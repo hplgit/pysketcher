@@ -16,7 +16,10 @@ class MatplotlibDraw:
         instruction_file: name of file where all the instructions
         are recorded.
         """
-        self.instruction_file = filename
+        if filename:
+            self.instruction_file = open(self.instruction_file, 'w')
+        else:
+            self.instruction_file = None
 
     def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False):
         """
@@ -30,10 +33,6 @@ class MatplotlibDraw:
         self.xrange = self.xmax - self.xmin
         self.yrange = self.ymax - self.ymin
         self.axis = axis
-        if self.instruction_file:
-            self.instruction_file = open(self.instruction_file, 'w')
-        else:
-            self.instruction_file = None
 
         # Compute the right X11 geometry on the screen based on the
         # x-y ratio of axis ranges
@@ -101,15 +100,15 @@ ax.set_aspect('equal')
         """Change the line width (int, starts at 1)."""
         self.linewidth = width
 
-    def set_filled_curves(self, color='', hatch=''):
+    def set_filled_curves(self, color='', pattern=''):
         """Fill area inside curves with current line color."""
         if color is False:
             self.fillcolor = ''
-            self.fillhatch = ''
+            self.fillpattern = ''
         else:
             self.fillcolor = color if len(color) == 1 else \
                          MatplotlibDraw.line_colors[color]
-            self.fillhatch = hatch
+            self.fillpattern = pattern
 
     def set_grid(self, on=False):
         self.mpl.grid(on)
@@ -127,7 +126,7 @@ ax.set_aspect('equal')
     def define_curve(self, x, y,
                      linestyle=None, linewidth=None,
                      linecolor=None, arrow=None,
-                     fillcolor=None, fillhatch=None):
+                     fillcolor=None, fillpattern=None):
         """Define a curve with coordinates x and y (arrays)."""
         self.xdata = np.asarray(x, dtype=np.float)
         self.ydata = np.asarray(y, dtype=np.float)
@@ -141,8 +140,8 @@ ax.set_aspect('equal')
             linewidth = self.linewidth
         if fillcolor is None:
             fillcolor = self.fillcolor
-        if fillhatch is None:
-            fillhatch = self.fillhatch
+        if fillpattern is None:
+            fillpattern = self.fillpattern
 
         if self.instruction_file is not None:
             import pprint
@@ -151,11 +150,15 @@ ax.set_aspect('equal')
             self.instruction_file.write('y = %s\n' % \
                                         pprint.pformat(self.ydata.tolist()))
 
-        if fillcolor or fillhatch:
+
+        if fillcolor or fillpattern:
+            if fillpattern != '':
+                fillcolor = 'white'
+            #print '%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (x.size, fillcolor, linecolor, fillpattern)
             self.ax.fill(x, y, fillcolor, edgecolor=linecolor,
-                         hatch=fillhatch)
+                         linewidth=linewidth, hatch=fillpattern)
             if self.instruction_file is not None:
-                self.instruction_file.write("ax.fill(x, y, '%s', edgecolor='%s', hatch='%s')\n" % (linecolor, fillcolor, fillhatch))
+                self.instruction_file.write("ax.fill(x, y, '%s', edgecolor='%s', linewidth=%d, hatch='%s')\n" % (fillcolor, linecolor, linewidth, fillpattern))
         else:
             self.ax.plot(x, y, linecolor, linewidth=linewidth,
                          linestyle=linestyle)
