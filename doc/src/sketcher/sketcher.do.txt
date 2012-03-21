@@ -229,7 +229,7 @@ FIGURE: [figs-sketcher/vehicle0v2.png, width=400] Changed properties of parts of
 We can also change position of parts of the figure and thereby make
 animations, as shown next.
 
-=== Animation ===
+=== Animation: Translating the Vehicle ===
 
 Can we make our little vehicle roll? A first attempt will be to
 fake rolling by just displacing all parts of the vehicle.
@@ -301,11 +301,76 @@ movie(files, encoder='html', output_file='anim')
 !ec
 This command makes a movie that is actually an HTML file `anim.html`,
 which can be loaded into a web browser.
-You can try this by running the present example in
+You can try this by running the present example in the file
 # #ifdef PRIMER_BOOK
-the file `vehicle0.py`.
+`vehicle0.py`.
 # #else
-the file "vehicle0.py":
+"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/sketcher.do.txt".
+# #endif
+
+=== Animation: Rolling the Wheels ===
+
+It is time to show rolling wheels. To this end, we make somewhat
+more complicated wheels with spokes as on a bicyle, formed by
+two crossing lines, see Figure ref{sketcher:fig:vehicle1}.
+The construction of the wheels will now involve a circle
+and two lines:
+!bc pycod
+R = 1.  # radius of wheel
+wheel1 = Compose({'wheel':
+                  Circle(center=(4, R), radius=R),
+                  'cross':
+                  Compose({'cross1': Line((4,0), (4,2*R)),
+                          'cross2': Line((4-R,R), (4+R,R))})})
+wheel2 = wheel1.copy()
+wheel2.translate((4,0))
+!ec
+Observe that `wheel1.copy()` copies all the objects that make
+up the first wheel, and `wheel2.translate` translates all
+the copied objects.
+
+FIGURE: [figs-sketcher/vehicle1.png, width=400] Wheels with spokes to show rotation. label{sketcher:fig:vehicle1}
+
+The `move_vehicle` function need to displace all the objects in the
+entire vehicle and also rotate the crosses in the wheels.
+The rotation angle follows from the fact that the arc length
+of a rolling wheel equals the displacement of the center of
+the wheel, leading to a rotation angle
+!bc pycod
+angle = - displacement[0]/R
+!ec
+With `wheel1_center` tracking the $x$ coordinate of the center
+of the front wheel, we can rotate that wheel by
+!bc pycod
+w1 = fig['vehicle']['wheels']['wheel1']
+from math import degrees
+w1.rotate(degrees(angle), center=(wheel1_center, R))
+!ec
+The `rotate` function takes two parameters: the rotation angle
+(in degrees) and the center point of the rotation, which is the
+center of the wheel in this case. The other wheel is rotated by
+!bc pycod
+w2 = fig['vehicle']['wheels']['wheel2']
+w2.rotate(degrees(angle), center=(wheel1_center+4, R))
+!ec
+That is, the angle is the same, but the rotation point is different.
+The update of the center point is done by `wheel1_center += displacement[0]`.
+The complete `move_vehicle` function then becomes
+!bc pycod
+wheel1_center = 7   # start position
+
+def move_vehicle(t, fig):
+    displacement = dt*v(t)
+    fig['vehicle'].translate(displacement)
+    global wheel1_center
+    wheel1_center += displacement[0]
+    angle = - displacement[0]/R
+    w1 = fig['vehicle']['wheels']['wheel1']
+    w1.rotate(degrees(angle), center=(wheel1_center, R))
+    w2 = fig['vehicle']['wheels']['wheel2']
+    w2.rotate(degrees(angle), center=(wheel1_center+4, R))
+!ec
+
 
 
 The great advantage with making figures this way through programming,

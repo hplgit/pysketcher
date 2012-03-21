@@ -81,9 +81,14 @@ class Shape:
                 return self.shapes[name]
             else:
                 for shape in self.shapes:
+                    if isinstance(self.shapes[shape], (Curve,Point)):
+                        # Indexing of Curve/Point/Text is not possible
+                        raise TypeError(
+                            'Index "%s" is illegal' % name)
                     return self.shapes[shape][name]
         else:
-            return self
+            raise Exception('This is a bug')
+
 
     def for_all_shapes(self, func, *args, **kwargs):
         if not hasattr(self, 'shapes'):
@@ -146,6 +151,9 @@ class Shape:
 
     def show_hierarchy(self, indent=0, format='std'):
         """Recursive pretty print of hierarchy of objects."""
+        if not isinstance(self.shapes, dict):
+            print 'cannot print hierarchy when %s.shapes is not a dict' % \
+                  self.__class__.__name__
         s = ''
         if format == 'dict':
             s += '{'
@@ -401,6 +409,29 @@ class Line(Shape):
             if self.b is None:
                 self.d = x[1]
         except ZeroDivisionError:
+            # Horizontal line, x is not a function of y
+            self.c = None
+            self.d = None
+
+    def compute_formulas(self):
+        x, y = self.shapes['line'].x, self.shapes['line'].y
+
+        tol = 1E-14
+        # Define equations for line:
+        # y = a*x + b,  x = c*y + d
+        if abs(x[1] - x[0]) > tol:
+            self.a = (y[1] - y[0])/(x[1] - x[0])
+            self.b = y[0] - self.a*x[0]
+        else:
+            # Vertical line, y is not a function of x
+            self.a = None
+            self.b = None
+        if self.a is None:
+            self.c = 0
+        elif abs(self.a) > tol:
+            self.c = 1/float(self.a)
+            self.d = x[1]
+        else:  # self.a is 0
             # Horizontal line, x is not a function of y
             self.c = None
             self.d = None
