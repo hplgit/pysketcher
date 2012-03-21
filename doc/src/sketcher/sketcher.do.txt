@@ -1,0 +1,1000 @@
+
+Implementing a drawing program provides a very good example on the usefulness
+of object-oriented programming. In the following we shall develop
+the simpler parts of a relatively small and compact drawing program
+for making sketches of the type shown in Figure ref{sketcher:fig1}.
+This sketch is made up many individual elements....
+
+FIGURE: [figs-sketcher/...png, width=500]
+
+Classes are very suitable for implementing the various components that
+build up a sketch and their functionality. In particular, we shall
+demonstrate that as soon some classes are established, more are easily
+added, and enhanced functionality for all the classes is also easy to
+implement in common, generic code that can be shared by all classes.
+
+===== Using the Object Collection =====
+
+Before we dive into implementation details, let us first decide upon
+the interface we want to take advantage of to make sketches of the type in
+Figure ref{sketcher:fig1}. We start with a significantly simpler
+example as depicted in Figure ref{sketcher:fig:vehicle0}.
+This toy sketch consists of several elements: two circles, two
+rectangles, and a "ground" element.
+
+FIGURE: [figs-sketcher/vehicle0.png, width=400] Very simple sketch of a vehicle. label{sketcher:fig:vehicle0}
+
+=== Basic Drawing ===
+
+A typical program creating these five elements is shown next.
+The drawing package is named `pysketcher` so it is natural that we
+must import tools from `pysketcher`. The first task is always to
+define a coordinate system. Some graphics operations are done with
+a helper object called `drawing_tool` (imported from `pysketcher`).
+With the drawing area in place we can make the first `Circle` object:
+!bc pycod
+from pysketcher import *
+
+drawing_tool.set_coordinate_system(xmin=0, xmax=15,
+                                   ymin=-1, ymax=10)
+R = 1  # radius of wheel
+wheel1 = Circle(center=(4, R), radius=R)
+!ec
+To translate the geometric information about the `wheel1` object to
+instructions for the plotting engine (in this case Matplotlib), one calls the
+`wheel1.draw()`. To display all drawn objects, one issues
+`drawing_tool.display()`. The steps are hence:
+!bc pycod
+r = 1  # radius of wheel
+wheel1 = Circle(center=(4, r), radius=r)
+wheel1.draw()
+
+# Define other objects and call their draw() methods
+drawing_tool.display()
+drawing_tool.savefig('tmp.png')  # store picture
+!ec
+
+The next wheel can be made by taking a copy of `wheel1` and
+translating the object a distance (to the right) described by the
+vector $(4,0)$:
+!bc pycod
+wheel2 = wheel1.copy()
+wheel2.translate((4,0))
+!ec
+The two rectangles are made in an intuitive way:
+!bc pycod
+height1 = 2
+under = Rectangle(lower_left_corner=(2, 2*R),
+                  width=8, height=height1)
+height2 = 2.5
+over = Rectangle(lower_left_corner=(4, 2*R+height1),
+                 width=2.5, height=height2)
+!ec
+
+=== Groups of Objects ===
+
+Instead of calling the `draw` method of every object, we can
+group objects and call `draw`, or perform other operations, for
+the whole group. For example, we may collect the two wheels
+in a `wheels` group and the `over` and `under` rectangles
+in a vehicle `body` group. The whole vehicle is a composition
+of the `wheels` and `body` groups. The codes goes like
+!bc pycod
+wheels = Compose({'wheel1': wheel1, 'wheel2': wheel2})
+body = Compose({'under': under, 'over': over})
+
+vehicle = Compose({'wheels': wheels, 'body': body})
+!ec
+The ground is illustrated by an object of type `CurveWall`,
+mostly used to indicate walls in sketches of physical systems.
+A `CurveWall` takes the `x` and `y` coordinates of some curve
+and a `thickness` parameter and creates a "thick" curve filled
+with a simple pattern. In this case the curve is just a flat
+line so the construction is simple:
+!bc pycod
+ground = CurveWall(x=[0, 12], y=[0, 0], thickness=-0.3)
+!ec
+We may collect all the objects in a "top" object that contains
+the whole figure:
+!bc pycod
+fig = Compose({'vehicle': vehicle, 'ground': ground})
+fig.draw()  # send all figures to plotting backend
+drawing_tool.display()
+drawing_tool.savefig('tmp.png')
+!ec
+The `fig.draw()` call will visit
+all subgroups, their subgroups,
+and so in the herarchical tree structure that we have collected,
+and call `draw` for every object.
+
+=== Changing Line Styles and Colors ===
+
+Controlling the line style, line color, and line width is
+fundamental when designing figures. The `pysketcher`
+package allows the user to control such properties in
+single objects, but also set global properties that are
+used if the object has no particular specification of
+the properties. Setting the global properties are done like
+!bc pycod
+drawing_tool.set_linestyle('dashed')
+drawing_tool.set_linecolor('black')
+drawing_tool.set_linewidth(4)
+!ec
+At the object level the properties are specified in a similar
+way:
+!bc pycod
+wheel1.set_linestyle('solid')
+wheel1.set_linecolor('red')
+!ec
+and so on.
+
+Geometric figures can be filled, either with a color or with a
+special visual pattern:
+!bc
+# Set filling of all curves
+drawing_tool.set_filled_curves(color='blue', hatch='/')
+# Turn off filling of all curves
+drawing_tool.set_filled_curves(False)
+# Fill the wheel with red color
+wheel1.set_filled_curves('red')
+!ec
+
+# http://packages.python.org/ete2/ for visualizing tree structures!
+
+=== The Figure Composition as an Object Hierarchy ===
+
+The composition of objects is hierarchical, as in a family, where
+each object has a parent and a number of children. Do a
+`print fig` to display the relations:
+!bc dat
+ground
+    wall
+vehicle
+    body
+        over
+            rectangle
+        under
+            rectangle
+    wheels
+        wheel1
+            arc
+        wheel2
+            arc
+!ec
+The indentation reflects how deep down in the hierarchy (family)
+we are.
+This output is to be interpreted as follows:
+
+  * `fig` contains two objects, `ground` and `vehicle`
+  * `ground` contains an object `wall`
+  * `vehicle` contains two objects, `body` and `wheels`
+  * `body` contains two objects, `over` and `under`
+  * `wheels` contains two objects, `wheel1` and `wheel2`
+
+More detailed information can be printed by
+!bc pycod
+print fig.show_hierarchy('std')
+!ec
+yielding the output
+!bc dat
+ground (CurveWall):
+    wall (Curve): 4 coords fillcolor='white' fillhatch='/'
+vehicle (Compose):
+    body (Compose):
+        over (Rectangle):
+            rectangle (Curve): 5 coords
+        under (Rectangle):
+            rectangle (Curve): 5 coords
+    wheels (Compose):
+        wheel1 (Circle):
+            arc (Curve): 181 coords
+        wheel2 (Circle):
+            arc (Curve): 181 coords
+!ec
+Here we can see the class type each object, how many
+coordinates that are involved in basic figures, and
+special settings of the basic figure (fillcolor, line types, etc.).
+For example, `wheel2` is a `Circle` object consisting of an `arc`,
+which is a `Curve` object consisting of 181 coordinates (the
+points needed to draw a smooth circle). The `Curve` objects are the
+only objects that really holds specific coordinates to be drawn.
+The other object types are just compositions used to group
+parts of the complete figure.
+
+Any of the objects can in the program be reached through their names, e.g.,
+!bc pycodc
+fig['vehicle']
+fig['vehicle']['wheels']
+fig['vehicle']['wheels']['wheel2']
+fig['vehicle']['wheels']['wheel2']['arc']
+fig['vehicle']['wheels']['wheel2']['arc'].x  # x coords
+fig['vehicle']['wheels']['wheel2']['arc'].y  # y coords
+fig['vehicle']['wheels']['wheel2']['arc'].linestyle
+fig['vehicle']['wheels']['wheel2']['arc'].linetype
+!ec
+Grabbing a part of the figure this way is very handy for
+changing properties of that part, for example, colors, line styles
+(see Figure ref{sketcher:fig:vehicle0:v2}):
+!bc pycod
+fig['vehicle']['wheels'].set_filled_curves('blue')
+fig['vehicle']['wheels'].set_linewidth(6)
+fig['vehicle']['wheels'].set_linecolor('black')
+fig['vehicle']['body']['under'].set_filled_curves('red')
+fig['vehicle']['body']['over'].set_filled_curves(pattern='/')
+fig['vehicle']['body']['over'].set_linewidth(10)
+!ec
+
+FIGURE: [figs-sketcher/vehicle0v2.png, width=400] Changed properties of parts of the figure. label{sketcher:fig:vehicle0:v2}
+
+We can also change position of parts of the figure and thereby make
+animations, as shown next.
+
+=== Animation ===
+
+Can we make our little vehicle roll? A first attempt will be to
+fake rolling by just displacing all parts of the vehicle.
+The relevant parts constitute the `fig['vehicle']` object.
+This part of the figure can be translated, rotated, and scaled.
+A translation along the ground means a translation in $x$ direction,
+say a length $4$ to the right:
+!bc pycod
+fig['vehicle'].translate((3,0))
+!ec
+You need to erase, draw, and display to see the movement:
+!bc pycod
+drawing_tool.erase()
+fig.draw()
+drawing_tool.display()
+!ec
+Without erasing, the old position of the vehicle will remain in
+the figure so you get two vehicles. Without `fig.draw()` the
+new coordinates of the vehicle will not be communicated to
+the drawing tool, and without calling dislay the updated
+drawing will not be visible.
+
+Let us make a velocity function and move the object according
+to that velocity in small steps of time:
+!bc pydoc
+def v(t):
+    return point(-t*(1-t/5.), 0)
+
+animate(fig, tp, user_action)
+!ec
+For small time steps `dt` the corresponding displacement is
+well approximated by `dt*v(t)` (we could integrate the velocity
+to obtain the exact position, but we would anyway need to
+calculate the displacement from time step to time step).
+The `animate` function takes as arguments some figure `fig`, a set of
+time points `tp`, and a user function `action`,
+and then a new figure is drawn for each time point and the user
+can through the provided `action` function modify desired parts
+of the figure. Here the `action` function will move the `vehicle`:
+!bc pycod
+def move_vehicle(t, fig):
+    displacement = dt*v(t)
+    fig['vehicle'].translate(displacement)
+!ec
+Defining a set of time points for the frames in the animation
+and performing the animation is done by
+!bc pycod
+import numpy
+tp = numpy.linspace(0, 5, 35)
+dt = tp[1] - tp[0]  # time step
+
+animate(fig, tp, move_vehicle, pause_per_frame=0.2)
+!ec
+The `pause_per_frame` adds a pause, here 0.2 seconds, between
+each frame.
+
+We can also make a movie file of the animation:
+!bc pycod
+files = animate(fig, tp, move_vehicle, moviefiles=True,
+                pause_per_frame=0.2)
+!ec
+The `files` variable holds a string with the family of
+files constituting the frames in the movie, here
+`'tmp_frame*.png'`. Making a movie out of the individual
+frames can be done in many ways, e.g.,
+!bc pycod
+from scitools.std import movie
+movie(files, encoder='html', output_file='anim')
+!ec
+This command makes a movie that is actually an HTML file `anim.html`,
+which can be loaded into a web browser.
+You can try this by running the present example in
+# #ifdef PRIMER_BOOK
+the file `vehicle0.py`.
+# #else
+the file "vehicle0.py":
+
+
+The great advantage with making figures this way through programming,
+rather than using interactive drawing programs, is that the
+accuracy of mathematical drawings is easily reflected, distances
+can be parameterized through variables such that the
+proportions of parts of the figure can be quickly changed,
+groups of objects can easily be manipulated (translated, rotated,
+scaled), objects can be left out while experimenting with the
+figure, to mention some important features.
+
+
+
+
+
+We can change the color and thickness of the lines and also fill
+circles, rectangles, etc.~with a color. Figure ref{fig:shapes2}
+shows the result of the following example, where
+we first define elements in the figure and then adjust the line
+color and other properties prior to calling the `draw` methods:
+!bc cod
+r1 = Rectangle(lower_left_corner=(0,1), width=3, height=5)
+c1 = Circle(center=(5,7), radius=1)
+w1 = Wheel(center=(6,2), radius=2, inner_radius=0.5, nlines=7)
+c2 = Circle(center=(7,7), radius=1)
+filled_curves(True)
+c1.draw()               # filled red circle
+set_linecolor('blue')
+r1.draw()               # filled blue rectangle
+set_linecolor('aqua')
+c2.draw()               # filled aqua/cyan circle
+# Add thick aqua line around rectangle
+filled_curves(False)
+set_linewidth(4)
+r1.draw()
+set_linecolor('red')
+w1.draw()
+display()
+!ec
+
+
+===== Overall Design of the Class Hierarchy =====
+
+Let us have a class `Shape` as superclass for all specialized shapes.
+Class `Line` is a subclass of `Shape` and
+represents the simplest shape: a stright line between two points.
+Class `Rectangle` is another subclass of `Shape`, implementing the
+functionality needed to specify the four lines of a rectangle.
+Class `Circle` can be yet another subclass of `Shape`, or
+we may have a class `Arc` and let `Circle` be a subclass
+of `Arc` since a circle is an arc of 360 degrees.
+Class `Wheel`
+is also subclass of `Shape`, but it contains
+naturally two `Circle` instances for the inner and outer circles,
+plus a set of `Line` instances
+going from the inner to the outer circles.
+
+The discussion in the previous paragraph shows that a subclass in
+the `Shape` hierarchy typically contains a list of
+other subclass instances, *or* the shape is a primitive, such as a line,
+circle, or rectangle, where the geometry is defined through a set of
+$(x,y)$ coordinates rather than through other `Shape` instances.
+It turns out that the implementation is simplest if we introduce
+a class `Curve` for holding a primitive shape defined by
+$(x,y)$ coordinates. Then all other subclasses of `Shape` can
+have a list `shapes` holding the various instances of subclasses of
+`Shape` needed to
+build up the geometric object. The `shapes`
+attribute in class `Circle` will contain
+one `Curve` instance for holding the coordinates along the circle,
+while the `shapes` attribute in class `Wheel` contains
+two `Circle` instances and a number of `Line` instances.
+Figures ref{fig:oo:Rectangle:fig} and ref{fig:oo:Wheel:fig}
+display two UML drawings of the `shapes` class hierarchy where we
+can get a view of how `Rectangle` and `Wheel` relate to other classes:
+the darkest arrows represent is-a relationship while the lighter arrows
+represent has-a relationship.
+
+
+All instances in the `Shape` hierarchy must have a `draw` method.
+The `draw` method in class `Curve` plots the $(x,y)$ coordinates
+as a curve, while the `draw` method in all other classes simply
+draws all the shapes that make up the particular figure of the class:
+!bc cod
+for shape in self.shapes:
+    shape.draw()
+!ec
+
+
+\begin{figure}
+  \centerline{\psfig{figure=figs/lumpy_Rectangle_shapes_hier.ps,width=0.5\linewidth}}
+  \caption{ label{fig:oo:Rectangle:fig}
+  UML diagram of parts of the `shapes` hierarchy. Classes `Rectangle`
+  and `Curve` are subclasses of `Shape`. The darkest arrow with
+  the biggest arrowhead indicates inheritance and is-a
+  relationship: `Rectangle` and `Curve` are both also `Shape`.
+  The lighter arrow
+  indicates {has-a}  relationship:
+  `Rectangle` has a `Curve`, and a `Curve` has a
+  `NumPyArray`.
+  }
+\end{figure}
+
+\begin{figure}
+  \centerline{\psfig{figure=figs/lumpy_Wheel_shapes_hier.ps,width=0.7\linewidth}}
+  \caption{ label{fig:oo:Wheel:fig}
+  This is a variant of Figure ref{fig:oo:Rectangle:fig} where we
+  display how class `Wheel` relates to other classes in the
+  `shapes` hierarchy.
+  `Wheel` is a `Shape`, like `Arc`, `Line`, and `Curve`,
+  but `Wheel` contains `Circle` and `Line` objects,
+  while the `Circle` and `Line` objects have a `Curve`, which has a
+  `NumPyArray`. We also see that `Circle` is a subclass of `Arc`.
+  }
+\end{figure}
+
+
+
+===== The Drawing Tool =====
+We have in Chapter ref{ch:plot} introduced the Easyviz tool for
+plotting graphs. This tool is quite well suited for drawing
+geometric shapes defined in terms of curves, but when drawing shapes
+we often want to skip ticmarks on the axis, labeling of the curves and
+axis, and perform other adjustments. Instead of using Easyviz, which
+aims at function plotting, we
+have decided to use a plotting tool directly and fine-tune the few
+commands we need for drawing shapes.
+
+A simple plotting tool for shapes is based on Gnuplot and implemented in
+class `GnuplotDraw` in the file `GnuplotDraw.py`.
+This class has the following user interface:
+!bc cod
+class GnuplotDraw:
+    def __init__(self, xmin, xmax, ymin, ymax):
+        """Define the drawing area [xmin,xmax]x[ymin,ymax]."""
+
+    def define_curve(self, x, y):
+        """Define a curve with coordinates x and y (arrays)."""
+
+    def erase(self):
+        """Erase the current figure."""
+
+    def display(self):
+        """Display the figure."""
+
+    def hardcopy(self, name):
+        """Save figure in PNG file name.png."""
+
+    def set_linecolor(self, color):
+        """Change the color of lines."""
+
+    def set_linewidth(self, width):
+        """Change the line width (int, starts at 1)."""
+
+    def filled_curves(self, on=True):
+        """Fill area inside curves with current line color."""
+!ec
+One can easily make a similar class with an identical interface that
+applies another plotting package than Gnuplot to create the drawings.
+In particular, encapsulating the drawing actions in such a class makes
+it trivial to change the drawing program in the future.
+The program pieces that apply a drawing tool like `GnuplotDraw`
+remain the same. This is an important strategy to follow, especially
+when developing larger software systems.
+
+
+===== Implementation of Shape Classes =====
+label{sec:oo:shape:impl}
+
+Our superclass `Shape` can naturally hold a coordinate system
+specification, i.e., the rectangle in which other shapes can be drawn.
+This area is fixed for all shapes, so the associated variables should
+be static and the method for setting them should also be static
+(see Chapter ref{sec:class:static} for static attributes and methods).
+It is also natural that class `Shape` holds access to a drawing
+tool, in our case a `GnuplotDraw` instance. This object
+is also static.
+However, it can be an advantage to mirror the static attributes and methods
+as global variables and functions in the `shapes` modules.
+Users not familiar with static class items can drop the `Shape`
+prefix and just use plain module variables and functions. This is what
+we do in the application examples.
+
+Class `Shape` defines an imporant method, `draw`, which
+just calls the `draw` method for all subshapes that build up the
+current shape.
+
+Here is a brief view of class `Shape`\footnote{We have
+for simplicity omitted
+the static attributes
+and methods. These can be viewed in the `shapes.py` file.}:
+!bc cod
+class Shape:
+    def __init__(self):
+        self.shapes = self.subshapes()
+        if isinstance(self.shapes, Shape):
+            self.shapes = [self.shapes]  # turn to list
+
+    def subshapes(self):
+        """Define self.shapes as list of Shape instances."""
+        raise NotImplementedError(self.__class__.__name__)
+
+    def draw(self):
+        for shape in self.shapes:
+            shape.draw()
+!ec
+In class `Shape` we require the `shapes` attribute to be a
+list, but if the `subshape` method in subclasses returns just one
+instance, this is automatically wrapped in a list in the constructor.
+
+
+First we implement the special case class `Curve`, which does not
+have subshapes but instead $(x,y)$ coordinates for a curve:
+!bc cod
+class Curve(Shape):
+    """General (x,y) curve with coordintes."""
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        # Turn to Numerical Python arrays
+        self.x = asarray(self.x, float)
+        self.y = asarray(self.y, float)
+        Shape.__init__(self)
+
+    def subshapes(self):
+        pass # geometry defined in constructor
+!ec
+# In Python, `Curve` does not need to be a subclass of `Shape`.
+# It could in fact be natural to remove the `subshapes` method and
+# the inheritance from `Shape`. In other languages where all
+# elements in `self.shapes` need to be instances of classes in the
+# `Shape` hierarchy, because all list elements must have a fixed
+# and specified type, `Curve` must be a subclass of `Shape`.
+
+The simplest ordinary `Shape` class is `Line`:
+!bc cod
+class Line(Shape):
+    def __init__(self, start, stop):
+        self.start, self.stop = start, stop
+        Shape.__init__(self)
+
+    def subshapes(self):
+        x = [self.start[0], self.stop[0]]
+        y = [self.start[1], self.stop[1]]
+        return Curve(x,y)
+!ec
+The code in this class works with `start` and `stop` as
+tuples, lists, or arrays of length
+two, holding the end points of the line.
+The underlying `Curve` object needs only these two end points.
+
+A rectangle is represented by a slightly more complicated class, having the
+lower left corner, the width, and the height of the rectangle as
+attributes:
+!bc cod
+class Rectangle(Shape):
+    def __init__(self, lower_left_corner, width, height):
+        self.lower_left_corner = lower_left_corner  # 2-tuple
+        self.width, self.height = width, height
+        Shape.__init__(self)
+
+    def subshapes(self):
+        ll = self.lower_left_corner  # short form
+        x = [ll[0], ll[0]+self.width,
+             ll[0]+self.width, ll[0], ll[0]]
+        y = [ll[1], ll[1], ll[1]+self.height,
+             ll[1]+self.height, ll[1]]
+        return Curve(x,y)
+!ec
+
+Class `Circle` needs many coordinates in its `Curve` object
+in order to display a smooth circle. We can provide the number of
+straight line segments along the circle as a parameter `resolution`.
+Using a default value of 180 means that each straight line segment
+approximates an arc of 2 degrees. This resolution should be sufficient
+for visual purposes. The set of coordinates along a circle with radius $R$
+and center $(x_0,y_0)$ is defined by
+!bt
+\begin{align}
+x &= x_0 + R\cos(t), label{sec:oo:circle:eq1}\\
+y &= y_0 + R\sin(t), label{sec:oo:circle:eq2}
+\end{align}
+!et
+for `resolution+1` $t$ values between $0$ and $2\pi$.
+The vectorized code for computing the coordinates becomes
+!bc cod
+t = linspace(0, 2*pi, self.resolution+1)
+x = x0 + R*cos(t)
+y = y0 + R*sin(t)
+!ec
+The complete `Circle` class is shown below:
+!bc cod
+class Circle(Shape):
+    def __init__(self, center, radius, resolution=180):
+        self.center, self.radius = center, radius
+        self.resolution = resolution
+        Shape.__init__(self)
+
+    def subshapes(self):
+        t = linspace(0, 2*pi, self.resolution+1)
+        x0 = self.center[0];  y0 = self.center[1]
+        R = self.radius
+        x = x0 + R*cos(t)
+        y = y0 + R*sin(t)
+        return Curve(x,y)
+!ec
+
+We can also introduce class `Arc` for drawing the arc of a circle.
+Class `Arc` could be a subclass of `Circle`, extending the
+latter with two additional parameters: the opening of the arc
+(in degrees) and the starting $t$ value in
+(ref{sec:oo:circle:eq1})--(ref{sec:oo:circle:eq2}).
+The implementation of class `Arc` will then be almost a copy of
+the implementation of class `Circle`. The `subshapes` method
+will just define a different `t` array.
+
+Another view is to let class `Arc` be a subclass of `Shape`,
+and `Circle` a subclass of `Arc`, since a circle is an arc
+of 360 degrees. Let us employ this idea:
+!bc cod
+class Arc(Shape):
+    def __init__(self, center, radius,
+                 start_degrees, opening_degrees, resolution=180):
+        self.center = center
+        self.radius = radius
+        self.start_degrees = start_degrees*pi/180
+        self.opening_degrees = opening_degrees*pi/180
+        self.resolution = resolution
+        Shape.__init__(self)
+
+    def subshapes(self):
+        t = linspace(self.start_degrees,
+                     self.start_degrees + self.opening_degrees,
+                     self.resolution+1)
+        x0 = self.center[0];  y0 = self.center[1]
+        R = self.radius
+        x = x0 + R*cos(t)
+        y = y0 + R*sin(t)
+        return Curve(x,y)
+
+class Circle(Arc):
+    def __init__(self, center, radius, resolution=180):
+        Arc.__init__(self, center, radius, 0, 360, resolution)
+!ec
+In this latter implementation, we save a lot of code in class
+`Circle` since all of class `Arc` can be reused.
+
+Class `Wheel` may conceptually be a subclass of `Circle`.
+One circle, say the outer, is inherited and the subclass must have
+the inner circle as an attribute. Because of this "asymmetric"
+representation of the two circles in a wheel, we find it more natural
+to derive `Wheel` directly from `Shape`, and have the two
+circles as two attributes of type `Circle`:
+!bc cod
+class Wheel(Shape):
+    def __init__(self, center, radius, inner_radius=None, nlines=10):
+        self.center = center
+        self.radius = radius
+        if inner_radius is None:
+            self.inner_radius = radius/5.0
+        else:
+            self.inner_radius = inner_radius
+        self.nlines = nlines
+        Shape.__init__(self)
+!ec
+If the radius of the inner circle
+is not defined (`None`)
+we take it as 1/5 of the radius of the outer circle.
+The wheel is naturally composed of two `Circle` instances and
+`nlines` `Line` instances:
+!bc cod
+    def subshapes(self):
+        outer = Circle(self.center, self.radius)
+        inner = Circle(self.center, self.inner_radius)
+        lines = []
+        t = linspace(0, 2*pi, self.nlines)
+        Ri = self.inner_radius;  Ro = self.radius
+        x0 = self.center[0];  y0 = self.center[1]
+        xinner = x0 + Ri*cos(t)
+        yinner = y0 + Ri*sin(t)
+        xouter = x0 + Ro*cos(t)
+        youter = y0 + Ro*sin(t)
+        lines = [Line((xi,yi),(xo,yo)) for xi, yi, xo, yo in \
+                 zip(xinner, yinner, xouter, youter)]
+        return [outer, inner] + lines
+!ec
+
+For the fun of it, we can implement other shapes, say a sine wave
+!bt
+\begin{equation*}y = m + A\sin kx,\quad k=2\pi /\lambda,\end{equation*}
+!et
+where $\lambda$ is the wavelength
+of the sine waves, $A$ is the wave amplitude, and $m$ is the mean
+value of the wave. The class looks like
+!bc cod
+class Wave(Shape):
+    def __init__(self, xstart, xstop,
+                 wavelength, amplitude, mean_level):
+        self.xstart = xstart
+        self.xstop = xstop
+        self.wavelength = wavelength
+        self.amplitude = amplitude
+        self.mean_level = mean_level
+        Shape.__init__(self)
+
+    def subshapes(self):
+        npoints = (self.xstop - self.xstart)/(self.wavelength/61.0)
+        x = linspace(self.xstart, self.xstop, npoints)
+        k = 2*pi/self.wavelength # frequency
+        y = self.mean_level + self.amplitude*sin(k*x)
+        return Curve(x,y)
+!ec
+With this and the previous example, you should be in a position to
+write your own subclasses. Exercises~ref{sec:oo:ex11}--ref{sec:oo:ex13b}
+suggest some smaller projects.
+
+
+# ===== A Class for Drawing Springs =====
+#
+# Give: bottom point $B$, number of spring tags $n$, length $L$. Assume that
+# $L/3$ is the bottom and top vertical line and that the tags
+# are in the middle $L/3$. The width of the tags, $w$, can be either fixed to
+# a number or relative to $L$ (say $L/10$ -- need two variables, one
+# fixed true/false and one value).
+#
+#
+
+# \notready
+
+__Functions for Controlling Lines, Colors, etc.__
+The `shapes` module containing class `Shape` and all subclasses
+mentioned above, also offers some additional functions that do not
+depend on any particular shape:
+
+  * `display()` for displaying the defined figures so far (all figures whose `draw` method is called).
+  * `erase()` for ereasing the current figure.
+  * `hardcopy(name)` for saving the current figure to a PNG file `name.png`.
+  * `set_linecolor(color)` for setting the color of lines, where
+`color` is a string like `'red'` (default), `'blue'`, `'green'`, `'aqua'`, `'purple'`, `'yellow'`, and `'black'`.
+  * `set_linewidth(width)` for setting the width of a line, measured as an integer (default is 2).
+  * `filled_curves(on)` for turrning on (`on=True`) or off (`on=False`) whether the area inside a shape should be filled with the current line color.
+
+Actually, the functions above are static methods in class `Shape`
+(cf.~Chapter ref{sec:class:static}),
+and they are
+just mirrored
+as global functions\footnote{You can look into `shapes.py` to see how
+we automate the duplication of static methods as global functions.}
+in the `shapes` module.
+Users without knowledge of static methods do not need to use the
+`Shape` prefix for reaching this functionality.
+
+===== Scaling, Translating, and Rotating a Figure =====
+label{sec:oo:scaling}
+
+The real power of object-oriented programming will be obvious in a
+minute when we, with a few lines of code, suddenly can
+equip *all* shape objects
+with additional functionality for scaling, translating, and rotating the
+figure.
+
+__Scaling.__
+Let us first treat the simplest of the three cases: scaling.
+For a `Curve` instance containing a set of $n$ coordinates
+$(x_i,y_i)$ that make up a curve, scaling by
+a factor $a$ means that we multiply all the $x$ and $y$ coordinates
+by $a$:
+!bt
+\begin{equation*} x_i \leftarrow ax_i,\quad y_i\leftarrow ay_i,\quad i=0,\ldots,n-1\thinspace . \end{equation*}
+!et
+Here we apply the arrow as an assignment operator.
+The corresponding Python implementation in
+class `Curve` reads
+!bc cod
+class Curve:
+    ...
+    def scale(self, factor):
+        self.x = factor*self.x
+        self.y = factor*self.y
+!ec
+Note here that `self.x` and `self.y` are Numerical Python arrays,
+so that multiplication by a scalar number `factor` is
+a vectorized operation.
+
+In an instance of a subclass of `Shape`,
+the meaning of a method `scale` is
+to run through all objects in the list `self.shapes` and ask
+each object to scale itself. This is the same delegation of actions
+to subclass instances as we do in the `draw` method, and
+all objects, except `Curve` instances, can share the same
+implementation of the `scale` method. Therefore, we place
+the `scale` method in the superclass `Shape` such that all
+subclasses can inherit this method.
+Since `scale` and `draw` are so similar,
+we can easily implement the `scale` method in class `Shape` by
+copying and editing the `draw` method:
+!bc cod
+class Shape:
+    ...
+    def scale(self, factor):
+        for shape in self.shapes:
+            shape.scale(factor)
+!ec
+This is all we have to do in order to equip all subclasses of
+`Shape` with scaling functionality! But why is it so easy?
+All subclasses inherit `scale` from class `Shape`.
+Say we have a subclass instance `s` and that we call
+`s.scale(factor)`. This leads to calling the inherited `scale`
+method shown above, and in the `for` loop we call the
+`scale` method for each `shape` object in the `self.shapes` list.
+If `shape` is not a `Curve` object, this procedure repeats,
+until we hit a `shape` that is a `Curve`, and then
+the scaling on that set of coordinates is performed.
+
+__Translation.__
+A set of coordinates $(x_i, y_i)$ can be translated $x$ units in
+the $x$ direction and $y$ units in the $y$ direction using the formulas
+!bt
+\begin{equation*} x_i\leftarrow x+x_i,\quad y_i\leftarrow y + y_i,\quad i=0,\ldots,n-1\thinspace . \end{equation*}
+!et
+The corresponding Python implementation in class `Curve` becomes
+!bc cod
+class Curve:
+    ...
+    def translate(self, x, y):
+        self.x = x + self.x
+        self.y = y + self.y
+!ec
+The translation operation for a shape object is very similar to the
+scaling and drawing operations. This means that we can implement a
+common method `translate` in the superclass `Shape`. The code
+is parallel to the `scale` method:
+!bc cod
+class Shape:
+    ....
+    def translate(self, x, y):
+        for shape in self.shapes:
+            shape.translate(x, y)
+!ec
+
+__Rotation.__
+Rotating a figure is more complicated than scaling and translating.
+A counter clockwise rotation of $\theta$ degrees for a set of
+coordinates $(x_i,y_i)$ is given by
+!bt
+\begin{align*}
+ \bar x_i &\leftarrow& x_i\cos\theta - y_i\sin\theta,\\
+ \bar y_i &\leftarrow& x_i\sin\theta + y_i\cos\theta\thinspace .
+\end{align*}
+!et
+This rotation is performed around the origin. If we want the figure
+to be rotated with respect to a general point $(x,y)$, we need to
+extend the formulas above:
+!bt
+\begin{align*}
+ \bar x_i &\leftarrow& x + (x_i -x)\cos\theta - (y_i -y)\sin\theta,\\
+ \bar y_i &\leftarrow& y + (x_i -x)\sin\theta + (y_i -y)\cos\theta\thinspace .
+\end{align*}
+!et
+The Python implementation in class `Curve`, assuming that $\theta$
+is given in degrees and not in radians, becomes
+!bc cod
+    def rotate(self, angle, x=0, y=0):
+        angle = angle*pi/180
+        c = cos(angle);  s = sin(angle)
+        xnew = x + (self.x - x)*c - (self.y - y)*s
+        ynew = y + (self.x - x)*s + (self.y - y)*c
+        self.x = xnew
+        self.y = ynew
+!ec
+The `rotate` method in class `Shape` is identical to the
+`draw`, `scale`, and `translate` methods except that we
+have other arguments:
+!bc cod
+class Shape:
+    ....
+    def rotate(self, angle, x=0, y=0):
+        for shape in self.shapes:
+            shape.rotate(angle, x, y)
+!ec
+
+__Application: Rolling Wheel.__
+To demonstrate the effect of translation and rotation we can roll
+a wheel on the screen. First we draw the wheel and rotate it a bit
+to demonstrate the basic operations:
+!bc cod
+center = (6,2)   # the wheel's center point
+w1 = Wheel(center=center, radius=2, inner_radius=0.5, nlines=7)
+# rorate the wheel 2 degrees around its center point:
+w1.rotate(angle=2, center[0], center[1])
+w1.draw()
+display()
+!ec
+Now we want to roll the wheel by making many such small rotations.
+At the same time we need to translate the wheel since rolling
+an arc length $L=R\theta$, where $\theta$ is the rotation angle
+(in radians) and $R$ is the outer radius of the wheel, implies that
+the center point moves a distance $L$ to the left ($\theta >0$
+means counter clockwise rotation).
+In code we must therefore combine rotation with translation:
+!bc cod
+L = radius*angle*pi/180  # translation = arc length
+w1.rotate(angle, center[0], center[1])
+w1.translate(-L, 0)
+center = (center[0] - L, center[1])
+!ec
+We are now in a position to put the rotation and translation
+operations in a `for` loop and make a complete function:
+!bc cod
+def rolling_wheel(total_rotation_angle):
+    """Animation of a rotating wheel."""
+    set_coordinate_system(xmin=0, xmax=10, ymin=0, ymax=10)
+
+    center = (6,2)
+    radius = 2.0
+    angle = 2.0
+    w1 = Wheel(center=center, radius=radius,
+               inner_radius=0.5, nlines=7)
+    for i in range(int(total_rotation_angle/angle)):
+        w1.draw()
+        display()
+
+        L = radius*angle*pi/180  # translation = arc length
+        w1.rotate(angle, center[0], center[1])
+        w1.translate(-L, 0)
+        center = (center[0] - L, center[1])
+
+        erase()
+!ec
+To control the visual "velocity" of the wheel, we can insert a pause
+between each frame in the `for` loop. A call to
+`time.sleep(s)`, where `s` is the length of
+the pause in seconds, can do this for us.
+
+Another convenient feature is to save each frame drawn in the `for`
+loop as a hardcopy in PNG format and then, after the loop,
+make an animated GIF file based on the individual PNG frames.
+The latter operation is performed either by the `movie` function
+from `scitools.std`
+or by the `convert` program from
+the ImageMagick suite. With the latter you write the following command
+in a terminal window:
+!bc ccq
+convert -delay 50 -loop 1000 xxx tmp_movie.gif
+!ec
+Here, `xxx` is a space-separated list of all the PNG files, and
+`tmp_movie.gif` is the name of the resulting animated GIF file.
+We can easily make `xxx` by collecting the names of the PNG files
+from the loop in a list object, and then join the names.
+The `convert` command can be run as an `os.system` call.
+
+The complete `rolling_wheel` function, incorporating the
+mentioned movie making, will then be
+!bc cod
+def rolling_wheel(total_rotation_angle):
+    """Animation of a rotating wheel."""
+    set_coordinate_system(xmin=0, xmax=10, ymin=0, ymax=10)
+
+    import time
+    center = (6,2)
+    radius = 2.0
+    angle = 2.0
+    pngfiles = []
+    w1 = Wheel(center=center, radius=radius,
+               inner_radius=0.5, nlines=7)
+    for i in range(int(total_rotation_angle/angle)):
+        w1.draw()
+        display()
+
+        filename = 'tmp_
+#03d'  i
+        pngfiles.append(filename + '.png')
+        hardcopy(filename)
+        time.sleep(0.3)  # pause 0.3 sec
+
+        L = radius*angle*pi/180  # translation = arc length
+        w1.rotate(angle, center[0], center[1])
+        w1.translate(-L, 0)
+        center = (center[0] - L, center[1])
+
+        erase()  # erase the screen before new figure
+
+    cmd = 'convert -delay 50 -loop 1000
+#s tmp_movie.gif' \
+#  (' '.join(pngfiles))
+    import commands
+    failure, output = commands.getstatusoutput(cmd)
+    if failure:  print 'Could not run', cmd
+!ec
+The last two lines run a command, from Python, as we would run the
+command in a terminal window.
+The resulting animated GIF file can be viewed with
+`animate tmp_movie.gif` as a command in a terminal window.

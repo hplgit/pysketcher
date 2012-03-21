@@ -1,11 +1,41 @@
 from numpy import linspace, sin, cos, pi, array, asarray, ndarray, sqrt, abs
-import pprint
+import pprint, copy, glob, os
 
 from MatplotlibDraw import MatplotlibDraw
 drawing_tool = MatplotlibDraw()
 
 def point(x, y):
     return array((x, y), dtype=float)
+
+def animate(fig, time_points, user_action, moviefiles=False,
+            pause_per_frame=0.5):
+    if moviefiles:
+        # Clean up old frame files
+        framefilestem = 'tmp_frame_'
+        framefiles = glob.glob('%s*.png' % framefilestem)
+        for framefile in framefiles:
+            os.remove(framefile)
+
+    for n, t in enumerate(time_points):
+        drawing_tool.erase()
+
+        user_action(t, fig)
+        #could demand returning fig, but in-place modifications
+        #are done anyway
+        #fig = user_action(t, fig)
+        #if fig is None:
+        #    raise TypeError(
+        #        'animate: user_action returns None, not fig\n'
+        #        '(a Shape object with the whole figure)')
+
+        fig.draw()
+        drawing_tool.display()
+
+        if moviefiles:
+            drawing_tool.savefig('%s%04d.png' % (framefilestem, n))
+
+    if moviefiles:
+        return '%s*.png' % framefilestem
 
 
 class Shape:
@@ -34,6 +64,27 @@ class Shape:
               'as a *list* of Shape objects'
         return [self]  # Make the iteration work
 
+    def copy(self):
+        return copy.deepcopy(self)
+
+    def __getitem__(self, name):
+        """
+        Allow indexing like::
+
+           obj1['name1']['name2']
+
+        all the way down to ``Curve`` or ``Point`` (``Text``)
+        objects.
+        """
+        if hasattr(self, 'shapes'):
+            if name in self.shapes:
+                return self.shapes[name]
+            else:
+                for shape in self.shapes:
+                    return self.shapes[shape][name]
+        else:
+            return self
+
     def for_all_shapes(self, func, *args, **kwargs):
         if not hasattr(self, 'shapes'):
             # When self.shapes is lacking, we either come to
@@ -50,6 +101,20 @@ class Shape:
         for shape in self.shapes:
             if is_dict:
                 shape = self.shapes[shape]
+            if not isinstance(shape, Shape):
+                if isinstance(shape, (dict,list,tuple)):
+                    raise TypeError(
+                        'class %s has a shapes attribute containing '
+                        'dict/list/tuple objects (nested shapes),\n'
+                        'which is not allowed - all object must be '
+                        'derived from Shape and the shapes dict/list\n'
+                        'cannot be nested.' % self.__class__.__name__)
+                else:
+                    raise TypeError(
+                        'class %s has a shapes attribute where not all '
+                        'values are Shape objects:\n%s' %
+                        (self.__class__.__name__, pprint.pformat(self.shapes)))
+
             getattr(shape, func)(*args, **kwargs)
 
     def draw(self):
@@ -76,18 +141,44 @@ class Shape:
     def set_arrow(self, style):
         self.for_all_shapes('set_arrow', style)
 
-    def set_name(self, name):
-        self.for_all_shapes('set_name', name)
+    def set_filled_curves(self, color='', pattern=''):
+        self.for_all_shapes('set_filled_curves', color, pattern)
 
-    def set_filled_curves(self, fillcolor='', fillhatch=''):
-        self.for_all_shapes('set_filled_curves', fillcolor, fillhatch)
+    def show_hierarchy(self, indent=0, format='std'):
+        """Recursive pretty print of hierarchy of objects."""
+        s = ''
+        if format == 'dict':
+            s += '{'
+        for shape in self.shapes:
+            if format == 'dict':
+                shape_str = repr(shape) + ':'
+            elif format == 'plain':
+                shape_str = shape
+            else:
+                shape_str = shape + ':'
+            if format == 'dict' or format == 'plain':
+                class_str = ''
+            else:
+                class_str = ' (%s)' % \
+                            self.shapes[shape].__class__.__name__
+            s += '\n%s%s%s %s' % (
+                ' '*indent,
+                shape_str,
+                class_str,
+                self.shapes[shape].show_hierarchy(indent+4, format))
+
+        if format == 'dict':
+            s += '}'
+        return s
 
     def __str__(self):
-        return self.__class__.__name__
+        """Display hierarchy with minimum information (just object names)."""
+        return self.show_hierarchy(format='plain')
 
     def __repr__(self):
-        #print 'repr in class', self.__class__.__name__
-        return pprint.pformat(self.shapes)
+        """Display hierarchy as a dictionary."""
+        return self.show_hierarchy(format='dict')
+        #return pprint.pformat(self.shapes)
 
 
 class Curve(Shape):
@@ -108,9 +199,8 @@ class Curve(Shape):
         self.linewidth = None
         self.linecolor = None
         self.fillcolor = None
-        self.fillhatch = None
+        self.fillpattern = None
         self.arrow = None
-        self.name = None
 
     def inside_plot_area(self, verbose=True):
         """Check that all coordinates are within drawing_tool's area."""
@@ -137,11 +227,17 @@ class Curve(Shape):
         return inside
 
     def draw(self):
+        """
+        Send the curve to the plotting engine. That is, convert
+        coordinate information in self.x and self.y, together
+        with optional settings of linestyles, etc., to
+        plotting commands for the chosen engine.
+        """
         self.inside_plot_area()
         drawing_tool.define_curve(
             self.x, self.y,
             self.linestyle, self.linewidth, self.linecolor,
-            self.arrow, self.fillcolor, self.fillhatch)
+            self.arrow, self.fillcolor, self.fillpattern)
 
     def rotate(self, angle, center=point(0,0)):
         """
@@ -184,20 +280,29 @@ class Curve(Shape):
     def set_name(self, name):
         self.name = name
 
-    def set_filled_curves(self, fillcolor='', fillhatch=''):
-        self.fillcolor = fillcolor
-        self.fillhatch = fillhatch
+    def set_filled_curves(self, color='', pattern=''):
+        self.fillcolor = color
+        self.fillpattern = pattern
+
+    def show_hierarchy(self, indent=0, format='std'):
+        if format == 'dict':
+            return '"%s"' % str(self)
+        elif format == 'plain':
+            return ''
+        else:
+            return str(self)
 
     def __str__(self):
-        s = '%d (x,y) coordinates' % self.x.size
+        """Compact pretty print of a Curve object."""
+        s = '%d coords' % self.x.size
         if not self.inside_plot_area(verbose=False):
             s += ', some coordinates are outside plotting area!\n'
-        props = ('linecolor', 'linewidth', 'linestyle', 'arrow', 'name',
-                 'fillcolor', 'fillhatch')
+        props = ('linecolor', 'linewidth', 'linestyle', 'arrow',
+                 'fillcolor', 'fillpattern')
         for prop in props:
             value = getattr(self, prop)
             if value is not None:
-                s += ' %s: "%s"' % (prop, value)
+                s += ' %s=%s' % (prop, repr(value))
         return s
 
     def __repr__(self):
@@ -242,6 +347,14 @@ class Point(Shape):
         self.x += vec[0]
         self.y += vec[1]
 
+    def show_hierarchy(self, indent=0, format='std'):
+        s = '%s at (%g,%g)' % (self.__class__.__name__, self.x, self.y)
+        if format == 'dict':
+            return '"%s"' % s
+        elif format == 'plain':
+            return ''
+        else:
+            return s
 
 # no need to store input data as they are invalid after rotations etc.
 class Rectangle(Shape):
