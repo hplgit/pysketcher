@@ -11,21 +11,15 @@ class MatplotlibDraw:
     def __init__(self):
         self.instruction_file = None
 
-    def set_instruction_file(self, filename='tmp_mpl.py'):
-        """
-        instruction_file: name of file where all the instructions
-        are recorded.
-        """
-        if filename:
-            self.instruction_file = open(self.instruction_file, 'w')
-        else:
-            self.instruction_file = None
-
-    def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False):
+    def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
+                              instruction_file=None):
         """
         Define the drawing area [xmin,xmax]x[ymin,ymax].
         axis: None or False means that axes with tickmarks
         are not drawn.
+        instruction_file: name of file where all the instructions
+        for the plotting program are stored (useful for debugging
+        a figure or tailoring plots).
         """
         self.mpl = mpl
         self.xmin, self.xmax, self.ymin, self.ymax = \
@@ -42,8 +36,13 @@ class MatplotlibDraw:
         geometry = '%dx%d' % (self.xsize, self.ysize)
         # See http://stackoverflow.com/questions/7449585/how-do-you-set-the-absolute-position-of-figure-windows-with-matplotlib
 
+        if isinstance(instruction_file, str):
+            self.instruction_file = open(instruction_file, 'w')
+        else:
+            self.instruction_file = None
+
         self.mpl.ion()  # important for interactive drawing and animation
-        if self.instruction_file is not None:
+        if self.instruction_file:
             self.instruction_file.write("""\
 import matplotlib.pyplot as mpl
 
@@ -54,10 +53,13 @@ mpl.ion()  # for interactive drawing
         manager = self.mpl.get_current_fig_manager()
         manager.window.wm_geometry(geometry)
 
+
+        # Default properties
         self.set_linecolor('red')
         self.set_linewidth(2)
         self.set_linestyle('solid')
-        self.set_filled_curves()
+        self.set_filled_curves()  # no filling
+        self.arrow_head_width = 0.2
 
     def _make_axes(self, new_figure=False):
         if new_figure:
@@ -73,7 +75,7 @@ mpl.ion()  # for interactive drawing
         else:
             axis_cmd = ''
 
-        if self.instruction_file is not None:
+        if self.instruction_file:
             fig = 'fig = mpl.figure()\n' if new_figure else ''
             self.instruction_file.write("""\
 %s
@@ -86,8 +88,32 @@ ax.set_aspect('equal')
 
 """ % (fig, self.xmin, self.xmax, self.ymin, self.ymax, axis_cmd))
 
+    def inside(self, pt):
+        """Is point pt inside the defined plotting area?"""
+        area = '[%s,%s]x[%s,%s]' % \
+               (self.xmin, self.xmax, self.ymin, self.ymax)
+        pt_inside = True
+        if self.xmin <= pt[0] <= self.xmax:
+            pass
+        else:
+            pt_inside = False
+        if self.ymin <= pt[1] <= self.ymax:
+            pass
+        else:
+            pt_inside = False
+        if pt_inside:
+            return pt_inside, 'point=%s is inside plotting area %s' % \
+                   (pt, area)
+        else:
+            return pt_inside, 'point=%s is outside plotting area %s' % \
+                   (pt, area)
+
     def set_linecolor(self, color):
-        """Change the color of lines."""
+        """
+        Change the color of lines. Available colors are
+        'black', 'white', 'red', 'blue', 'green', 'yellow',
+        'magenta', 'cyan'.
+        """
         self.linecolor = MatplotlibDraw.line_colors[color]
 
     def set_linestyle(self, style):
@@ -101,7 +127,11 @@ ax.set_aspect('equal')
         self.linewidth = width
 
     def set_filled_curves(self, color='', pattern=''):
-        """Fill area inside curves with current line color."""
+        """
+        Fill area inside curves with specified color and/or pattern.
+        A common pattern is '/' (45 degree lines). Other patterns
+        include....
+        """
         if color is False:
             self.fillcolor = ''
             self.fillpattern = ''
@@ -112,21 +142,21 @@ ax.set_aspect('equal')
 
     def set_grid(self, on=False):
         self.mpl.grid(on)
-        if self.instruction_file is not None:
+        if self.instruction_file:
             self.instruction_file.write("\nmpl.grid(%s)\n" % str(on))
 
     def erase(self):
         """Erase the current figure."""
         self.mpl.delaxes()
-        if self.instruction_file is not None:
+        if self.instruction_file:
             self.instruction_file.write("\nmpl.delaxes()  # erase\n")
 
         self._make_axes(new_figure=False)
 
-    def define_curve(self, x, y,
-                     linestyle=None, linewidth=None,
-                     linecolor=None, arrow=None,
-                     fillcolor=None, fillpattern=None):
+    def plot_curve(self, x, y,
+                   linestyle=None, linewidth=None,
+                   linecolor=None, arrow=None,
+                   fillcolor=None, fillpattern=None):
         """Define a curve with coordinates x and y (arrays)."""
         self.xdata = np.asarray(x, dtype=np.float)
         self.ydata = np.asarray(y, dtype=np.float)
@@ -143,7 +173,7 @@ ax.set_aspect('equal')
         if fillpattern is None:
             fillpattern = self.fillpattern
 
-        if self.instruction_file is not None:
+        if self.instruction_file:
             import pprint
             self.instruction_file.write('x = %s\n' % \
                                         pprint.pformat(self.xdata.tolist()))
@@ -157,39 +187,41 @@ ax.set_aspect('equal')
             #print '%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (x.size, fillcolor, linecolor, fillpattern)
             self.ax.fill(x, y, fillcolor, edgecolor=linecolor,
                          linewidth=linewidth, hatch=fillpattern)
-            if self.instruction_file is not None:
+            if self.instruction_file:
                 self.instruction_file.write("ax.fill(x, y, '%s', edgecolor='%s', linewidth=%d, hatch='%s')\n" % (fillcolor, linecolor, linewidth, fillpattern))
         else:
             self.ax.plot(x, y, linecolor, linewidth=linewidth,
                          linestyle=linestyle)
-            if self.instruction_file is not None:
+            if self.instruction_file:
                 self.instruction_file.write("ax.plot(x, y, '%s', linewidth=%d, linestyle='%s')\n" % (linecolor, linewidth, linestyle))
         if arrow:
-            if not arrow in ('start', 'end', 'both'):
-                raise ValueError("arrow argument must be 'start', 'end', or 'both', not %s" % repr(arrow))
+            if not arrow in ('->', '<-', '<->'):
+                raise ValueError("arrow argument must be '->', '<-', or '<->', not %s" % repr(arrow))
 
             # Add arrow to first and/or last segment
-            start = arrow == 'start' or arrow == 'both'
-            end = arrow == 'end' or arrow == 'both'
+            start = arrow == '<-' or arrow == '<->'
+            end = arrow == '->' or arrow == '<->'
             if start:
                 x_s, y_s = x[1], y[1]
                 dx_s, dy_s = x[0]-x[1], y[0]-y[1]
-                self.arrow(x_s, y_s, dx_s, dy_s)
+                self.plot_arrow(x_s, y_s, dx_s, dy_s, '->',
+                                linestyle, linewidth, linecolor)
             if end:
                 x_e, y_e = x[-2], y[-2]
                 dx_e, dy_e = x[-1]-x[-2], y[-1]-y[-2]
-                self.arrow(x_e, y_e, dx_e, dy_e)
+                self.plot_arrow(x_e, y_e, dx_e, dy_e, '->',
+                                linestyle, linewidth, linecolor)
 
     def display(self):
         """Display the figure. Last possible command."""
         self.mpl.draw()
-        if self.instruction_file is not None:
+        if self.instruction_file:
             self.instruction_file.write('mpl.draw()\n')
 
     def savefig(self, filename):
         """Save figure in file."""
         self.mpl.savefig(filename)
-        if self.instruction_file is not None:
+        if self.instruction_file:
             self.instruction_file.write('mpl.savefig(%s)\n' % filename)
 
     def text(self, text, position, alignment='center', fontsize=18,
@@ -205,7 +237,7 @@ ax.set_aspect('equal')
         if arrow_tip is None:
             self.ax.text(x, y, text, horizontalalignment=alignment,
                          fontsize=fontsize)
-            if self.instruction_file is not None:
+            if self.instruction_file:
                 self.instruction_file.write("""\
 ax.text(%g, %g, %s,
         horizontalalignment=%s, fontsize=%d)
@@ -225,7 +257,7 @@ ax.text(%g, %g, %s,
                                              linewidth=1,
                                              shrinkA=5,
                                              shrinkB=5))
-            if self.instruction_file is not None:
+            if self.instruction_file:
                 self.instruction_file.write("""\
 ax.annotate('%s', xy=%s, xycoords='data',
             textcoords='data', xytext=%s,
@@ -245,7 +277,7 @@ ax.annotate('%s', xy=%s, xycoords='data',
 #http://matplotlib.sourceforge.net/users/annotations_intro.html
 #http://matplotlib.sourceforge.net/users/annotations_guide.html#plotting-guide-annotation
 
-    def arrow(self, x, y, dx, dy, style='->',
+    def plot_arrow(self, x, y, dx, dy, style='->',
               linestyle=None, linewidth=None, linecolor=None):
         """Draw arrow (dx,dy) at (x,y). `style` is '->', '<-' or '<->'."""
         if linestyle is None:
@@ -261,11 +293,12 @@ ax.annotate('%s', xy=%s, xycoords='data',
                            facecolor=linecolor,
                            edgecolor=linecolor,
                            linewidth=linewidth,
-                           head_width=0.1,
-                           #width=1,
+                           head_width=self.arrow_head_width,
+                           #head_width=0.1,
+                           #width=1,  # width of arrow body in coordinate scale
                            length_includes_head=True,
                            shape='full')
-            if self.instruction_file is not None:
+            if self.instruction_file:
                 self.instruction_file.write("""\
 mpl.arrow(x=%g, y=%g, dx=%g, dy=%g,
           facecolor='%s', edgecolor='%s',
@@ -282,7 +315,7 @@ mpl.arrow(x=%g, y=%g, dx=%g, dy=%g,
                            #width=1,
                            length_includes_head=True,
                            shape='full')
-            if self.instruction_file is not None:
+            if self.instruction_file:
                 self.instruction_file.write("""\
 mpl.arrow(x=%g, y=%g, dx=%g, dy=%g,
           facecolor='%s', edgecolor='%s',
@@ -293,14 +326,21 @@ mpl.arrow(x=%g, y=%g, dx=%g, dy=%g,
 
     def arrow2(self, x, y, dx, dy, style='->'):
         """Draw arrow (dx,dy) at (x,y). `style` is '->', '<-' or '<->'."""
-        self.ax.annotate('', xy=(x+dx,y+dy) , xytext=(x,y),
+        self.ax.annotate('', xy=(x+dx,y+dy), xytext=(x,y),
                          arrowprops=dict(arrowstyle=style,
                                          facecolor='black',
                                          linewidth=1,
                                          shrinkA=0,
                                          shrinkB=0))
-        if self.instruction_file is not None:
-            self.instruction_file.write("")
+        if self.instruction_file:
+            self.instruction_file.write("""
+ax.annotate('', xy=(%s,%s), xytext=(%s,%s),
+                         arrowprops=dict(arrowstyle=%s,
+                                         facecolor='black',
+                                         linewidth=1,
+                                         shrinkA=0,
+                                         shrinkB=0))
+""" % (x+dx, y+dy, x, y, style))
 
 
 
@@ -311,9 +351,9 @@ def _test():
     # triangle
     x = np.array([1, 4, 1, 1]);  y = np.array([1, 1, 4, 1])
     d.set_filled_curves('magenta')
-    d.define_curve(x, y)
+    d.plot_curve(x, y)
     d.set_filled_curves(False)
-    d.define_curve(x+4, y)
+    d.plot_curve(x+4, y)
     d.text('some text1', position=(8,4), arrow_tip=(6, 1), alignment='left',
            fontsize=18)
     pos = np.array((7,4.5))  # numpy points work fine
@@ -325,7 +365,7 @@ def _test():
     d.arrow2(4.5, 0, 0, 3, style='<->')
     x = np.linspace(0, 9, 201)
     y = 4.5 + 0.45*np.cos(0.5*np.pi*x)
-    d.define_curve(x, y, arrow='end')
+    d.plot_curve(x, y, arrow='end')
     d.display()
     raw_input()
 

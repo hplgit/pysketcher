@@ -35,18 +35,21 @@ With the drawing area in place we can make the first `Circle` object:
 !bc pycod
 from pysketcher import *
 
-drawing_tool.set_coordinate_system(xmin=0, xmax=15,
-                                   ymin=-1, ymax=10)
-R = 1  # radius of wheel
-wheel1 = Circle(center=(4, R), radius=R)
+R = 1    # radius of wheel
+L = 4    # distance between wheels
+H = 2    # height of vehicle body
+w_1 = 5  # position of front wheel
+drawing_tool.set_coordinate_system(xmin=0, xmax=w_1 + 2*L + 3*R,
+                                   ymin=-1, ymax=2*R + 3*H)
+
+wheel1 = Circle(center=(w_1, R), radius=R)
 !ec
 To translate the geometric information about the `wheel1` object to
 instructions for the plotting engine (in this case Matplotlib), one calls the
 `wheel1.draw()`. To display all drawn objects, one issues
 `drawing_tool.display()`. The steps are hence:
 !bc pycod
-r = 1  # radius of wheel
-wheel1 = Circle(center=(4, r), radius=r)
+wheel1 = Circle(center=(w_1, R), radius=R)
 wheel1.draw()
 
 # Define other objects and call their draw() methods
@@ -59,16 +62,14 @@ translating the object a distance (to the right) described by the
 vector $(4,0)$:
 !bc pycod
 wheel2 = wheel1.copy()
-wheel2.translate((4,0))
+wheel2.translate((L,0))
 !ec
 The two rectangles are made in an intuitive way:
 !bc pycod
-height1 = 2
-under = Rectangle(lower_left_corner=(2, 2*R),
-                  width=8, height=height1)
-height2 = 2.5
-over = Rectangle(lower_left_corner=(4, 2*R+height1),
-                 width=2.5, height=height2)
+under = Rectangle(lower_left_corner=(w_1-2*R, 2*R),
+                  width=2*R + L + 2*R, height=H)
+over  = Rectangle(lower_left_corner=(w_1, 2*R + H),
+                  width=2.5*R, height=1.25*H)
 !ec
 
 === Groups of Objects ===
@@ -92,7 +93,8 @@ and a `thickness` parameter and creates a "thick" curve filled
 with a simple pattern. In this case the curve is just a flat
 line so the construction is simple:
 !bc pycod
-ground = CurveWall(x=[0, 12], y=[0, 0], thickness=-0.3)
+ground = CurveWall(x=[w_1 - L, w_1 + 3*L], y=[0, 0],
+                   thickness=-0.3*R)
 !ec
 We may collect all the objects in a "top" object that contains
 the whole figure:
@@ -224,7 +226,7 @@ fig['vehicle']['body']['over'].set_filled_curves(pattern='/')
 fig['vehicle']['body']['over'].set_linewidth(10)
 !ec
 
-FIGURE: [figs-sketcher/vehicle0v2.png, width=400] Changed properties of parts of the figure. label{sketcher:fig:vehicle0:v2}
+FIGURE: [figs-sketcher/vehicle0b.png, width=400] Changed properties of parts of the figure. label{sketcher:fig:vehicle0:v2}
 
 We can also change position of parts of the figure and thereby make
 animations, as shown next.
@@ -238,7 +240,7 @@ This part of the figure can be translated, rotated, and scaled.
 A translation along the ground means a translation in $x$ direction,
 say a length $4$ to the right:
 !bc pycod
-fig['vehicle'].translate((3,0))
+fig['vehicle'].translate((L,0))
 !ec
 You need to erase, draw, and display to see the movement:
 !bc pycod
@@ -256,7 +258,7 @@ Let us make a velocity function and move the object according
 to that velocity in small steps of time:
 !bc pydoc
 def v(t):
-    return point(-t*(1-t/5.), 0)
+    return -8*R*t*(1 - t/(2*R))
 
 animate(fig, tp, user_action)
 !ec
@@ -278,7 +280,7 @@ Defining a set of time points for the frames in the animation
 and performing the animation is done by
 !bc pycod
 import numpy
-tp = numpy.linspace(0, 5, 35)
+tp = numpy.linspace(0, 2*R, 25)
 dt = tp[1] - tp[0]  # time step
 
 animate(fig, tp, move_vehicle, pause_per_frame=0.2)
@@ -316,14 +318,13 @@ two crossing lines, see Figure ref{sketcher:fig:vehicle1}.
 The construction of the wheels will now involve a circle
 and two lines:
 !bc pycod
-R = 1.  # radius of wheel
 wheel1 = Compose({'wheel':
-                  Circle(center=(4, R), radius=R),
+                  Circle(center=(w_1, R), radius=R),
                   'cross':
-                  Compose({'cross1': Line((4,0), (4,2*R)),
-                          'cross2': Line((4-R,R), (4+R,R))})})
+                  Compose({'cross1': Line((w_1,0),   (w_1,2*R)),
+                           'cross2': Line((w_1-R,R), (w_1+R,R))})})
 wheel2 = wheel1.copy()
-wheel2.translate((4,0))
+wheel2.translate((L,0))
 !ec
 Observe that `wheel1.copy()` copies all the objects that make
 up the first wheel, and `wheel2.translate` translates all
@@ -339,36 +340,39 @@ the wheel, leading to a rotation angle
 !bc pycod
 angle = - displacement[0]/R
 !ec
-With `wheel1_center` tracking the $x$ coordinate of the center
+With `w_1` tracking the $x$ coordinate of the center
 of the front wheel, we can rotate that wheel by
 !bc pycod
 w1 = fig['vehicle']['wheels']['wheel1']
 from math import degrees
-w1.rotate(degrees(angle), center=(wheel1_center, R))
+w1.rotate(degrees(angle), center=(w_1, R))
 !ec
 The `rotate` function takes two parameters: the rotation angle
 (in degrees) and the center point of the rotation, which is the
 center of the wheel in this case. The other wheel is rotated by
 !bc pycod
 w2 = fig['vehicle']['wheels']['wheel2']
-w2.rotate(degrees(angle), center=(wheel1_center+4, R))
+w2.rotate(degrees(angle), center=(w_1 + L, R))
 !ec
 That is, the angle is the same, but the rotation point is different.
-The update of the center point is done by `wheel1_center += displacement[0]`.
+The update of the center point is done by `w_1 += displacement[0]`.
 The complete `move_vehicle` function then becomes
 !bc pycod
-wheel1_center = 7   # start position
+w_1 = w_1 + L   # start position
 
 def move_vehicle(t, fig):
     displacement = dt*v(t)
     fig['vehicle'].translate(displacement)
-    global wheel1_center
-    wheel1_center += displacement[0]
+
+    # Rotate wheels
+    global w_1
+    w_1 += displacement[0]
+    # R*angle = -x_displacement
     angle = - displacement[0]/R
     w1 = fig['vehicle']['wheels']['wheel1']
-    w1.rotate(degrees(angle), center=(wheel1_center, R))
+    w1.rotate(degrees(angle), center=(w_1, R))
     w2 = fig['vehicle']['wheels']['wheel2']
-    w2.rotate(degrees(angle), center=(wheel1_center+4, R))
+    w2.rotate(degrees(angle), center=(w_1 + L, R))
 !ec
 The complete example is found in the file
 # #ifdef PRIMER_BOOK
@@ -391,38 +395,268 @@ based on solving differential equations reflecting the physics
 of the problem.
 
 
+===== Example of Classes for Geometric Objects =====
 
+We shall now explain how we can, quite easily, realize software
+with the capabilities demonstrated above. Each object in the
+figure is represented as a class in a class hierarchy. Using
+inheritance, classes can inherit properties from parent classes
+and add new geometric features.
 
+We introduce class `Shape` as superclass for all specialized objects
+in a figure. This class does not store any data, but provides a
+series of functions that add functionality to all the subclasses.
+This will be shown later.
 
-We can change the color and thickness of the lines and also fill
-circles, rectangles, etc.~with a color. Figure ref{fig:shapes2}
-shows the result of the following example, where
-we first define elements in the figure and then adjust the line
-color and other properties prior to calling the `draw` methods:
-!bc cod
-r1 = Rectangle(lower_left_corner=(0,1), width=3, height=5)
-c1 = Circle(center=(5,7), radius=1)
-w1 = Wheel(center=(6,2), radius=2, inner_radius=0.5, nlines=7)
-c2 = Circle(center=(7,7), radius=1)
-filled_curves(True)
-c1.draw()               # filled red circle
-set_linecolor('blue')
-r1.draw()               # filled blue rectangle
-set_linecolor('aqua')
-c2.draw()               # filled aqua/cyan circle
-# Add thick aqua line around rectangle
-filled_curves(False)
-set_linewidth(4)
-r1.draw()
-set_linecolor('red')
-w1.draw()
-display()
+=== Simple Geometric Objects ===
+
+One simple subclass is `Rectangle`:
+!bc pycod
+class Rectangle(Shape):
+    def __init__(self, lower_left_corner, width, height):
+        p = lower_left_corner  # short form
+        x = [p[0], p[0] + width,
+             p[0] + width, p[0], p[0]]
+        y = [p[1], p[1], p[1] + height,
+             p[1] + height, p[1]]
+        self.shapes = {'rectangle': Curve(x,y)}
+!ec
+Any subclass of `Shape` will have a constructor which takes
+geometric information about the shape of the object and
+creates a dictionary `self.shapes` with the shape built of
+simpler shapes. The most fundamental shape is `Curve`, which is
+just a collection of $(x,y)$ coordinates in two arrays `x` and `y`.
+Drawing the `Curve` object is a matter of plotting `y` versus `x`.
+
+The `Rectangle` class illustrates how the constructor takes information
+about the lower left corner, the width and the height, and
+creates coordinate arrays `x` and `y` consisting of the four corners,
+plus the first one repeated such that plotting `x` and `y` will
+form a closed four-sided rectangle. This construction procedure
+demands that the rectangle will always be aligned with the $x$ and
+$y$ axis. However, we may easily rotate the rectangle about
+any point once the object is constructed.
+
+Class `Line` constitutes a similar example:
+!bc pycod
+class Line(Shape):
+    def __init__(self, start, end):
+        x = [start[0], end[0]]
+        y = [start[1], end[1]]
+        self.shapes = {'line': Curve(x, y)}
+!ec
+Here we only need two points, the start and end point on the line.
+However, we may add some useful functionality, e.g., the ability
+to give an $x$ coordinate and have the class calculate the
+corresponding $y$ coordinate:
+!bc pycod
+    def __call__(self, x):
+        """Given x, return y on the line."""
+        x, y = self.shapes['line'].x, self.shapes['line'].y
+        self.a = (y[1] - y[0])/(x[1] - x[0])
+        self.b = y[0] - self.a*x[0]
+        return self.a*x + self.b
+!ec
+Unfortunately, this is too simplistic because vertical lines cannot
+be handled (infinte `self.a`). The source code of `Line` therefore
+provides a more general solution at the cost of significantly
+longer code with more tests.
+
+A circle gives us somewhat increased complexity. Again we represent
+the geometic object by a `Curve` object, but this time the `Curve`
+object needs to store a large number of points on the curve such
+that a plotting program produces a visually smooth curve.
+The points on the circle must be calculated manually in the constructor
+of class `Circle`. The formulas for points $(x,y)$ on a curve with radius
+$R$ and center at $(x_0, y_0)$ are given by
+!bt
+\begin{align*}
+x &= x_0 + R\cos (t),\\
+y &= y_0 + R\sin (t),
+\end{align*}
+!et
+where $t\in [0, 2\pi]$. A discrete set of $t$ values in this
+interval gives the corresponding set of $(x,y)$ coordinates on
+the circle. The user must specify the resolution, i.e., the number
+of $t$ values, or equivalently, points on the circle. The circle's
+radius and center must of course also be specified.
+
+We can write the `Circle` class as
+!bc pycod
+class Circle(Shape):
+    def __init__(self, center, radius, resolution=180):
+        self.center, self.radius = center, radius
+        self.resolution = resolution
+
+        t = linspace(0, 2*pi, resolution+1)
+        x0 = center[0];  y0 = center[1]
+        R = radius
+        x = x0 + R*cos(t)
+        y = y0 + R*sin(t)
+        self.shapes = {'circle': Curve(x, y)}
+!ec
+As in class `Line` we can offer the possibility to give an angle
+$\theta$ (equivalent to $t$ in the formulas above)
+and then get the corresponding $x$ and $y$ coordinates:
+!bc pycod
+    def __call__(self, theta):
+        """Return (x, y) point corresponding to angle theta."""
+        return self.center[0] + self.radius*cos(theta), \
+               self.center[1] + self.radius*sin(theta)
+!ec
+There is one flaw with this method: it yields illegal values after
+a translation, scaling, or rotation of the circle.
+
+A part of a circle, an arc, is a frequent geometric object when
+drawing mechanical systems. The arc is constructed much like
+a circle, but $t$ runs in $[\theta_0, \theta_1]$. Giving
+$\theta_1$ and $\theta_2$ the slightly more descriptive names
+`start_angle` and `arc_angle`, the code looks like this:
+!bc pycod
+class Arc(Shape):
+    def __init__(self, center, radius,
+                 start_angle, arc_angle,
+                 resolution=180):
+        self.center = center
+        self.radius = radius
+        self.start_angle = start_angle*pi/180  # radians
+        self.arc_angle = arc_angle*pi/180
+        self.resolution = resolution
+
+        t = linspace(self.start_angle,
+                     self.start_angle + self.arc_angle,
+                     resolution+1)
+        x0 = center[0];  y0 = center[1]
+        R = radius
+        x = x0 + R*cos(t)
+        y = y0 + R*sin(t)
+        self.shapes = {'arc': Curve(x, y)}
 !ec
 
+Having the `Arc` class, a `Circle` can alternatively befined as
+a subclass specializing the arc to a circle:
+!bc pycod
+class Circle(Arc):
+    def __init__(self, center, radius, resolution=180):
+        Arc.__init__(self, center, radius, 0, 360, resolution)
+!ec
 
-===== Overall Design of the Class Hierarchy =====
+A wall is about drawing a curve, displacing the curve vertically by
+some thickness, and then filling the space between the curves
+by some pattern. The input is the `x` and `y` coordinate arrays
+of the curve and a thickness parameter. The computed coordinates
+will be a polygon: going along the originally curve and then back again
+along the vertically displaced curve. The relevant code becomes
+!bc pycod
+class CurveWall(Shape):
+    def __init__(self, x, y, thickness):
+        # User's curve
+        x1 = asarray(x, float)
+        y1 = asarray(y, float)
+        # Displaced curve (according to thickness)
+        x2 = x1
+        y2 = y1 + thickness
+        # Combine x1,y1 with x2,y2 reversed
+        from numpy import concatenate
+        x = concatenate((x1, x2[-1::-1]))
+        y = concatenate((y1, y2[-1::-1]))
+        wall = Curve(x, y)
+        wall.set_filled_curves(color='white', pattern='/')
+        self.shapes = {'wall': wall}
+!ec
 
-Let us have a class `Shape` as superclass for all specialized shapes.
+=== Class Curve ===
+
+Class `Curve` sits on the coordinates to be drawn, but how is
+that done? The constructor just stores the coordinates, while
+a method `draw` sends the coordinates to the plotting program
+to make a graph.
+Or more precisely, to avoid a lot of (e.g.) Matplotlib-specific
+plotting commands we have created a small layer with a
+simple programming interface to plotting programs. This makes it
+straightforward to change from Matplotlib to another plotting
+program. The programming interface is represented by the `drawing_tool`
+object and has a few functions:
+
+  * `plot_curve` for sending a curve in terms of $x$ and $y$ coordinates
+    to the plotting program,
+  * `set_coordinate_system` for specifying the graphics area,
+  * `erase` for deleting all elements of the graph,
+  * `set_grid` for turning on a grid (convenient while constructing the plot),
+  * `set_instruction_file` for creating a separate file with all
+    plotting commands (Matplotlib commands in our case),
+  * a series of `set_X` functions where `X` is some property like
+    `linecolor`, `linestyle`, `linewidth`, `filled_curves`.
+
+This is basically all we need to communicate to a plotting program.
+
+Any class in the `Shape` hierarchy inherits `set_X` functions for
+setting properties of curves. This information is propagated to
+all other shape objects that make up the figure. Class
+`Curve` stores the line properties together with the coordinates
+of its curve and propagates this information to the plotting program.
+When saying `vehicle.set_linewidth(10)`, all objects that make
+up the `vehicle` object will get a `set_linewidth(10)` call,
+but only the `Curve` object at the end of the chain will actually
+store the information and send it to the plotting program.
+
+A rough sketch of class `Curve` reads
+!bc pycod
+class Curve(Shape):
+    """General curve as a sequence of (x,y) coordintes."""
+    def __init__(self, x, y):
+        self.x = asarray(x, dtype=float)
+        self.y = asarray(y, dtype=float)
+
+        self.linestyle = None
+        self.linewidth = None
+        self.linecolor = None
+        self.fillcolor = None
+        self.fillpattern = None
+        self.arrow = None
+
+    def draw(self):
+        drawing_tool.plot_curve(
+            self.x, self.y,
+            self.linestyle, self.linewidth, self.linecolor,
+            self.arrow, self.fillcolor, self.fillpattern)
+
+    def set_linewidth(self, width):
+        self.linewidth = width
+
+    det set_linestyle(self, style):
+        self.linestyle = style
+    ...
+!ec
+
+=== Compound Geometric Objects ===
+
+The sample classes so far has managed to define the geometric shape
+through just one `Curve` object.[[[
+
+
+
+Some objects in a figure will be associated with a point and not
+a curve. Therefore, it is natural to introduce a `Point` class
+as superclass for such objects:
+!bc pycod
+class Point(Shape):
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+!ec
+A candidate for subclass is a text located at a given point:
+!bc pycod
+class Text(Point):
+    def __init__(self, text, position, alignment='center', fontsize=18):
+        self.text = text
+        self.alignment, self.fontsize = alignment, fontsize
+        is_sequence(position, length=2, can_be_None=True)
+        Point.__init__(self, position[0], position[1])
+        #no need for self.shapes here
+!ec
+
+[[[[[[[[[[[
+
 Class `Line` is a subclass of `Shape` and
 represents the simplest shape: a stright line between two points.
 Class `Rectangle` is another subclass of `Shape`, implementing the

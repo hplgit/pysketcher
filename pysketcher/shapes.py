@@ -5,7 +5,67 @@ from MatplotlibDraw import MatplotlibDraw
 drawing_tool = MatplotlibDraw()
 
 def point(x, y):
+    if isinstance(x, (float,int)) and isinstance(y, (float,int)):
+        pass
+    else:
+        raise TypeError('x=%s,y=%s must be float,float, not %s,%s' %
+                        (x, y, type(x), type(y)))
+    ok, msg = drawing_tool.inside((x,y))
+    if not ok: print msg
+
     return array((x, y), dtype=float)
+
+def arr2D(x):
+    if isinstance(x, (tuple,list,ndarray)):
+        if len(x) == 2:
+            pass
+        else:
+            raise ValueError('x=%s has length %d, not 2' % (x, len(x)))
+    else:
+        raise TypeError('x=%s must be list/tuple/ndarray, not %s' %
+                        (x, type(x)))
+    ok, msg = drawing_tool.inside(x)
+    if not ok: print msg
+
+    return asarray(x, dtype=float)
+
+def _is_sequence(seq, length=None,
+                 can_be_None=False, error_message=True):
+    if can_be_None:
+        legal_types = (list,tuple,ndarray,None)
+    else:
+        legal_types = (list,tuple,ndarray)
+
+    if isinstance(seq, legal_types):
+        if length is not None:
+            if length == len(seq):
+                return True
+            elif error_message:
+                raise TypeError('%s is %s; must be %s of length %d' %
+                            (str(seq), type(seq),
+                            ', '.join([str(t) for t in legal_types]),
+                             len(seq)))
+            else:
+                return False
+        else:
+            return True
+    elif error_message:
+        raise TypeError('%s is %s; must be %s' %
+                        (str(seq), type(seq),
+                        ','.join([str(t)[5:-1] for t in legal_types])))
+    else:
+        return False
+
+def is_sequence(*sequences, **kwargs):
+    length = kwargs.get('length', 2)
+    can_be_None = kwargs.get('can_be_None', False)
+    error_message = kwargs.get('error_message', True)
+    for x in sequences:
+        _is_sequence(x, length=length, can_be_None=can_be_None,
+                     error_message=error_message)
+        ok, msg = drawing_tool.inside(x)
+        if not ok: print msg
+
 
 def animate(fig, time_points, user_action, moviefiles=False,
             pause_per_frame=0.5):
@@ -107,46 +167,86 @@ class Shape:
             if is_dict:
                 shape = self.shapes[shape]
             if not isinstance(shape, Shape):
-                if isinstance(shape, (dict,list,tuple)):
+                if isinstance(shape, dict):
                     raise TypeError(
-                        'class %s has a shapes attribute containing '
-                        'dict/list/tuple objects (nested shapes),\n'
-                        'which is not allowed - all object must be '
-                        'derived from Shape and the shapes dict/list\n'
-                        'cannot be nested.' % self.__class__.__name__)
+                        'class %s has a shapes attribute that is just\n'
+                        'a plain dictionary,\n%s\n'
+                        'Did you mean to embed this dict in a Compose\n'
+                        'object?' % (self.__class__.__name__,
+                        str(shape)))
+                elif isinstance(shape, (list,tuple)):
+                    raise TypeError(
+                        'class %s has a shapes attribute containing\n'
+                        'a %s object %s,\n'
+                        'Did you mean to embed this list in a Compose\n'
+                        'object?' % (self.__class__.__name__,
+                        type(shape), str(shape)))
                 else:
                     raise TypeError(
-                        'class %s has a shapes attribute where not all '
-                        'values are Shape objects:\n%s' %
-                        (self.__class__.__name__, pprint.pformat(self.shapes)))
+                        'class %s has a shapes attribute %s which is not'
+                        'a Shape objects\n%s' %
+                        (self.__class__.__name__, type(shape),
+                         pprint.pformat(self.shapes)))
 
             getattr(shape, func)(*args, **kwargs)
 
     def draw(self):
         self.for_all_shapes('draw')
 
-    def rotate(self, angle, center=point(0,0)):
+    def rotate(self, angle, center):
+        is_sequence(center, length=2)
         self.for_all_shapes('rotate', angle, center)
 
     def translate(self, vec):
+        is_sequence(vec, length=2)
         self.for_all_shapes('translate', vec)
 
     def scale(self, factor):
         self.for_all_shapes('scale', factor)
 
     def set_linestyle(self, style):
+        styles = ('solid', 'dashed', 'dashdot', 'dotted')
+        if style not in styles:
+            raise ValueError('%s: style=%s must be in %s' %
+                             (self.__class__.__name__ + '.set_linestyle:',
+                              style, str(styles)))
         self.for_all_shapes('set_linestyle', style)
 
     def set_linewidth(self, width):
+        if not isinstance(width, int) and width >= 0:
+            raise ValueError('%s: width=%s must be positive integer' %
+                             (self.__class__.__name__ + '.set_linewidth:',
+                              width))
         self.for_all_shapes('set_linewidth', width)
 
     def set_linecolor(self, color):
+        if color in drawing_tool.line_colors:
+            color = drawing_tool.line_colors[color]
+        elif color in drawing_tool.line_colors.values():
+            pass # color is ok
+        else:
+            raise ValueError('%s: invalid color "%s", must be in %s' %
+                             (self.__class__.__name__ + '.set_linecolor:',
+                                 color, list(drawing_tool.line_colors.keys())))
         self.for_all_shapes('set_linecolor', color)
 
     def set_arrow(self, style):
+        styles = ('->', '<-', '<->')
+        if not style in styles:
+            raise ValueError('%s: style=%s must be in %s' %
+                             (self.__class__.__name__ + '.set_arrow:',
+                              style, styles))
         self.for_all_shapes('set_arrow', style)
 
     def set_filled_curves(self, color='', pattern=''):
+        if color in drawing_tool.line_colors:
+            color = drawing_tool.line_colors[color]
+        elif color in drawing_tool.line_colors.values():
+            pass # color is ok
+        else:
+            raise ValueError('%s: invalid color "%s", must be in %s' %
+                             (self.__class__.__name__ + '.set_filled_curves:',
+                              color, list(drawing_tool.line_colors.keys())))
         self.for_all_shapes('set_filled_curves', color, pattern)
 
     def show_hierarchy(self, indent=0, format='std'):
@@ -195,10 +295,8 @@ class Curve(Shape):
         """
         `x`, `y`: arrays holding the coordinates of the curve.
         """
-        self.x, self.y = x, y
-        # Turn to numpy arrays
-        self.x = asarray(self.x, dtype=float)
-        self.y = asarray(self.y, dtype=float)
+        self.x = asarray(x, dtype=float)
+        self.y = asarray(y, dtype=float)
         #self.shapes must not be defined in this class
         #as self.shapes holds children objects:
         #Curve has no children (end leaf of self.shapes tree)
@@ -242,12 +340,12 @@ class Curve(Shape):
         plotting commands for the chosen engine.
         """
         self.inside_plot_area()
-        drawing_tool.define_curve(
+        drawing_tool.plot_curve(
             self.x, self.y,
             self.linestyle, self.linewidth, self.linecolor,
             self.arrow, self.fillcolor, self.fillpattern)
 
-    def rotate(self, angle, center=point(0,0)):
+    def rotate(self, angle, center):
         """
         Rotate all coordinates: `angle` is measured in degrees and
         (`x`,`y`) is the "origin" of the rotation.
@@ -280,9 +378,6 @@ class Curve(Shape):
         self.linestyle = style
 
     def set_arrow(self, style=None):
-        styles = ('->', '<-', '<->')
-        if not style in styles:
-            raise ValueError('style=%s must be in %s' % (style, styles))
         self.arrow = style
 
     def set_name(self, name):
@@ -335,7 +430,7 @@ class Point(Shape):
             'class %s must implement the draw method' %
             self.__class__.__name__)
 
-    def rotate(self, angle, center=point(0,0)):
+    def rotate(self, angle):
         """Rotate point an `angle` (in degrees) around (`x`,`y`)."""
         angle = angle*pi/180
         x, y = center
@@ -367,27 +462,29 @@ class Point(Shape):
 # no need to store input data as they are invalid after rotations etc.
 class Rectangle(Shape):
     def __init__(self, lower_left_corner, width, height):
-        ll = lower_left_corner  # short form
-        x = [ll[0], ll[0] + width,
-             ll[0] + width, ll[0], ll[0]]
-        y = [ll[1], ll[1], ll[1] + height,
-             ll[1] + height, ll[1]]
+        is_sequence(lower_left_corner)
+        p = lower_left_corner  # short form
+        x = [p[0], p[0] + width,
+             p[0] + width, p[0], p[0]]
+        y = [p[1], p[1], p[1] + height,
+             p[1] + height, p[1]]
         self.shapes = {'rectangle': Curve(x,y)}
 
 class Triangle(Shape):
     """Triangle defined by its three vertices p1, p2, and p3."""
     def __init__(self, p1, p2, p3):
+        is_sequence(p1, p2, p3)
         x = [p1[0], p2[0], p3[0], p1[0]]
         y = [p1[1], p2[1], p3[1], p1[1]]
         self.shapes = {'triangle': Curve(x,y)}
 
 
 class Line(Shape):
-    def __init__(self, start, stop):
-        x = [start[0], stop[0]]
-        y = [start[1], stop[1]]
+    def __init__(self, start, end):
+        is_sequence(start, end)
+        x = [start[0], end[0]]
+        y = [start[1], end[1]]
         self.shapes = {'line': Curve(x, y)}
-        self.compute_formulas()
 
     def compute_formulas(self):
         x, y = self.shapes['line'].x, self.shapes['line'].y
@@ -462,23 +559,27 @@ class Circle(Shape):
         self.shapes = {'circle': Curve(x, y)}
 
     def __call__(self, theta):
-        """Return (x, y) point corresponding to theta."""
+        """
+        Return (x, y) point corresponding to angle theta.
+        Not valid after a translation, rotation, or scaling.
+        """
         return self.center[0] + self.radius*cos(theta), \
                self.center[1] + self.radius*sin(theta)
 
 
 class Arc(Shape):
     def __init__(self, center, radius,
-                 start_degrees, opening_degrees,
+                 start_angle, arc_angle,
                  resolution=180):
+        is_sequence(center)
         self.center = center
         self.radius = radius
-        self.start_degrees = start_degrees*pi/180  # radians
-        self.opening_degrees = opening_degrees*pi/180
+        self.start_angle = start_angle*pi/180  # radians
+        self.arc_angle = arc_angle*pi/180
         self.resolution = resolution
 
-        t = linspace(self.start_degrees,
-                     self.start_degrees + self.opening_degrees,
+        t = linspace(self.start_angle,
+                     self.start_angle + self.arc_angle,
                      resolution+1)
         x0 = center[0];  y0 = center[1]
         R = radius
@@ -487,9 +588,12 @@ class Arc(Shape):
         self.shapes = {'arc': Curve(x, y)}
 
     def __call__(self, theta):
-        """Return (x,y) point at start_degrees + theta."""
+        """
+        Return (x,y) point at start_angle + theta.
+        Not valid after translation, rotation, or scaling.
+        """
         theta = theta*pi/180
-        t = self.start_degrees + theta
+        t = self.start_angle + theta
         x0 = self.center[0]
         y0 = self.center[1]
         R = self.radius
@@ -570,58 +674,32 @@ class XWall(Shape):
             taps = [Line((xi,y), (xi+dx, y+dy)) for xi in x[:-1]]
         self.shapes = [Line(start, (start[0]+length, start[1]))] + taps
 
-class Wall(Shape):
-    def __init__(self, start, length, thickness, rotation_angle=0):
-        p1 = asarray(start)
-        p2 = p1 + asarray([length, 0])
-        p3 = p2 + asarray([0, thickness])
-        p4 = p1 + asarray([0, thickness])
-        p5 = p1
-        x = [p[0] for p in p1, p2, p3, p4, p5]
-        y = [p[1] for p in p1, p2, p3, p4, p5]
-        wall = Curve(x, y)
-        wall.set_filled_curves('white', '/')
-        wall.rotate(rotation_angle, start)
-        self.shapes = {'wall': wall}
-
-"""
-    def draw(self):
-        x = self.shapes['wall'].x
-        y = self.shapes['wall'].y
-        drawing_tool.ax.fill(x, y, 'w',
-                             edgecolor=drawing_tool.linecolor,
-                             hatch='/')
-"""
 
 class CurveWall(Shape):
     def __init__(self, x, y, thickness):
+        # User's curve
         x1 = asarray(x, float)
         y1 = asarray(y, float)
+        # Displaced curve (according to thickness)
         x2 = x1
         y2 = y1 + thickness
+        # Combine x1,y1 with x2,y2 reversed
         from numpy import concatenate
-        # x1/y1 + reversed x2/y2
         x = concatenate((x1, x2[-1::-1]))
         y = concatenate((y1, y2[-1::-1]))
         wall = Curve(x, y)
-        wall.set_filled_curves('white', '/')
+        wall.set_filled_curves(color='white', pattern='/')
         self.shapes = {'wall': wall}
-
-"""
-    def draw(self):
-        x = self.shapes['wall'].x
-        y = self.shapes['wall'].y
-        drawing_tool.ax.fill(x, y, 'w',
-                             edgecolor=drawing_tool.linecolor,
-                             hatch='/')
-"""
 
 
 class Text(Point):
-    def __init__(self, text, position, alignment='center', fontsize=18):
-        self.text = text
-        self.alignment, self.fontsize = alignment, fontsize
+    def __init__(self, text, position, alignment='center', fontsize=14):
+        is_sequence(position)
         is_sequence(position, length=2, can_be_None=True)
+        self.text = text
+        self.position = position
+        self.alignment = alignment
+        self.fontsize = fontsize
         Point.__init__(self, position[0], position[1])
         #no need for self.shapes here
 
@@ -638,8 +716,9 @@ class Text(Point):
 
 class Text_wArrow(Text):
     def __init__(self, text, position, arrow_tip,
-                 alignment='center', fontsize=18):
+                 alignment='center', fontsize=14):
         is_sequence(arrow_tip, length=2, can_be_None=True)
+        is_sequence(position)
         self.arrow_tip = arrow_tip
         Text.__init__(self, text, position, alignment, fontsize)
 
@@ -709,25 +788,29 @@ class DistanceSymbol(Shape):
     for identifying a distance with a symbol.
     """
     def __init__(self, start, end, symbol, fontsize=14):
-        start = asarray(start, float)
-        end = asarray(end, float)
+        start = arr2D(start)
+        end   = arr2D(end)
         mid = 0.5*(start + end)  # midpoint of start-end line
         tangent = end - start
-        normal = asarray([-tangent[1], tangent[0]])/\
-                 sqrt(tangent[0]**2 + tangent[1]**2)
+        normal = arr2D([-tangent[1], tangent[0]])/\
+                       sqrt(tangent[0]**2 + tangent[1]**2)
         symbol_pos = mid + normal*drawing_tool.xrange/60.
-        self.shapes = {'arrow': Arrow1(start, end, style='<->'),
+        arrow = Arrow1(start, end, style='<->')
+        arrow.set_linecolor('black')
+        arrow.set_linewidth(1)
+        self.shapes = {'arrow': arrow,
                        'symbol': Text(symbol, symbol_pos, fontsize=fontsize)}
+        print 'Line in Arrow1:', arrow.shapes['arrow']['line'].linecolor, arrow.shapes['arrow']['line'].linewidth #[[[
 
 
 class ArcSymbol(Shape):
     def __init__(self, symbol, center, radius,
-                 start_degrees, opening_degrees,
+                 start_angle, arc_angle,
                  resolution=180, fontsize=14):
-        arc = Arc(center, radius, start_degrees, opening_degrees,
+        arc = Arc(center, radius, start_angle, arc_angle,
                   resolution)
-        mid = asarray(arc(opening_degrees/2.))
-        normal = mid - asarray(center, float)
+        mid = arr2D(arc(arc_angle/2.))
+        normal = mid - arr2D(center)
         normal = normal/sqrt(normal[0]**2 + normal[1]**2)
         symbol_pos = mid + normal*drawing_tool.xrange/60.
         self.shapes = {'arc': arc,
@@ -752,8 +835,9 @@ class Compose(Shape):
 class Arrow1(Shape):
     """Draw an arrow as Line with arrow."""
     def __init__(self, start, end, style='->'):
-        self.start, self.end, self.style = start, end, style
-        self.shapes = {'arrow': Line(start, end, arrow=style)}
+        arrow = Line(start, end)
+        arrow.set_arrow(style)
+        self.shapes = {'arrow': arrow}
 
 class Arrow3(Shape):
     """Draw a vertical line and arrow head. Then rotate `rotation_angle`."""
@@ -811,7 +895,7 @@ class Wheel(Shape):
                  zip(xinner, yinner, xouter, youter)]
         self.shapes = [outer, inner] + lines
 
-class Wave(Shape):
+class SineWave(Shape):
     def __init__(self, xstart, xstop,
                  wavelength, amplitude, mean_level):
         self.xstart = xstart
@@ -832,19 +916,58 @@ class Wave(Shape):
 
 
 class Spring(Shape):
-    def __init__(self, bottom_point, length, tagwidth, ntags=4):
+    def __init__(self, bottom_point, length, tooth_spacing, ntooths=4):
         """
         Specify a vertical spring, starting at bottom_point and
         having a specified lengths. In the middle third of the
-        spring there are ntags tags.
+        spring there are ntooths saw thooth tips.
         """
         self.B = bottom_point
-        self.n = ntags - 1  # n counts tag intervals
+        self.n = ntooths - 1  # n counts tag intervals
         # n must be odd:
         if self.n % 2 == 0:
             self.n = self.n+1
         self.L = length
-        self.w = tagwidth
+        self.w = tooth_spacing
+
+        B, L, n, w = self.B, self.L, self.n, self.w  # short forms
+        t = L/(3.0*n)  # must be better worked out
+        P0 = (B[0], B[1]+L/3.0)
+        P1 = (B[0], B[1]+L/3.0+t/2.0)
+        P2 = (B[0], B[1]+L*2/3.0)
+        P3 = (B[0], B[1]+L)
+        line1 = Line(B, P1)
+        lines = [line1]
+        #line2 = Line(P2, P3)
+        T1 = P1
+        T2 = (T1[0] + w, T1[1] + t/2.0)
+        lines.append(Line(T1,T2))
+        T1 = (T2[0], T2[1])
+        for i in range(n):
+            T2 = (T1[0] + (-1)**(i+1)*2*w, T1[1] + t/2.0)
+            lines.append(Line(T1, T2))
+            T1 = (T2[0], T2[1])
+        T2 = (T1[0] + w, T1[1] + t/2.0)
+        lines.append(Line(T1,T2))
+
+        #print P2, T2
+        lines.append(Line(T2, P3))
+        self.shapes = lines
+
+class Spring(Shape):
+    def __init__(self, bottom_point, length, tooth_spacing, ntooths=4):
+        """
+        Specify a vertical spring, starting at bottom_point and
+        having a specified lengths. In the middle third of the
+        spring there are ntooths tags.
+        """
+        self.B = bottom_point
+        self.n = ntooths - 1  # n counts tag intervals
+        # n must be odd:
+        if self.n % 2 == 0:
+            self.n = self.n+1
+        self.L = length
+        self.w = tooth_spacing
 
         B, L, n, w = self.B, self.L, self.n, self.w  # short forms
         t = L/(3.0*n)  # must be better worked out
@@ -995,32 +1118,6 @@ def rolling_wheel(total_rotation_angle):
     failure, output = commands.getstatusoutput(cmd)
     if failure:  print 'Could not run', cmd
 
-def is_sequence(seq, length=None,
-                can_be_None=False, error_message=True):
-    if can_be_None:
-        legal_types = (list,tuple,ndarray,None)
-    else:
-        legal_types = (list,tuple,ndarray)
-
-    if isinstance(seq, legal_types):
-        if length is not None:
-            if length == len(seq):
-                return True
-            elif error_message:
-                raise TypeError('%s is %s; must be %s of length %d' %
-                            (str(point), type(point),
-                            ', '.join([str(t) for t in legal_types]),
-                             len(seq)))
-            else:
-                return False
-        else:
-            return True
-    elif error_message:
-        raise TypeError('%s is %s; must be %s' %
-                        str(point), type(point),
-                        ', '.join([str(t) for t in legal_types]))
-    else:
-        return False
 
 if __name__ == '__main__':
     #rolling_wheel(40)

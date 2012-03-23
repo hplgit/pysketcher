@@ -23,7 +23,7 @@ def inclined_plane():
     wall = CurveWall(x=[A[0], B[0]], y=[A[1], B[1]], thickness=-0.25)
 
     angle = ArcSymbol(r'$\theta$', center=B, radius=3,
-                      start_degrees=180-theta, opening_degrees=theta,
+                      start_angle=180-theta, arc_angle=theta,
                       fontsize=fontsize)
     angle.set_linecolor('black')
     angle.set_linewidth(1)
