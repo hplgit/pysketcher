@@ -22,8 +22,7 @@ wheels = Compose({'wheel1': wheel1, 'wheel2': wheel2})
 body = Compose({'under': under, 'over': over})
 
 vehicle = Compose({'wheels': wheels, 'body': body})
-ground = CurveWall(x=[w_1 - L, w_1 + 3*L], y=[0, 0],
-                   thickness=-0.3*R)
+ground = Wall(x=[w_1 - L, w_1 + 3*L], y=[0, 0], thickness=-0.3*R)
 
 fig = Compose({'vehicle': vehicle, 'ground': ground})
 fig.draw()  # send all figures to plotting backend

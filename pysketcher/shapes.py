@@ -4,18 +4,20 @@ import pprint, copy, glob, os
 from MatplotlibDraw import MatplotlibDraw
 drawing_tool = MatplotlibDraw()
 
-def point(x, y):
+def point(x, y, check_inside=False):
     if isinstance(x, (float,int)) and isinstance(y, (float,int)):
         pass
     else:
         raise TypeError('x=%s,y=%s must be float,float, not %s,%s' %
                         (x, y, type(x), type(y)))
-    ok, msg = drawing_tool.inside((x,y))
-    if not ok: print msg
+    if check_inside:
+        ok, msg = drawing_tool.inside((x,y), exception=True)
+        if not ok:
+            print msg
 
     return array((x, y), dtype=float)
 
-def arr2D(x):
+def arr2D(x, check_inside=False):
     if isinstance(x, (tuple,list,ndarray)):
         if len(x) == 2:
             pass
@@ -24,8 +26,10 @@ def arr2D(x):
     else:
         raise TypeError('x=%s must be list/tuple/ndarray, not %s' %
                         (x, type(x)))
-    ok, msg = drawing_tool.inside(x)
-    if not ok: print msg
+    if check_inside:
+        ok, msg = drawing_tool.inside(x, exception=True)
+        if not ok:
+            print msg
 
     return asarray(x, dtype=float)
 
@@ -63,7 +67,7 @@ def is_sequence(*sequences, **kwargs):
     for x in sequences:
         _is_sequence(x, length=length, can_be_None=can_be_None,
                      error_message=error_message)
-        ok, msg = drawing_tool.inside(x)
+        ok, msg = drawing_tool.inside(x, exception=True)
         if not ok: print msg
 
 
@@ -144,7 +148,8 @@ class Shape:
                     if isinstance(self.shapes[shape], (Curve,Point)):
                         # Indexing of Curve/Point/Text is not possible
                         raise TypeError(
-                            'Index "%s" is illegal' % name)
+                            'Index "%s" (%s) is illegal' %
+                            (name, self.__class__.__name__))
                     return self.shapes[shape][name]
         else:
             raise Exception('This is a bug')
@@ -192,17 +197,21 @@ class Shape:
 
     def draw(self):
         self.for_all_shapes('draw')
+        return self
 
     def rotate(self, angle, center):
         is_sequence(center, length=2)
         self.for_all_shapes('rotate', angle, center)
+        return self
 
     def translate(self, vec):
         is_sequence(vec, length=2)
         self.for_all_shapes('translate', vec)
+        return self
 
     def scale(self, factor):
         self.for_all_shapes('scale', factor)
+        return self
 
     def set_linestyle(self, style):
         styles = ('solid', 'dashed', 'dashdot', 'dotted')
@@ -211,6 +220,7 @@ class Shape:
                              (self.__class__.__name__ + '.set_linestyle:',
                               style, str(styles)))
         self.for_all_shapes('set_linestyle', style)
+        return self
 
     def set_linewidth(self, width):
         if not isinstance(width, int) and width >= 0:
@@ -218,6 +228,7 @@ class Shape:
                              (self.__class__.__name__ + '.set_linewidth:',
                               width))
         self.for_all_shapes('set_linewidth', width)
+        return self
 
     def set_linecolor(self, color):
         if color in drawing_tool.line_colors:
@@ -229,6 +240,7 @@ class Shape:
                              (self.__class__.__name__ + '.set_linecolor:',
                                  color, list(drawing_tool.line_colors.keys())))
         self.for_all_shapes('set_linecolor', color)
+        return self
 
     def set_arrow(self, style):
         styles = ('->', '<-', '<->')
@@ -237,6 +249,7 @@ class Shape:
                              (self.__class__.__name__ + '.set_arrow:',
                               style, styles))
         self.for_all_shapes('set_arrow', style)
+        return self
 
     def set_filled_curves(self, color='', pattern=''):
         if color in drawing_tool.line_colors:
@@ -248,6 +261,7 @@ class Shape:
                              (self.__class__.__name__ + '.set_filled_curves:',
                               color, list(drawing_tool.line_colors.keys())))
         self.for_all_shapes('set_filled_curves', color, pattern)
+        return self
 
     def show_hierarchy(self, indent=0, format='std'):
         """Recursive pretty print of hierarchy of objects."""
@@ -357,35 +371,44 @@ class Curve(Shape):
         ynew = y + (self.x - x)*s + (self.y - y)*c
         self.x = xnew
         self.y = ynew
+        return self
 
     def scale(self, factor):
         """Scale all coordinates by `factor`: ``x = factor*x``, etc."""
         self.x = factor*self.x
         self.y = factor*self.y
+        return self
 
     def translate(self, vec):
         """Translate all coordinates by a vector `vec`."""
         self.x += vec[0]
         self.y += vec[1]
+        return self
 
     def set_linecolor(self, color):
         self.linecolor = color
+        return self
 
     def set_linewidth(self, width):
         self.linewidth = width
+        return self
 
     def set_linestyle(self, style):
         self.linestyle = style
+        return self
 
     def set_arrow(self, style=None):
         self.arrow = style
+        return self
 
     def set_name(self, name):
         self.name = name
+        return self
 
     def set_filled_curves(self, color='', pattern=''):
         self.fillcolor = color
         self.fillpattern = pattern
+        return self
 
     def show_hierarchy(self, indent=0, format='std'):
         if format == 'dict':
@@ -439,16 +462,19 @@ class Point(Shape):
         ynew = y + (self.x - x)*s + (self.y - y)*c
         self.x = xnew
         self.y = ynew
+        return self
 
     def scale(self, factor):
         """Scale point coordinates by `factor`: ``x = factor*x``, etc."""
         self.x = factor*self.x
         self.y = factor*self.y
+        return self
 
     def translate(self, vec):
         """Translate point by a vector `vec`."""
         self.x += vec[0]
         self.y += vec[1]
+        return self
 
     def show_hierarchy(self, indent=0, format='std'):
         s = '%s at (%g,%g)' % (self.__class__.__name__, self.x, self.y)
@@ -661,25 +687,21 @@ class Circle(Arc):
     def __init__(self, center, radius, resolution=180):
         Arc.__init__(self, center, radius, 0, 360, resolution)
 
-# class Wall: horizontal Line with many small Lines 45 degrees
-class XWall(Shape):
-    def __init__(start, length, dx, below=True):
-        n = int(round(length/float(dx)))  # no of intervals
-        x = linspace(start[0], start[0] + length, n+1)
-        y = start[1]
-        dy = dx
-        if below:
-            taps = [Line((xi,y-dy), (xi+dx, y)) for xi in x[:-1]]
+
+class Wall(Shape):
+    def __init__(self, x, y, thickness, pattern='/'):
+        is_sequence(x, y, length=len(x))
+        if isinstance(x[0], (tuple,list,ndarray)):
+            # x is list of curves
+            x1 = concatenate(x)
         else:
-            taps = [Line((xi,y), (xi+dx, y+dy)) for xi in x[:-1]]
-        self.shapes = [Line(start, (start[0]+length, start[1]))] + taps
+            x1 = asarray(x, float)
+        if isinstance(y[0], (tuple,list,ndarray)):
+            # x is list of curves
+            y = concatenate(y)
+        else:
+            y1 = asarray(y, float)
 
-
-class CurveWall(Shape):
-    def __init__(self, x, y, thickness):
-        # User's curve
-        x1 = asarray(x, float)
-        y1 = asarray(y, float)
         # Displaced curve (according to thickness)
         x2 = x1
         y2 = y1 + thickness
@@ -688,8 +710,50 @@ class CurveWall(Shape):
         x = concatenate((x1, x2[-1::-1]))
         y = concatenate((y1, y2[-1::-1]))
         wall = Curve(x, y)
-        wall.set_filled_curves(color='white', pattern='/')
+        wall.set_filled_curves(color='white', pattern=pattern)
         self.shapes = {'wall': wall}
+
+
+class VelocityProfile(Shape):
+    def __init__(self, start, height, profile, num_arrows, scaling=1):
+        # vx, vy = profile(y)
+
+        shapes = {}
+        # Draw left line
+        shapes['start line'] = Line(start, (start[0], start[1]+height))
+
+        # Draw velocity arrows
+        dy = float(height)/(num_arrows-1)
+        x = start[0]
+        y = start[1]
+        r = profile(y)  # Test on return type
+        if not isinstance(r, (list,tuple,ndarray)) and len(r) != 2:
+            raise TypeError('VelocityProfile constructor: profile(y) function must return velocity vector (vx,vy), not %s' % type(r))
+
+        for i in range(num_arrows):
+            y = i*dy
+            vx, vy = profile(y)
+            if abs(vx) < 1E-8:
+                continue
+            vx *= scaling
+            vy *= scaling
+            arr = Arrow1((x,y), (x+vx, y+vy), '->')
+            shapes['arrow%d' % i] = arr
+        # Draw smooth profile
+        xs = []
+        ys = []
+        n = 100
+        dy = float(height)/n
+        for i in range(n+2):
+            y = i*dy
+            vx, vy = profile(y)
+            vx *= scaling
+            vy *= scaling
+            xs.append(x+vx)
+            ys.append(y+vy)
+        shapes['smooth curve'] = Curve(xs, ys)
+        self.shapes = shapes
+
 
 
 class Text(Point):
@@ -737,7 +801,7 @@ class Text_wArrow(Text):
 
 class Axis(Shape):
     def __init__(self, bottom_point, length, label, below=True,
-                 rotation_angle=0, label_spacing=1./25):
+                 rotation_angle=0, label_spacing=1./30):
         """
         Draw axis from bottom_point with `length` to the right
         (x axis). Place label below (True) or above (False) axis.
@@ -787,32 +851,32 @@ class DistanceSymbol(Shape):
     Arrow with symbol at the midpoint,
     for identifying a distance with a symbol.
     """
-    def __init__(self, start, end, symbol, fontsize=14):
+    def __init__(self, start, end, symbol, symbol_spacing=1/60., fontsize=14):
         start = arr2D(start)
         end   = arr2D(end)
         mid = 0.5*(start + end)  # midpoint of start-end line
         tangent = end - start
         normal = arr2D([-tangent[1], tangent[0]])/\
                        sqrt(tangent[0]**2 + tangent[1]**2)
-        symbol_pos = mid + normal*drawing_tool.xrange/60.
+        symbol_pos = mid + normal*drawing_tool.xrange*symbol_spacing
         arrow = Arrow1(start, end, style='<->')
         arrow.set_linecolor('black')
         arrow.set_linewidth(1)
         self.shapes = {'arrow': arrow,
                        'symbol': Text(symbol, symbol_pos, fontsize=fontsize)}
-        print 'Line in Arrow1:', arrow.shapes['arrow']['line'].linecolor, arrow.shapes['arrow']['line'].linewidth #[[[
 
 
 class ArcSymbol(Shape):
     def __init__(self, symbol, center, radius,
                  start_angle, arc_angle,
+                 symbol_spacing=1/60.,
                  resolution=180, fontsize=14):
         arc = Arc(center, radius, start_angle, arc_angle,
                   resolution)
         mid = arr2D(arc(arc_angle/2.))
         normal = mid - arr2D(center)
         normal = normal/sqrt(normal[0]**2 + normal[1]**2)
-        symbol_pos = mid + normal*drawing_tool.xrange/60.
+        symbol_pos = mid + normal*drawing_tool.xrange*symbol_spacing
         self.shapes = {'arc': arc,
                        'symbol': Text(symbol, symbol_pos, fontsize=fontsize)}
 
@@ -840,7 +904,10 @@ class Arrow1(Shape):
         self.shapes = {'arrow': arrow}
 
 class Arrow3(Shape):
-    """Draw a vertical line and arrow head. Then rotate `rotation_angle`."""
+    """
+    Build a vertical line and arrow head from Line objects.
+    Then rotate `rotation_angle`.
+    """
     def __init__(self, bottom_point, length, rotation_angle=0):
         self.bottom = bottom_point
         self.length = length
@@ -864,8 +931,6 @@ class Arrow3(Shape):
 
         # rotate goes through self.shapes so this must be initialized first
         self.rotate(rotation_angle, bottom_point)
-
-Arrow = Arrow3  # backward compatibility
 
 
 class Wheel(Shape):

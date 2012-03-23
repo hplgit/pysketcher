@@ -7,7 +7,8 @@ import numpy as np
 class MatplotlibDraw:
     line_colors = {'red': 'r', 'green': 'g', 'blue': 'b', 'cyan': 'c',
                    'magenta': 'm', 'purple': 'p',
-                   'yellow': 'y', 'black': 'k', 'white': 'w', '': ''}
+                   'yellow': 'y', 'black': 'k', 'white': 'w',
+                   'brown': 'brown', '': ''}
     def __init__(self):
         self.instruction_file = None
 
@@ -88,7 +89,7 @@ ax.set_aspect('equal')
 
 """ % (fig, self.xmin, self.xmax, self.ymin, self.ymax, axis_cmd))
 
-    def inside(self, pt):
+    def inside(self, pt, exception=False):
         """Is point pt inside the defined plotting area?"""
         area = '[%s,%s]x[%s,%s]' % \
                (self.xmin, self.xmax, self.ymin, self.ymax)
@@ -105,8 +106,10 @@ ax.set_aspect('equal')
             return pt_inside, 'point=%s is inside plotting area %s' % \
                    (pt, area)
         else:
-            return pt_inside, 'point=%s is outside plotting area %s' % \
-                   (pt, area)
+            msg = 'point=%s is outside plotting area %s' % (pt, area)
+            if exception:
+                raise ValueError(msg)
+            return pt_inside, msg
 
     def set_linecolor(self, color):
         """

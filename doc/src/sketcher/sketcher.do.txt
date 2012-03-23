@@ -86,15 +86,15 @@ body = Compose({'under': under, 'over': over})
 
 vehicle = Compose({'wheels': wheels, 'body': body})
 !ec
-The ground is illustrated by an object of type `CurveWall`,
+
+The ground is illustrated by an object of type `Wall`,
 mostly used to indicate walls in sketches of physical systems.
-A `CurveWall` takes the `x` and `y` coordinates of some curve
+A `Wall` takes the `x` and `y` coordinates of some curve
 and a `thickness` parameter and creates a "thick" curve filled
 with a simple pattern. In this case the curve is just a flat
 line so the construction is simple:
 !bc pycod
-ground = CurveWall(x=[w_1 - L, w_1 + 3*L], y=[0, 0],
-                   thickness=-0.3*R)
+ground = Wall(x=[w_1 - L, w_1 + 3*L], y=[0, 0], thickness=-0.3*R)
 !ec
 We may collect all the objects in a "top" object that contains
 the whole figure:
@@ -179,7 +179,7 @@ print fig.show_hierarchy('std')
 !ec
 yielding the output
 !bc dat
-ground (CurveWall):
+ground (Wall):
     wall (Curve): 4 coords fillcolor='white' fillhatch='/'
 vehicle (Compose):
     body (Compose):
@@ -307,7 +307,7 @@ You can try this by running the present example in the file
 # #ifdef PRIMER_BOOK
 `vehicle0.py`.
 # #else
-"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py", or view a ready-made "movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0_animation/anim.html".
+"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py", or view a ready-made "movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/animation_vehicle0/anim.html".
 # #endif
 
 === Animation: Rolling the Wheels ===
@@ -378,7 +378,7 @@ The complete example is found in the file
 # #ifdef PRIMER_BOOK
 `vehicle1.py`.
 # #else
-"`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0_animation/anim.html".
+"`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/animation_vehicle1/anim.html".
 # #endif
 
 The great advantage with making figures this way through programming,
@@ -632,7 +632,7 @@ class Curve(Shape):
 === Compound Geometric Objects ===
 
 The sample classes so far has managed to define the geometric shape
-through just one `Curve` object.[[[
+through just one `Curve` object.
 
 
 
