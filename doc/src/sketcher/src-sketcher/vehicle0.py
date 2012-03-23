@@ -7,7 +7,7 @@ w_1 = 5  # position of front wheel
 
 drawing_tool.set_coordinate_system(xmin=0, xmax=w_1 + 2*L + 3*R,
                                    ymin=-1, ymax=2*R + 3*H,
-                                   axis=True)
+                                   axis=False)
 
 wheel1 = Circle(center=(w_1, R), radius=R)
 wheel2 = wheel1.copy()
@@ -36,7 +36,7 @@ fig['vehicle']['wheels'].set_linewidth(6)
 fig['vehicle']['wheels'].set_linecolor('black')
 fig['vehicle']['body']['under'].set_filled_curves('red')
 fig['vehicle']['body']['over'].set_filled_curves(pattern='/')
-fig['vehicle']['body']['over'].set_linewidth(10)
+fig['vehicle']['body']['over'].set_linewidth(14)
 
 drawing_tool.erase()  # avoid drawing old and new fig on top of each other
 fig.draw()
@@ -59,8 +59,8 @@ tp = numpy.linspace(0, 2*R, 25)
 dt = tp[1] - tp[0]  # time step
 
 def move_vehicle(t, fig):
-    displacement = dt*v(t)
-    fig['vehicle'].translate((displacement, 0))
+    x_displacement = dt*v(t)
+    fig['vehicle'].translate((x_displacement, 0))
 
 files = animate(fig, tp, move_vehicle, moviefiles=True,
                 pause_per_frame=0)

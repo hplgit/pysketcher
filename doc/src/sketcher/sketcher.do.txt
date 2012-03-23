@@ -223,7 +223,7 @@ fig['vehicle']['wheels'].set_linewidth(6)
 fig['vehicle']['wheels'].set_linecolor('black')
 fig['vehicle']['body']['under'].set_filled_curves('red')
 fig['vehicle']['body']['over'].set_filled_curves(pattern='/')
-fig['vehicle']['body']['over'].set_linewidth(10)
+fig['vehicle']['body']['over'].set_linewidth(14)
 !ec
 
 FIGURE: [figs-sketcher/vehicle0b.png, width=400] Changed properties of parts of the figure. label{sketcher:fig:vehicle0:v2}
@@ -273,8 +273,8 @@ can through the provided `action` function modify desired parts
 of the figure. Here the `action` function will move the `vehicle`:
 !bc pycod
 def move_vehicle(t, fig):
-    displacement = dt*v(t)
-    fig['vehicle'].translate(displacement)
+    x_displacement = dt*v(t)
+    fig['vehicle'].translate((x_displacement, 0))
 !ec
 Defining a set of time points for the frames in the animation
 and performing the animation is done by
@@ -338,7 +338,7 @@ The rotation angle follows from the fact that the arc length
 of a rolling wheel equals the displacement of the center of
 the wheel, leading to a rotation angle
 !bc pycod
-angle = - displacement[0]/R
+angle = - x_displacement/R
 !ec
 With `w_1` tracking the $x$ coordinate of the center
 of the front wheel, we can rotate that wheel by
@@ -361,14 +361,14 @@ The complete `move_vehicle` function then becomes
 w_1 = w_1 + L   # start position
 
 def move_vehicle(t, fig):
-    displacement = dt*v(t)
-    fig['vehicle'].translate(displacement)
+    x_displacement = dt*v(t)
+    fig['vehicle'].translate((x_displacement, 0))
 
     # Rotate wheels
     global w_1
-    w_1 += displacement[0]
+    w_1 += x_displacement
     # R*angle = -x_displacement
-    angle = - displacement[0]/R
+    angle = - x_displacement/R
     w1 = fig['vehicle']['wheels']['wheel1']
     w1.rotate(degrees(angle), center=(w_1, R))
     w2 = fig['vehicle']['wheels']['wheel2']
