@@ -22,7 +22,7 @@ example as depicted in Figure ref{sketcher:fig:vehicle0}.
 This toy sketch consists of several elements: two circles, two
 rectangles, and a "ground" element.
 
-FIGURE: [figs-sketcher/vehicle0.png, width=400] Very simple sketch of a vehicle. label{sketcher:fig:vehicle0}
+FIGURE: [figs-sketcher/vehicle0_dim.png, width=400] Sketch of a simple figure. label{sketcher:fig:vehicle0}
 
 === Basic Drawing ===
 
@@ -226,7 +226,7 @@ fig['vehicle']['body']['over'].set_filled_curves(pattern='/')
 fig['vehicle']['body']['over'].set_linewidth(14)
 !ec
 
-FIGURE: [figs-sketcher/vehicle0b.png, width=400] Changed properties of parts of the figure. label{sketcher:fig:vehicle0:v2}
+FIGURE: [figs-sketcher/vehicle0.png, width=700] Left: Basic line-based drawing. Right: Thicker lines and filled parts. label{sketcher:fig:vehicle0:v2}
 
 We can also change position of parts of the figure and thereby make
 animations, as shown next.
