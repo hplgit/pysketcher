@@ -9,9 +9,9 @@ ypos = 3.0
 
 drawing_tool.set_coordinate_system(xmin=-3, xmax=xpos+1.5*L,
                                    ymin=0, ymax=ypos+5*H,
-                                   axis=True)
+                                   axis=False)
 drawing_tool.set_linecolor('blue')
-drawing_tool.set_grid(True)
+#drawing_tool.set_grid(True)
 
 fontsize=16
 A = point(xpos,ypos)
@@ -89,7 +89,7 @@ time.sleep(1.5)
 
 annotations.draw()
 drawing_tool.display()
-drawing_tool.savefig('tmp_beam2_1.png')
+drawing_tool.savefig('tmp_beam2_2.png')
 time.sleep(1.5)
 
 elastic_line.draw()
