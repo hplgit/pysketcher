@@ -12,6 +12,12 @@ class MatplotlibDraw:
     def __init__(self):
         self.instruction_file = None
 
+    def ok(self):
+        """
+        Return True if set_coordinate_system is called and
+        objects can be drawn.
+        """
+
     def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
                               instruction_file=None):
         """
@@ -60,7 +66,7 @@ mpl.ion()  # for interactive drawing
         self.set_linewidth(2)
         self.set_linestyle('solid')
         self.set_filled_curves()  # no filling
-        self.arrow_head_width = 0.2
+        self.arrow_head_width = 0.2*self.xrange/16
 
     def _make_axes(self, new_figure=False):
         if new_figure:
@@ -93,12 +99,13 @@ ax.set_aspect('equal')
         """Is point pt inside the defined plotting area?"""
         area = '[%s,%s]x[%s,%s]' % \
                (self.xmin, self.xmax, self.ymin, self.ymax)
+        tol = 1E-14
         pt_inside = True
-        if self.xmin <= pt[0] <= self.xmax:
+        if self.xmin - tol <= pt[0] <= self.xmax + tol:
             pass
         else:
             pt_inside = False
-        if self.ymin <= pt[1] <= self.ymax:
+        if self.ymin - tol <= pt[1] <= self.ymax + tol:
             pass
         else:
             pt_inside = False
@@ -215,8 +222,12 @@ ax.set_aspect('equal')
                 self.plot_arrow(x_e, y_e, dx_e, dy_e, '->',
                                 linestyle, linewidth, linecolor)
 
-    def display(self):
+    def display(self, title=None):
         """Display the figure. Last possible command."""
+        if title is not None:
+            self.mpl.title(title)
+            if self.instruction_file:
+                self.instruction_file.write('mpl.title("%s")\n' % title)
         self.mpl.draw()
         if self.instruction_file:
             self.instruction_file.write('mpl.draw()\n')

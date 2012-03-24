@@ -5,7 +5,8 @@ L = 4    # distance between wheels
 H = 2    # height of vehicle body
 w_1 = 5  # position of front wheel
 
-drawing_tool.set_coordinate_system(xmin=0, xmax=w_1 + 2*L + 3*R,
+xmax = w_1 + 2*L + 3*R
+drawing_tool.set_coordinate_system(xmin=0, xmax=xmax,
                                    ymin=-1, ymax=2*R + 3*H,
                                    axis=False)
 
@@ -22,7 +23,7 @@ wheels = Compose({'wheel1': wheel1, 'wheel2': wheel2})
 body = Compose({'under': under, 'over': over})
 
 vehicle = Compose({'wheels': wheels, 'body': body})
-ground = Wall(x=[w_1 - L, w_1 + 3*L], y=[0, 0], thickness=-0.3*R)
+ground = Wall(x=[R, xmax], y=[0, 0], thickness=-0.3*R)
 
 fig = Compose({'vehicle': vehicle, 'ground': ground})
 fig.draw()  # send all figures to plotting backend
