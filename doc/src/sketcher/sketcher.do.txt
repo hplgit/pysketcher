@@ -381,18 +381,17 @@ The complete example is found in the file
 "`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/animation_vehicle1/anim.html".
 # #endif
 
-The great advantage with making figures this way through programming,
-rather than using interactive drawing programs, is that the
-accuracy of mathematical drawings is easily reflected, distances
-can be parameterized through variables such that the
-proportions of parts of the figure can be quickly changed,
-groups of objects can easily be manipulated (translated, rotated,
-scaled), objects can be left out while experimenting with the
-figure, to mention some important features. However, the single
-most important feature is the ability to make animations governed
-by mathematical formulas, maybe coming from simulations
-based on solving differential equations reflecting the physics
-of the problem.
+The advantages with making figures this way through programming,
+rather than using interactive drawing programs, are numerous.  For
+example, the objects are parameterized by variables so that various
+dimensions can easily be changed.  Subparts of the figure can change
+color, linetype, filling or other properties through a single function
+call.  Subparts of the figure can be rotated, translated, or scaled.
+Subparts of the figure can be copied and moved to other parts of the
+drawing area. However, the single most important feature is probably
+the ability to make animations governed by mathematical formulas or
+data coming from physics simulations of the problem sketched in
+the drawing.
 
 
 ===== Example of Classes for Geometric Objects =====
@@ -632,7 +631,7 @@ class Curve(Shape):
 === Compound Geometric Objects ===
 
 The sample classes so far has managed to define the geometric shape
-through just one `Curve` object.
+through just one `Curve` object.[[[
 
 
 

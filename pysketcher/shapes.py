@@ -846,7 +846,7 @@ def test_Axis():
     print repr(system)
 
 
-class DistanceSymbol(Shape):
+class Distance_wSymbol(Shape):
     """
     Arrow with symbol at the midpoint,
     for identifying a distance with a symbol.
@@ -977,87 +977,132 @@ class SineWave(Shape):
 
 
 
-# make a version of Spring using Point class
+class Spring1(Shape):
+    spring_fraction = 1./2  # fraction of total length occupied by spring
 
-
-class Spring(Shape):
-    def __init__(self, bottom_point, length, tooth_spacing, ntooths=4):
+    def __init__(self, start, length, tooth_width, num_teeth=8):
         """
         Specify a vertical spring, starting at bottom_point and
         having a specified lengths. In the middle third of the
         spring there are ntooths saw thooth tips.
         """
-        self.B = bottom_point
-        self.n = ntooths - 1  # n counts tag intervals
+        B = start
+        n = num_teeth - 1  # n counts teeth intervals
         # n must be odd:
-        if self.n % 2 == 0:
-            self.n = self.n+1
-        self.L = length
-        self.w = tooth_spacing
+        if n % 2 == 0:
+            n = n+1
+        L = length
+        w = tooth_width
 
-        B, L, n, w = self.B, self.L, self.n, self.w  # short forms
-        t = L/(3.0*n)  # must be better worked out
-        P0 = (B[0], B[1]+L/3.0)
-        P1 = (B[0], B[1]+L/3.0+t/2.0)
-        P2 = (B[0], B[1]+L*2/3.0)
-        P3 = (B[0], B[1]+L)
-        line1 = Line(B, P1)
-        lines = [line1]
-        #line2 = Line(P2, P3)
-        T1 = P1
+        # [0, x, L-x, L], f = (L-2*x)/L
+        # x = L*(1-f)/2.
+        shapes = {}
+        f = Spring1.spring_fraction
+        t = f*L/n      # distance between teeth
+        s = L*(1-f)/2. # start of spring
+        P0 = (B[0], B[1]+s)
+        shapes['line start'] = Line(B, P0)
+        T1 = P0
         T2 = (T1[0] + w, T1[1] + t/2.0)
-        lines.append(Line(T1,T2))
-        T1 = (T2[0], T2[1])
-        for i in range(n):
+        k = 1
+        shapes['line%d' % k] = Line(T1,T2)
+        T1 = T2[:]  # copy
+        for i in range(2*n-3):
             T2 = (T1[0] + (-1)**(i+1)*2*w, T1[1] + t/2.0)
-            lines.append(Line(T1, T2))
+            k += 1
+            shapes['line%d' % k] = Line(T1, T2)
             T1 = (T2[0], T2[1])
         T2 = (T1[0] + w, T1[1] + t/2.0)
-        lines.append(Line(T1,T2))
+        k += 1
+        shapes['line%d' % k] = Line(T1,T2)
 
-        #print P2, T2
-        lines.append(Line(T2, P3))
-        self.shapes = lines
+        P2 = (B[0], B[1]+L)
+        shapes['line end'] = Line(T2, P2)
+        self.shapes = shapes
 
-class Spring(Shape):
-    def __init__(self, bottom_point, length, tooth_spacing, ntooths=4):
+class Spring2(Shape):
+    spring_fraction = 1./2  # fraction of total length occupied by spring
+
+    def __init__(self, start, length, width, num_windings=11):
         """
         Specify a vertical spring, starting at bottom_point and
         having a specified lengths. In the middle third of the
-        spring there are ntooths tags.
+        spring there are ntooths saw thooth tips.
         """
-        self.B = bottom_point
-        self.n = ntooths - 1  # n counts tag intervals
+        B = start
+        n = num_windings - 1  # n counts teeth intervals
+        if n <= 6:
+            n = 7
         # n must be odd:
-        if self.n % 2 == 0:
-            self.n = self.n+1
-        self.L = length
-        self.w = tooth_spacing
+        if n % 2 == 0:
+            n = n+1
+        L = length
+        w = width
 
-        B, L, n, w = self.B, self.L, self.n, self.w  # short forms
-        t = L/(3.0*n)  # must be better worked out
-        P0 = (B[0], B[1]+L/3.0)
-        P1 = (B[0], B[1]+L/3.0+t/2.0)
-        P2 = (B[0], B[1]+L*2/3.0)
-        P3 = (B[0], B[1]+L)
-        line1 = Line(B, P1)
-        lines = [line1]
-        #line2 = Line(P2, P3)
-        T1 = P1
-        T2 = (T1[0] + w, T1[1] + t/2.0)
-        lines.append(Line(T1,T2))
-        T1 = (T2[0], T2[1])
-        for i in range(n):
-            T2 = (T1[0] + (-1)**(i+1)*2*w, T1[1] + t/2.0)
-            lines.append(Line(T1, T2))
-            T1 = (T2[0], T2[1])
-        T2 = (T1[0] + w, T1[1] + t/2.0)
-        lines.append(Line(T1,T2))
+        # [0, x, L-x, L], f = (L-2*x)/L
+        # x = L*(1-f)/2.
+        shapes = {}
+        f = Spring2.spring_fraction
+        t = f*L/n      # must be better worked out
+        s = L*(1-f)/2. # start of spring
+        P0 = (B[0], B[1]+s)
+        shapes['line start'] = Line(B, P0)
+        q = linspace(0, n, n*180 + 1)
+        x = P0[0] + w*sin(2*pi*q)
+        y = P0[1] + q*t
+        shapes['sprial'] = Curve(x, y)
+        P1 = (B[0], L-s)
+        P2 = (B[0], B[1]+L)
+        shapes['line end'] = Line(P1,P2)
+        self.shapes = shapes
 
-        #print P2, T2
-        lines.append(Line(T2, P3))
-        self.shapes = lines
+class Dashpot(Shape):
+    dashpot_fraction = 1./2  # fraction of total length occupied by dashpot
+    piston_gap_fraction = 1./6
+    piston_thickness_fraction = 1./8
 
+    def __init__(self, start, length, width, piston_pos=None):
+        """
+        Specify a vertical dashpot of height `length`, width `width`,
+        and `start` as bottom/starting point. The piston position,
+        `piston_pos` can be specified, but default value None places
+        it at 1/3 from the bottom of the dashpot.
+        """
+        B = start
+        L = length
+        w = width
+
+        # [0, x, L-x, L], f = (L-2*x)/L
+        # x = L*(1-f)/2.
+        shapes = {}
+        f = Dashpot.dashpot_fraction
+        s = L*(1-f)/2. # start of dashpot
+        P0 = (B[0], B[1]+s)
+        P1 = (B[0], B[1]+L-s)
+        P2 = (B[0], B[1]+L)
+        shapes['line start'] = Line(B, P0)
+
+        shapes['pot'] = Curve([P1[0]-w, P0[0]-w, P0[0]+w, P1[0]+w],
+                              [P1[1], P0[1], P0[1], P1[1]])
+        piston_thickness = f*L*Dashpot.piston_thickness_fraction
+        if piston_pos is None:
+            piston_pos = P0[1] + 1/3.*f*L
+            print 'Calculated piston position:', piston_pos, P0[1], 1/3.*f*L
+        if piston_pos < P0[1]:
+            piston_pos = P0[1]
+            print 'too small piston position, <', P0[1]
+        if piston_pos > P1[1]-piston_thickness:
+            print 'too large piston position, >', P1[1]-piston_thickness
+            piston_pos = P1[1]-piston_thickness
+        gap = w*Dashpot.piston_gap_fraction
+        shapes['piston'] = Compose(
+            {'line': Line(P2, (B[0], piston_pos + piston_thickness)),
+             'rectangle': Rectangle((B[0] - w+gap, piston_pos),
+                                    2*w-2*gap, piston_thickness),
+             })
+        shapes['piston']['rectangle'].set_filled_curves(pattern='X')
+
+        self.shapes = shapes
 
 # COMPOSITE types:
 # MassSpringForce: Line(horizontal), Spring, Rectangle, Arrow/Line(w/arrow)

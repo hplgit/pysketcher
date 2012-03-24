@@ -42,13 +42,14 @@ fig.draw()  # send all figures to plotting backend
 
 vx, vy = velprofile(H/2.)
 symbols = {
-    'alpha': DistanceSymbol((W,0), (W,alpha), r'$\alpha$'),
-    'W': DistanceSymbol((0,-0.5), (W,-0.5), r'$W$',
-                        symbol_spacing=-1./30),
-    'L': DistanceSymbol((W,-0.5), (W+L,-0.5), r'$L$',
-                        symbol_spacing=-1./30),
+    'alpha': Distance_wSymbol((W,0), (W,alpha), r'$\alpha$'),
+    'W': Distance_wSymbol((0,-0.5), (W,-0.5), r'$W$',
+                          symbol_spacing=-1./30),
+    'L': Distance_wSymbol((W,-0.5), (W+L,-0.5), r'$L$',
+                          symbol_spacing=-1./30),
     'v(y)': Text('$v(y)$', (H/2., vx)),
-    'dashed line': Line((W-2.5*sigma,0), (W+2.5*sigma,0)).set_linestyle('dotted').set_linecolor('black'),
+    'dashed line': Line((W-2.5*sigma,0), (W+2.5*sigma,0)).\
+                   set_linestyle('dotted').set_linecolor('black'),
     }
 symbols = Compose(symbols)
 symbols.draw()

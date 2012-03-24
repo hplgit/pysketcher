@@ -225,7 +225,7 @@ ax.set_aspect('equal')
         """Save figure in file."""
         self.mpl.savefig(filename)
         if self.instruction_file:
-            self.instruction_file.write('mpl.savefig(%s)\n' % filename)
+            self.instruction_file.write('mpl.savefig("%s")\n' % filename)
 
     def text(self, text, position, alignment='center', fontsize=18,
              arrow_tip=None):
