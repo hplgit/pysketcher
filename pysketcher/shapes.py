@@ -765,7 +765,14 @@ class Wall(Shape):
         y = concatenate((y1, y2[-1::-1]))
         wall = Curve(x, y)
         wall.set_filled_curves(color='white', pattern=pattern)
-        self.shapes = {'wall': wall}
+        x = [x1[-1]] + x2[-1::-1].tolist() + [x1[0]]
+        y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
+        white_eraser = Curve(x, y)
+        white_eraser.set_linecolor('white')
+        from collections import OrderedDict
+        self.shapes = OrderedDict()
+        self.shapes['wall'] = wall
+        self.shapes['eraser'] = white_eraser
 
 
 class VelocityProfile(Shape):

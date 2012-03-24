@@ -20,7 +20,7 @@ def gaussian(x):
 x = linspace(0, W+L)
 y = gaussian(x)
 wall = Wall(x, y, thickness=-0.3, pattern='|').set_linecolor('brown')
-
+wall['eraser'].set_linecolor('white')
 def velprofile(y):
     return [2*y*(2*H-y)/H**2, 0]
 
@@ -42,11 +42,11 @@ fig.draw()  # send all figures to plotting backend
 
 vx, vy = velprofile(H/2.)
 symbols = {
-    'alpha': Distance_wSymbol((W,0), (W,alpha), r'$\alpha$'),
-    'W': Distance_wSymbol((0,-0.5), (W,-0.5), r'$W$',
-                          symbol_spacing=-1./30),
-    'L': Distance_wSymbol((W,-0.5), (W+L,-0.5), r'$L$',
-                          symbol_spacing=-1./30),
+    'alpha': Distance_wText((W,0), (W,alpha), r'$\alpha$'),
+    'W': Distance_wText((0,-0.5), (W,-0.5), r'$W$',
+                          text_spacing=-1./30),
+    'L': Distance_wText((W,-0.5), (W+L,-0.5), r'$L$',
+                          text_spacing=-1./30),
     'v(y)': Text('$v(y)$', (H/2., vx)),
     'dashed line': Line((W-2.5*sigma,0), (W+2.5*sigma,0)).\
                    set_linestyle('dotted').set_linecolor('black'),

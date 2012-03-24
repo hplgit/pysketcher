@@ -15,9 +15,13 @@ drawing_tool.set_linecolor('blue')
 
 fontsize=16
 A = point(xpos,ypos)
-main = Rectangle(A, L, H)
+
+beam = Rectangle(A, L, H)
+
 h = L/16  # size of support, clamped wall etc
-clamped = Rectangle(A - point(h,0) - point(0,2*h), h, 6*h).set_filled_curves(pattern='/')
+
+clamped = Rectangle(A - point(h,0) - point(0,2*h), h,
+                    6*h).set_filled_curves(pattern='/')
 
 load = ConstantBeamLoad(A + point(0,H), L, H)
 load.set_linewidth(1).set_linecolor('black')
@@ -61,8 +65,8 @@ axes = Compose({'x axis': x_axis, 'y axis': y_axis})
 
 annotations = Compose({'dims': dims, 'symbols': symbols,
                 'axes': axes})
-beam = Compose({'main': main, 'support': support,
-                'clamped end': clamped, 'load': load})
+fig = Compose({'main': main, 'support': support,
+               'clamped end': clamped, 'load': load})
 
 def deflection(x, a, b, w):
     import numpy as np
@@ -80,7 +84,7 @@ y += ypos + H/2
 
 elastic_line = Curve(x, y).set_linecolor('red').set_linestyle('dashed').set_linewidth(3)
 
-beam.draw()
+fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp_beam2_1.png')
 
