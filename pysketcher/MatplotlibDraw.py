@@ -5,18 +5,50 @@ import matplotlib.pyplot as mpl
 import numpy as np
 
 class MatplotlibDraw:
+    """
+    Simple interface for plotting. This interface makes use of
+    Matplotlib for plotting.
+
+    Some attributes that must be controlled directly (no set_* method
+    since these attributes are changed quite seldom).
+
+    ========================== ============================================
+    Attribute                  Description
+    ========================== ============================================
+    allow_screen_graphics      False means that no plot is shown on
+                               the screen. (Does not work yet.)
+    arrow_head_width           Size of arrow head.
+    ========================== ============================================
+    """
+
     line_colors = {'red': 'r', 'green': 'g', 'blue': 'b', 'cyan': 'c',
                    'magenta': 'm', 'purple': 'p',
                    'yellow': 'y', 'black': 'k', 'white': 'w',
                    'brown': 'brown', '': ''}
     def __init__(self):
         self.instruction_file = None
+        self.allow_screen_graphics = True  # does not work yet
 
     def ok(self):
         """
         Return True if set_coordinate_system is called and
         objects can be drawn.
         """
+
+    def adjust_coordinate_system(self, minmax, occupation_percent=80):
+        """
+        Given a dict of xmin, xmax, ymin, ymax values, and a desired
+        filling of the plotting area of `occupation_percent` percent,
+        set new axis limits.
+        """
+        x_range = minmax['xmax'] - minmax['xmin']
+        y_range = minmax['ymax'] - minmax['ymin']
+        new_x_range = x_range*100./occupation_percent
+        x_space = new_x_range - x_range
+        new_y_range = y_range*100./occupation_percent
+        y_space = new_y_range - y_range
+        self.ax.set_xlim(minmax['xmin']-x_space/2., minmax['xmax']+x_space/2.)
+        self.ax.set_ylim(minmax['ymin']-y_space/2., minmax['ymax']+y_space/2.)
 
     def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
                               instruction_file=None):
@@ -28,6 +60,15 @@ class MatplotlibDraw:
         for the plotting program are stored (useful for debugging
         a figure or tailoring plots).
         """
+
+        # Close file for previous figure and start new one
+        # if not the figure file is the same
+        if self.instruction_file is not None:
+            if instruction_file == self.instruction_file.name:
+                pass  # continue with same file
+            else:
+                self.instruction_file.close()  # make new py file for commands
+
         self.mpl = mpl
         self.xmin, self.xmax, self.ymin, self.ymax = \
              float(xmin), float(xmax), float(ymin), float(ymax)
@@ -55,18 +96,18 @@ import matplotlib.pyplot as mpl
 
 mpl.ion()  # for interactive drawing
 """)
-        self._make_axes(new_figure=True)
-
-        manager = self.mpl.get_current_fig_manager()
-        manager.window.wm_geometry(geometry)
-
-
         # Default properties
         self.set_linecolor('red')
         self.set_linewidth(2)
         self.set_linestyle('solid')
         self.set_filled_curves()  # no filling
+        self.set_fontsize(14)
         self.arrow_head_width = 0.2*self.xrange/16
+
+        self._make_axes(new_figure=True)
+
+        manager = self.mpl.get_current_fig_manager()
+        manager.window.wm_geometry(geometry)
 
     def _make_axes(self, new_figure=False):
         if new_figure:
@@ -150,6 +191,13 @@ ax.set_aspect('equal')
                          MatplotlibDraw.line_colors[color]
             self.fillpattern = pattern
 
+    def set_fontsize(self, fontsize=18):
+        """
+        Method for setting a common fontsize for text, unless
+        individually specified when calling ``text``.
+        """
+        self.fontsize = fontsize
+
     def set_grid(self, on=False):
         self.mpl.grid(on)
         if self.instruction_file:
@@ -168,6 +216,11 @@ ax.set_aspect('equal')
                    linecolor=None, arrow=None,
                    fillcolor=None, fillpattern=None):
         """Define a curve with coordinates x and y (arrays)."""
+        #if not self.allow_screen_graphics:
+        #    mpl.ioff()
+        #else:
+        #    mpl.ion()
+
         self.xdata = np.asarray(x, dtype=np.float)
         self.ydata = np.asarray(y, dtype=np.float)
 
@@ -228,7 +281,9 @@ ax.set_aspect('equal')
             self.mpl.title(title)
             if self.instruction_file:
                 self.instruction_file.write('mpl.title("%s")\n' % title)
+
         self.mpl.draw()
+
         if self.instruction_file:
             self.instruction_file.write('mpl.draw()\n')
 
@@ -238,15 +293,26 @@ ax.set_aspect('equal')
         if self.instruction_file:
             self.instruction_file.write('mpl.savefig("%s")\n' % filename)
 
-    def text(self, text, position, alignment='center', fontsize=18,
+    def text(self, text, position, alignment='center', fontsize=0,
              arrow_tip=None):
         """
-        Write text at a position (centered, left, right - according
-        to the alignment string). position is a 2-tuple.
-        arrow+tip != None draws an arrow from the text to a point
+        Write `text` string at a position (centered, left, right - according
+        to the `alignment` string). `position` is a point in the coordinate
+        system.
+        If ``arrow+tip != None``, an arrow is drawn from the text to a point
         (on a curve, for instance). The arrow_tip argument is then
         the (x,y) coordinates for the arrow tip.
+        fontsize=0 indicates use of the default font as set by
+        ``set_fontsize``.
         """
+        if fontsize == 0:
+            if hasattr(self, 'fontsize'):
+                fontsize = self.fontsize
+            else:
+                raise AttributeError(
+                    'No self.fontsize attribute to be used when text(...)\n'
+                    'is called with fontsize=0. Call set_fontsize method.')
+
         x, y = position
         if arrow_tip is None:
             self.ax.text(x, y, text, horizontalalignment=alignment,

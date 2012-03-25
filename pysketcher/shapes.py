@@ -1,5 +1,6 @@
 from numpy import linspace, sin, cos, pi, array, asarray, ndarray, sqrt, abs
 import pprint, copy, glob, os
+from math import radians
 
 from MatplotlibDraw import MatplotlibDraw
 drawing_tool = MatplotlibDraw()
@@ -16,6 +17,16 @@ def point(x, y, check_inside=False):
             print msg
 
     return array((x, y), dtype=float)
+
+def unit_vec(x, y=None):
+    """Return unit vector of the vector (x,y), or just x if x is a 2D point."""
+    if isinstance(x, (float,int)) and isinstance(y, (float,int)):
+        x = point(x, y)
+    elif isinstance(x, (list,tuple,ndarray)) and y is None:
+        return arr2D(x)/sqrt(x[0]**2 + x[1]**2)
+    else:
+        raise TypeError('x=%s is %s, must be float or ndarray 2D point' %
+                        (x, type(x)))
 
 def arr2D(x, check_inside=False):
     if isinstance(x, (tuple,list,ndarray)):
@@ -171,29 +182,38 @@ class Shape:
                                      self.__class__.__name__)
 
         is_dict = True if isinstance(self.shapes, dict) else False
-        for shape in self.shapes:
+        for k, shape in enumerate(self.shapes):
             if is_dict:
+                shape_name = shape
                 shape = self.shapes[shape]
+            else:
+                shape_name = k
             if not isinstance(shape, Shape):
                 if isinstance(shape, dict):
                     raise TypeError(
-                        'class %s has a shapes attribute that is just\n'
+                        'class %s has a self.shapes member "%s" that is just\n'
                         'a plain dictionary,\n%s\n'
                         'Did you mean to embed this dict in a Compose\n'
-                        'object?' % (self.__class__.__name__,
+                        'object?' % (self.__class__.__name__, shape_name,
                         str(shape)))
                 elif isinstance(shape, (list,tuple)):
                     raise TypeError(
-                        'class %s has a shapes attribute containing\n'
+                        'class %s has self.shapes member "%s" containing\n'
                         'a %s object %s,\n'
                         'Did you mean to embed this list in a Compose\n'
-                        'object?' % (self.__class__.__name__,
+                        'object?' % (self.__class__.__name__, shape_name,
                         type(shape), str(shape)))
+                elif shape is None:
+                    raise TypeError(
+                        'class %s has a self.shapes member "%s" that is None.\n'
+                        'Some variable name is wrong, or some function\n'
+                        'did not return the right object...' \
+                        % (self.__class__.__name__, shape_name))
                 else:
                     raise TypeError(
-                        'class %s has a shapes attribute %s which is not'
-                        'a Shape objects\n%s' %
-                        (self.__class__.__name__, type(shape),
+                        'class %s has a self.shapes member "%s" of %s which '
+                        'is not a Shape object\n%s' %
+                        (self.__class__.__name__, shape_name, type(shape),
                          pprint.pformat(self.shapes)))
 
             getattr(shape, func)(*args, **kwargs)
@@ -224,6 +244,31 @@ class Shape:
     def scale(self, factor):
         self._for_all_shapes('scale', factor)
         return self
+
+    def deform(self, displacement_function):
+        self._for_all_shapes('deform', displacement_function)
+        return self
+
+    def minmax_coordinates(self, minmax=None):
+        if minmax is None:
+            minmax = {'xmin': 1E+20, 'xmax': -1E+20,
+                      'ymin': 1E+20, 'ymax': -1E+20}
+        self._for_all_shapes('minmax_coordinates', minmax)
+        return minmax
+
+    def traverse_hierarchy(self, indent=0):
+        if not isinstance(self.shapes, dict):
+            raise TypeError('traverse_hierarchy works only with dict self.shape')
+        space = ' '*indent
+        print space, '%s.shapes has entries' % \
+              self.__class__.__name__,\
+              str(list(self.shapes.keys()))[1:-1]
+        for shape in self.shapes:
+            print space,
+            print 'call self.shapes["%s"].traverse_hierarchy' % \
+                  shape
+            name = self.shapes[shape].traverse_hierarchy(indent+4)
+        return name
 
     def set_linestyle(self, style):
         styles = ('solid', 'dashed', 'dashdot', 'dotted')
@@ -397,6 +442,27 @@ class Curve(Shape):
         self.y += vec[1]
         return self
 
+    def deform(self, displacement_function):
+        """Displace all coordinates according to displacement_function(x,y)."""
+        for i in range(len(self.x)):
+            self.x[i], self.y[i] = displacement_function(self.x[i], self.y[i])
+        return self
+
+    def minmax_coordinates(self, minmax=None):
+        if minmax is None:
+            minmax = {'xmin': [], 'xmax': [], 'ymin': [], 'ymax': []}
+        minmax['xmin'] = min(self.x.min(), minmax['xmin'])
+        minmax['xmax'] = max(self.x.max(), minmax['xmax'])
+        minmax['ymin'] = min(self.y.min(), minmax['ymin'])
+        minmax['ymax'] = max(self.y.max(), minmax['ymax'])
+        return minmax
+
+    def traverse_hierarchy(self, indent=0):
+        space = ' '*indent
+        print space, 'reached "bottom" object %s' % \
+              self.__class__.__name__
+        return len(space)/4  # level
+
     def set_linecolor(self, color):
         self.linecolor = color
         return self
@@ -488,6 +554,27 @@ class Point(Shape):
         self.y += vec[1]
         return self
 
+    def deform(self, displacement_function):
+        """Displace coordinates according to displacement_function(x,y)."""
+        for i in range(len(self.x)):
+            self.x, self.y = displacement_function(self.x, self.y)
+        return self
+
+    def minmax_coordinates(self, minmax=None):
+        if minmax is None:
+            minmax = {'xmin': [], 'xmax': [], 'ymin': [], 'ymax': []}
+        minmax['xmin'] = min(self.x, minmax['xmin'])
+        minmax['xmax'] = max(self.x, minmax['xmax'])
+        minmax['ymin'] = min(self.y, minmax['ymin'])
+        minmax['ymax'] = max(self.y, minmax['ymax'])
+        return minmax
+
+    def traverse_hierarchy(self, indent=0):
+        space = ' '*indent
+        print space, 'reached "bottom" object %s' % \
+              self.__class__.__name__
+        return len(space)/4  # level
+
     def show_hierarchy(self, indent=0, format='std'):
         s = '%s at (%g,%g)' % (self.__class__.__name__, self.x, self.y)
         if format == 'dict':
@@ -525,7 +612,20 @@ class Rectangle(Shape):
              p[1] + height, p[1]]
         self.shapes = {'rectangle': Curve(x,y)}
 
-        # Geometric features
+        # Dimensions
+        dims = {
+            'width': Distance_wText(p + point(0, -height/5.),
+                                    p + point(width, -height/5.),
+                                    'width'),
+            'height': Distance_wText(p + point(width + width/5., 0),
+                                     p + point(width + width/5., height),
+                                   'height'),
+            'lower_left_corner': Text_wArrow('lower_left_corner',
+                                             p - point(width/5., height/5.), p)
+            }
+        self.dimensions = dims
+
+        # Stored geometric features
         self.lower_left  = lower_left_corner
         self.lower_right = lower_left_corner + point(width,0)
         self.upper_left  = lower_left_corner + point(0,height)
@@ -553,7 +653,12 @@ class Triangle(Shape):
         y = [p1[1], p2[1], p3[1], p1[1]]
         self.shapes = {'triangle': Curve(x,y)}
 
-        # Geometric features
+        # Dimensions
+        self.dimensions = {'p1': Text('p1', p1),
+                           'p2': Text('p2', p2),
+                           'p3': Text('p3', p3)}
+
+        # Stored geometric features
         self.p1 = arr2D(p1)
         self.p2 = arr2D(p2)
         self.p3 = arr2D(p3)
@@ -565,6 +670,10 @@ class Line(Shape):
         x = [start[0], end[0]]
         y = [start[1], end[1]]
         self.shapes = {'line': Curve(x, y)}
+
+        # Stored geometric features
+        self.start = start
+        self.end = end
 
     def compute_formulas(self):
         x, y = self.shapes['line'].x, self.shapes['line'].y
@@ -652,11 +761,12 @@ class Arc(Shape):
                  start_angle, arc_angle,
                  resolution=180):
         is_sequence(center)
-        self.center = center
+
+        # Must record some parameters for __call__
+        self.center = arr2D(center)
         self.radius = radius
-        self.start_angle = start_angle*pi/180  # radians
-        self.arc_angle = arc_angle*pi/180
-        self.resolution = resolution
+        self.start_angle = radians(start_angle)
+        self.arc_angle = radians(arc_angle)
 
         t = linspace(self.start_angle,
                      self.start_angle + self.arc_angle,
@@ -667,12 +777,20 @@ class Arc(Shape):
         y = y0 + R*sin(t)
         self.shapes = {'arc': Curve(x, y)}
 
+        # Cannot set dimensions (Arc_wText recurses into this
+        # constructor forever). Set in test_Arc instead.
+
+        # Stored geometric features
+        self.mid_point = self(arc_angle/2)
+        self.start = point(x[0], y[0])
+        self.end = point(x[-1], y[-1])
+
     def __call__(self, theta):
         """
         Return (x,y) point at start_angle + theta.
         Not valid after translation, rotation, or scaling.
         """
-        theta = theta*pi/180
+        theta = radians(theta)
         t = self.start_angle + theta
         x0 = self.center[0]
         y0 = self.center[1]
@@ -767,12 +885,46 @@ class Wall(Shape):
         wall.set_filled_curves(color='white', pattern=pattern)
         x = [x1[-1]] + x2[-1::-1].tolist() + [x1[0]]
         y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
-        white_eraser = Curve(x, y)
-        white_eraser.set_linecolor('white')
-        from collections import OrderedDict
-        self.shapes = OrderedDict()
+        self.shapes = {'wall': wall}
+
+        #white_eraser = Curve(x, y)
+        #white_eraser.set_linecolor('white')
+        #from collections import OrderedDict
+        #self.shapes = OrderedDict()
+        #self.shapes['wall'] = wall
+        #self.shapes['eraser'] = white_eraser
+
+class Wall2(Shape):
+    def __init__(self, x, y, thickness, pattern='/'):
+        is_sequence(x, y, length=len(x))
+        if isinstance(x[0], (tuple,list,ndarray)):
+            # x is list of curves
+            x1 = concatenate(x)
+        else:
+            x1 = asarray(x, float)
+        if isinstance(y[0], (tuple,list,ndarray)):
+            # x is list of curves
+            y = concatenate(y)
+        else:
+            y1 = asarray(y, float)
+
+        # Displaced curve (according to thickness)
+        for i in range(1, len(x1)-1):
+            # Find tangent and normal
+            # set x2, y2 in distance thickness in normal dir
+            # check sign of thickness
+            pass
+        x2 = x1
+        y2 = y1 + thickness
+        # Combine x1,y1 with x2,y2 reversed
+        from numpy import concatenate
+        x = concatenate((x1, x2[-1::-1]))
+        y = concatenate((y1, y2[-1::-1]))
+        wall = Curve(x, y)
+        wall.set_filled_curves(color='white', pattern=pattern)
+        x = [x1[-1]] + x2[-1::-1].tolist() + [x1[0]]
+        y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
         self.shapes['wall'] = wall
-        self.shapes['eraser'] = white_eraser
 
 
 class VelocityProfile(Shape):
@@ -837,7 +989,7 @@ class Arrow3(Shape):
         main = Line(self.bottom, top)
         #head_length = self.length/8.0
         head_length = drawing_tool.xrange/50.
-        head_degrees = 30*pi/180
+        head_degrees = radians(30)
         head_left_pt = (top[0] - head_length*sin(head_degrees),
                         top[1] - head_length*cos(head_degrees))
         head_right_pt = (top[0] + head_length*sin(head_degrees),
@@ -857,11 +1009,12 @@ class Arrow3(Shape):
 class Text(Point):
     """
     Place `text` at the (x,y) point `position`, with the given
-    fontsize. The text is centered around `position` if `alignment` is
+    fontsize (0 indicates that the default fontsize set in drawing_tool
+    is to be used). The text is centered around `position` if `alignment` is
     'center'; if 'left', the text starts at `position`, and if
     'right', the right and of the text is located at `position`.
     """
-    def __init__(self, text, position, alignment='center', fontsize=14):
+    def __init__(self, text, position, alignment='center', fontsize=0):
         is_sequence(position)
         is_sequence(position, length=2, can_be_None=True)
         self.text = text
@@ -888,7 +1041,7 @@ class Text_wArrow(Text):
     to some point `arrow_tip`.
     """
     def __init__(self, text, position, arrow_tip,
-                 alignment='center', fontsize=14):
+                 alignment='center', fontsize=0):
         is_sequence(arrow_tip, length=2, can_be_None=True)
         is_sequence(position)
         self.arrow_tip = arrow_tip
@@ -909,7 +1062,7 @@ class Text_wArrow(Text):
 
 class Axis(Shape):
     def __init__(self, start, length, label, below=True,
-                 rotation_angle=0, fontsize=14,
+                 rotation_angle=0, fontsize=0,
                  label_spacing=1./30):
         """
         Draw axis from start with `length` to the right
@@ -919,7 +1072,7 @@ class Axis(Shape):
         ``rotation_angle=0``. To make a standard y axis, call with
         ``below=False`` and ``rotation_angle=90``.
         A tilted axis can also be drawn.
-        The `label_spacing` denotes the space between the symbol
+        The `label_spacing` denotes the space between the label
         and the arrow tip as a fraction of the length of the plot
         in x direction.
         """
@@ -930,32 +1083,49 @@ class Axis(Shape):
         if below:
             spacing = - spacing
         label_pos = [start[0] + length, start[1] + spacing]
-        symbol = Text(label, position=label_pos, fontsize=fontsize)
-        symbol.rotate(rotation_angle, start)
-        self.shapes = {'arrow': arrow, 'symbol': symbol}
+        label = Text(label, position=label_pos, fontsize=fontsize)
+        label.rotate(rotation_angle, start)
+        self.shapes = {'arrow': arrow, 'label': label}
 
 class Gravity(Axis):
     """Downward-pointing gravity arrow with the symbol g."""
-    def __init__(self, start, length):
+    def __init__(self, start, length, fontsize=0):
         Axis.__init__(self, start, length, '$g$', below=False,
-                      rotation_angle=-90, label_spacing=1./30)
+                      rotation_angle=-90, label_spacing=1./30,
+                      fontsize=fontsize)
+        self.shapes['arrow'].set_linecolor('black')
 
 class Force(Arrow1):
     """
-    Indication of a force by an arrow and a symbol.
-    Draw an arrow, starting at `start` and with the tip at `end`.
-    The symbol is placed at the `start` point, in a distance
-    `symbol_spacing` times the width of the total plotting area.
+    Indication of a force by an arrow and a text (symbol).  Draw an
+    arrow, starting at `start` and with the tip at `end`.  The symbol
+    is placed at `text_pos`, which can be 'start', 'end' or the
+    coordinates of a point. If 'end' or 'start', the text is placed at
+    a distance `text_spacing` times the width of the total plotting
+    area away from the specified point.
     """
-    def __init__(self, start, end, symbol, symbol_spacing=1./60,
-                 fontsize=14):
+    def __init__(self, start, end, text, text_spacing=1./60,
+                 fontsize=0, text_pos='start'):
         Arrow1.__init__(self, start, end, style='->')
-        spacing = drawing_tool.xrange*symbol_spacing
+        spacing = drawing_tool.xrange*text_spacing
         start, end = arr2D(start), arr2D(end)
-        spacing_dir = start - end
-        spacing_dir /= sqrt(spacing_dir[0]**2 + spacing_dir[1]**2)
-        symbol_pos = start + spacing*spacing_dir
-        self.shapes['symbol'] = Text(symbol, symbol_pos, fontsize=fontsize)
+        downward = (end-start)[1] < 0 # needs more space to text if downward
+        if downward:
+            spacing *= 1.5
+
+        if isinstance(text_pos, str):
+            if text_pos == 'start':
+                spacing_dir = unit_vec(start - end)
+                text_pos = start + spacing*spacing_dir
+            elif text_pos == 'end':
+                spacing_dir = unit_vec(end - start)
+                text_pos = end + spacing*spacing_dir
+        self.shapes['text'] = Text(text, text_pos, fontsize=fontsize)
+
+        # Stored geometric features
+        self.start = start
+        self.end = end
+        self.symbol_location = text_pos
 
 
 class Distance_wText(Shape):
@@ -968,7 +1138,7 @@ class Distance_wText(Shape):
     horizontal-like arrows, the text is placed the same distance
     above, but aligned 'center' by default (when `alignment` is None).
     """
-    def __init__(self, start, end, text, fontsize=14, text_spacing=1/60.,
+    def __init__(self, start, end, text, fontsize=0, text_spacing=1/60.,
                  alignment=None, text_pos='mid'):
         start = arr2D(start)
         end   = arr2D(end)
@@ -991,8 +1161,7 @@ class Distance_wText(Shape):
 
         tangent = end - start
         # Tangeng goes always to the left and upward
-        normal = arr2D([tangent[1], -tangent[0]])/\
-                       sqrt(tangent[0]**2 + tangent[1]**2)
+        normal = unit_vec([tangent[1], -tangent[0]])
         mid = 0.5*(start + end)  # midpoint of start-end line
 
         if text_pos == 'mid':
@@ -1009,18 +1178,17 @@ class Distance_wText(Shape):
         self.shapes = {'arrow': arrow, 'text': text}
 
 
-class ArcSymbol(Shape):
-    def __init__(self, symbol, center, radius,
-                 start_angle, arc_angle, fontsize=14,
-                 resolution=180, symbol_spacing=1/60.):
+class Arc_wText(Shape):
+    def __init__(self, text, center, radius,
+                 start_angle, arc_angle, fontsize=0,
+                 resolution=180, text_spacing=1/60.):
         arc = Arc(center, radius, start_angle, arc_angle,
                   resolution)
         mid = arr2D(arc(arc_angle/2.))
-        normal = mid - arr2D(center)
-        normal = normal/sqrt(normal[0]**2 + normal[1]**2)
-        symbol_pos = mid + normal*drawing_tool.xrange*symbol_spacing
+        normal = unit_vec(mid - arr2D(center))
+        text_pos = mid + normal*drawing_tool.xrange*text_spacing
         self.shapes = {'arc': arc,
-                       'symbol': Text(symbol, symbol_pos, fontsize=fontsize)}
+                       'text': Text(text, text_pos, fontsize=fontsize)}
 
 class Compose(Shape):
     def __init__(self, shapes):
@@ -1054,7 +1222,7 @@ class SimplySupportedBeam(Shape):
                            'size': Distance_wText((P2[0], P2[1]-size),
                                                   (P2[0]+size, P2[1]-size),
                                                   'size')}
-        # Geometric features
+        # Stored geometric features
         self.mid_support = point(P2[0] + size/2., P2[1])  # lower center
         self.top = pos
 
@@ -1084,19 +1252,19 @@ class ConstantBeamLoad(Shape):
             x = lower_left_corner[0] + i*dx
             self.shapes['arrow%d' % i] = Arrow1((x, y_top), (x, y_tip))
 
-        # Geometric features
+        # Stored geometric features
         self.mid_top = arr2D(lower_left_corner) + point(width/2., height)
 
-class Moment(ArcSymbol):
-    def __init__(self, symbol, center, radius,
+class Moment(Arc_wText):
+    def __init__(self, text, center, radius,
                  left=True, counter_clockwise=True,
-                 fontsize=14, symbol_spacing=1/60.):
+                 fontsize=0, text_spacing=1/60.):
         style = '->' if counter_clockwise else '<-'
         start_angle = 90 if left else -90
-        ArcSymbol.__init__(self, symbol, center, radius,
+        Arc_wText.__init__(self, text, center, radius,
                            start_angle=start_angle,
                            arc_angle=180, fontsize=fontsize,
-                           symbol_spacing=symbol_spacing,
+                           text_spacing=text_spacing,
                            resolution=180)
         self.shapes['arc'].set_arrow(style)
 
@@ -1143,11 +1311,18 @@ class SineWave(Shape):
 
 
 
-class Spring1(Shape):
+
+class Spring(Shape):
     """
-    Specify a vertical spring, starting at `start`, with
-    given vertical `length`. In the middle of the
-    spring there are `num_teeth` saw teeth.
+    Specify a *vertical* spring, starting at `start` and with `length`
+    as total vertical length. In the middle of the spring there are
+    `num_windings` circular windings to illustrate the spring. If
+    `teeth` is true, the spring windings look like saw teeth,
+    otherwise the windings are smooth circles.  The parameters `width`
+    (total width of spring) and `bar_length` (length of first and last
+    bar are given sensible default values if they are not specified
+    (these parameters can later be extracted as attributes, see table
+    below).
 
     Recorded geometric features:
 
@@ -1156,83 +1331,16 @@ class Spring1(Shape):
     ==================== =============================================
     start                Start point of spring.
     end                  End point of spring.
-    ==================== =============================================
-    """
-    spring_fraction = 1./2  # fraction of total length occupied by spring
-
-    def __init__(self, start, length, tooth_width, num_teeth=8):
-        B = start
-        n = num_teeth - 1  # n counts teeth intervals
-        # n must be odd:
-        if n % 2 == 0:
-            n = n+1
-        L = length
-        w = tooth_width
-
-        # [0, x, L-x, L], f = (L-2*x)/L
-        # x = L*(1-f)/2.
-        shapes = {}
-        f = Spring1.spring_fraction
-        t = f*L/n      # distance between teeth
-        s = L*(1-f)/2. # start of spring
-        P0 = (B[0], B[1]+s)
-        shapes['line start'] = Line(B, P0)
-        T1 = P0
-        T2 = (T1[0] + w, T1[1] + t/2.0)
-        k = 1
-        shapes['line%d' % k] = Line(T1,T2)
-        T1 = T2[:]  # copy
-        for i in range(2*n-3):
-            T2 = (T1[0] + (-1)**(i+1)*2*w, T1[1] + t/2.0)
-            k += 1
-            shapes['line%d' % k] = Line(T1, T2)
-            T1 = (T2[0], T2[1])
-        T2 = (T1[0] + w, T1[1] + t/2.0)
-        k += 1
-        shapes['line%d' % k] = Line(T1,T2)
-
-        P2 = (B[0], B[1]+L)
-        shapes['line end'] = Line(T2, P2)
-        self.shapes = shapes
-
-        # Dimensions
-        start = Text_wArrow('start', (B[0]-1.5*w,B[1]-1.5*w), B)
-        width = Distance_wText((B[0]-w, B[1]-3.5*w), (B[0]+w, B[1]-3.5*w),
-                               'tooth_width')
-        length = Distance_wText((B[0]+3*w, B[1]), (B[0]+3*w, B[1]+L),
-                                'length')
-        num_teeth = Text_wArrow('num_teeth',
-                                (B[0]+2*w,P2[1]+w),
-                                (B[0]+1.2*w, B[1]+L/2.))
-        dims = {'start': start, 'width': width, 'length': length,
-                'num_teeth': num_teeth}
-        self.dimensions = dims
-
-        # Geometric features
-        self.start = B
-        self.end = point(B[0], B[1]+L)
-
-
-class Spring2(Shape):
-    """
-    Specify a vertical spring, starting at `start` and,
-    with vertical `length`. In the middle of the
-    spring there are `num_windings` circular windings to illustrate
-    the spring.
-
-    Recorded geometric features:
-
-    ==================== =============================================
-    Attribute            Description
-    ==================== =============================================
-    start                Start point of spring.
-    end                  End point of spring.
+    width                Total width of spring.
+    bar_length           Length of first (and last) bar part.
+    num_windings         Number of windings.
     ==================== =============================================
 
     """
     spring_fraction = 1./2  # fraction of total length occupied by spring
 
-    def __init__(self, start, length, width, num_windings=11):
+    def __init__(self, start, length, width=None, bar_length=None,
+                 num_windings=11, teeth=False):
         B = start
         n = num_windings - 1  # n counts teeth intervals
         if n <= 6:
@@ -1241,23 +1349,47 @@ class Spring2(Shape):
         if n % 2 == 0:
             n = n+1
         L = length
-        w = width
+        if width is None:
+            w = L/10.
+        else:
+            w = width/2.0
+        s = bar_length
 
         # [0, x, L-x, L], f = (L-2*x)/L
         # x = L*(1-f)/2.
+
+        # B: start point
+        # w: half-width
+        # L: total length
+        # s: length of first bar
+        # P0: start of dashpot (B[0]+s)
+        # P1: end of dashpot
+        # P2: end point
+
         shapes = {}
-        f = Spring2.spring_fraction
-        t = f*L/n      # must be better worked out
-        s = L*(1-f)/2. # start of spring
-        P0 = (B[0], B[1]+s)
-        shapes['line start'] = Line(B, P0)
-        q = linspace(0, n, n*180 + 1)
+        if s is None:
+            f = Spring.spring_fraction
+            s = L*(1-f)/2. # start of spring
+
+        P0 = (B[0], B[1] + s)
+        P1 = (B[0], B[1] + L-s)
+        P2 = (B[0], B[1] + L)
+
+        if s >= L:
+            raise ValueError('length of first bar: %g is larger than total length: %g' % (s, L))
+
+        shapes['bar1'] = Line(B, P0)
+        spring_length = L - 2*s
+        t = spring_length/n  # height increment per winding
+        if teeth:
+            resolution = 4
+        else:
+            resolution = 90
+        q = linspace(0, n, n*resolution + 1)
         x = P0[0] + w*sin(2*pi*q)
         y = P0[1] + q*t
         shapes['sprial'] = Curve(x, y)
-        P1 = (B[0], L-s)
-        P2 = (B[0], B[1]+L)
-        shapes['line end'] = Line(P1,P2)
+        shapes['bar2'] = Line(P1,P2)
         self.shapes = shapes
 
         # Dimensions
@@ -1269,28 +1401,39 @@ class Spring2(Shape):
         num_windings = Text_wArrow('num_windings',
                                    (B[0]+2*w,P2[1]+w),
                                    (B[0]+1.2*w, B[1]+L/2.))
-        spring_length = Distance_wText((B[0]-2*w, P0[1]), (B[0]-2*w, P1[1]),
-                                       'Spring2.spring_fraction*length',
-                                       text_pos=(B[0]-6*w, P2[1]+2.5*w))
+        blength1 = Distance_wText((B[0]-2*w, B[1]), (B[0]-2*w, P0[1]),
+                                       'bar_length',
+                                       text_pos=(P0[0]-7*w, P0[1]+w))
+        blength2 = Distance_wText((P1[0]-2*w, P1[1]), (P2[0]-2*w, P2[1]),
+                                       'bar_length',
+                                       text_pos=(P2[0]-7*w, P2[1]+w))
         dims = {'start': start, 'width': width, 'length': length,
-                'num_windings': num_windings, 'spring_length': spring_length}
+                'num_windings': num_windings, 'bar_length1': blength1,
+                'bar_length2': blength2}
         self.dimensions = dims
 
-        # Geometric features
+        # Stored geometric features
         self.start = B
-        self.end = point(B[0], B[1]+L)
+        self.end = P2
+        self.bar_length = s
+        self.width = 2*w
+        self.num_windings = num_windings
+
 
 class Dashpot(Shape):
     """
-    Specify a vertical dashpot of height `total_length` and
-    `start` as bottom/starting point. The rectangular dashpot part
-    has width `width` and height `dashpot_length`.  If the latter
-    is not given (None), it becomes
-    ``Dashpot.dashpot_fraction*total_length`` (default
-    ``total_length/2```).  The piston position inside the
-    rectangular dashpot, can be specified as `piston_pos`, (the
-    default value None places it at 1/3 from the bottom of the
-    dashpot).
+    Specify a vertical dashpot of height `total_length` and `start` as
+    bottom/starting point. The first bar part has length `bar_length`.
+    Then comes the dashpot as a rectangular construction of total
+    width `width` and height `dashpot_length`. The position of the
+    piston inside the rectangular dashpot area is given by
+    `piston_pos`, which is the distance between the first bar (given
+    by `bar_length`) to the piston.
+
+    If some of `dashpot_length`, `bar_length`, `width` or `piston_pos`
+    are not given, suitable default values are calculated. Their
+    values can be extracted as attributes given in the table of
+    recorded geometric features.
 
     Recorded geometric features:
 
@@ -1299,49 +1442,77 @@ class Dashpot(Shape):
     ==================== =============================================
     start                Start point of dashpot.
     end                  End point of dashpot.
+    bar_length           Length of first bar (from start to spring).
+    dashpot_length       Length of dashpot middle part.
+    width                Total width of dashpot.
+    piston_pos           Position of piston in dashpot, relative to
+                         start[1] + bar_length.
     ==================== =============================================
     """
-    dashpot_fraction = 1./2
-    piston_gap_fraction = 1./6
-    piston_thickness_fraction = 1./8
+    dashpot_fraction = 1./2            # fraction of total_length
+    piston_gap_fraction = 1./6         # fraction of width
+    piston_thickness_fraction = 1./8   # fraction of dashplot_length
 
-    def __init__(self, start, total_length,
-                 width, dashpot_length=None, piston_pos=None):
+    def __init__(self, start, total_length, bar_length=None,
+                 width=None, dashpot_length=None, piston_pos=None):
         B = start
         L = total_length
-        w = width
+        if width is None:
+            w = L/10.    # total width 1/5 of length
+        else:
+            w = width/2.0
+        s = bar_length
 
         # [0, x, L-x, L], f = (L-2*x)/L
         # x = L*(1-f)/2.
 
+        # B: start point
+        # w: half-width
+        # L: total length
+        # s: length of first bar
+        # P0: start of dashpot (B[0]+s)
+        # P1: end of dashpot
+        # P2: end point
+
         shapes = {}
         # dashpot is P0-P1 in y and width 2*w
         if dashpot_length is None:
-            f = Dashpot.dashpot_fraction
-            s = L*(1-f)/2. # start of dashpot
+            if s is None:
+                f = Dashpot.dashpot_fraction
+                s = L*(1-f)/2. # default
             P1 = (B[0], B[1]+L-s)
             dashpot_length = f*L
         else:
-            f = 1./2
-            s = f*dashpot_length # start of dashpot
+            if s is None:
+                f = 1./2  # the bar lengths are taken as f*dashpot_length
+                s = f*dashpot_length # default
             P1 = (B[0], B[1]+s+dashpot_length)
         P0 = (B[0], B[1]+s)
         P2 = (B[0], B[1]+L)
+
+        if P2[1] > P1[1] > P0[1]:
+            pass # ok
+        else:
+            raise ValueError('Dashpot has inconsistent dimensions! start: %g, dashpot begin: %g, dashpot end: %g, very end: %g' % (B[1], P0[1], P1[1], P2[1]))
+
         shapes['line start'] = Line(B, P0)
 
         shapes['pot'] = Curve([P1[0]-w, P0[0]-w, P0[0]+w, P1[0]+w],
                               [P1[1], P0[1], P0[1], P1[1]])
-        piston_thickness = f*L*Dashpot.piston_thickness_fraction
+        piston_thickness = dashpot_length*Dashpot.piston_thickness_fraction
         if piston_pos is None:
-            piston_pos = P0[1] + 1/3.*dashpot_length
-        if piston_pos < P0[1]:
-            piston_pos = P0[1]
-        if piston_pos > P1[1]-piston_thickness:
-            piston_pos = P1[1]-piston_thickness
+            piston_pos = 1/3.*dashpot_length
+        if piston_pos < 0:
+            piston_pos = 0
+        elif piston_pos > dashpot_length:
+            piston_pos = dashpot_length - piston_tickness
+
+        abs_piston_pos = P0[1] + piston_pos
+
         gap = w*Dashpot.piston_gap_fraction
         shapes['piston'] = Compose(
-            {'line': Line(P2, (B[0], piston_pos + piston_thickness)),
-             'rectangle': Rectangle((B[0] - w+gap, piston_pos),
+            {'line': Line(P2, (B[0], abs_piston_pos + piston_thickness)),
+             'rectangle': Rectangle((B[0] - w+gap, abs_piston_pos),
                                     2*w-2*gap, piston_thickness),
              })
         shapes['piston']['rectangle'].set_filled_curves(pattern='X')
@@ -1353,20 +1524,26 @@ class Dashpot(Shape):
         width = Distance_wText((B[0]-w, B[1]-3.5*w), (B[0]+w, B[1]-3.5*w),
                                'width')
         dplength = Distance_wText((B[0]+2*w, P0[1]), (B[0]+2*w, P1[1]),
-                               'dashpot_length', text_pos=(B[0]+w,B[1]-w))
+                                  'dashpot_length', text_pos=(B[0]+w,B[1]-w))
+        blength = Distance_wText((B[0]-2*w, B[1]), (B[0]-2*w, P0[1]),
+                                 'bar_length', text_pos=(B[0]-6*w,P0[1]-w))
         tlength = Distance_wText((B[0]+4*w, B[1]), (B[0]+4*w, B[1]+L),
                                  'total_length',
                                  text_pos=(B[0]+4.5*w, B[1]+L-2*w))
-        line = Line((B[0]+w, piston_pos), (B[0]+7*w, piston_pos)).set_linestyle('dotted').set_linecolor('black').set_linewidth(1)
-        pp = Text('piston_pos', (B[0]+7*w, piston_pos), alignment='left')
+        line = Line((B[0]+w, abs_piston_pos), (B[0]+7*w, abs_piston_pos)).set_linestyle('dashed').set_linecolor('black').set_linewidth(1)
+        pp = Text('abs_piston_pos', (B[0]+7*w, abs_piston_pos), alignment='left')
         dims = {'start': start, 'width': width, 'dashpot_length': dplength,
-                'total_length': tlength,
-                'piston_pos': Compose({'line': line, 'text': pp})}
+                'bar_length': blength, 'total_length': tlength,
+                'abs_piston_pos': Compose({'line': line, 'text': pp})}
         self.dimensions = dims
 
-        # Geometric features
+        # Stored geometric features
         self.start = B
         self.end = point(B[0], B[1]+L)
+        self.bar_length = s
+        self.dashpot_length = dashpot_length
+        self.piston_pos = abs_piston_pos
+        self.width = 2*w
 
 # COMPOSITE types:
 # MassSpringForce: Line(horizontal), Spring, Rectangle, Arrow/Line(w/arrow)
@@ -1374,7 +1551,8 @@ class Dashpot(Shape):
 # Maybe extra dict: self.name['mass'] = Rectangle object - YES!
 
 def test_Axis():
-    set_coordinate_system(xmin=0, xmax=15, ymin=0, ymax=15, axis=True)
+    set_coordinate_system(xmin=0, xmax=15, ymin=0, ymax=15, axis=True,
+                          instruction_file='tmp_Axis.py')
     x_axis = Axis((7.5,2), 5, 'x', rotation_angle=0)
     y_axis = Axis((7.5,2), 5, 'y', below=False, rotation_angle=90)
     system = Compose({'x axis': x_axis, 'y axis': y_axis})
@@ -1393,7 +1571,7 @@ def test_Distance_wText():
     drawing_tool.set_coordinate_system(xmin=0, xmax=10,
                                        ymin=0, ymax=6,
                                        axis=True,
-                                       instruction_file='tmp_mpl.py')
+                                       instruction_file='tmp_Distance_wText.py')
     #drawing_tool.arrow_head_width = 0.1
     fontsize=14
     t = r'$ 2\pi R^2 $'
@@ -1418,55 +1596,149 @@ def test_Distance_wText():
     drawing_tool.display('Distance_wText and text positioning')
     drawing_tool.savefig('tmp_Distance_wText.png')
 
-def test_Springs():
-    L = 5
-    W = 2
+def test_Rectangle():
+    L = 3.0
+    W = 4.0
+
+    drawing_tool.set_coordinate_system(xmin=0, xmax=2*W,
+                                       ymin=-L/2, ymax=2*L,
+                                       axis=True,
+                                       instruction_file='tmp_Rectangle.py')
+    drawing_tool.set_linecolor('blue')
+    drawing_tool.set_grid(True)
+
+    xpos = W/2
+    r = Rectangle(lower_left_corner=(xpos,0), width=W, height=L)
+    r.draw()
+    r.draw_dimensions()
+    drawing_tool.display('Rectangle')
+    drawing_tool.savefig('tmp_Rectangle.png')
+
+
+def test_Triangle():
+    L = 3.0
+    W = 4.0
+
+    drawing_tool.set_coordinate_system(xmin=0, xmax=2*W,
+                                       ymin=-L/2, ymax=1.2*L,
+                                       axis=True,
+                                       instruction_file='tmp_Triangle.py')
+    drawing_tool.set_linecolor('blue')
+    drawing_tool.set_grid(True)
+
+    xpos = 1
+    t = Triangle(p1=(W/2,0), p2=(3*W/2,W/2), p3=(4*W/5.,L))
+    t.draw()
+    t.draw_dimensions()
+    drawing_tool.display('Triangle')
+    drawing_tool.savefig('tmp_Triangle.png')
+
+def test_Arc():
+    L = 4.0
+    W = 4.0
+
+    drawing_tool.set_coordinate_system(xmin=-W/2, xmax=W,
+                                       ymin=-L/2, ymax=1.5*L,
+                                       axis=True,
+                                       instruction_file='tmp_Arc.py')
+    drawing_tool.set_linecolor('blue')
+    drawing_tool.set_grid(True)
+
+    center = point(0,0)
+    radius = L/2
+    start_angle = 60
+    arc_angle = 45
+    a = Arc(center, radius, start_angle, arc_angle)
+    a.set_arrow('->')
+    a.draw()
+
+    R1 = 1.25*radius
+    R2 = 1.5*radius
+    R = 2*radius
+    a.dimensions = {
+        'start_angle': Arc_wText(
+            'start_angle', center, R1, start_angle=0,
+            arc_angle=start_angle, text_spacing=1/10.),
+        'arc_angle': Arc_wText(
+            'arc_angle', center, R2, start_angle=start_angle,
+            arc_angle=arc_angle, text_spacing=1/20.),
+        'r=0': Line(center, center +
+                    point(R*cos(radians(start_angle)),
+                          R*sin(radians(start_angle)))),
+        'r=start_angle': Line(center, center +
+                              point(R*cos(radians(start_angle+arc_angle)),
+                                    R*sin(radians(start_angle+arc_angle)))),
+        'r=start+arc_angle':  Line(center, center +
+                                   point(R, 0)).set_linestyle('dashed'),
+        'radius': Distance_wText(center, a(0), 'radius', text_spacing=1/40.),
+        'center': Text('center', center-point(radius/10., radius/10.)),
+        }
+    for dimension in a.dimensions:
+        dim = a.dimensions[dimension]
+        dim.set_linestyle('dashed')
+        dim.set_linewidth(1)
+        dim.set_linecolor('black')
+
+    a.draw_dimensions()
+    drawing_tool.display('Arc')
+    drawing_tool.savefig('tmp_Arc.png')
+
+
+def test_Spring():
+    L = 5.0
+    W = 2.0
 
     drawing_tool.set_coordinate_system(xmin=0, xmax=7*W,
-                                       ymin=-2, ymax=L+2,
-                                       axis=True)
+                                       ymin=-L/2, ymax=1.5*L,
+                                       axis=True,
+                                       instruction_file='tmp_Spring.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     xpos = W
-    s1 = Spring1((W,0), L, W/4.)
+    s1 = Spring((W,0), L, teeth=True)
+    s1_title = Text('Default Spring', s1.end + point(0,L/10))
     s1.draw()
-    s1.draw_dimensions()
+    s1_title.draw()
+    #s1.draw_dimensions()
     xpos += 3*W
-    s2 = Spring2((xpos,0), L, W/4.)
+    s2 = Spring(start=(xpos,0), length=L, width=W/2.,
+                bar_length=L/6., teeth=False)
     s2.draw()
     s2.draw_dimensions()
-    drawing_tool.display('Spring1 (left) and Spring2 (right)')
-    drawing_tool.savefig('tmp_springs.png')
+    drawing_tool.display('Spring')
+    drawing_tool.savefig('tmp_Spring.png')
 
 
 def test_Dashpot():
-    L = 5
-    W = 2
+    L = 5.0
+    W = 2.0
+    xpos = 0
 
-    drawing_tool.set_coordinate_system(xmin=xpos, xmax=xpos+5*W,
-                                       ymin=-2, ymax=L+2,
-                                       axis=True)
+    drawing_tool.set_coordinate_system(xmin=xpos, xmax=xpos+6*W,
+                                       ymin=-L/2, ymax=1.5*L,
+                                       axis=True,
+                                       instruction_file='tmp_Dashpot.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     # Default (simple) dashpot
-    xpos = 2
-    d1 = Dashpot(start=(xpos,0), total_length=L, width=W/4.)
-    text1 = Text('Dashpot (default)', (xpos, 1.1*L))
+    xpos = 1.5
+    d1 = Dashpot(start=(xpos,0), total_length=L)
+    d1_title = Text('Dashpot (default)', d1.end + point(0,L/10))
     d1.draw()
-    text1.draw()
+    d1_title.draw()
 
-    # Dashpot for animation with fixed dashpot_length and
+    # Dashpot for animation with fixed bar_length, dashpot_length and
     # prescribed piston_pos
-    xpos += 1.5*W
-    d2 = Dashpot(start=(xpos,0), total_length=L+1.5, width=W/4.,
-                 dashpot_length=2.5, piston_pos=L/2.)
+    xpos += 2.5*W
+    d2 = Dashpot(start=(xpos,0), total_length=1.2*L, width=W/2,
+                 bar_length=W, dashpot_length=L/2, piston_pos=2*W)
     d2.draw()
     d2.draw_dimensions()
 
     drawing_tool.display('Dashpot')
-    drawing_tool.savefig('tmp_dashpot.png')
+    drawing_tool.savefig('tmp_Dashpot.png')
 
 
 def _test1():

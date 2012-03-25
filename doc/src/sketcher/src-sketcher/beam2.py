@@ -12,8 +12,8 @@ drawing_tool.set_coordinate_system(xmin=-3, xmax=xpos+1.5*L,
                                    axis=False)
 drawing_tool.set_linecolor('blue')
 #drawing_tool.set_grid(True)
+drawing_tool.set_fontsize(16)
 
-fontsize=16
 A = point(xpos,ypos)
 
 beam = Rectangle(A, L, H)
@@ -25,47 +25,41 @@ clamped = Rectangle(A - point(h,0) - point(0,2*h), h,
 
 load = ConstantBeamLoad(A + point(0,H), L, H)
 load.set_linewidth(1).set_linecolor('black')
-load_text = Text('$w$', load.mid_top + point(0,h/2.), fontsize=fontsize)
+load_text = Text('$w$', load.mid_top + point(0,h/2.))
 
 B = A + point(a, 0)
 C = B + point(b, 0)
 
-support = SimplySupportedBeam(B, h)
+support = SimplySupportedBeam(B, h)  # pt B is simply supported
 
 
-R1 = Force(A-point(0,2*H), A, '$R_1$',
-           fontsize=fontsize, symbol_spacing=1./20)
+R1 = Force(A-point(0,2*H), A, '$R_1$', text_spacing=1./20)
 R1.set_linewidth(3).set_linecolor('black')
 R2 = Force(B-point(0,2*H), support.mid_support,
-           '$R_2$', fontsize=fontsize, symbol_spacing=1./20)
+           '$R_2$', text_spacing=1./20)
 R2.set_linewidth(3).set_linecolor('black')
 M1 = Moment('$M_1$', center=A + point(-H, H/2), radius=H/2,
-            left=True, fontsize=fontsize,
-            symbol_spacing=1/30.)
+            left=True, text_spacing=1/30.)
 M1.set_linecolor('black')
 
 ab_level = point(0, 3*h)
-a_dim = Distance_wText(A - ab_level, B - ab_level, '$a$',
-                       fontsize=fontsize)
-b_dim = Distance_wText(B - ab_level, C - ab_level, '$b$',
-                       fontsize=fontsize)
+a_dim = Distance_wText(A - ab_level, B - ab_level, '$a$')
+b_dim = Distance_wText(B - ab_level, C - ab_level, '$b$')
 dims = Compose({'a': a_dim, 'b': b_dim})
 symbols = Compose({'R1': R1, 'R2': R2, 'M1': M1,
                    'w': load, 'w text': load_text,
-                   'A': Text('$A$', A+point(h/2,-h/2)),
+                   'A': Text('$A$', A+point(0.7*h,-0.9*h)),
                    'B': Text('$B$', support.mid_support-point(h,0)),
                    'C': Text('$C$', C+point(h/2,-h/2))})
 
-x_axis = Axis(A + point(L+h, H/2), 2*H, '$x$',
-              fontsize=fontsize).set_linecolor('black')
+x_axis = Axis(A + point(L+h, H/2), 2*H, '$x$',).set_linecolor('black')
 y_axis = Axis(A + point(0,H/2), 3.5*H, '$y$',
-              below=False, rotation_angle=90,
-              fontsize=fontsize).set_linecolor('black')
+              below=False, rotation_angle=90).set_linecolor('black')
 axes = Compose({'x axis': x_axis, 'y axis': y_axis})
 
 annotations = Compose({'dims': dims, 'symbols': symbols,
                 'axes': axes})
-fig = Compose({'main': main, 'support': support,
+fig = Compose({'beam': beam, 'support': support,
                'clamped end': clamped, 'load': load})
 
 def deflection(x, a, b, w):
