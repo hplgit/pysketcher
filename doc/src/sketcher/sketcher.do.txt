@@ -405,11 +405,10 @@ two crossing lines, see Figure ref{sketcher:fig:vehicle1}.
 The construction of the wheels will now involve a circle
 and two lines:
 !bc pycod
-wheel1 = Composition({'wheel':
-                  Circle(center=(w_1, R), radius=R),
-                  'cross':
-                  Composition({'cross1': Line((w_1,0),   (w_1,2*R)),
-                           'cross2': Line((w_1-R,R), (w_1+R,R))})})
+wheel1 = Composition({
+    'wheel': Circle(center=(w_1, R), radius=R),
+    'cross': Composition({'cross1': Line((w_1,0),   (w_1,2*R)),
+                          'cross2': Line((w_1-R,R), (w_1+R,R))})})
 wheel2 = wheel1.copy()
 wheel2.translate((L,0))
 !ec
@@ -419,8 +418,9 @@ the copied objects.
 
 FIGURE: [figs-sketcher/vehicle1.png, width=400] Wheels with spokes to show rotation. label{sketcher:fig:vehicle1}
 
-The `move_vehicle` function need to displace all the objects in the
-entire vehicle and also rotate the crosses in the wheels.
+The `move_vehicle` function now needs to displace all the objects in the
+entire vehicle and also rotate the `cross1` and `cross2`
+objects in both wheels.
 The rotation angle follows from the fact that the arc length
 of a rolling wheel equals the displacement of the center of
 the wheel, leading to a rotation angle
@@ -471,14 +471,15 @@ The complete example is found in the file
 The advantages with making figures this way through programming,
 rather than using interactive drawing programs, are numerous.  For
 example, the objects are parameterized by variables so that various
-dimensions can easily be changed.  Subparts of the figure can change
-color, linetype, filling or other properties through a single function
+dimensions can easily be changed.  Subparts of the figure, possible
+involving a lot of figure objects, can change
+color, linetype, filling or other properties through a *single* function
 call.  Subparts of the figure can be rotated, translated, or scaled.
-Subparts of the figure can be copied and moved to other parts of the
+Subparts of the figure can also be copied and moved to other parts of the
 drawing area. However, the single most important feature is probably
 the ability to make animations governed by mathematical formulas or
 data coming from physics simulations of the problem sketched in
-the drawing.
+the drawing, as very simplistically shown in the example above.
 
 
 ===== Example of Classes for Geometric Objects =====
@@ -717,241 +718,101 @@ class Curve(Shape):
 
 === Compound Geometric Objects ===
 
-The sample classes so far has managed to define the geometric shape
-through just one `Curve` object.[[[
+The simple classes `Line`, `Arc`, and `Circle` could define the geometric
+shape through just one `Curve` object. More complicated figure elements
+are built from instances of various subclasses of `Shape`. Classes used
+for professional drawings soon get quite complex in composition and
+have a lot of geometric details, so here we prefer to make a very simple
+composition: the already drawy vehicle from
+Figure refref{sketcher:fig:vehicle0}.
+That is, instead of composing the drawing in a Python code we make a class
+`Vehicle0` for doing the same thing, and derive it from `Shape`.
 
-
-
-Some objects in a figure will be associated with a point and not
-a curve. Therefore, it is natural to introduce a `Point` class
-as superclass for such objects:
+The `Shape` hierarchy is found in the `pysketcher` package, so to use these
+classes or derive a new one, we need to import `pysketcher`. The constructor
+of clas `Vehicle0` performs approximately the same statements as
+in the example program we developed for making the drawing in
+Figure refref{sketcher:fig:vehicle0}.
 !bc pycod
-class Point(Shape):
-    def __init__(self, x, y):
-        self.x, self.y = x, y
+class Vehicle0(Shape):
+    def __init__(self, w_1, R, L, H):
+        wheel1 = Circle(center=(w_1, R), radius=R)
+        wheel2 = wheel1.copy()
+        wheel2.translate((L,0))
+
+        under = Rectangle(lower_left_corner=(w_1-2*R, 2*R),
+                          width=2*R + L + 2*R, height=H)
+        over  = Rectangle(lower_left_corner=(w_1, 2*R + H),
+                          width=2.5*R, height=1.25*H)
+
+        wheels = Composition(
+            {'wheel1': wheel1, 'wheel2': wheel2})
+        body = Composition(
+            {'under': under, 'over': over})
+
+        vehicle = Composition({'wheels': wheels, 'body': body})
+        xmax = w_1 + 2*L + 3*R
+        ground = Wall(x=[R, xmax], y=[0, 0], thickness=-0.3*R)
+
+        self.shapes = {'vehicle': vehicle, 'ground': ground}
 !ec
-A candidate for subclass is a text located at a given point:
+
+Any subclass of `Shape` *must* define the `shapes` attribute, otherwise
+the inherited `draw` method (and a lot of other methods too) will
+not work.
+
+The painting of the vehicle could be offered by a method:
 !bc pycod
-class Text(Point):
-    def __init__(self, text, position, alignment='center', fontsize=18):
-        self.text = text
-        self.alignment, self.fontsize = alignment, fontsize
-        is_sequence(position, length=2, can_be_None=True)
-        Point.__init__(self, position[0], position[1])
-        #no need for self.shapes here
+    def colorful(self):
+        wheels = self.shapes['vehicle']['wheels']
+        wheels.set_filled_curves('blue')
+        wheels.set_linewidth(6)
+        wheels.set_linecolor('black')
+        under = self.shapes['vehicle']['body']['under']
+        under.set_filled_curves('red')
+        over = self.shapes['vehicle']['body']['over']
+        over.set_filled_curves(pattern='/')
+        over.set_linewidth(14)
 !ec
 
-[[[[[[[[[[[
-
-Class `Line` is a subclass of `Shape` and
-represents the simplest shape: a stright line between two points.
-Class `Rectangle` is another subclass of `Shape`, implementing the
-functionality needed to specify the four lines of a rectangle.
-Class `Circle` can be yet another subclass of `Shape`, or
-we may have a class `Arc` and let `Circle` be a subclass
-of `Arc` since a circle is an arc of 360 degrees.
-Class `Wheel`
-is also subclass of `Shape`, but it contains
-naturally two `Circle` instances for the inner and outer circles,
-plus a set of `Line` instances
-going from the inner to the outer circles.
-
-The discussion in the previous paragraph shows that a subclass in
-the `Shape` hierarchy typically contains a list of
-other subclass instances, *or* the shape is a primitive, such as a line,
-circle, or rectangle, where the geometry is defined through a set of
-$(x,y)$ coordinates rather than through other `Shape` instances.
-It turns out that the implementation is simplest if we introduce
-a class `Curve` for holding a primitive shape defined by
-$(x,y)$ coordinates. Then all other subclasses of `Shape` can
-have a list `shapes` holding the various instances of subclasses of
-`Shape` needed to
-build up the geometric object. The `shapes`
-attribute in class `Circle` will contain
-one `Curve` instance for holding the coordinates along the circle,
-while the `shapes` attribute in class `Wheel` contains
-two `Circle` instances and a number of `Line` instances.
-Figures ref{fig:oo:Rectangle:fig} and ref{fig:oo:Wheel:fig}
-display two UML drawings of the `shapes` class hierarchy where we
-can get a view of how `Rectangle` and `Wheel` relate to other classes:
-the darkest arrows represent is-a relationship while the lighter arrows
-represent has-a relationship.
-
-
-All instances in the `Shape` hierarchy must have a `draw` method.
-The `draw` method in class `Curve` plots the $(x,y)$ coordinates
-as a curve, while the `draw` method in all other classes simply
-draws all the shapes that make up the particular figure of the class:
-!bc cod
-for shape in self.shapes:
-    shape.draw()
+The usage of the class is simple: after having set up an appropriate
+coordinate system a s previously shown, we can do
+!bc pycod
+vehicle = Vehicle0(w_1, R, L, H)
+vehicle.draw()
+drawing_tool.display()
 !ec
-
-
-\begin{figure}
-  \centerline{\psfig{figure=figs/lumpy_Rectangle_shapes_hier.ps,width=0.5\linewidth}}
-  \caption{ label{fig:oo:Rectangle:fig}
-  UML diagram of parts of the `shapes` hierarchy. Classes `Rectangle`
-  and `Curve` are subclasses of `Shape`. The darkest arrow with
-  the biggest arrowhead indicates inheritance and is-a
-  relationship: `Rectangle` and `Curve` are both also `Shape`.
-  The lighter arrow
-  indicates {has-a}  relationship:
-  `Rectangle` has a `Curve`, and a `Curve` has a
-  `NumPyArray`.
-  }
-\end{figure}
-
-\begin{figure}
-  \centerline{\psfig{figure=figs/lumpy_Wheel_shapes_hier.ps,width=0.7\linewidth}}
-  \caption{ label{fig:oo:Wheel:fig}
-  This is a variant of Figure ref{fig:oo:Rectangle:fig} where we
-  display how class `Wheel` relates to other classes in the
-  `shapes` hierarchy.
-  `Wheel` is a `Shape`, like `Arc`, `Line`, and `Curve`,
-  but `Wheel` contains `Circle` and `Line` objects,
-  while the `Circle` and `Line` objects have a `Curve`, which has a
-  `NumPyArray`. We also see that `Circle` is a subclass of `Arc`.
-  }
-\end{figure}
-
-
-
-===== The Drawing Tool =====
-We have in Chapter ref{ch:plot} introduced the Easyviz tool for
-plotting graphs. This tool is quite well suited for drawing
-geometric shapes defined in terms of curves, but when drawing shapes
-we often want to skip ticmarks on the axis, labeling of the curves and
-axis, and perform other adjustments. Instead of using Easyviz, which
-aims at function plotting, we
-have decided to use a plotting tool directly and fine-tune the few
-commands we need for drawing shapes.
-
-A simple plotting tool for shapes is based on Gnuplot and implemented in
-class `GnuplotDraw` in the file `GnuplotDraw.py`.
-This class has the following user interface:
-!bc cod
-class GnuplotDraw:
-    def __init__(self, xmin, xmax, ymin, ymax):
-        """Define the drawing area [xmin,xmax]x[ymin,ymax]."""
-
-    def define_curve(self, x, y):
-        """Define a curve with coordinates x and y (arrays)."""
-
-    def erase(self):
-        """Erase the current figure."""
-
-    def display(self):
-        """Display the figure."""
-
-    def hardcopy(self, name):
-        """Save figure in PNG file name.png."""
-
-    def set_linecolor(self, color):
-        """Change the color of lines."""
-
-    def set_linewidth(self, width):
-        """Change the line width (int, starts at 1)."""
-
-    def filled_curves(self, on=True):
-        """Fill area inside curves with current line color."""
+The color from Figure ref{sketcher:fig:vehicle0:v2} is realized by
+!bc pycod
+drawing_tool.erase()
+vehicle.colorful()
+vehicle.draw()
+drawing_tool.display()
 !ec
-One can easily make a similar class with an identical interface that
-applies another plotting package than Gnuplot to create the drawings.
-In particular, encapsulating the drawing actions in such a class makes
-it trivial to change the drawing program in the future.
-The program pieces that apply a drawing tool like `GnuplotDraw`
-remain the same. This is an important strategy to follow, especially
-when developing larger software systems.
+A complete code defining and using class `Vehicle0` is found in the file
+# #ifdef PRIMER_BOOK
+`vehicle2.py`.
+# #else
+"`vehicle2.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle2.py".
+# #endif
 
+The `pysketcher` package contains a wide range of classes for various
+geometrical objects, particularly those that are frequently used in
+drawings of mechanical systems.
 
-===== Implementation of Shape Classes =====
-label{sec:oo:shape:impl}
+======= Adding Functionality via Recursion =======
 
-Our superclass `Shape` can naturally hold a coordinate system
-specification, i.e., the rectangle in which other shapes can be drawn.
-This area is fixed for all shapes, so the associated variables should
-be static and the method for setting them should also be static
-(see Chapter ref{sec:class:static} for static attributes and methods).
-It is also natural that class `Shape` holds access to a drawing
-tool, in our case a `GnuplotDraw` instance. This object
-is also static.
-However, it can be an advantage to mirror the static attributes and methods
-as global variables and functions in the `shapes` modules.
-Users not familiar with static class items can drop the `Shape`
-prefix and just use plain module variables and functions. This is what
-we do in the application examples.
+The really powerful feature of our class hierarchy is that we can add
+much functionality to the superclass `Shape` and to the "bottom" classe
+`Curve`, and all other classes for all types of geometrical shapes
+immediately get the new functionality. To explain the idea we first have
+to look at the `draw` method, which all classes in the `Shape`
+hierarchy must have. The inner workings of the `draw` method explain
+the secrets of how a series of other useful operations on figures
+can be implemented.
 
-Class `Shape` defines an imporant method, `draw`, which
-just calls the `draw` method for all subshapes that build up the
-current shape.
+[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
 
-Here is a brief view of class `Shape`\footnote{We have
-for simplicity omitted
-the static attributes
-and methods. These can be viewed in the `shapes.py` file.}:
-!bc cod
-class Shape:
-    def __init__(self):
-        self.shapes = self.subshapes()
-        if isinstance(self.shapes, Shape):
-            self.shapes = [self.shapes]  # turn to list
-
-    def subshapes(self):
-        """Define self.shapes as list of Shape instances."""
-        raise NotImplementedError(self.__class__.__name__)
-
-    def draw(self):
-        for shape in self.shapes:
-            shape.draw()
-!ec
-In class `Shape` we require the `shapes` attribute to be a
-list, but if the `subshape` method in subclasses returns just one
-instance, this is automatically wrapped in a list in the constructor.
-
-
-First we implement the special case class `Curve`, which does not
-have subshapes but instead $(x,y)$ coordinates for a curve:
-!bc cod
-class Curve(Shape):
-    """General (x,y) curve with coordintes."""
-    def __init__(self, x, y):
-        self.x, self.y = x, y
-        # Turn to Numerical Python arrays
-        self.x = asarray(self.x, float)
-        self.y = asarray(self.y, float)
-        Shape.__init__(self)
-
-    def subshapes(self):
-        pass # geometry defined in constructor
-!ec
-# In Python, `Curve` does not need to be a subclass of `Shape`.
-# It could in fact be natural to remove the `subshapes` method and
-# the inheritance from `Shape`. In other languages where all
-# elements in `self.shapes` need to be instances of classes in the
-# `Shape` hierarchy, because all list elements must have a fixed
-# and specified type, `Curve` must be a subclass of `Shape`.
-
-The simplest ordinary `Shape` class is `Line`:
-!bc cod
-class Line(Shape):
-    def __init__(self, start, stop):
-        self.start, self.stop = start, stop
-        Shape.__init__(self)
-
-    def subshapes(self):
-        x = [self.start[0], self.stop[0]]
-        y = [self.start[1], self.stop[1]]
-        return Curve(x,y)
-!ec
-The code in this class works with `start` and `stop` as
-tuples, lists, or arrays of length
-two, holding the end points of the line.
-The underlying `Curve` object needs only these two end points.
-
-A rectangle is represented by a slightly more complicated class, having the
-lower left corner, the width, and the height of the rectangle as
-attributes:
 !bc cod
 class Rectangle(Shape):
     def __init__(self, lower_left_corner, width, height):
