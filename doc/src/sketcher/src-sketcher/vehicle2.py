@@ -42,6 +42,10 @@ def _test():
     vehicle = Vehicle0(w_1, R, L, H)
     vehicle.draw()
     drawing_tool.display()
+    print vehicle
+    vehicle.graphviz_dot('Vehicle0', classname=False)
+    vehicle.recurse('vehicle')
+
 
     drawing_tool.erase()
     vehicle.colorful()

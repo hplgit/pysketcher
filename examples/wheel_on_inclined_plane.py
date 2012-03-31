@@ -1,9 +1,4 @@
-import sys, os
-sys.path.insert(0, os.path.join(os.pardir, 'pysketcher'))
 from shapes import *
-
-print dir()
-print 'drawin_tool' in dir()
 
 def inclined_plane():
     theta = 30.
@@ -49,7 +44,7 @@ def inclined_plane():
     hole.set_linecolor('blue')
     hole.set_filled_curves('white')
 
-    wheel = Compose({'outer': outer_wheel, 'inner': hole})
+    wheel = Composition({'outer': outer_wheel, 'inner': hole})
 
     drawing_tool.set_linecolor('black')
     N = Force(contact - 2*r*normal_vec, contact, r'$N$', text_pos='start')
@@ -63,12 +58,12 @@ def inclined_plane():
     x_axis = Axis(start=contact+ 3*r*normal_vec, length=4*r,
                   label='$x$', rotation_angle=-theta)
 
-    body  = Compose({'wheel': wheel, 'N': N, 'mg': mg})
-    fixed = Compose({'angle': angle, 'inclined wall': wall,
-                     'wheel': wheel, 'ground': ground,
-                     'x start': x_const, 'x axis': x_axis})
+    body  = Composition({'wheel': wheel, 'N': N, 'mg': mg})
+    fixed = Composition({'angle': angle, 'inclined wall': wall,
+                         'wheel': wheel, 'ground': ground,
+                         'x start': x_const, 'x axis': x_axis})
 
-    fig = Compose({'body': body, 'fixed elements': fixed})
+    fig = Composition({'body': body, 'fixed elements': fixed})
 
     fig.draw()
     drawing_tool.savefig('tmp.png')

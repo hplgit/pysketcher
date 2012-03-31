@@ -264,11 +264,12 @@ class Shape:
         print space, '%s: %s.shapes has entries' % \
               (self.__class__.__name__, name), \
               str(list(self.shapes.keys()))[1:-1]
+
         for shape in self.shapes:
             print space,
             print 'call %s.shapes["%s"].recurse("%s", %d)' % \
                   (name, shape, shape, indent+2)
-            name = self.shapes[shape].recurse(shape, indent+2)
+            self.shapes[shape].recurse(shape, indent+2)
 
     def graphviz_dot(self, name, classname=True):
         if not isinstance(self.shapes, dict):
@@ -474,7 +475,7 @@ class Curve(Shape):
         Rotate all coordinates: `angle` is measured in degrees and
         (`x`,`y`) is the "origin" of the rotation.
         """
-        angle = angle*pi/180
+        angle = radians(angle)
         x, y = center
         c = cos(angle);  s = sin(angle)
         xnew = x + (self.x - x)*c - (self.y - y)*s
