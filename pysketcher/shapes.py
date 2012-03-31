@@ -70,8 +70,8 @@ def _is_sequence(seq, length=None,
         else:
             return True
     elif error_message:
-        raise TypeError('%s is %s; must be %s' %
-                        (str(seq), type(seq),
+        raise TypeError('%s is %s, %s; must be %s' %
+                        (str(seq), seq.__class__.__name__, type(seq),
                         ','.join([str(t)[5:-1] for t in legal_types])))
     else:
         return False
@@ -574,6 +574,34 @@ class Curve(Shape):
         return str(self)
 
 
+class Spline(Shape):
+    def __init__(self, x, y, degree=3, resolution=501):
+        from scipy.interpolate import UnivariateSpline
+        self.smooth = UnivariateSpline(x, y, s=0, k=degree)
+        xs = linspace(x[0], x[-1], resolution)
+        ys = self.smooth(xs)
+        self.shapes = {'smooth': Curve(xs, ys)}
+
+    def geometric_features(self):
+        s = self.shapes['smooth']
+        return {'start': point(s.x[0], s.y[0]),
+                'end': point(s.x[-1], s.y[-1]),
+                'interval': [s.x[0], s.x[-1]]}
+
+    def __call__(self, x):
+        return self.smooth(x)
+
+
+class SketchyFunc(Spline):
+    def __init__(self, name=None):
+        x = [1, 2,   3,   4, 5,   6]
+        y = [5, 3.5, 3.8, 3, 2.5, 2.4]
+        Spline.__init__(self, x, y)
+        self.shapes['smooth'].set_linecolor('black')
+        if name is not None:
+            self.shapes['name'] = Text(name, self.geometric_features()['start'] + point(0,0.1))
+
+
 class Point(Shape):
     """A point (x,y) which can be rotated, translated, and scaled."""
     def __init__(self, x, y):
@@ -733,7 +761,7 @@ class Triangle(Shape):
 
 class Line(Shape):
     def __init__(self, start, end):
-        is_sequence(start, end)
+        is_sequence(start, end, length=2)
         x = [start[0], end[0]]
         y = [start[1], end[1]]
         self.shapes = {'line': Curve(x, y)}
@@ -801,6 +829,20 @@ class Line(Shape):
             raise ValueError(
                 'Line.__call__(x=%s, y=%s) not meaningful' % \
                 (x, y))
+
+    def new_interval(self, x=None, y=None):
+        """Redefine current Line to cover interval in x or y."""
+        if x is not None:
+            is_sequence(x, length=2)
+            xL, xR = x
+            new_line = Line((xL, self(x=xL)), (xR, self(x=xR)))
+        elif y is not None:
+            is_sequence(y, length=2)
+            yL, yR = y
+            new_line = Line((xL, self(y=xL)), (xR, self(y=xR)))
+        self.shapes['line'] = new_line['line']
+        return self
+
 
 # First implementation of class Circle
 class Circle(Shape):
