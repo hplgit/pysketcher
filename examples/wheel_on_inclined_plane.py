@@ -6,23 +6,26 @@ print dir()
 print 'drawin_tool' in dir()
 
 def inclined_plane():
-    drawing_tool.set_coordinate_system(xmin=0, xmax=15,
-                                       ymin=-1, ymax=10,
+    theta = 30.
+    L = 10.
+    a = 1.
+    xmin = 0
+    ymin = -3
+
+    drawing_tool.set_coordinate_system(xmin=xmin, xmax=xmin+1.5*L,
+                                       ymin=ymin, ymax=ymin+L,
                                        #axis=True,
                                        )
     #drawing_tool.set_grid(True)
     fontsize = 18
     from math import tan, radians
 
-    theta = 30.
-    L = 10.
-    a = 1.
     B = point(a+L, 0)
     A = point(a, tan(radians(theta))*L)
 
-    wall = CurveWall(x=[A[0], B[0]], y=[A[1], B[1]], thickness=-0.25)
+    wall = Wall(x=[A[0], B[0]], y=[A[1], B[1]], thickness=-0.25)
 
-    angle = ArcSymbol(r'$\theta$', center=B, radius=3,
+    angle = Arc_wText(r'$\theta$', center=B, radius=3,
                       start_angle=180-theta, arc_angle=theta,
                       fontsize=fontsize)
     angle.set_linecolor('black')
@@ -49,30 +52,23 @@ def inclined_plane():
     wheel = Compose({'outer': outer_wheel, 'inner': hole})
 
     drawing_tool.set_linecolor('black')
-    N_arr = Arrow3((4,2), 2)
-    N_arr.rotate(-theta, (4,4))
-    N_text = Text('$N$', (3.7,2.6), fontsize=fontsize)
-    N_force = Compose({'arrow': N_arr, 'symbol': N_text})
-
-    g = Gravity(c, 2.5)
+    N = Force(contact - 2*r*normal_vec, contact, r'$N$', text_pos='start')
+              #text_alignment='left')
+    mg = Gravity(c, 3*r, text='$Mg$')
 
     x_const = Line(contact, contact + point(0,4))
     x_const.set_linestyle('dotted')
     x_const.rotate(-theta, contact)
-    x_axis_start = point(5.5, x_const(x=5.5))
-    x_axis = Axis(x_axis_start, 2*L/5, '$x$', rotation_angle=-theta)
+    # or x_const = Line(contact-2*r*normal_vec, contact+4*r*normal_vec).set_linestyle('dotted')
+    x_axis = Axis(start=contact+ 3*r*normal_vec, length=4*r,
+                  label='$x$', rotation_angle=-theta)
 
-    body  = Compose({'wheel': wheel, 'N force': N_force, 'g': g})
+    body  = Compose({'wheel': wheel, 'N': N, 'mg': mg})
     fixed = Compose({'angle': angle, 'inclined wall': wall,
                      'wheel': wheel, 'ground': ground,
                      'x start': x_const, 'x axis': x_axis})
 
     fig = Compose({'body': body, 'fixed elements': fixed})
-
-    #import copy
-    #body2 = copy.deepcopy(body)
-    #body2.translate(3, 0)
-    #body2.draw()
 
     fig.draw()
     drawing_tool.savefig('tmp.png')
@@ -80,13 +76,24 @@ def inclined_plane():
     import time
     time.sleep(1)
     tangent_vec = point(normal_vec[1], -normal_vec[0])
-    print 'loop'
-    for t in range(7):
-        drawing_tool.erase()
-        body.translate(0.2*t*tangent_vec)
-        time.sleep(0.5)
-        fig.draw()
-        drawing_tool.display()
+
+    import numpy
+    time_points = numpy.linspace(0, 1, 31)
+
+    def position(t):
+        """Position of center point of wheel."""
+        return c + 7*t**2*tangent_vec
+
+    def move(t, fig, dt=None):
+        x = position(t)
+        x0 = position(t-dt)
+        displacement = x - x0
+        fig['body'].translate(displacement)
+
+
+    animate(fig, time_points, move, pause_per_frame=0,
+            dt=time_points[1]-time_points[0])
+
     print str(fig)
     print repr(fig)
 

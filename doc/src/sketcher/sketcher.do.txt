@@ -1,37 +1,48 @@
 
-Implementing a drawing program provides a very good example on the usefulness
-of object-oriented programming. In the following we shall develop
-the simpler parts of a relatively small and compact drawing program
-for making sketches of the type shown in Figure ref{sketcher:fig1}.
-This sketch is made up many individual elements....
+Implementing a drawing program provides a very good example on the
+usefulness of object-oriented programming. In the following we shall
+develop the simpler parts of a relatively small and compact drawing
+program for making sketches of the type shown in
+Figure ref{sketcher:fig:inclinedplane}. This is a typical principal sketch of
+a physics problem, here involving a rolling wheel on an inclined
+plane.  This sketch is made up many individual elements: a rectangle
+filled with a pattern (the inclined plane), a hollow circle with color
+(the wheel), arrows with label (the $N$ and $Mg$ forces, and the $x$
+axis), an angle with symbol $\theta$, and a dashed line indicating the
+starting location of the wheel.  Drawing software and plotting
+programs can produce such figures quite easily in principle, but the
+amount of details the user needs to control with the mouse can be
+substantial. Software more tailored to producing sketches of this type
+would work with more convenient abstractions, such as circle, wall,
+angle, force arrow, axis, and so forth.
 
-FIGURE: [figs-sketcher/...png, width=500]
+FIGURE: [figs-sketcher/wheel_on_inclined_plane.png, width=500] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
 
 Classes are very suitable for implementing the various components that
 build up a sketch and their functionality. In particular, we shall
 demonstrate that as soon some classes are established, more are easily
-added, and enhanced functionality for all the classes is also easy to
-implement in common, generic code that can be shared by all classes.
+added. Enhanced functionality for all the classes is also easy to
+implement in common, generic code that can immediately be shared by all
+present and future classes.
 
 ===== Using the Object Collection =====
 
-Before we dive into implementation details, let us first decide upon
-the interface we want to take advantage of to make sketches of the type in
-Figure ref{sketcher:fig1}. We start with a significantly simpler
-example as depicted in Figure ref{sketcher:fig:vehicle0}.
-This toy sketch consists of several elements: two circles, two
-rectangles, and a "ground" element.
+We start by demonstrating a convenient user interface for making
+sketches of the type in Figure ref{sketcher:fig1}. However, it is more
+appropriate to start with a significantly simpler example as depicted
+in Figure ref{sketcher:fig:vehicle0}.  This toy sketch consists of
+several elements: two circles, two rectangles, and a "ground" element.
 
 FIGURE: [figs-sketcher/vehicle0_dim.png, width=400] Sketch of a simple figure. label{sketcher:fig:vehicle0}
 
 === Basic Drawing ===
 
 A typical program creating these five elements is shown next.
-The drawing package is named `pysketcher` so it is natural that we
-must import tools from `pysketcher`. The first task is always to
+After importing the `pysketcher` package, the first task is always to
 define a coordinate system. Some graphics operations are done with
 a helper object called `drawing_tool` (imported from `pysketcher`).
-With the drawing area in place we can make the first `Circle` object:
+With the drawing area in place we can make the first `Circle` object
+in an intuitive fashion:
 !bc pycod
 from pysketcher import *
 
@@ -44,10 +55,14 @@ drawing_tool.set_coordinate_system(xmin=0, xmax=w_1 + 2*L + 3*R,
 
 wheel1 = Circle(center=(w_1, R), radius=R)
 !ec
+By using symbols for characteristic lengths in the drawing, rather than
+absolute lengths, it is easier
+to change dimensions later.
+
 To translate the geometric information about the `wheel1` object to
 instructions for the plotting engine (in this case Matplotlib), one calls the
 `wheel1.draw()`. To display all drawn objects, one issues
-`drawing_tool.display()`. The steps are hence:
+`drawing_tool.display()`. The typical steps are hence:
 !bc pycod
 wheel1 = Circle(center=(w_1, R), radius=R)
 wheel1.draw()
@@ -78,28 +93,32 @@ Instead of calling the `draw` method of every object, we can
 group objects and call `draw`, or perform other operations, for
 the whole group. For example, we may collect the two wheels
 in a `wheels` group and the `over` and `under` rectangles
-in a vehicle `body` group. The whole vehicle is a composition
-of the `wheels` and `body` groups. The codes goes like
+in a `body` group. The whole vehicle is a composition
+of its `wheels` and `body` groups. The codes goes like
 !bc pycod
-wheels = Compose({'wheel1': wheel1, 'wheel2': wheel2})
-body = Compose({'under': under, 'over': over})
+wheels  = Composition({'wheel1': wheel1, 'wheel2': wheel2})
+body    = Composition({'under': under, 'over': over})
 
-vehicle = Compose({'wheels': wheels, 'body': body})
+vehicle = Composition({'wheels': wheels, 'body': body})
 !ec
 
 The ground is illustrated by an object of type `Wall`,
-mostly used to indicate walls in sketches of physical systems.
-A `Wall` takes the `x` and `y` coordinates of some curve
-and a `thickness` parameter and creates a "thick" curve filled
+mostly used to indicate walls in sketches of mechanical systems.
+A `Wall` takes the `x` and `y` coordinates of some curve,
+and a `thickness` parameter, and creates a "thick" curve filled
 with a simple pattern. In this case the curve is just a flat
-line so the construction is simple:
+line so the construction is made of two points on the
+ground line ($(w_1-L,0)$ and $(w_1+3L,0)$):
 !bc pycod
 ground = Wall(x=[w_1 - L, w_1 + 3*L], y=[0, 0], thickness=-0.3*R)
 !ec
-We may collect all the objects in a "top" object that contains
+The negative thickness makes the pattern-filled rectangle appear below
+the defined line, otherwise it appears above.
+
+We may now collect all the objects in a "top" object that contains
 the whole figure:
 !bc pycod
-fig = Compose({'vehicle': vehicle, 'ground': ground})
+fig = Composition({'vehicle': vehicle, 'ground': ground})
 fig.draw()  # send all figures to plotting backend
 drawing_tool.display()
 drawing_tool.savefig('tmp.png')
@@ -130,13 +149,15 @@ wheel1.set_linecolor('red')
 !ec
 and so on.
 
-Geometric figures can be filled, either with a color or with a
+Geometric figures can be specified as *filled*, either with a color or with a
 special visual pattern:
 !bc
 # Set filling of all curves
-drawing_tool.set_filled_curves(color='blue', hatch='/')
+drawing_tool.set_filled_curves(color='blue', pattern='/')
+
 # Turn off filling of all curves
 drawing_tool.set_filled_curves(False)
+
 # Fill the wheel with red color
 wheel1.set_filled_curves('red')
 !ec
@@ -180,21 +201,21 @@ print fig.show_hierarchy('std')
 yielding the output
 !bc dat
 ground (Wall):
-    wall (Curve): 4 coords fillcolor='white' fillhatch='/'
-vehicle (Compose):
-    body (Compose):
+    wall (Curve): 4 coords fillcolor='white' fillpattern='/'
+vehicle (Composition):
+    body (Composition):
         over (Rectangle):
             rectangle (Curve): 5 coords
         under (Rectangle):
             rectangle (Curve): 5 coords
-    wheels (Compose):
+    wheels (Composition):
         wheel1 (Circle):
             arc (Curve): 181 coords
         wheel2 (Circle):
             arc (Curve): 181 coords
 !ec
-Here we can see the class type each object, how many
-coordinates that are involved in basic figures, and
+Here we can see the class type for each figure object, how many
+coordinates that are involved in basic figures (`Curve` objects), and
 special settings of the basic figure (fillcolor, line types, etc.).
 For example, `wheel2` is a `Circle` object consisting of an `arc`,
 which is a `Curve` object consisting of 181 coordinates (the
@@ -202,6 +223,28 @@ points needed to draw a smooth circle). The `Curve` objects are the
 only objects that really holds specific coordinates to be drawn.
 The other object types are just compositions used to group
 parts of the complete figure.
+
+One can also get a graphical overview of the hiearchy of figure objects
+that build up a particular figure `fig`.
+Just call `fig.graphviz_dot('fig')` to produce a file `fig.dot` in
+the *dot format*. This file contains relations between parent and
+child objects in the figure and can be turned into an image,
+as in Figure ref{sketcher:fig:vehicle0:hier1}, by
+running the `dot` program:
+!bc sys
+Terminal> dot -Tpng -o fig.png fig.dot
+!ec
+
+FIGURE: [figs-sketcher/vehicle0_hier1.png, width=400] Hierarchical relation between figure objects. label{sketcher:fig:vehicle0:hier1}
+
+
+The call `fig.graphviz_dot('fig', classname=True)` makes a `fig.dot` file
+where the class type of each object is also visible, see
+Figure ref{sketcher:fig:vehicle0:hier2}. The ability to write out the
+object hierarchy or view it graphically can be of great help when
+working with complex figures that involve layers of subfigures.
+
+FIGURE: [figs-sketcher/vehicle0_hier1.png, width=400] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
 
 Any of the objects can in the program be reached through their names, e.g.,
 !bc pycodc
@@ -221,10 +264,17 @@ changing properties of that part, for example, colors, line styles
 fig['vehicle']['wheels'].set_filled_curves('blue')
 fig['vehicle']['wheels'].set_linewidth(6)
 fig['vehicle']['wheels'].set_linecolor('black')
+
 fig['vehicle']['body']['under'].set_filled_curves('red')
+
 fig['vehicle']['body']['over'].set_filled_curves(pattern='/')
 fig['vehicle']['body']['over'].set_linewidth(14)
+fig['vehicle']['body']['over']['rectangle'].linewidth = 4
 !ec
+The last line accesses the `Curve` object directly, while the line above,
+accesses the `Rectangle` object which will then set the linewidth of
+its `Curve` object, and other objects if it had any.
+The result of the actions above is shown in Figure ref{sketcher:fig:vehicle0:v2}.
 
 FIGURE: [figs-sketcher/vehicle0.png, width=700] Left: Basic line-based drawing. Right: Thicker lines and filled parts. label{sketcher:fig:vehicle0:v2}
 
@@ -238,7 +288,7 @@ fake rolling by just displacing all parts of the vehicle.
 The relevant parts constitute the `fig['vehicle']` object.
 This part of the figure can be translated, rotated, and scaled.
 A translation along the ground means a translation in $x$ direction,
-say a length $4$ to the right:
+say a length $L$ to the right:
 !bc pycod
 fig['vehicle'].translate((L,0))
 !ec
@@ -248,7 +298,7 @@ drawing_tool.erase()
 fig.draw()
 drawing_tool.display()
 !ec
-Without erasing, the old position of the vehicle will remain in
+Without erasing the old position of the vehicle will remain in
 the figure so you get two vehicles. Without `fig.draw()` the
 new coordinates of the vehicle will not be communicated to
 the drawing tool, and without calling dislay the updated
@@ -260,7 +310,7 @@ to that velocity in small steps of time:
 def v(t):
     return -8*R*t*(1 - t/(2*R))
 
-animate(fig, tp, user_action)
+animate(fig, tp, action)
 !ec
 For small time steps `dt` the corresponding displacement is
 well approximated by `dt*v(t)` (we could integrate the velocity
@@ -270,7 +320,7 @@ The `animate` function takes as arguments some figure `fig`, a set of
 time points `tp`, and a user function `action`,
 and then a new figure is drawn for each time point and the user
 can through the provided `action` function modify desired parts
-of the figure. Here the `action` function will move the `vehicle`:
+of the figure. Here the `action` function will move the vehicle:
 !bc pycod
 def move_vehicle(t, fig):
     x_displacement = dt*v(t)
@@ -296,18 +346,55 @@ files = animate(fig, tp, move_vehicle, moviefiles=True,
 The `files` variable holds a string with the family of
 files constituting the frames in the movie, here
 `'tmp_frame*.png'`. Making a movie out of the individual
-frames can be done in many ways, e.g.,
+frames can be done in many ways.
+A simple approach is to make an animated GIF file with help of
+`convert`, a program in the ImageMagick software suite:
+!bc sys
+Terminal> convert -delay 20 tmp_frame*.png anim.gif
+Terminal> animate anim.gif  # play movie
+!ec
+The delay between frames governs the speed of the movie.
+The `anim.gif` file can be embedded in a web page and shown as
+a movie the page is loaded into a web browser (just insert
+`<img src="anim.gif">` in the HTML code to play the GIF animation).
+
+The tool `ffmpeg` can alternatively be used, e.g.,
+!bc sys
+Terminal> ffmpeg -i "tmp_frame_%04d.png" -b 800k -r 25 \
+          -vcodec mpeg4 -y -qmin 2 -qmax 31 anim.mpeg
+!ec
+An easy-to-use interface to movie-making tools is provided by the
+SciTools package:
 !bc pycod
 from scitools.std import movie
-movie(files, encoder='html', output_file='anim')
+
+# HTML page showing individual frames
+movie(files, encoder='html', output_file='anim.html')
+
+# Standard GIF file
+movie(files, encoder='convert', output_file='anim.gif')
+
+# AVI format
+movie('tmp_*.png', encoder='ffmpeg', fps=4,
+      output_file='anim.avi') # requires ffmpeg package
+
+# MPEG format
+movie('tmp_*.png', encoder='ffmpeg', fps=4,
+      output_file='anim2.mpeg', vodec='mpeg2video')
+# or
+movie(files, encoder='ppmtompeg', fps=24,
+      output_file='anim.mpeg')  # requires the netpbm package
 !ec
-This command makes a movie that is actually an HTML file `anim.html`,
-which can be loaded into a web browser.
-You can try this by running the present example in the file
+When difficulties with encoders and players arise, the simple
+web page for showing a movie, here `anim.html` (generated by the
+first `movie` command above), is a safe method that you always
+can rely on.
+You can try loading `anim.html` into a web browser, after first
+having run the present example in the file
 # #ifdef PRIMER_BOOK
 `vehicle0.py`.
 # #else
-"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py", or view a ready-made "movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/animation_vehicle0/anim.html".
+"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py". Alternatively, you can view a ready-made "movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/movies-sketcher/anim.html_vehicle0/anim.html".
 # #endif
 
 === Animation: Rolling the Wheels ===
@@ -318,10 +405,10 @@ two crossing lines, see Figure ref{sketcher:fig:vehicle1}.
 The construction of the wheels will now involve a circle
 and two lines:
 !bc pycod
-wheel1 = Compose({'wheel':
+wheel1 = Composition({'wheel':
                   Circle(center=(w_1, R), radius=R),
                   'cross':
-                  Compose({'cross1': Line((w_1,0),   (w_1,2*R)),
+                  Composition({'cross1': Line((w_1,0),   (w_1,2*R)),
                            'cross2': Line((w_1-R,R), (w_1+R,R))})})
 wheel2 = wheel1.copy()
 wheel2.translate((L,0))
@@ -378,7 +465,7 @@ The complete example is found in the file
 # #ifdef PRIMER_BOOK
 `vehicle1.py`.
 # #else
-"`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/animation_vehicle1/anim.html".
+"`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/movies-sketcher/anim.html_vehicle1/anim.html".
 # #endif
 
 The advantages with making figures this way through programming,

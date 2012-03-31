@@ -37,8 +37,8 @@ fig = Compose({
     'dashpot': d, 'spring': s, 'mass': M, 'left wall': left_wall,
     'ground': ground, 'wheel1': wheel1, 'wheel2': wheel2})
 
-#fig.draw()
-s.draw()
+fig.draw()
+#s.draw()
 print s
 print s.shapes['bar1']['line'].x, s.shapes['bar1']['line'].y
 print s.shapes['bar2']['line'].x, s.shapes['bar2']['line'].y

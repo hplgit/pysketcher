@@ -19,13 +19,13 @@ under = Rectangle(lower_left_corner=(w_1-2*R, 2*R),
 over  = Rectangle(lower_left_corner=(w_1, 2*R + H),
                   width=2.5*R, height=1.25*H)
 
-wheels = Compose({'wheel1': wheel1, 'wheel2': wheel2})
-body = Compose({'under': under, 'over': over})
+wheels = Composition({'wheel1': wheel1, 'wheel2': wheel2})
+body = Composition({'under': under, 'over': over})
 
-vehicle = Compose({'wheels': wheels, 'body': body})
+vehicle = Composition({'wheels': wheels, 'body': body})
 ground = Wall(x=[R, xmax], y=[0, 0], thickness=-0.3*R)
 
-fig = Compose({'vehicle': vehicle, 'ground': ground})
+fig = Composition({'vehicle': vehicle, 'ground': ground})
 fig.draw()  # send all figures to plotting backend
 
 drawing_tool.display()
@@ -44,6 +44,8 @@ drawing_tool.display()
 drawing_tool.savefig('tmp2.png')
 
 print fig
+fig.recurse('fig')
+fig.graphviz_dot('fig', False)
 
 import time
 time.sleep(1)
@@ -65,7 +67,25 @@ def move_vehicle(t, fig):
 files = animate(fig, tp, move_vehicle, moviefiles=True,
                 pause_per_frame=0)
 
+os.system('convert -delay 20 %s anim.gif' % files)
+os.system('ffmpeg -i "tmp_frame_%04d.png" -b 800k -r 25 -vcodec mpeg4 -y -qmin 2 -qmax 31 anim.mpeg')
+
 from scitools.std import movie
-movie(files, encoder='html', output_file='anim')
+# HTML page showing individual frames
+movie(files, encoder='html', fps=4, output_file='anim.html')
+
+# Standard GIF file
+movie(files, encoder='convert', fps=4, output_file='anim2.gif')
+
+# AVI format
+movie('tmp_*.png', encoder='ffmpeg', fps=4,
+      output_file='anim.avi') # requires ffmpeg package
+
+# MPEG format
+movie('tmp_*.png', encoder='ffmpeg', fps=4,
+      output_file='anim3.mpeg', vodec='mpeg2video')
+# or
+movie(files, encoder='ppmtompeg', fps=24,
+      output_file='anim2.mpeg')  # requires the netpbm package
 
 raw_input()

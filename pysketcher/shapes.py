@@ -85,8 +85,8 @@ def is_sequence(*sequences, **kwargs):
                 print msg
 
 
-def animate(fig, time_points, user_action, moviefiles=False,
-            pause_per_frame=0.5):
+def animate(fig, time_points, action, moviefiles=False,
+            pause_per_frame=0.5, **action_kwargs):
     if moviefiles:
         # Clean up old frame files
         framefilestem = 'tmp_frame_'
@@ -97,13 +97,13 @@ def animate(fig, time_points, user_action, moviefiles=False,
     for n, t in enumerate(time_points):
         drawing_tool.erase()
 
-        user_action(t, fig)
+        action(t, fig, **action_kwargs)
         #could demand returning fig, but in-place modifications
         #are done anyway
-        #fig = user_action(t, fig)
+        #fig = action(t, fig)
         #if fig is None:
         #    raise TypeError(
-        #        'animate: user_action returns None, not fig\n'
+        #        'animate: action returns None, not fig\n'
         #        '(a Shape object with the whole figure)')
 
         fig.draw()
@@ -193,14 +193,14 @@ class Shape:
                     raise TypeError(
                         'class %s has a self.shapes member "%s" that is just\n'
                         'a plain dictionary,\n%s\n'
-                        'Did you mean to embed this dict in a Compose\n'
+                        'Did you mean to embed this dict in a Composition\n'
                         'object?' % (self.__class__.__name__, shape_name,
                         str(shape)))
                 elif isinstance(shape, (list,tuple)):
                     raise TypeError(
                         'class %s has self.shapes member "%s" containing\n'
                         'a %s object %s,\n'
-                        'Did you mean to embed this list in a Compose\n'
+                        'Did you mean to embed this list in a Composition\n'
                         'object?' % (self.__class__.__name__, shape_name,
                         type(shape), str(shape)))
                 elif shape is None:
@@ -256,19 +256,72 @@ class Shape:
         self._for_all_shapes('minmax_coordinates', minmax)
         return minmax
 
-    def traverse_hierarchy(self, indent=0):
+    def recurse(self, name, indent=0):
         if not isinstance(self.shapes, dict):
-            raise TypeError('traverse_hierarchy works only with dict self.shape')
+            raise TypeError('recurse works only with dict self.shape, not %s' %
+                            type(self.shapes))
         space = ' '*indent
-        print space, '%s.shapes has entries' % \
-              self.__class__.__name__,\
+        print space, '%s: %s.shapes has entries' % \
+              (self.__class__.__name__, name), \
               str(list(self.shapes.keys()))[1:-1]
         for shape in self.shapes:
             print space,
-            print 'call self.shapes["%s"].traverse_hierarchy' % \
-                  shape
-            name = self.shapes[shape].traverse_hierarchy(indent+4)
-        return name
+            print 'call %s.shapes["%s"].recurse("%s", %d)' % \
+                  (name, shape, shape, indent+2)
+            name = self.shapes[shape].recurse(shape, indent+2)
+
+    def graphviz_dot(self, name, classname=True):
+        if not isinstance(self.shapes, dict):
+            raise TypeError('recurse works only with dict self.shape, not %s' %
+                            type(self.shapes))
+        dotfile = name + '.dot'
+        pngfile = name + '.png'
+        if classname:
+            name = r"%s:\n%s" % (self.__class__.__name__, name)
+
+        couplings = self._object_couplings(name, classname=classname)
+        # Insert counter for similar names
+        from collections import defaultdict
+        count = defaultdict(lambda: 0)
+        couplings2 = []
+        for i in range(len(couplings)):
+            parent, child = couplings[i]
+            count[child] += 1
+            parent += ' (%d)' % count[parent]
+            child += ' (%d)' % count[child]
+            couplings2.append((parent, child))
+        print 'graphviz', couplings, count
+        # Remove counter for names there are only one of
+        for i in range(len(couplings)):
+            parent2, child2 = couplings2[i]
+            parent, child = couplings[i]
+            if count[parent] > 1:
+                parent = parent2
+            if count[child] > 1:
+                child = child2
+            couplings[i] = (parent, child)
+        print couplings
+        f = open(dotfile, 'w')
+        f.write('digraph G {\n')
+        for parent, child in couplings:
+            f.write('"%s" -> "%s";\n' % (parent, child))
+        f.write('}\n')
+        f.close()
+        print 'Run dot -Tpng -o %s %s' % (pngfile, dotfile)
+
+    def _object_couplings(self, parent, couplings=[], classname=True):
+        """Find all couplings of parent and child objects in a figure."""
+        for shape in self.shapes:
+            if classname:
+                childname = r"%s:\n%s" % \
+                            (self.shapes[shape].__class__.__name__, shape)
+            else:
+                childname = shape
+            couplings.append((parent, childname))
+            self.shapes[shape]._object_couplings(childname, couplings,
+                                                 classname)
+        return couplings
+
 
     def set_linestyle(self, style):
         styles = ('solid', 'dashed', 'dashdot', 'dotted')
@@ -457,11 +510,13 @@ class Curve(Shape):
         minmax['ymax'] = max(self.y.max(), minmax['ymax'])
         return minmax
 
-    def traverse_hierarchy(self, indent=0):
+    def recurse(self, name, indent=0):
         space = ' '*indent
         print space, 'reached "bottom" object %s' % \
               self.__class__.__name__
-        return len(space)/4  # level
+
+    def _object_couplings(self, parent, couplings=[], classname=True):
+        return
 
     def set_linecolor(self, color):
         self.linecolor = color
@@ -569,11 +624,13 @@ class Point(Shape):
         minmax['ymax'] = max(self.y, minmax['ymax'])
         return minmax
 
-    def traverse_hierarchy(self, indent=0):
+    def recurse(self, name, indent=0):
         space = ' '*indent
         print space, 'reached "bottom" object %s' % \
               self.__class__.__name__
-        return len(space)/4  # level
+
+    def _object_couplings(self, parent, couplings=[], classname=True):
+        return
 
     def show_hierarchy(self, indent=0, format='std'):
         s = '%s at (%g,%g)' % (self.__class__.__name__, self.x, self.y)
@@ -870,7 +927,7 @@ class Wall(Shape):
             x1 = asarray(x, float)
         if isinstance(y[0], (tuple,list,ndarray)):
             # x is list of curves
-            y = concatenate(y)
+            y1 = concatenate(y)
         else:
             y1 = asarray(y, float)
 
@@ -904,18 +961,31 @@ class Wall2(Shape):
             x1 = asarray(x, float)
         if isinstance(y[0], (tuple,list,ndarray)):
             # x is list of curves
-            y = concatenate(y)
+            y1 = concatenate(y)
         else:
             y1 = asarray(y, float)
 
         # Displaced curve (according to thickness)
-        for i in range(1, len(x1)-1):
+        x2 = x1.copy()
+        y2 = y1.copy()
+
+        def displace(idx, idx_m, idx_p):
             # Find tangent and normal
-            # set x2, y2 in distance thickness in normal dir
-            # check sign of thickness
-            pass
-        x2 = x1
-        y2 = y1 + thickness
+            tangent = point(x1[idx_m], y1[idx_m]) - point(x1[idx_p], y1[idx_p])
+            tangent = unit_vec(tangent)
+            normal = point(tangent[1], -tangent[0])
+            # Displace length "thickness" in "positive" normal direction
+            displaced_pt = point(x1[idx], y1[idx]) + thickness*normal
+            x2[idx], y2[idx] = displaced_pt
+
+        for i in range(1, len(x1)-1):
+            displace(i-1, i+1, i)  # centered difference for normal comp.
+        # One-sided differences at the end points
+        i = 0
+        displace(i, i+1, i)
+        i = len(x1)-1
+        displace(i-1, i, i)
+
         # Combine x1,y1 with x2,y2 reversed
         from numpy import concatenate
         x = concatenate((x1, x2[-1::-1]))
@@ -1061,39 +1131,33 @@ class Text_wArrow(Text):
 
 
 class Axis(Shape):
-    def __init__(self, start, length, label, below=True,
+    def __init__(self, start, length, label,
                  rotation_angle=0, fontsize=0,
-                 label_spacing=1./30):
+                 label_spacing=1./45, label_alignment='left'):
         """
         Draw axis from start with `length` to the right
-        (x axis). Place label below (True) or above (False) axis.
+        (x axis). Place label at the end of the arrow tip.
         Then return `rotation_angle` (in degrees).
-        To make a standard x axis, call with ``below=True`` and
-        ``rotation_angle=0``. To make a standard y axis, call with
-        ``below=False`` and ``rotation_angle=90``.
-        A tilted axis can also be drawn.
         The `label_spacing` denotes the space between the label
         and the arrow tip as a fraction of the length of the plot
-        in x direction.
+        in x direction. With `label_alignment` one can place
+        the axis label text such that the arrow tip is to the 'left',
+        'right', or 'center' with respect to the text field.
+        The `label_spacing` and `label_alignment` parameters can
+        be used to fine-tune the location of the label.
         """
         # Arrow is vertical arrow, make it horizontal
         arrow = Arrow3(start, length, rotation_angle=-90)
         arrow.rotate(rotation_angle, start)
         spacing = drawing_tool.xrange*label_spacing
-        if below:
-            spacing = - spacing
-        label_pos = [start[0] + length, start[1] + spacing]
+        # should increase spacing for downward pointing axis
+        label_pos = [start[0] + length + spacing, start[1]]
         label = Text(label, position=label_pos, fontsize=fontsize)
         label.rotate(rotation_angle, start)
         self.shapes = {'arrow': arrow, 'label': label}
 
-class Gravity(Axis):
-    """Downward-pointing gravity arrow with the symbol g."""
-    def __init__(self, start, length, fontsize=0):
-        Axis.__init__(self, start, length, '$g$', below=False,
-                      rotation_angle=-90, label_spacing=1./30,
-                      fontsize=fontsize)
-        self.shapes['arrow'].set_linecolor('black')
+
+# Maybe Axis3 with label below/above?
 
 class Force(Arrow1):
     """
@@ -1105,27 +1169,66 @@ class Force(Arrow1):
     area away from the specified point.
     """
     def __init__(self, start, end, text, text_spacing=1./60,
-                 fontsize=0, text_pos='start'):
+                 fontsize=0, text_pos='start', text_alignment='center'):
         Arrow1.__init__(self, start, end, style='->')
         spacing = drawing_tool.xrange*text_spacing
         start, end = arr2D(start), arr2D(end)
-        downward = (end-start)[1] < 0 # needs more space to text if downward
-        if downward:
-            spacing *= 1.5
+
+        # Two cases: label at bottom of line or top, need more
+        # spacing if bottom
+        downward = (end-start)[1] < 0
+        upward = not downward  # for easy code reading
 
         if isinstance(text_pos, str):
             if text_pos == 'start':
                 spacing_dir = unit_vec(start - end)
+                if upward:
+                    spacing *= 1.7
                 text_pos = start + spacing*spacing_dir
             elif text_pos == 'end':
                 spacing_dir = unit_vec(end - start)
+                if downward:
+                    spacing *= 1.7
                 text_pos = end + spacing*spacing_dir
-        self.shapes['text'] = Text(text, text_pos, fontsize=fontsize)
+        self.shapes['text'] = Text(text, text_pos, fontsize=fontsize,
+                                   alignment=text_alignment)
 
         # Stored geometric features
         self.start = start
         self.end = end
         self.symbol_location = text_pos
+
+class Axis2(Force):
+    def __init__(self, start, length, label,
+                 rotation_angle=0, fontsize=0,
+                 label_spacing=1./45, label_alignment='left'):
+        direction = point(cos(radians(rotation_angle)),
+                          sin(radians(rotation_angle)))
+        Force.__init__(start=start, end=length*direction, text=label,
+                       text_spacing=label_spacing,
+                       fontsize=fontsize, text_pos='end',
+                       text_alignment=label_alignment)
+        # Substitute text by label for axis
+        self.shapes['label'] = self.shapes['text']
+        del self.shapes['text']
+
+
+class Gravity(Axis):
+    """Downward-pointing gravity arrow with the symbol g."""
+    def __init__(self, start, length, fontsize=0):
+        Axis.__init__(self, start, length, '$g$', below=False,
+                      rotation_angle=-90, label_spacing=1./30,
+                      fontsize=fontsize)
+        self.shapes['arrow'].set_linecolor('black')
+
+
+class Gravity(Force):
+    """Downward-pointing gravity arrow with the symbol g."""
+    def __init__(self, start, length, text='$g$', fontsize=0):
+        Force.__init__(self, start, (start[0], start[1]-length),
+                       text, text_spacing=1./60,
+                       fontsize=0, text_pos='end')
+        self.shapes['arrow'].set_linecolor('black')
 
 
 class Distance_wText(Shape):
@@ -1190,7 +1293,7 @@ class Arc_wText(Shape):
         self.shapes = {'arc': arc,
                        'text': Text(text, text_pos, fontsize=fontsize)}
 
-class Compose(Shape):
+class Composition(Shape):
     def __init__(self, shapes):
         """shapes: list or dict of Shape objects."""
         self.shapes = shapes
@@ -1290,7 +1393,7 @@ class Wheel(Shape):
         lines = [Line((xi,yi),(xo,yo)) for xi, yi, xo, yo in \
                  zip(xinner, yinner, xouter, youter)]
         self.shapes = {'inner': inner, 'outer': outer,
-                       'spokes': Compose(
+                       'spokes': Composition(
                            {'spoke%d' % i: lines[i]
                             for i in range(len(lines))})}
 
@@ -1510,7 +1613,7 @@ class Dashpot(Shape):
         abs_piston_pos = P0[1] + piston_pos
 
         gap = w*Dashpot.piston_gap_fraction
-        shapes['piston'] = Compose(
+        shapes['piston'] = Composition(
             {'line': Line(P2, (B[0], abs_piston_pos + piston_thickness)),
              'rectangle': Rectangle((B[0] - w+gap, abs_piston_pos),
                                     2*w-2*gap, piston_thickness),
@@ -1534,7 +1637,7 @@ class Dashpot(Shape):
         pp = Text('abs_piston_pos', (B[0]+7*w, abs_piston_pos), alignment='left')
         dims = {'start': start, 'width': width, 'dashpot_length': dplength,
                 'bar_length': blength, 'total_length': tlength,
-                'abs_piston_pos': Compose({'line': line, 'text': pp})}
+                'abs_piston_pos': Composition({'line': line, 'text': pp})}
         self.dimensions = dims
 
         # Stored geometric features
@@ -1555,14 +1658,19 @@ def test_Axis():
                           instruction_file='tmp_Axis.py')
     x_axis = Axis((7.5,2), 5, 'x', rotation_angle=0)
     y_axis = Axis((7.5,2), 5, 'y', below=False, rotation_angle=90)
-    system = Compose({'x axis': x_axis, 'y axis': y_axis})
+    system = Composition({'x axis': x_axis, 'y axis': y_axis})
     system.draw()
     drawing_tool.display()
-    set_linestyle('dashed')
-    #system.shapes['x axis'].rotate(40, (7.5, 2))
-    #system.shapes['y axis'].rotate(40, (7.5, 2))
+    system.set_linestyle('dashed')
     system.rotate(40, (7.5,2))
     system.draw()
+    drawing_tool.display()
+
+    system.set_linestyle('dotted')
+    system.rotate(220, (7.5,2))
+    system.draw()
+    drawing_tool.display()
+
     drawing_tool.display('Axis')
     drawing_tool.savefig('tmp_Axis.png')
     print repr(system)
@@ -1575,7 +1683,7 @@ def test_Distance_wText():
     #drawing_tool.arrow_head_width = 0.1
     fontsize=14
     t = r'$ 2\pi R^2 $'
-    dims2 = Compose({
+    dims2 = Composition({
         'a0': Distance_wText((4,5), (8, 5), t, fontsize),
         'a6': Distance_wText((4,5), (4, 4), t, fontsize),
         'a1': Distance_wText((0,2), (2, 4.5), t, fontsize),
