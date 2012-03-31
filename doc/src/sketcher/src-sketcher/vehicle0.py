@@ -70,7 +70,15 @@ files = animate(fig, tp, move_vehicle, moviefiles=True,
 os.system('convert -delay 20 %s anim.gif' % files)
 os.system('ffmpeg -i "tmp_frame_%04d.png" -b 800k -r 25 -vcodec mpeg4 -y -qmin 2 -qmax 31 anim.mpeg')
 
-from scitools.std import movie
+try:
+    from scitools.std import movie
+except ImportError:
+    raise ImportError(
+        'scitools must be installed for running the "movie" function.\n'
+        'scitools is installed by sudo apt-get install python-scitools\n'
+        'on Ubuntu or by sudo python setup.py install if the code is\n'
+        'downloaded from http://code.google.com/p/scitools.')
+
 # HTML page showing individual frames
 movie(files, encoder='html', fps=4, output_file='anim.html')
 

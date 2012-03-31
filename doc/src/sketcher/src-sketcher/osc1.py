@@ -14,7 +14,7 @@ x = 0
 def make_dashpot(x):
     d_start = (-L,2*H)
     d = Dashpot(start=d_start, total_length=L+x, width=W,
-                bar_length=3*H/2, dashpot_length=L/4, piston_pos=H)
+                bar_length=3*H/2, dashpot_length=L/2, piston_pos=H+x)
     d.rotate(-90, d_start)
     return d
 

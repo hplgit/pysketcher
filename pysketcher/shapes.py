@@ -18,6 +18,11 @@ def point(x, y, check_inside=False):
 
     return array((x, y), dtype=float)
 
+def distance(p1, p2):
+    p1 = arr2D(p1);  p2 = arr2D(p2)
+    d = p2 - p1
+    return sqrt(d[0]**2 + d[1]**2)
+
 def unit_vec(x, y=None):
     """Return unit vector of the vector (x,y), or just x if x is a 2D point."""
     if isinstance(x, (float,int)) and isinstance(y, (float,int)):
@@ -647,19 +652,6 @@ class Rectangle(Shape):
     """
     Rectangle specified by the point `lower_left_corner`, `width`,
     and `height`.
-
-    Recorded geometric features:
-
-    ==================== =============================================
-    Attribute            Description
-    ==================== =============================================
-    lower_left           Lower left corner point.
-    upper_left           Upper left corner point.
-    lower_right          Lower right corner point.
-    upper_right          Upper right corner point.
-    lower_mid            Middle point on lower side.
-    upper_mid            Middle point on upper side.
-    ==================== =============================================
     """
     def __init__(self, lower_left_corner, width, height):
         is_sequence(lower_left_corner)
@@ -683,14 +675,31 @@ class Rectangle(Shape):
             }
         self.dimensions = dims
 
-        # Stored geometric features
-        self.lower_left  = lower_left_corner
-        self.lower_right = lower_left_corner + point(width,0)
-        self.upper_left  = lower_left_corner + point(0,height)
-        self.upper_right = lower_left_corner + point(width,height)
-        self.lower_mid = 0.5*(self.lower_left + self.lower_right)
-        self.upper_mid = 0.5*(self.upper_left + self.upper_right)
+    def geometric_features(self):
+        """
+        Return dictionary with
 
+        ==================== =============================================
+        Attribute            Description
+        ==================== =============================================
+        lower_left           Lower left corner point.
+        upper_left           Upper left corner point.
+        lower_right          Lower right corner point.
+        upper_right          Upper right corner point.
+        lower_mid            Middle point on lower side.
+        upper_mid            Middle point on upper side.
+        ==================== =============================================
+        """
+        r = self.shapes['rectangle']
+        d = {'lower_left': point(r.x[0], r.y[0]),
+             'lower_right': point(r.x[1], r.y[1]),
+             'upper_right': point(r.x[2], r.y[2]),
+             'upper_left': point(r.x[3], r.y[3])}
+        d['lower_mid'] = 0.5*(d['lower_left'] + d['lower_right'])
+        d['upper_mid'] = 0.5*(d['upper_left'] + d['upper_right'])
+        d['left_mid'] = 0.5*(d['lower_left'] + d['upper_left'])
+        d['right_mid'] = 0.5*(d['lower_right'] + d['upper_right'])
+        return d
 
 class Triangle(Shape):
     """
@@ -716,11 +725,11 @@ class Triangle(Shape):
                            'p2': Text('p2', p2),
                            'p3': Text('p3', p3)}
 
-        # Stored geometric features
-        self.p1 = arr2D(p1)
-        self.p2 = arr2D(p2)
-        self.p3 = arr2D(p3)
-
+    def geometric_features(self):
+        t = self.shapes['triangle']
+        return {'p1': point(t.x[0], t.y[0]),
+                'p2': point(t.x[1], t.y[1]),
+                'p3': point(t.x[2], t.y[2])}
 
 class Line(Shape):
     def __init__(self, start, end):
@@ -729,9 +738,10 @@ class Line(Shape):
         y = [start[1], end[1]]
         self.shapes = {'line': Curve(x, y)}
 
-        # Stored geometric features
-        self.start = start
-        self.end = end
+    def geometric_features(self):
+        line = self.shapes['line']
+        return {'start': point(line.x[0], line.y[0]),
+                'end': point(line.x[1], line.y[1]),}
 
     def compute_formulas(self):
         x, y = self.shapes['line'].x, self.shapes['line'].y
@@ -839,9 +849,13 @@ class Arc(Shape):
         # constructor forever). Set in test_Arc instead.
 
         # Stored geometric features
-        self.mid_point = self(arc_angle/2)
-        self.start = point(x[0], y[0])
-        self.end = point(x[-1], y[-1])
+    def geometric_features(self):
+        a = self.shapes['arc']
+        m = len(a.x)/2  # mid point in array
+        d = {'start': point(a.x[0], a.y[0]),
+             'end': point(a.x[-1], a.y[-1]),
+             'mid': point(a.x[m], a.y[m])}
+        return d
 
     def __call__(self, theta):
         """
@@ -931,6 +945,7 @@ class Wall(Shape):
             y1 = concatenate(y)
         else:
             y1 = asarray(y, float)
+        self.x1 = x1;  self.y1 = y1
 
         # Displaced curve (according to thickness)
         x2 = x1
@@ -945,12 +960,17 @@ class Wall(Shape):
         y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
         self.shapes = {'wall': wall}
 
-        #white_eraser = Curve(x, y)
-        #white_eraser.set_linecolor('white')
-        #from collections import OrderedDict
-        #self.shapes = OrderedDict()
-        #self.shapes['wall'] = wall
-        #self.shapes['eraser'] = white_eraser
+        white_eraser = Curve(x, y)
+        white_eraser.set_linecolor('white')
+        from collections import OrderedDict
+        self.shapes = OrderedDict()
+        self.shapes['wall'] = wall
+        self.shapes['eraser'] = white_eraser
+
+    def geometric_features(self):
+        d = {'start': point(self.x1[0], self.y1[0]),
+             'end': point(self.x1[-1], self.y1[-1])}
+        return d
 
 class Wall2(Shape):
     def __init__(self, x, y, thickness, pattern='/'):
@@ -965,6 +985,8 @@ class Wall2(Shape):
             y1 = concatenate(y)
         else:
             y1 = asarray(y, float)
+
+        self.x1 = x1;  self.y1 = y1
 
         # Displaced curve (according to thickness)
         x2 = x1.copy()
@@ -996,6 +1018,11 @@ class Wall2(Shape):
         x = [x1[-1]] + x2[-1::-1].tolist() + [x1[0]]
         y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
         self.shapes['wall'] = wall
+
+    def geometric_features(self):
+        d = {'start': point(self.x1[0], self.y1[0]),
+             'end': point(self.x1[-1], self.y1[-1])}
+        return d
 
 
 class VelocityProfile(Shape):
@@ -1046,6 +1073,9 @@ class Arrow1(Shape):
         arrow.set_arrow(style)
         self.shapes = {'arrow': arrow}
 
+    def geometric_features(self):
+        return self.shapes['arrow'].geometric_features()
+
 class Arrow3(Shape):
     """
     Build a vertical line and arrow head from Line objects.
@@ -1075,6 +1105,9 @@ class Arrow3(Shape):
         # rotate goes through self.shapes so self.shapes
         # must be initialized first
         self.rotate(rotation_angle, start)
+
+    def geometric_features(self):
+        return self.shapes['line'].geometric_features()
 
 
 class Text(Point):
@@ -1157,6 +1190,8 @@ class Axis(Shape):
         label.rotate(rotation_angle, start)
         self.shapes = {'arrow': arrow, 'label': label}
 
+    def geometric_features(self):
+        return self.shapes['arrow'].geometric_features()
 
 # Maybe Axis3 with label below/above?
 
@@ -1194,10 +1229,10 @@ class Force(Arrow1):
         self.shapes['text'] = Text(text, text_pos, fontsize=fontsize,
                                    alignment=text_alignment)
 
-        # Stored geometric features
-        self.start = start
-        self.end = end
-        self.symbol_location = text_pos
+    def geometric_features(self):
+        d = Arrow1.geometric_features(self)
+        d['symbol_location'] = self.shapes['text'].position
+        return d
 
 class Axis2(Force):
     def __init__(self, start, length, label,
@@ -1213,6 +1248,7 @@ class Axis2(Force):
         self.shapes['label'] = self.shapes['text']
         del self.shapes['text']
 
+    # geometric features from Force is ok
 
 class Gravity(Axis):
     """Downward-pointing gravity arrow with the symbol g."""
@@ -1281,6 +1317,10 @@ class Distance_wText(Shape):
         arrow.set_linewidth(1)
         self.shapes = {'arrow': arrow, 'text': text}
 
+    def geometric_features(self):
+        d = self.shapes['arrow'].geometric_features()
+        d['text_position'] = self.shapes['text'].position
+        return d
 
 class Arc_wText(Shape):
     def __init__(self, text, center, radius,
@@ -1326,9 +1366,12 @@ class SimplySupportedBeam(Shape):
                            'size': Distance_wText((P2[0], P2[1]-size),
                                                   (P2[0]+size, P2[1]-size),
                                                   'size')}
-        # Stored geometric features
-        self.mid_support = point(P2[0] + size/2., P2[1])  # lower center
-        self.top = pos
+    def geometric_features(self):
+        t = self.shapes['triangle']
+        r = self.shapes['rectangle']
+        d = {'pos': point(t.x[2], t.y[2]),  # "p2"/pos
+             'mid_support': r.geometric_features()['lower_mid']}
+        return d
 
 
 class ConstantBeamLoad(Shape):
@@ -1356,8 +1399,9 @@ class ConstantBeamLoad(Shape):
             x = lower_left_corner[0] + i*dx
             self.shapes['arrow%d' % i] = Arrow1((x, y_top), (x, y_tip))
 
-        # Stored geometric features
-        self.mid_top = arr2D(lower_left_corner) + point(width/2., height)
+    def geometric_features(self):
+        return {'mid_top': self.shapes['box'].geometric_features()['upper_mid']}
+
 
 class Moment(Arc_wText):
     def __init__(self, text, center, radius,
@@ -1427,19 +1471,6 @@ class Spring(Shape):
     bar are given sensible default values if they are not specified
     (these parameters can later be extracted as attributes, see table
     below).
-
-    Recorded geometric features:
-
-    ==================== =============================================
-    Attribute            Description
-    ==================== =============================================
-    start                Start point of spring.
-    end                  End point of spring.
-    width                Total width of spring.
-    bar_length           Length of first (and last) bar part.
-    num_windings         Number of windings.
-    ==================== =============================================
-
     """
     spring_fraction = 1./2  # fraction of total length occupied by spring
 
@@ -1474,6 +1505,9 @@ class Spring(Shape):
         if s is None:
             f = Spring.spring_fraction
             s = L*(1-f)/2. # start of spring
+
+        self.bar_length = s  # record
+        self.width = 2*w
 
         P0 = (B[0], B[1] + s)
         P1 = (B[0], B[1] + L-s)
@@ -1516,12 +1550,25 @@ class Spring(Shape):
                 'bar_length2': blength2}
         self.dimensions = dims
 
-        # Stored geometric features
-        self.start = B
-        self.end = P2
-        self.bar_length = s
-        self.width = 2*w
-        self.num_windings = num_windings
+    def geometric_features(self):
+        """
+        Recorded geometric features:
+
+        ==================== =============================================
+        Attribute            Description
+        ==================== =============================================
+        start                Start point of spring.
+        end                  End point of spring.
+        width                Total width of spring.
+        bar_length           Length of first (and last) bar part.
+        ==================== =============================================
+        """
+        b1 = self.shapes['bar1']
+        d = {'start': b1.geometric_features()['start'],
+             'end': self.shapes['bar2'].geometric_features()['end'],
+             'bar_length': self.bar_length,
+             'width': self.width}
+        return d
 
 
 class Dashpot(Shape):
@@ -1536,22 +1583,9 @@ class Dashpot(Shape):
 
     If some of `dashpot_length`, `bar_length`, `width` or `piston_pos`
     are not given, suitable default values are calculated. Their
-    values can be extracted as attributes given in the table of
-    recorded geometric features.
+    values can be extracted as keys in the dict returned from
+    ``geometric_features``.
 
-    Recorded geometric features:
-
-    ==================== =============================================
-    Attribute            Description
-    ==================== =============================================
-    start                Start point of dashpot.
-    end                  End point of dashpot.
-    bar_length           Length of first bar (from start to spring).
-    dashpot_length       Length of dashpot middle part.
-    width                Total width of dashpot.
-    piston_pos           Position of piston in dashpot, relative to
-                         start[1] + bar_length.
-    ==================== =============================================
     """
     dashpot_fraction = 1./2            # fraction of total_length
     piston_gap_fraction = 1./6         # fraction of width
@@ -1609,7 +1643,7 @@ class Dashpot(Shape):
         if piston_pos < 0:
             piston_pos = 0
         elif piston_pos > dashpot_length:
-            piston_pos = dashpot_length - piston_tickness
+            piston_pos = dashpot_length - piston_thickness
 
         abs_piston_pos = P0[1] + piston_pos
 
@@ -1623,6 +1657,11 @@ class Dashpot(Shape):
 
         self.shapes = shapes
 
+        self.bar_length = s
+        self.width = 2*w
+        self.piston_pos = piston_pos
+        self.dashpot_length = dashpot_length
+
         # Dimensions
         start = Text_wArrow('start', (B[0]-1.5*w,B[1]-1.5*w), B)
         width = Distance_wText((B[0]-w, B[1]-3.5*w), (B[0]+w, B[1]-3.5*w),
@@ -1631,6 +1670,8 @@ class Dashpot(Shape):
                                   'dashpot_length', text_pos=(B[0]+w,B[1]-w))
         blength = Distance_wText((B[0]-2*w, B[1]), (B[0]-2*w, P0[1]),
                                  'bar_length', text_pos=(B[0]-6*w,P0[1]-w))
+        ppos    = Distance_wText((B[0]-2*w, P0[1]), (B[0]-2*w, P0[1]+piston_pos),
+                                 'piston_pos', text_pos=(B[0]-6*w,P0[1]+piston_pos-w))
         tlength = Distance_wText((B[0]+4*w, B[1]), (B[0]+4*w, B[1]+L),
                                  'total_length',
                                  text_pos=(B[0]+4.5*w, B[1]+L-2*w))
@@ -1638,16 +1679,34 @@ class Dashpot(Shape):
         pp = Text('abs_piston_pos', (B[0]+7*w, abs_piston_pos), alignment='left')
         dims = {'start': start, 'width': width, 'dashpot_length': dplength,
                 'bar_length': blength, 'total_length': tlength,
-                'abs_piston_pos': Composition({'line': line, 'text': pp})}
+                'piston_pos': ppos,}
+        #'abs_piston_pos': Composition({'line': line, 'text': pp})}
         self.dimensions = dims
 
-        # Stored geometric features
-        self.start = B
-        self.end = point(B[0], B[1]+L)
-        self.bar_length = s
-        self.dashpot_length = dashpot_length
-        self.piston_pos = abs_piston_pos
-        self.width = 2*w
+    def geometric_features(self):
+        """
+        Recorded geometric features:
+
+        ==================== =============================================
+        Attribute            Description
+        ==================== =============================================
+        start                Start point of dashpot.
+        end                  End point of dashpot.
+        bar_length           Length of first bar (from start to spring).
+        dashpot_length       Length of dashpot middle part.
+        width                Total width of dashpot.
+        piston_pos           Position of piston in dashpot, relative to
+                             start[1] + bar_length.
+        ==================== =============================================
+        """
+        d = {'start': self.shapes['line start'].geometric_features()['start'],
+             'end': self.shapes['piston']['line'].geometric_features()['start'],
+             'bar_length': self.bar_length,
+             'piston_pos': self.piston_pos,
+             'width': self.width,
+             'dashpot_length': self.dashpot_length,
+             }
+        return d
 
 # COMPOSITE types:
 # MassSpringForce: Line(horizontal), Spring, Rectangle, Arrow/Line(w/arrow)
@@ -1655,10 +1714,11 @@ class Dashpot(Shape):
 # Maybe extra dict: self.name['mass'] = Rectangle object - YES!
 
 def test_Axis():
-    set_coordinate_system(xmin=0, xmax=15, ymin=0, ymax=15, axis=True,
-                          instruction_file='tmp_Axis.py')
+    drawing_tool.set_coordinate_system(
+        xmin=0, xmax=15, ymin=-7, ymax=8, axis=True,
+        instruction_file='tmp_Axis.py')
     x_axis = Axis((7.5,2), 5, 'x', rotation_angle=0)
-    y_axis = Axis((7.5,2), 5, 'y', below=False, rotation_angle=90)
+    y_axis = Axis((7.5,2), 5, 'y', rotation_angle=90)
     system = Composition({'x axis': x_axis, 'y axis': y_axis})
     system.draw()
     drawing_tool.display()
@@ -1806,7 +1866,7 @@ def test_Spring():
 
     xpos = W
     s1 = Spring((W,0), L, teeth=True)
-    s1_title = Text('Default Spring', s1.end + point(0,L/10))
+    s1_title = Text('Default Spring', s1.geometric_features()['end'] + point(0,L/10))
     s1.draw()
     s1_title.draw()
     #s1.draw_dimensions()
@@ -1824,7 +1884,7 @@ def test_Dashpot():
     W = 2.0
     xpos = 0
 
-    drawing_tool.set_coordinate_system(xmin=xpos, xmax=xpos+6*W,
+    drawing_tool.set_coordinate_system(xmin=xpos, xmax=xpos+5.5*W,
                                        ymin=-L/2, ymax=1.5*L,
                                        axis=True,
                                        instruction_file='tmp_Dashpot.py')
@@ -1834,7 +1894,7 @@ def test_Dashpot():
     # Default (simple) dashpot
     xpos = 1.5
     d1 = Dashpot(start=(xpos,0), total_length=L)
-    d1_title = Text('Dashpot (default)', d1.end + point(0,L/10))
+    d1_title = Text('Dashpot (default)', d1.geometric_features()['end'] + point(0,L/10))
     d1.draw()
     d1_title.draw()
 
@@ -1848,6 +1908,50 @@ def test_Dashpot():
 
     drawing_tool.display('Dashpot')
     drawing_tool.savefig('tmp_Dashpot.png')
+
+
+def diff_files(files1, files2, mode='HTML'):
+    import difflib, time
+    n = 3
+    for fromfile, tofile in zip(files1, files2):
+        fromdate = time.ctime(os.stat(fromfile).st_mtime)
+        todate = time.ctime(os.stat(tofile).st_mtime)
+        fromlines = open(fromfile, 'U').readlines()
+        tolines = open(tofile, 'U').readlines()
+        diff_html = difflib.HtmlDiff().\
+                    make_file(fromlines,tolines,
+                              fromfile,tofile,context=True,numlines=n)
+        diff_plain = difflib.unified_diff(fromlines, tolines, fromfile, tofile, fromdate, todate, n=n)
+        filename_plain = fromfile + '.diff.txt'
+        filename_html = fromfile + '.diff.html'
+        if os.path.isfile(filename_plain):
+            os.remove(filename_plain)
+        if os.path.isfile(filename_html):
+            os.remove(filename_html)
+        f = open(filename_plain, 'w')
+        f.writelines(diff_plain)
+        f.close()
+        size = os.path.getsize(filename_plain)
+        if size > 4:
+            print 'found differences:', fromfile, tofile
+            f = open(filename_html, 'w')
+            f.writelines(diff_html)
+            f.close()
+
+
+def test_test():
+    os.chdir('test')
+    funcs = [name for name in globals() if name.startswith('test_') and callable(globals()[name])]
+    funcs.remove('test_test')
+    new_files = []
+    res_files = []
+    for func in funcs:
+        mplfile = func.replace('test_', 'tmp_') + '.py'
+        #exec(func + '()')
+        new_files.append(mplfile)
+        resfile = mplfile.replace('tmp_', 'res_')
+        res_files.append(resfile)
+    diff_files(new_files, res_files)
 
 
 def _test1():

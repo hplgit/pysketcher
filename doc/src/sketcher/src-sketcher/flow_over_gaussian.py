@@ -31,7 +31,7 @@ outlet = Line((W+L,0), (W+L,H))
 outlet.set_linestyle('dashed')
 
 #print repr(inlet_profile)
-fig = Compose({
+fig = Composition({
     'bottom': wall,
     'inlet': inlet_profile,
     'symmetry line': symmetry_line,
@@ -51,7 +51,7 @@ symbols = {
     'dashed line': Line((W-2.5*sigma,0), (W+2.5*sigma,0)).\
                    set_linestyle('dotted').set_linecolor('black'),
     }
-symbols = Compose(symbols)
+symbols = Composition(symbols)
 symbols.draw()
 
 drawing_tool.display()

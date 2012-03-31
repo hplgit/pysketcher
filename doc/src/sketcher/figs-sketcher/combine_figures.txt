@@ -1,0 +1,17 @@
+Here is a recipe on how to combine two or more figures into one
+(same effect as subfigure in latex):
+
+convert -background white Vehicle0_hier1.png  Vehicle0_hier2.png +append tmp.png
+
+Use +append for stacking left to right, -append for top to bottom.
+The positioning of the figures can be controlled by -gravity.
+
+More general tool: montage
+
+montage file1.png file2.png ... file4.png -geometry +2+2  result.png
+montage file1.png file2.png -tile x1 result.png
+montage file1.png file2.png -tile 1x result.png
+
+See
+http://www.imagemagick.org/Usage/montage/#montage
+for borders, frames and shadows.
