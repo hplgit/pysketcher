@@ -33,6 +33,7 @@ org
 png
 py
 pysketcher
+simplistically
 src
 subdictionaries
 subfigures

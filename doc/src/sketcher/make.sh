@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Run spellcheck
+python ~/hg/programs/spellcheck.py -d dictionary.txt *.do.txt
+if [ $? -ne 0 ]; then
+  exit
+fi
+
+
 main=wrap_sketcher
 doconce format html $main
 

@@ -83,12 +83,12 @@ corresponding $y$ coordinate:
         return self.a*x + self.b
 !ec
 Unfortunately, this is too simplistic because vertical lines cannot
-be handled (infinte `self.a`). The source code of `Line` therefore
+be handled (infinite `self.a`). The source code of `Line` therefore
 provides a more general solution at the cost of significantly
 longer code with more tests.
 
 A circle gives us somewhat increased complexity. Again we represent
-the geometic object by a `Curve` object, but this time the `Curve`
+the geometric object by a `Curve` object, but this time the `Curve`
 object needs to store a large number of points on the curve such
 that a plotting program produces a visually smooth curve.
 The points on the circle must be calculated manually in the constructor
@@ -261,14 +261,14 @@ shape through just one `Curve` object. More complicated figure elements
 are built from instances of various subclasses of `Shape`. Classes used
 for professional drawings soon get quite complex in composition and
 have a lot of geometric details, so here we prefer to make a very simple
-composition: the already drawy vehicle from
+composition: the already drawn vehicle from
 Figure refref{sketcher:fig:vehicle0}.
 That is, instead of composing the drawing in a Python code we make a class
 `Vehicle0` for doing the same thing, and derive it from `Shape`.
 
 The `Shape` hierarchy is found in the `pysketcher` package, so to use these
 classes or derive a new one, we need to import `pysketcher`. The constructor
-of clas `Vehicle0` performs approximately the same statements as
+of class `Vehicle0` performs approximately the same statements as
 in the example program we developed for making the drawing in
 Figure refref{sketcher:fig:vehicle0}.
 !bc pycod
@@ -341,7 +341,7 @@ drawings of mechanical systems.
 ======= Adding Functionality via Recursion =======
 
 The really powerful feature of our class hierarchy is that we can add
-much functionality to the superclass `Shape` and to the "bottom" classe
+much functionality to the superclass `Shape` and to the "bottom" classes
 `Curve`, and all other classes for all types of geometrical shapes
 immediately get the new functionality. To explain the idea we first have
 to look at the `draw` method, which all classes in the `Shape`
@@ -351,9 +351,9 @@ can be implemented.
 
 === Basic Principles of Recursion ===
 
-We work with two types of class hierarchies: one Python class hierarcy,
+We work with two types of class hierarchies: one Python class hierarchy,
 with `Shape` as superclass, and one *object hierarchy* of figure elements
-in a specific figure. A subclass of `Shape` stres its figure in the
+in a specific figure. A subclass of `Shape` stores its figure in the
 `self.shapes` dictionary. This dictionary represents the object hierarchy
 of figure elements for that class. We want to make one `draw` call
 for an instance, say our class `Vehicle0`, and then we want this call
@@ -370,7 +370,7 @@ def draw(self):
 This general method can be provided by class `Shape` and inherited in
 subclasses like `Vehicle0`. Let `v` be a `Vehicle0` instance.
 Seemingly, a call `v.draw()` just calls
-!bc pydoc
+!bc pycod
 v.shapes['vehicle'].draw()
 v.shapes['ground'].draw()
 !ec
@@ -394,9 +394,9 @@ of class `Curve` shown previously.
 We can go to any of the other shape objects that appear in the figure
 hierarchy and follow their `draw` calls in the similar way. Every time,
 a `draw` call will invoke a new `draw` call, until we eventually hit
-a `Curve` object in the "botton" of the figure hiearchy, and then that part
-of the figure is really plotted (or more precisesly, the coordinates
-are sent to a plotting programm).
+a `Curve` object in the "botton" of the figure hierarchy, and then that part
+of the figure is really plotted (or more precisely, the coordinates
+are sent to a plotting program).
 
 When a method calls itself, such as `draw` does, the calls are known as
 *recursive* and the programming principle is referred to as
@@ -419,7 +419,7 @@ This feature allows us to trace the execution and see exactly where
 we are in the hierarchy and which objects that are visited.
 
 The `recurse` method is very similar to `draw`:
-!bc pydoc
+!bc pycod
     def recurse(self, name, indent=0):
         # print message where we are (name is where we come from)
         for shape in self.shapes:
@@ -456,7 +456,7 @@ The number of leading blanks on each line corresponds to the value of
 
 Let us follow a `v.recurse('vehicle')` call in detail, `v` being
 a `Vehicle0` instance. Before looking into the output from `recurse`,
-let us get an overfiew of the figure hierarchy in the `v` object
+let us get an overview of the figure hierarchy in the `v` object
 (as produced by `print v`)
 !bc dat
 ground
@@ -501,7 +501,7 @@ processing procedure of the parent object can be repeated.
 A recommended next step is to simulate the `recurse` method by hand and
 carefully check that what happens in the visits to `recurse` is
 consistent with the output listed below. Although tedious, this is
-a major exercise that guaranteed will help to demystify recrusion.
+a major exercise that guaranteed will help to demystify recursion.
 Also remember that it requires some efforts to understand recursion.
 
 A part of the printout of `v.recurse('vehicle')` looks like

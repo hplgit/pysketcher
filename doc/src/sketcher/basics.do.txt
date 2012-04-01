@@ -51,10 +51,11 @@ excellent example on the power of class programming.
 ===== Using the Object Collection =====
 
 We start by demonstrating a convenient user interface for making
-sketches of the type in Figure ref{sketcher:fig1}. However, it is more
-appropriate to start with a significantly simpler example as depicted
-in Figure ref{sketcher:fig:vehicle0}.  This toy sketch consists of
-several elements: two circles, two rectangles, and a "ground" element.
+sketches of the type in Figure ref{sketcher:fig:inclinedplane}.
+However, it is more appropriate to start with a significantly simpler
+example as depicted in Figure ref{sketcher:fig:vehicle0}.  This toy
+sketch consists of several elements: two circles, two rectangles, and
+a "ground" element.
 
 # #else
 
@@ -159,7 +160,7 @@ drawing_tool.savefig('tmp.png')
 !ec
 The `fig.draw()` call will visit
 all subgroups, their subgroups,
-and so in the herarchical tree structure that we have collected,
+and so in the hierarchical tree structure that we have collected,
 and call `draw` for every object.
 
 === Changing Line Styles and Colors ===
@@ -258,7 +259,7 @@ only objects that really holds specific coordinates to be drawn.
 The other object types are just compositions used to group
 parts of the complete figure.
 
-One can also get a graphical overview of the hiearchy of figure objects
+One can also get a graphical overview of the hierarchy of figure objects
 that build up a particular figure `fig`.
 Just call `fig.graphviz_dot('fig')` to produce a file `fig.dot` in
 the *dot format*. This file contains relations between parent and
@@ -335,7 +336,7 @@ drawing_tool.display()
 Without erasing the old position of the vehicle will remain in
 the figure so you get two vehicles. Without `fig.draw()` the
 new coordinates of the vehicle will not be communicated to
-the drawing tool, and without calling dislay the updated
+the drawing tool, and without calling display the updated
 drawing will not be visible.
 
 Let us make a velocity function and move the object according

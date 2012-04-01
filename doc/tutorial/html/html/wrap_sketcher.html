@@ -1,0 +1,1241 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using Pysketcher to Create Principal Sketches of Physics Problems &mdash; Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Using Pysketcher to Create Principal Sketches of Physics Problems" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Using Pysketcher to Create Principal Sketches of Physics Problems"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-pysketcher-to-create-principal-sketches-of-physics-problems">
+<h1>Using Pysketcher to Create Principal Sketches of Physics Problems<a class="headerlink" href="#using-pysketcher-to-create-principal-sketches-of-physics-problems" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Hans Petter Langtangen</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Apr 1, 2012</td>
+</tr>
+</tbody>
+</table>
+<p><em>Abstract.</em> Pysketcher is a Python package which allows principal sketches of
+physics and mechanics problems to be realized through short programs
+instead of interactive (and potentially tedious and inaccurate)
+drawing.  Elements of the sketch, such as lines, circles, angles,
+forces, coordinate systems, etc., are realized as objects and
+collected in hierarchical structures. Parts of the hierarchical
+structures can easily change line styles and colors, or be copied,
+scaled, translated, and rotated. These features make it
+straightforward to move parts of the sketch to create animation,
+usually in accordance with the physics of the underlying problem.
+Exact dimensioning of the elements in the sketch is trivial to obtain
+since distances are specified in computer code.</p>
+<p>Pysketcher is easy to learn from a number of examples. Beyond
+essential Python programming and a knowledge about mechanics problems,
+no further background is required.</p>
+</div>
+<div class="section" id="a-first-glimpse-of-pysketcher">
+<h1>A First Glimpse of Pysketcher<a class="headerlink" href="#a-first-glimpse-of-pysketcher" title="Permalink to this headline">¶</a></h1>
+<p>Formulation of physical problems makes heavy use of <em>principal sketches</em>
+such as the one in Figure <a class="reference internal" href="#sketcher-fig-inclinedplane"><em>Sketch of a physics problem</em></a>.
+This particular sketch illustrates the classical mechanics problem
+of a rolling wheel on an inclined plane.
+The figure
+is made up many individual elements: a rectangle
+filled with a pattern (the inclined plane), a hollow circle with color
+(the wheel), arrows with label (the <span class="math">\(N\)</span> and <span class="math">\(Mg\)</span> forces, and the <span class="math">\(x\)</span>
+axis), an angle with symbol <span class="math">\(\theta\)</span>, and a dashed line indicating the
+starting location of the wheel.  Drawing software and plotting
+programs can produce such figures quite easily in principle, but the
+amount of details the user needs to control with the mouse can be
+substantial. Software more tailored to producing sketches of this type
+would work with more convenient abstractions, such as circle, wall,
+angle, force arrow, axis, and so forth. And as soon we start
+<em>programming</em> to construct the figure we get a range of other
+powerful tools at disposal. For example, we can easily translate and
+rotate parts of the figure and make an animation that illustrates the
+physics of the problem.</p>
+<div class="figure" id="sketcher-fig-inclinedplane">
+<img alt="_images/wheel_on_inclined_plane.png" src="_images/wheel_on_inclined_plane.png" style="width: 600px;" />
+<p class="caption"><em>Sketch of a physics problem</em></p>
+</div>
+<div class="section" id="basic-construction-of-sketches">
+<h2>Basic Construction of Sketches<a class="headerlink" href="#basic-construction-of-sketches" title="Permalink to this headline">¶</a></h2>
+<p>Before attacking real-life sketches as in Figure <em class="xref std std-ref">sketcher:fig1</em>
+we focus on the significantly simpler drawing shown in
+in Figure <a class="reference internal" href="#sketcher-fig-vehicle0"><em>Sketch of a simple figure</em></a>.  This toy sketch consists of
+several elements: two circles, two rectangles, and a &#8220;ground&#8221; element.</p>
+<div class="figure" id="sketcher-fig-vehicle0">
+<img alt="_images/vehicle0_dim.png" src="_images/vehicle0_dim.png" style="width: 600px;" />
+<p class="caption"><em>Sketch of a simple figure</em></p>
+</div>
+<div class="section" id="basic-drawing">
+<h3>Basic Drawing<a class="headerlink" href="#basic-drawing" title="Permalink to this headline">¶</a></h3>
+<p>A typical program creating these five elements is shown next.
+After importing the <tt class="docutils literal"><span class="pre">pysketcher</span></tt> package, the first task is always to
+define a coordinate system. Some graphics operations are done with
+a helper object called <tt class="docutils literal"><span class="pre">drawing_tool</span></tt> (imported from <tt class="docutils literal"><span class="pre">pysketcher</span></tt>).
+With the drawing area in place we can make the first <tt class="docutils literal"><span class="pre">Circle</span></tt> object
+in an intuitive fashion:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pysketcher</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">R</span> <span class="o">=</span> <span class="mi">1</span>    <span class="c"># radius of wheel</span>
+<span class="n">L</span> <span class="o">=</span> <span class="mi">4</span>    <span class="c"># distance between wheels</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mi">2</span>    <span class="c"># height of vehicle body</span>
+<span class="n">w_1</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c"># position of front wheel</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_coordinate_system</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">w_1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">L</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">R</span><span class="p">,</span>
+                                   <span class="n">ymin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">H</span><span class="p">)</span>
+
+<span class="n">wheel1</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By using symbols for characteristic lengths in the drawing, rather than
+absolute lengths, it is easier
+to change dimensions later.</p>
+<p>To translate the geometric information about the <tt class="docutils literal"><span class="pre">wheel1</span></tt> object to
+instructions for the plotting engine (in this case Matplotlib), one calls the
+<tt class="docutils literal"><span class="pre">wheel1.draw()</span></tt>. To display all drawn objects, one issues
+<tt class="docutils literal"><span class="pre">drawing_tool.display()</span></tt>. The typical steps are hence:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">wheel1</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
+<span class="n">wheel1</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+
+<span class="c"># Define other objects and call their draw() methods</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;tmp.png&#39;</span><span class="p">)</span>  <span class="c"># store picture</span>
+</pre></div>
+</div>
+<p>The next wheel can be made by taking a copy of <tt class="docutils literal"><span class="pre">wheel1</span></tt> and
+translating the object a distance (to the right) described by the
+vector <span class="math">\((4,0)\)</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">wheel2</span> <span class="o">=</span> <span class="n">wheel1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">wheel2</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="n">L</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The two rectangles are made in an intuitive way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">under</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span><span class="n">lower_left_corner</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">),</span>
+                  <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="n">L</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">H</span><span class="p">)</span>
+<span class="n">over</span>  <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span><span class="n">lower_left_corner</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="n">H</span><span class="p">),</span>
+                  <span class="n">width</span><span class="o">=</span><span class="mf">2.5</span><span class="o">*</span><span class="n">R</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.25</span><span class="o">*</span><span class="n">H</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="groups-of-objects">
+<h3>Groups of Objects<a class="headerlink" href="#groups-of-objects" title="Permalink to this headline">¶</a></h3>
+<p>Instead of calling the <tt class="docutils literal"><span class="pre">draw</span></tt> method of every object, we can
+group objects and call <tt class="docutils literal"><span class="pre">draw</span></tt>, or perform other operations, for
+the whole group. For example, we may collect the two wheels
+in a <tt class="docutils literal"><span class="pre">wheels</span></tt> group and the <tt class="docutils literal"><span class="pre">over</span></tt> and <tt class="docutils literal"><span class="pre">under</span></tt> rectangles
+in a <tt class="docutils literal"><span class="pre">body</span></tt> group. The whole vehicle is a composition
+of its <tt class="docutils literal"><span class="pre">wheels</span></tt> and <tt class="docutils literal"><span class="pre">body</span></tt> groups. The codes goes like</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">wheels</span>  <span class="o">=</span> <span class="n">Composition</span><span class="p">({</span><span class="s">&#39;wheel1&#39;</span><span class="p">:</span> <span class="n">wheel1</span><span class="p">,</span> <span class="s">&#39;wheel2&#39;</span><span class="p">:</span> <span class="n">wheel2</span><span class="p">})</span>
+<span class="n">body</span>    <span class="o">=</span> <span class="n">Composition</span><span class="p">({</span><span class="s">&#39;under&#39;</span><span class="p">:</span> <span class="n">under</span><span class="p">,</span> <span class="s">&#39;over&#39;</span><span class="p">:</span> <span class="n">over</span><span class="p">})</span>
+
+<span class="n">vehicle</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">({</span><span class="s">&#39;wheels&#39;</span><span class="p">:</span> <span class="n">wheels</span><span class="p">,</span> <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="n">body</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>The ground is illustrated by an object of type <tt class="docutils literal"><span class="pre">Wall</span></tt>,
+mostly used to indicate walls in sketches of mechanical systems.
+A <tt class="docutils literal"><span class="pre">Wall</span></tt> takes the <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt> coordinates of some curve,
+and a <tt class="docutils literal"><span class="pre">thickness</span></tt> parameter, and creates a &#8220;thick&#8221; curve filled
+with a simple pattern. In this case the curve is just a flat
+line so the construction is made of two points on the
+ground line (<span class="math">\((w_1-L,0)\)</span> and <span class="math">\((w_1+3L,0)\)</span>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ground</span> <span class="o">=</span> <span class="n">Wall</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">w_1</span> <span class="o">-</span> <span class="n">L</span><span class="p">,</span> <span class="n">w_1</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">L</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">thickness</span><span class="o">=-</span><span class="mf">0.3</span><span class="o">*</span><span class="n">R</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The negative thickness makes the pattern-filled rectangle appear below
+the defined line, otherwise it appears above.</p>
+<p>We may now collect all the objects in a &#8220;top&#8221; object that contains
+the whole figure:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fig</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">({</span><span class="s">&#39;vehicle&#39;</span><span class="p">:</span> <span class="n">vehicle</span><span class="p">,</span> <span class="s">&#39;ground&#39;</span><span class="p">:</span> <span class="n">ground</span><span class="p">})</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>  <span class="c"># send all figures to plotting backend</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;tmp.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">fig.draw()</span></tt> call will visit
+all subgroups, their subgroups,
+and so in the hierarchical tree structure that we have collected,
+and call <tt class="docutils literal"><span class="pre">draw</span></tt> for every object.</p>
+</div>
+<div class="section" id="changing-line-styles-and-colors">
+<h3>Changing Line Styles and Colors<a class="headerlink" href="#changing-line-styles-and-colors" title="Permalink to this headline">¶</a></h3>
+<p>Controlling the line style, line color, and line width is
+fundamental when designing figures. The <tt class="docutils literal"><span class="pre">pysketcher</span></tt>
+package allows the user to control such properties in
+single objects, but also set global properties that are
+used if the object has no particular specification of
+the properties. Setting the global properties are done like</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_linestyle</span><span class="p">(</span><span class="s">&#39;dashed&#39;</span><span class="p">)</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the object level the properties are specified in a similar
+way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">wheel1</span><span class="o">.</span><span class="n">set_linestyle</span><span class="p">(</span><span class="s">&#39;solid&#39;</span><span class="p">)</span>
+<span class="n">wheel1</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;red&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and so on.</p>
+<p>Geometric figures can be specified as <em>filled</em>, either with a color or with a
+special visual pattern:</p>
+<div class="highlight-py"><div class="highlight"><pre><span class="c"># Set filling of all curves</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+
+<span class="c"># Turn off filling of all curves</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="c"># Fill the wheel with red color</span>
+<span class="n">wheel1</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="s">&#39;red&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-figure-composition-as-an-object-hierarchy">
+<h3>The Figure Composition as an Object Hierarchy<a class="headerlink" href="#the-figure-composition-as-an-object-hierarchy" title="Permalink to this headline">¶</a></h3>
+<p>The composition of objects is hierarchical, as in a family, where
+each object has a parent and a number of children. Do a
+<tt class="docutils literal"><span class="pre">print</span> <span class="pre">fig</span></tt> to display the relations:</p>
+<div class="highlight-python"><pre>ground
+    wall
+vehicle
+    body
+        over
+            rectangle
+        under
+            rectangle
+    wheels
+        wheel1
+            arc
+        wheel2
+            arc</pre>
+</div>
+<p>The indentation reflects how deep down in the hierarchy (family)
+we are.
+This output is to be interpreted as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">fig</span></tt> contains two objects, <tt class="docutils literal"><span class="pre">ground</span></tt> and <tt class="docutils literal"><span class="pre">vehicle</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">ground</span></tt> contains an object <tt class="docutils literal"><span class="pre">wall</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">vehicle</span></tt> contains two objects, <tt class="docutils literal"><span class="pre">body</span></tt> and <tt class="docutils literal"><span class="pre">wheels</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">body</span></tt> contains two objects, <tt class="docutils literal"><span class="pre">over</span></tt> and <tt class="docutils literal"><span class="pre">under</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">wheels</span></tt> contains two objects, <tt class="docutils literal"><span class="pre">wheel1</span></tt> and <tt class="docutils literal"><span class="pre">wheel2</span></tt></li>
+</ul>
+</div></blockquote>
+<p>More detailed information can be printed by</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">fig</span><span class="o">.</span><span class="n">show_hierarchy</span><span class="p">(</span><span class="s">&#39;std&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>yielding the output</p>
+<div class="highlight-python"><pre>ground (Wall):
+    wall (Curve): 4 coords fillcolor='white' fillpattern='/'
+vehicle (Composition):
+    body (Composition):
+        over (Rectangle):
+            rectangle (Curve): 5 coords
+        under (Rectangle):
+            rectangle (Curve): 5 coords
+    wheels (Composition):
+        wheel1 (Circle):
+            arc (Curve): 181 coords
+        wheel2 (Circle):
+            arc (Curve): 181 coords</pre>
+</div>
+<p>Here we can see the class type for each figure object, how many
+coordinates that are involved in basic figures (<tt class="docutils literal"><span class="pre">Curve</span></tt> objects), and
+special settings of the basic figure (fillcolor, line types, etc.).
+For example, <tt class="docutils literal"><span class="pre">wheel2</span></tt> is a <tt class="docutils literal"><span class="pre">Circle</span></tt> object consisting of an <tt class="docutils literal"><span class="pre">arc</span></tt>,
+which is a <tt class="docutils literal"><span class="pre">Curve</span></tt> object consisting of 181 coordinates (the
+points needed to draw a smooth circle). The <tt class="docutils literal"><span class="pre">Curve</span></tt> objects are the
+only objects that really holds specific coordinates to be drawn.
+The other object types are just compositions used to group
+parts of the complete figure.</p>
+<p>One can also get a graphical overview of the hierarchy of figure objects
+that build up a particular figure <tt class="docutils literal"><span class="pre">fig</span></tt>.
+Just call <tt class="docutils literal"><span class="pre">fig.graphviz_dot('fig')</span></tt> to produce a file <tt class="docutils literal"><span class="pre">fig.dot</span></tt> in
+the <em>dot format</em>. This file contains relations between parent and
+child objects in the figure and can be turned into an image,
+as in Figure <a class="reference internal" href="#sketcher-fig-vehicle0-hier1"><em>Hierarchical relation between figure objects</em></a>, by
+running the <tt class="docutils literal"><span class="pre">dot</span></tt> program:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">Terminal&gt; dot -Tpng -o fig.png fig.dot</span>
+</pre></div>
+</div>
+<div class="figure" id="sketcher-fig-vehicle0-hier1">
+<img alt="_images/vehicle0_hier1.png" src="_images/vehicle0_hier1.png" style="width: 500px;" />
+<p class="caption"><em>Hierarchical relation between figure objects</em></p>
+</div>
+<p>The call <tt class="docutils literal"><span class="pre">fig.graphviz_dot('fig',</span> <span class="pre">classname=True)</span></tt> makes a <tt class="docutils literal"><span class="pre">fig.dot</span></tt> file
+where the class type of each object is also visible, see
+Figure <em class="xref std std-ref">sketcher:fig:vehicle0:hier2</em>. The ability to write out the
+object hierarchy or view it graphically can be of great help when
+working with complex figures that involve layers of subfigures.</p>
+<div class="figure" id="sketcher-fig-vehicle0-hier2">
+<img alt="_images/vehicle0_hier2.png" src="_images/vehicle0_hier2.png" style="width: 500px;" />
+<p class="caption"><em>Hierarchical relation between figure objects, including their class names</em></p>
+</div>
+<p>Any of the objects can in the program be reached through their names, e.g.,</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">][</span><span class="s">&#39;arc&#39;</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">][</span><span class="s">&#39;arc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span>  <span class="c"># x coords</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">][</span><span class="s">&#39;arc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span>  <span class="c"># y coords</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">][</span><span class="s">&#39;arc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">linestyle</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">][</span><span class="s">&#39;arc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">linetype</span>
+</pre></div>
+</div>
+<p>Grabbing a part of the figure this way is very handy for
+changing properties of that part, for example, colors, line styles
+(see Figure <a class="reference internal" href="#sketcher-fig-vehicle0-v2"><em>Left: Basic line-based drawing. Right: Thicker lines and filled parts</em></a>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;body&#39;</span><span class="p">][</span><span class="s">&#39;under&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="s">&#39;red&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;body&#39;</span><span class="p">][</span><span class="s">&#39;over&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;body&#39;</span><span class="p">][</span><span class="s">&#39;over&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;body&#39;</span><span class="p">][</span><span class="s">&#39;over&#39;</span><span class="p">][</span><span class="s">&#39;rectangle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>The last line accesses the <tt class="docutils literal"><span class="pre">Curve</span></tt> object directly, while the line above,
+accesses the <tt class="docutils literal"><span class="pre">Rectangle</span></tt> object which will then set the linewidth of
+its <tt class="docutils literal"><span class="pre">Curve</span></tt> object, and other objects if it had any.
+The result of the actions above is shown in Figure <a class="reference internal" href="#sketcher-fig-vehicle0-v2"><em>Left: Basic line-based drawing. Right: Thicker lines and filled parts</em></a>.</p>
+<div class="figure" id="sketcher-fig-vehicle0-v2">
+<img alt="_images/vehicle0.png" src="_images/vehicle0.png" style="width: 700px;" />
+<p class="caption"><em>Left: Basic line-based drawing. Right: Thicker lines and filled parts</em></p>
+</div>
+<p>We can also change position of parts of the figure and thereby make
+animations, as shown next.</p>
+</div>
+<div class="section" id="animation-translating-the-vehicle">
+<h3>Animation: Translating the Vehicle<a class="headerlink" href="#animation-translating-the-vehicle" title="Permalink to this headline">¶</a></h3>
+<p>Can we make our little vehicle roll? A first attempt will be to
+fake rolling by just displacing all parts of the vehicle.
+The relevant parts constitute the <tt class="docutils literal"><span class="pre">fig['vehicle']</span></tt> object.
+This part of the figure can be translated, rotated, and scaled.
+A translation along the ground means a translation in <span class="math">\(x\)</span> direction,
+say a length <span class="math">\(L\)</span> to the right:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="n">L</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>You need to erase, draw, and display to see the movement:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">drawing_tool</span><span class="o">.</span><span class="n">erase</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Without erasing the old position of the vehicle will remain in
+the figure so you get two vehicles. Without <tt class="docutils literal"><span class="pre">fig.draw()</span></tt> the
+new coordinates of the vehicle will not be communicated to
+the drawing tool, and without calling display the updated
+drawing will not be visible.</p>
+<p>Let us make a velocity function and move the object according
+to that velocity in small steps of time:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">v</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">8</span><span class="o">*</span><span class="n">R</span><span class="o">*</span><span class="n">t</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">))</span>
+
+<span class="n">animate</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For small time steps <tt class="docutils literal"><span class="pre">dt</span></tt> the corresponding displacement is
+well approximated by <tt class="docutils literal"><span class="pre">dt*v(t)</span></tt> (we could integrate the velocity
+to obtain the exact position, but we would anyway need to
+calculate the displacement from time step to time step).
+The <tt class="docutils literal"><span class="pre">animate</span></tt> function takes as arguments some figure <tt class="docutils literal"><span class="pre">fig</span></tt>, a set of
+time points <tt class="docutils literal"><span class="pre">tp</span></tt>, and a user function <tt class="docutils literal"><span class="pre">action</span></tt>,
+and then a new figure is drawn for each time point and the user
+can through the provided <tt class="docutils literal"><span class="pre">action</span></tt> function modify desired parts
+of the figure. Here the <tt class="docutils literal"><span class="pre">action</span></tt> function will move the vehicle:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">move_vehicle</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">fig</span><span class="p">):</span>
+    <span class="n">x_displacement</span> <span class="o">=</span> <span class="n">dt</span><span class="o">*</span><span class="n">v</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="n">x_displacement</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Defining a set of time points for the frames in the animation
+and performing the animation is done by</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="n">tp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">tp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># time step</span>
+
+<span class="n">animate</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">move_vehicle</span><span class="p">,</span> <span class="n">pause_per_frame</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">pause_per_frame</span></tt> adds a pause, here 0.2 seconds, between
+each frame.</p>
+<p>We can also make a movie file of the animation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">files</span> <span class="o">=</span> <span class="n">animate</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">move_vehicle</span><span class="p">,</span> <span class="n">moviefiles</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">pause_per_frame</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">files</span></tt> variable holds a string with the family of
+files constituting the frames in the movie, here
+<tt class="docutils literal"><span class="pre">'tmp_frame*.png'</span></tt>. Making a movie out of the individual
+frames can be done in many ways.
+A simple approach is to make an animated GIF file with help of
+<tt class="docutils literal"><span class="pre">convert</span></tt>, a program in the ImageMagick software suite:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">Terminal&gt; convert -delay 20 tmp_frame*.png anim.gif</span>
+<span class="go">Terminal&gt; animate anim.gif  # play movie</span>
+</pre></div>
+</div>
+<p>The delay between frames governs the speed of the movie.
+The <tt class="docutils literal"><span class="pre">anim.gif</span></tt> file can be embedded in a web page and shown as
+a movie the page is loaded into a web browser (just insert
+<tt class="docutils literal"><span class="pre">&lt;img</span> <span class="pre">src=&quot;anim.gif&quot;&gt;</span></tt> in the HTML code to play the GIF animation).</p>
+<p>The tool <tt class="docutils literal"><span class="pre">ffmpeg</span></tt> can alternatively be used, e.g.,</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">Terminal&gt; ffmpeg -i &quot;tmp_frame_%04d.png&quot; -b 800k -r 25 \</span>
+<span class="go">          -vcodec mpeg4 -y -qmin 2 -qmax 31 anim.mpeg</span>
+</pre></div>
+</div>
+<p>An easy-to-use interface to movie-making tools is provided by the
+SciTools package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">scitools.std</span> <span class="kn">import</span> <span class="n">movie</span>
+
+<span class="c"># HTML page showing individual frames</span>
+<span class="n">movie</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="s">&#39;html&#39;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;anim.html&#39;</span><span class="p">)</span>
+
+<span class="c"># Standard GIF file</span>
+<span class="n">movie</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="s">&#39;convert&#39;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;anim.gif&#39;</span><span class="p">)</span>
+
+<span class="c"># AVI format</span>
+<span class="n">movie</span><span class="p">(</span><span class="s">&#39;tmp_*.png&#39;</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="s">&#39;ffmpeg&#39;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+      <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;anim.avi&#39;</span><span class="p">)</span> <span class="c"># requires ffmpeg package</span>
+
+<span class="c"># MPEG format</span>
+<span class="n">movie</span><span class="p">(</span><span class="s">&#39;tmp_*.png&#39;</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="s">&#39;ffmpeg&#39;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+      <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;anim2.mpeg&#39;</span><span class="p">,</span> <span class="n">vodec</span><span class="o">=</span><span class="s">&#39;mpeg2video&#39;</span><span class="p">)</span>
+<span class="c"># or</span>
+<span class="n">movie</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="s">&#39;ppmtompeg&#39;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+      <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;anim.mpeg&#39;</span><span class="p">)</span>  <span class="c"># requires the netpbm package</span>
+</pre></div>
+</div>
+<p>When difficulties with encoders and players arise, the simple
+web page for showing a movie, here <tt class="docutils literal"><span class="pre">anim.html</span></tt> (generated by the
+first <tt class="docutils literal"><span class="pre">movie</span></tt> command above), is a safe method that you always
+can rely on.
+You can try loading <tt class="docutils literal"><span class="pre">anim.html</span></tt> into a web browser, after first
+having run the present example in the file
+<a href="#id1"><span class="problematic" id="id2">``</span></a>vehicle0.py` &lt;<a class="reference external" href="http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py">http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py</a>&gt;`_. Alternatively, you can view a ready-made <a class="reference external" href="http://hplgit.github.com/pysketcher/doc/src/sketcher/movies-sketcher/anim.html_vehicle0/anim.html">movie</a>.</p>
+</div>
+<div class="section" id="animation-rolling-the-wheels">
+<span id="sketcher-vehicle1-anim"></span><h3>Animation: Rolling the Wheels<a class="headerlink" href="#animation-rolling-the-wheels" title="Permalink to this headline">¶</a></h3>
+<p>It is time to show rolling wheels. To this end, we make somewhat
+more complicated wheels with spokes as on a bicyle, formed by
+two crossing lines, see Figure <a class="reference internal" href="#sketcher-fig-vehicle1"><em>Wheels with spokes to show rotation</em></a>.
+The construction of the wheels will now involve a circle
+and two lines:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">wheel1</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">({</span>
+    <span class="s">&#39;wheel&#39;</span><span class="p">:</span> <span class="n">Circle</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="n">R</span><span class="p">),</span>
+    <span class="s">&#39;cross&#39;</span><span class="p">:</span> <span class="n">Composition</span><span class="p">({</span><span class="s">&#39;cross1&#39;</span><span class="p">:</span> <span class="n">Line</span><span class="p">((</span><span class="n">w_1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>   <span class="p">(</span><span class="n">w_1</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">)),</span>
+                          <span class="s">&#39;cross2&#39;</span><span class="p">:</span> <span class="n">Line</span><span class="p">((</span><span class="n">w_1</span><span class="o">-</span><span class="n">R</span><span class="p">,</span><span class="n">R</span><span class="p">),</span> <span class="p">(</span><span class="n">w_1</span><span class="o">+</span><span class="n">R</span><span class="p">,</span><span class="n">R</span><span class="p">))})})</span>
+<span class="n">wheel2</span> <span class="o">=</span> <span class="n">wheel1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">wheel2</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="n">L</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Observe that <tt class="docutils literal"><span class="pre">wheel1.copy()</span></tt> copies all the objects that make
+up the first wheel, and <tt class="docutils literal"><span class="pre">wheel2.translate</span></tt> translates all
+the copied objects.</p>
+<div class="figure" id="sketcher-fig-vehicle1">
+<img alt="_images/vehicle1.png" src="_images/vehicle1.png" style="width: 400px;" />
+<p class="caption"><em>Wheels with spokes to show rotation</em></p>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">move_vehicle</span></tt> function now needs to displace all the objects in the
+entire vehicle and also rotate the <tt class="docutils literal"><span class="pre">cross1</span></tt> and <tt class="docutils literal"><span class="pre">cross2</span></tt>
+objects in both wheels.
+The rotation angle follows from the fact that the arc length
+of a rolling wheel equals the displacement of the center of
+the wheel, leading to a rotation angle</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">angle</span> <span class="o">=</span> <span class="o">-</span> <span class="n">x_displacement</span><span class="o">/</span><span class="n">R</span>
+</pre></div>
+</div>
+<p>With <tt class="docutils literal"><span class="pre">w_1</span></tt> tracking the <span class="math">\(x\)</span> coordinate of the center
+of the front wheel, we can rotate that wheel by</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w1</span> <span class="o">=</span> <span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel1&#39;</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">degrees</span>
+<span class="n">w1</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">rotate</span></tt> function takes two parameters: the rotation angle
+(in degrees) and the center point of the rotation, which is the
+center of the wheel in this case. The other wheel is rotated by</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w2</span> <span class="o">=</span> <span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">]</span>
+<span class="n">w2</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span> <span class="o">+</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>That is, the angle is the same, but the rotation point is different.
+The update of the center point is done by <tt class="docutils literal"><span class="pre">w_1</span> <span class="pre">+=</span> <span class="pre">displacement[0]</span></tt>.
+The complete <tt class="docutils literal"><span class="pre">move_vehicle</span></tt> function then becomes</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w_1</span> <span class="o">=</span> <span class="n">w_1</span> <span class="o">+</span> <span class="n">L</span>   <span class="c"># start position</span>
+
+<span class="k">def</span> <span class="nf">move_vehicle</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">fig</span><span class="p">):</span>
+    <span class="n">x_displacement</span> <span class="o">=</span> <span class="n">dt</span><span class="o">*</span><span class="n">v</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="n">x_displacement</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="c"># Rotate wheels</span>
+    <span class="k">global</span> <span class="n">w_1</span>
+    <span class="n">w_1</span> <span class="o">+=</span> <span class="n">x_displacement</span>
+    <span class="c"># R*angle = -x_displacement</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="o">-</span> <span class="n">x_displacement</span><span class="o">/</span><span class="n">R</span>
+    <span class="n">w1</span> <span class="o">=</span> <span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel1&#39;</span><span class="p">]</span>
+    <span class="n">w1</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">))</span>
+    <span class="n">w2</span> <span class="o">=</span> <span class="n">fig</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">][</span><span class="s">&#39;wheel2&#39;</span><span class="p">]</span>
+    <span class="n">w2</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span> <span class="o">+</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The complete example is found in the file
+<a href="#id3"><span class="problematic" id="id4">``</span></a>vehicle1.py` &lt;<a class="reference external" href="http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py">http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py</a>&gt;`_. You may run this file or watch a <a class="reference external" href="http://hplgit.github.com/pysketcher/doc/src/sketcher/movies-sketcher/anim.html_vehicle1/anim.html">ready-made movie</a>.</p>
+<p>The advantages with making figures this way through programming,
+rather than using interactive drawing programs, are numerous.  For
+example, the objects are parameterized by variables so that various
+dimensions can easily be changed.  Subparts of the figure, possible
+involving a lot of figure objects, can change
+color, linetype, filling or other properties through a <em>single</em> function
+call.  Subparts of the figure can be rotated, translated, or scaled.
+Subparts of the figure can also be copied and moved to other parts of the
+drawing area. However, the single most important feature is probably
+the ability to make animations governed by mathematical formulas or
+data coming from physics simulations of the problem sketched in
+the drawing, as very simplistically shown in the example above.</p>
+</div>
+</div>
+</div>
+<div class="section" id="inner-workings-of-the-pysketcher-tool">
+<h1>Inner Workings of the Pysketcher Tool<a class="headerlink" href="#inner-workings-of-the-pysketcher-tool" title="Permalink to this headline">¶</a></h1>
+<p>We shall now explain how we can, quite easily, realize software with
+the capabilities demonstrated in the previous examples. Each object in
+the figure is represented as a class in a class hierarchy. Using
+inheritance, classes can inherit properties from parent classes and
+add new geometric features.</p>
+<p>Class programming is a key technology for realizing Pysketcher.
+As soon as some classes are established, more are easily
+added. Enhanced functionality for all the classes is also easy to
+implement in common, generic code that can immediately be shared by
+all present and future classes. The fundamental data structure
+involved in the <tt class="docutils literal"><span class="pre">pysketcher</span></tt> package is a hierarchical tree, and much
+of the material on implementation issues targets how to traverse tree
+structures with recursive function calls in object hierarchies. This
+topic is of key relevance in a wide range of other applications as
+well. In total, the inner workings of Pysketcher constitute an
+excellent example on the power of class programming.</p>
+<div class="section" id="example-of-classes-for-geometric-objects">
+<h2>Example of Classes for Geometric Objects<a class="headerlink" href="#example-of-classes-for-geometric-objects" title="Permalink to this headline">¶</a></h2>
+<p>We introduce class <tt class="docutils literal"><span class="pre">Shape</span></tt> as superclass for all specialized objects
+in a figure. This class does not store any data, but provides a
+series of functions that add functionality to all the subclasses.
+This will be shown later.</p>
+<div class="section" id="simple-geometric-objects">
+<h3>Simple Geometric Objects<a class="headerlink" href="#simple-geometric-objects" title="Permalink to this headline">¶</a></h3>
+<p>One simple subclass is <tt class="docutils literal"><span class="pre">Rectangle</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Rectangle</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lower_left_corner</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">lower_left_corner</span>  <span class="c"># short form</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">width</span><span class="p">,</span>
+             <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">width</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">height</span><span class="p">,</span>
+             <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">height</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;rectangle&#39;</span><span class="p">:</span> <span class="n">Curve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>Any subclass of <tt class="docutils literal"><span class="pre">Shape</span></tt> will have a constructor which takes
+geometric information about the shape of the object and
+creates a dictionary <tt class="docutils literal"><span class="pre">self.shapes</span></tt> with the shape built of
+simpler shapes. The most fundamental shape is <tt class="docutils literal"><span class="pre">Curve</span></tt>, which is
+just a collection of <span class="math">\((x,y)\)</span> coordinates in two arrays <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt>.
+Drawing the <tt class="docutils literal"><span class="pre">Curve</span></tt> object is a matter of plotting <tt class="docutils literal"><span class="pre">y</span></tt> versus <tt class="docutils literal"><span class="pre">x</span></tt>.</p>
+<p>The <tt class="docutils literal"><span class="pre">Rectangle</span></tt> class illustrates how the constructor takes information
+about the lower left corner, the width and the height, and
+creates coordinate arrays <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt> consisting of the four corners,
+plus the first one repeated such that plotting <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt> will
+form a closed four-sided rectangle. This construction procedure
+demands that the rectangle will always be aligned with the <span class="math">\(x\)</span> and
+<span class="math">\(y\)</span> axis. However, we may easily rotate the rectangle about
+any point once the object is constructed.</p>
+<p>Class <tt class="docutils literal"><span class="pre">Line</span></tt> constitutes a similar example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Line</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;line&#39;</span><span class="p">:</span> <span class="n">Curve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>Here we only need two points, the start and end point on the line.
+However, we may add some useful functionality, e.g., the ability
+to give an <span class="math">\(x\)</span> coordinate and have the class calculate the
+corresponding <span class="math">\(y\)</span> coordinate:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given x, return y on the line.&quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="s">&#39;line&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="s">&#39;line&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+</pre></div>
+</div>
+<p>Unfortunately, this is too simplistic because vertical lines cannot
+be handled (infinite <tt class="docutils literal"><span class="pre">self.a</span></tt>). The source code of <tt class="docutils literal"><span class="pre">Line</span></tt> therefore
+provides a more general solution at the cost of significantly
+longer code with more tests.</p>
+<p>A circle gives us somewhat increased complexity. Again we represent
+the geometric object by a <tt class="docutils literal"><span class="pre">Curve</span></tt> object, but this time the <tt class="docutils literal"><span class="pre">Curve</span></tt>
+object needs to store a large number of points on the curve such
+that a plotting program produces a visually smooth curve.
+The points on the circle must be calculated manually in the constructor
+of class <tt class="docutils literal"><span class="pre">Circle</span></tt>. The formulas for points <span class="math">\((x,y)\)</span> on a curve with radius
+<span class="math">\(R\)</span> and center at <span class="math">\((x_0, y_0)\)</span> are given by</p>
+<div class="math">
+\[\begin{split}x &amp;= x_0 + R\cos (t),\\
+y &amp;= y_0 + R\sin (t),\end{split}\]</div>
+<p>where <span class="math">\(t\in [0, 2\pi]\)</span>. A discrete set of <span class="math">\(t\)</span> values in this
+interval gives the corresponding set of <span class="math">\((x,y)\)</span> coordinates on
+the circle. The user must specify the resolution, i.e., the number
+of <span class="math">\(t\)</span> values, or equivalently, points on the circle. The circle&#8217;s
+radius and center must of course also be specified.</p>
+<p>We can write the <tt class="docutils literal"><span class="pre">Circle</span></tt> class as</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Circle</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">180</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">center</span><span class="p">,</span> <span class="n">radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="n">resolution</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>  <span class="n">y0</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">R</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">R</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;circle&#39;</span><span class="p">:</span> <span class="n">Curve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>As in class <tt class="docutils literal"><span class="pre">Line</span></tt> we can offer the possibility to give an angle
+<span class="math">\(\theta\)</span> (equivalent to <span class="math">\(t\)</span> in the formulas above)
+and then get the corresponding <span class="math">\(x\)</span> and <span class="math">\(y\)</span> coordinates:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return (x, y) point corresponding to angle theta.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> \
+           <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There is one flaw with this method: it yields illegal values after
+a translation, scaling, or rotation of the circle.</p>
+<p>A part of a circle, an arc, is a frequent geometric object when
+drawing mechanical systems. The arc is constructed much like
+a circle, but <span class="math">\(t\)</span> runs in <span class="math">\([\theta_0, \theta_1]\)</span>. Giving
+<span class="math">\(\theta_1\)</span> and <span class="math">\(\theta_2\)</span> the slightly more descriptive names
+<tt class="docutils literal"><span class="pre">start_angle</span></tt> and <tt class="docutils literal"><span class="pre">arc_angle</span></tt>, the code looks like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Arc</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span>
+                 <span class="n">start_angle</span><span class="p">,</span> <span class="n">arc_angle</span><span class="p">,</span>
+                 <span class="n">resolution</span><span class="o">=</span><span class="mi">180</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">center</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_angle</span> <span class="o">=</span> <span class="n">start_angle</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>  <span class="c"># radians</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arc_angle</span> <span class="o">=</span> <span class="n">arc_angle</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_angle</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">start_angle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">arc_angle</span><span class="p">,</span>
+                     <span class="n">resolution</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>  <span class="n">y0</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">R</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">R</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;arc&#39;</span><span class="p">:</span> <span class="n">Curve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>Having the <tt class="docutils literal"><span class="pre">Arc</span></tt> class, a <tt class="docutils literal"><span class="pre">Circle</span></tt> can alternatively befined as
+a subclass specializing the arc to a circle:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Circle</span><span class="p">(</span><span class="n">Arc</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">180</span><span class="p">):</span>
+        <span class="n">Arc</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A wall is about drawing a curve, displacing the curve vertically by
+some thickness, and then filling the space between the curves
+by some pattern. The input is the <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt> coordinate arrays
+of the curve and a thickness parameter. The computed coordinates
+will be a polygon: going along the originally curve and then back again
+along the vertically displaced curve. The relevant code becomes</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CurveWall</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">thickness</span><span class="p">):</span>
+        <span class="c"># User&#39;s curve</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="c"># Displaced curve (according to thickness)</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">x1</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">thickness</span>
+        <span class="c"># Combine x1,y1 with x2,y2 reversed</span>
+        <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">concatenate</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">((</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">wall</span> <span class="o">=</span> <span class="n">Curve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">wall</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;white&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;wall&#39;</span><span class="p">:</span> <span class="n">wall</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="class-curve">
+<h3>Class Curve<a class="headerlink" href="#class-curve" title="Permalink to this headline">¶</a></h3>
+<p>Class <tt class="docutils literal"><span class="pre">Curve</span></tt> sits on the coordinates to be drawn, but how is
+that done? The constructor just stores the coordinates, while
+a method <tt class="docutils literal"><span class="pre">draw</span></tt> sends the coordinates to the plotting program
+to make a graph.
+Or more precisely, to avoid a lot of (e.g.) Matplotlib-specific
+plotting commands we have created a small layer with a
+simple programming interface to plotting programs. This makes it
+straightforward to change from Matplotlib to another plotting
+program. The programming interface is represented by the <tt class="docutils literal"><span class="pre">drawing_tool</span></tt>
+object and has a few functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">plot_curve</span></tt> for sending a curve in terms of <span class="math">\(x\)</span> and <span class="math">\(y\)</span> coordinates
+to the plotting program,</li>
+<li><tt class="docutils literal"><span class="pre">set_coordinate_system</span></tt> for specifying the graphics area,</li>
+<li><tt class="docutils literal"><span class="pre">erase</span></tt> for deleting all elements of the graph,</li>
+<li><tt class="docutils literal"><span class="pre">set_grid</span></tt> for turning on a grid (convenient while constructing the plot),</li>
+<li><tt class="docutils literal"><span class="pre">set_instruction_file</span></tt> for creating a separate file with all
+plotting commands (Matplotlib commands in our case),</li>
+<li>a series of <tt class="docutils literal"><span class="pre">set_X</span></tt> functions where <tt class="docutils literal"><span class="pre">X</span></tt> is some property like
+<tt class="docutils literal"><span class="pre">linecolor</span></tt>, <tt class="docutils literal"><span class="pre">linestyle</span></tt>, <tt class="docutils literal"><span class="pre">linewidth</span></tt>, <tt class="docutils literal"><span class="pre">filled_curves</span></tt>.</li>
+</ul>
+</div></blockquote>
+<p>This is basically all we need to communicate to a plotting program.</p>
+<p>Any class in the <tt class="docutils literal"><span class="pre">Shape</span></tt> hierarchy inherits <tt class="docutils literal"><span class="pre">set_X</span></tt> functions for
+setting properties of curves. This information is propagated to
+all other shape objects that make up the figure. Class
+<tt class="docutils literal"><span class="pre">Curve</span></tt> stores the line properties together with the coordinates
+of its curve and propagates this information to the plotting program.
+When saying <tt class="docutils literal"><span class="pre">vehicle.set_linewidth(10)</span></tt>, all objects that make
+up the <tt class="docutils literal"><span class="pre">vehicle</span></tt> object will get a <tt class="docutils literal"><span class="pre">set_linewidth(10)</span></tt> call,
+but only the <tt class="docutils literal"><span class="pre">Curve</span></tt> object at the end of the chain will actually
+store the information and send it to the plotting program.</p>
+<p>A rough sketch of class <tt class="docutils literal"><span class="pre">Curve</span></tt> reads</p>
+<div class="highlight-python"><pre>class Curve(Shape):
+    """General curve as a sequence of (x,y) coordintes."""
+    def __init__(self, x, y):
+        self.x = asarray(x, dtype=float)
+        self.y = asarray(y, dtype=float)
+
+        self.linestyle = None
+        self.linewidth = None
+        self.linecolor = None
+        self.fillcolor = None
+        self.fillpattern = None
+        self.arrow = None
+
+    def draw(self):
+        drawing_tool.plot_curve(
+            self.x, self.y,
+            self.linestyle, self.linewidth, self.linecolor,
+            self.arrow, self.fillcolor, self.fillpattern)
+
+    def set_linewidth(self, width):
+        self.linewidth = width
+
+    det set_linestyle(self, style):
+        self.linestyle = style
+    ...</pre>
+</div>
+</div>
+<div class="section" id="compound-geometric-objects">
+<h3>Compound Geometric Objects<a class="headerlink" href="#compound-geometric-objects" title="Permalink to this headline">¶</a></h3>
+<p>The simple classes <tt class="docutils literal"><span class="pre">Line</span></tt>, <tt class="docutils literal"><span class="pre">Arc</span></tt>, and <tt class="docutils literal"><span class="pre">Circle</span></tt> could define the geometric
+shape through just one <tt class="docutils literal"><span class="pre">Curve</span></tt> object. More complicated figure elements
+are built from instances of various subclasses of <tt class="docutils literal"><span class="pre">Shape</span></tt>. Classes used
+for professional drawings soon get quite complex in composition and
+have a lot of geometric details, so here we prefer to make a very simple
+composition: the already drawn vehicle from
+Figure ref:ref:<cite>sketcher:fig:vehicle0</cite>.
+That is, instead of composing the drawing in a Python code we make a class
+<tt class="docutils literal"><span class="pre">Vehicle0</span></tt> for doing the same thing, and derive it from <tt class="docutils literal"><span class="pre">Shape</span></tt>.</p>
+<p>The <tt class="docutils literal"><span class="pre">Shape</span></tt> hierarchy is found in the <tt class="docutils literal"><span class="pre">pysketcher</span></tt> package, so to use these
+classes or derive a new one, we need to import <tt class="docutils literal"><span class="pre">pysketcher</span></tt>. The constructor
+of class <tt class="docutils literal"><span class="pre">Vehicle0</span></tt> performs approximately the same statements as
+in the example program we developed for making the drawing in
+Figure ref:ref:<cite>sketcher:fig:vehicle0</cite>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Vehicle0</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">):</span>
+        <span class="n">wheel1</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="n">R</span><span class="p">)</span>
+        <span class="n">wheel2</span> <span class="o">=</span> <span class="n">wheel1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">wheel2</span><span class="o">.</span><span class="n">translate</span><span class="p">((</span><span class="n">L</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">under</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span><span class="n">lower_left_corner</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">),</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="n">L</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">R</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">H</span><span class="p">)</span>
+        <span class="n">over</span>  <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span><span class="n">lower_left_corner</span><span class="o">=</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="n">H</span><span class="p">),</span>
+                          <span class="n">width</span><span class="o">=</span><span class="mf">2.5</span><span class="o">*</span><span class="n">R</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.25</span><span class="o">*</span><span class="n">H</span><span class="p">)</span>
+
+        <span class="n">wheels</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span>
+            <span class="p">{</span><span class="s">&#39;wheel1&#39;</span><span class="p">:</span> <span class="n">wheel1</span><span class="p">,</span> <span class="s">&#39;wheel2&#39;</span><span class="p">:</span> <span class="n">wheel2</span><span class="p">})</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span>
+            <span class="p">{</span><span class="s">&#39;under&#39;</span><span class="p">:</span> <span class="n">under</span><span class="p">,</span> <span class="s">&#39;over&#39;</span><span class="p">:</span> <span class="n">over</span><span class="p">})</span>
+
+        <span class="n">vehicle</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">({</span><span class="s">&#39;wheels&#39;</span><span class="p">:</span> <span class="n">wheels</span><span class="p">,</span> <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="n">body</span><span class="p">})</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="n">w_1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">L</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">R</span>
+        <span class="n">ground</span> <span class="o">=</span> <span class="n">Wall</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">R</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">thickness</span><span class="o">=-</span><span class="mf">0.3</span><span class="o">*</span><span class="n">R</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;vehicle&#39;</span><span class="p">:</span> <span class="n">vehicle</span><span class="p">,</span> <span class="s">&#39;ground&#39;</span><span class="p">:</span> <span class="n">ground</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Any subclass of <tt class="docutils literal"><span class="pre">Shape</span></tt> <em>must</em> define the <tt class="docutils literal"><span class="pre">shapes</span></tt> attribute, otherwise
+the inherited <tt class="docutils literal"><span class="pre">draw</span></tt> method (and a lot of other methods too) will
+not work.</p>
+<p>The painting of the vehicle could be offered by a method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">colorful</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">wheels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;wheels&#39;</span><span class="p">]</span>
+    <span class="n">wheels</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">wheels</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">wheels</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+    <span class="n">under</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;body&#39;</span><span class="p">][</span><span class="s">&#39;under&#39;</span><span class="p">]</span>
+    <span class="n">under</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="s">&#39;red&#39;</span><span class="p">)</span>
+    <span class="n">over</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">][</span><span class="s">&#39;body&#39;</span><span class="p">][</span><span class="s">&#39;over&#39;</span><span class="p">]</span>
+    <span class="n">over</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">over</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The usage of the class is simple: after having set up an appropriate
+coordinate system a s previously shown, we can do</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">vehicle</span> <span class="o">=</span> <span class="n">Vehicle0</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+<span class="n">vehicle</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The color from Figure <a class="reference internal" href="#sketcher-fig-vehicle0-v2"><em>Left: Basic line-based drawing. Right: Thicker lines and filled parts</em></a> is realized by</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">drawing_tool</span><span class="o">.</span><span class="n">erase</span><span class="p">()</span>
+<span class="n">vehicle</span><span class="o">.</span><span class="n">colorful</span><span class="p">()</span>
+<span class="n">vehicle</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>A complete code defining and using class <tt class="docutils literal"><span class="pre">Vehicle0</span></tt> is found in the file
+<a href="#id5"><span class="problematic" id="id6">``</span></a>vehicle2.py` &lt;<a class="reference external" href="http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle2.py">http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle2.py</a>&gt;`_.</p>
+<p>The <tt class="docutils literal"><span class="pre">pysketcher</span></tt> package contains a wide range of classes for various
+geometrical objects, particularly those that are frequently used in
+drawings of mechanical systems.</p>
+</div>
+</div>
+</div>
+<div class="section" id="adding-functionality-via-recursion">
+<h1>Adding Functionality via Recursion<a class="headerlink" href="#adding-functionality-via-recursion" title="Permalink to this headline">¶</a></h1>
+<p>The really powerful feature of our class hierarchy is that we can add
+much functionality to the superclass <tt class="docutils literal"><span class="pre">Shape</span></tt> and to the &#8220;bottom&#8221; classes
+<tt class="docutils literal"><span class="pre">Curve</span></tt>, and all other classes for all types of geometrical shapes
+immediately get the new functionality. To explain the idea we first have
+to look at the <tt class="docutils literal"><span class="pre">draw</span></tt> method, which all classes in the <tt class="docutils literal"><span class="pre">Shape</span></tt>
+hierarchy must have. The inner workings of the <tt class="docutils literal"><span class="pre">draw</span></tt> method explain
+the secrets of how a series of other useful operations on figures
+can be implemented.</p>
+<p>We work with two types of class hierarchies: one Python class hierarchy,
+with <tt class="docutils literal"><span class="pre">Shape</span></tt> as superclass, and one <em>object hierarchy</em> of figure elements
+in a specific figure. A subclass of <tt class="docutils literal"><span class="pre">Shape</span></tt> stores its figure in the
+<tt class="docutils literal"><span class="pre">self.shapes</span></tt> dictionary. This dictionary represents the object hierarchy
+of figure elements for that class. We want to make one <tt class="docutils literal"><span class="pre">draw</span></tt> call
+for an instance, say our class <tt class="docutils literal"><span class="pre">Vehicle0</span></tt>, and then we want this call
+to be propagated to <em>all</em> objects that are contained in
+<tt class="docutils literal"><span class="pre">self.shapes</span></tt> and all is nested subdictionaries. How is this done?</p>
+<p>The natural starting point is to call <tt class="docutils literal"><span class="pre">draw</span></tt> for each <tt class="docutils literal"><span class="pre">Shape</span></tt> object
+in the <tt class="docutils literal"><span class="pre">self.shapes</span></tt> dictionary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This general method can be provided by class <tt class="docutils literal"><span class="pre">Shape</span></tt> and inherited in
+subclasses like <tt class="docutils literal"><span class="pre">Vehicle0</span></tt>. Let <tt class="docutils literal"><span class="pre">v</span></tt> be a <tt class="docutils literal"><span class="pre">Vehicle0</span></tt> instance.
+Seemingly, a call <tt class="docutils literal"><span class="pre">v.draw()</span></tt> just calls</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">v</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="s">&#39;vehicle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">v</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="s">&#39;ground&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>However, in the former call we call the <tt class="docutils literal"><span class="pre">draw</span></tt> method of a <tt class="docutils literal"><span class="pre">Composition</span></tt> object
+whose <tt class="docutils literal"><span class="pre">self.shapes</span></tt> attributed has two elements: <tt class="docutils literal"><span class="pre">wheels</span></tt> and <tt class="docutils literal"><span class="pre">body</span></tt>.
+Since class <tt class="docutils literal"><span class="pre">Composition</span></tt> inherits the same <tt class="docutils literal"><span class="pre">draw</span></tt> method, this method will
+run through <tt class="docutils literal"><span class="pre">self.shapes</span></tt> and call <tt class="docutils literal"><span class="pre">wheels.draw()</span></tt> and <tt class="docutils literal"><span class="pre">body.draw()</span></tt>.
+Now, the <tt class="docutils literal"><span class="pre">wheels</span></tt> object is also a <tt class="docutils literal"><span class="pre">Composition</span></tt> with the same <tt class="docutils literal"><span class="pre">draw</span></tt>
+method, which will run through the <tt class="docutils literal"><span class="pre">shapes</span></tt> dictionary, now containing
+the <tt class="docutils literal"><span class="pre">wheel1</span></tt> and and <tt class="docutils literal"><span class="pre">wheel2</span></tt> objects. The <tt class="docutils literal"><span class="pre">wheel1</span></tt> object is a <tt class="docutils literal"><span class="pre">Circle</span></tt>,
+so calling <tt class="docutils literal"><span class="pre">wheel1.draw()</span></tt> calls the <tt class="docutils literal"><span class="pre">draw</span></tt> method in class <tt class="docutils literal"><span class="pre">Circle</span></tt>,
+but this is the same <tt class="docutils literal"><span class="pre">draw</span></tt> method as shown above. This method will
+therefore traverse the circle&#8217;s <tt class="docutils literal"><span class="pre">shapes</span></tt> dictionary, which we have seen
+consists of one <tt class="docutils literal"><span class="pre">Curve</span></tt> element.</p>
+<p>The <tt class="docutils literal"><span class="pre">Curve</span></tt> object holds the coordinates to be plotted so here <tt class="docutils literal"><span class="pre">draw</span></tt>
+really needs to do something &#8220;physical&#8221;, namely send the coordinates to
+the plotting program. The <tt class="docutils literal"><span class="pre">draw</span></tt> method is outlined in the short listing
+of class <tt class="docutils literal"><span class="pre">Curve</span></tt> shown previously.</p>
+<p>We can go to any of the other shape objects that appear in the figure
+hierarchy and follow their <tt class="docutils literal"><span class="pre">draw</span></tt> calls in the similar way. Every time,
+a <tt class="docutils literal"><span class="pre">draw</span></tt> call will invoke a new <tt class="docutils literal"><span class="pre">draw</span></tt> call, until we eventually hit
+a <tt class="docutils literal"><span class="pre">Curve</span></tt> object in the &#8220;botton&#8221; of the figure hierarchy, and then that part
+of the figure is really plotted (or more precisely, the coordinates
+are sent to a plotting program).</p>
+<p>When a method calls itself, such as <tt class="docutils literal"><span class="pre">draw</span></tt> does, the calls are known as
+<em>recursive</em> and the programming principle is referred to as
+<em>recursion</em>. This technique is very often used to traverse hierarchical
+structures like the figure structures we work with here. Even though the
+hierarchy of objects building up a figure are of different types, they
+all inherit the same <tt class="docutils literal"><span class="pre">draw</span></tt> method and therefore exhibit the same
+behavior with respect to drawing. Only the <tt class="docutils literal"><span class="pre">Curve</span></tt> object has a different
+<tt class="docutils literal"><span class="pre">draw</span></tt> method, which does not lead to more recursion. Without this
+different <tt class="docutils literal"><span class="pre">draw</span></tt> method in class <tt class="docutils literal"><span class="pre">Curve</span></tt>, the repeated <tt class="docutils literal"><span class="pre">draw</span></tt> calls would
+go on forever.</p>
+<p>Understanding recursion is usually a challenge. To get a better idea of
+how recursion works, we have equipped class <tt class="docutils literal"><span class="pre">Shape</span></tt> with a method <tt class="docutils literal"><span class="pre">recurse</span></tt>
+which just visits all the objects in the <tt class="docutils literal"><span class="pre">shapes</span></tt> dictionary and prints
+out a message for each object.
+This feature allows us to trace the execution and see exactly where
+we are in the hierarchy and which objects that are visited.</p>
+<p>The <tt class="docutils literal"><span class="pre">recurse</span></tt> method is very similar to <tt class="docutils literal"><span class="pre">draw</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">recurse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c"># print message where we are (name is where we come from)</span>
+    <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">:</span>
+        <span class="c"># print message about which object to visit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span><span class="o">.</span><span class="n">recurse</span><span class="p">(</span><span class="n">indent</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">indent</span></tt> parameter governs how much the message from this
+<tt class="docutils literal"><span class="pre">recurse</span></tt> method is intended. We increase <tt class="docutils literal"><span class="pre">indent</span></tt> by 2 for every level
+in the hierarchy. This makes it easy to see on the printout how far
+down in the hierarchy we are.</p>
+<p>A typical message written by <tt class="docutils literal"><span class="pre">recurse</span></tt> when <tt class="docutils literal"><span class="pre">name</span></tt> is <tt class="docutils literal"><span class="pre">body</span></tt> and
+the <tt class="docutils literal"><span class="pre">shapes</span></tt> dictionary contains two entries, <tt class="docutils literal"><span class="pre">over</span></tt> and <tt class="docutils literal"><span class="pre">under</span></tt>,
+will be</p>
+<div class="highlight-python"><pre>Composition: body.shapes has entries 'over', 'under'
+call body.shapes["over"].recurse("over", 6)</pre>
+</div>
+<p>The number of leading blanks on each line corresponds to the value of
+<tt class="docutils literal"><span class="pre">indent</span></tt>. The code printing out such messages looks like</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">recurse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">space</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">*</span><span class="n">indent</span>
+    <span class="k">print</span> <span class="n">space</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">.shapes has entries&#39;</span> <span class="o">%</span> \
+          <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> \
+          <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="o">.</span><span class="n">keys</span><span class="p">()))[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">space</span><span class="p">,</span>
+        <span class="k">print</span> <span class="s">&#39;call </span><span class="si">%s</span><span class="s">.shapes[&quot;</span><span class="si">%s</span><span class="s">&quot;].recurse(&quot;</span><span class="si">%s</span><span class="s">&quot;, </span><span class="si">%d</span><span class="s">)&#39;</span> <span class="o">%</span> \
+              <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">indent</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span><span class="o">.</span><span class="n">recurse</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">indent</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let us follow a <tt class="docutils literal"><span class="pre">v.recurse('vehicle')</span></tt> call in detail, <tt class="docutils literal"><span class="pre">v</span></tt> being
+a <tt class="docutils literal"><span class="pre">Vehicle0</span></tt> instance. Before looking into the output from <tt class="docutils literal"><span class="pre">recurse</span></tt>,
+let us get an overview of the figure hierarchy in the <tt class="docutils literal"><span class="pre">v</span></tt> object
+(as produced by <tt class="docutils literal"><span class="pre">print</span> <span class="pre">v</span></tt>)</p>
+<div class="highlight-python"><pre>ground
+    wall
+vehicle
+    body
+        over
+            rectangle
+        under
+            rectangle
+    wheels
+        wheel1
+            arc
+        wheel2
+            arc</pre>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">recurse</span></tt> method performs the same kind of traversal of the
+hierarchy, but writes out and explains a lot more.</p>
+<p>The data structure represented by <tt class="docutils literal"><span class="pre">v.shapes</span></tt> is known as a <em>tree</em>.
+As in physical trees, there is a <em>root</em>, here the <tt class="docutils literal"><span class="pre">v.shapes</span></tt>
+dictionary. A graphical illustration of the tree (upside down) is
+shown in Figure <em class="xref std std-ref">sketcher:fig:Vehicle0:hier2</em>.
+From the root there are one or more branches, here two:
+<tt class="docutils literal"><span class="pre">ground</span></tt> and <tt class="docutils literal"><span class="pre">vehicle</span></tt>. Following the <tt class="docutils literal"><span class="pre">vehicle</span></tt> branch, it has two new
+branches, <tt class="docutils literal"><span class="pre">body</span></tt> and <tt class="docutils literal"><span class="pre">wheels</span></tt>. Relationships as in family trees
+are often used to describe the relations in object trees too: we say
+that <tt class="docutils literal"><span class="pre">vehicle</span></tt> is the parent of <tt class="docutils literal"><span class="pre">body</span></tt> and that <tt class="docutils literal"><span class="pre">body</span></tt> is a child of
+<tt class="docutils literal"><span class="pre">vehicle</span></tt>. The term <em>node</em> is also often used to describe an element
+in a tree. A node may have several other nodes as <em>descendants</em>.</p>
+<div class="figure" id="id7">
+<img alt="_images/Vehicle0_hier2.png" src="_images/Vehicle0_hier2.png" style="width: 600px;" />
+<p class="caption"><em>Hierarchy of figure elements in an instance of class `Vehicle0`</em></p>
+</div>
+<p>Recursion is the principal programming technique to traverse tree structures.
+Any object in the tree can be viewed as a root of a subtree. For
+example, <tt class="docutils literal"><span class="pre">wheels</span></tt> is the root of a subtree that branches into
+<tt class="docutils literal"><span class="pre">wheel1</span></tt> and <tt class="docutils literal"><span class="pre">wheel2</span></tt>. So when processing an object in the tree,
+we imagine we process the root and then recurse into a subtree, but the
+first object we recurse into can be viewed as the root of the subtree, so the
+processing procedure of the parent object can be repeated.</p>
+<p>A recommended next step is to simulate the <tt class="docutils literal"><span class="pre">recurse</span></tt> method by hand and
+carefully check that what happens in the visits to <tt class="docutils literal"><span class="pre">recurse</span></tt> is
+consistent with the output listed below. Although tedious, this is
+a major exercise that guaranteed will help to demystify recursion.
+Also remember that it requires some efforts to understand recursion.</p>
+<p>A part of the printout of <tt class="docutils literal"><span class="pre">v.recurse('vehicle')</span></tt> looks like</p>
+<div class="highlight-python"><pre> Vehicle0: vehicle.shapes has entries 'ground', 'vehicle'
+ call vehicle.shapes["ground"].recurse("ground", 2)
+   Wall: ground.shapes has entries 'wall'
+   call ground.shapes["wall"].recurse("wall", 4)
+     reached "bottom" object Curve
+ call vehicle.shapes["vehicle"].recurse("vehicle", 2)
+   Composition: vehicle.shapes has entries 'body', 'wheels'
+   call vehicle.shapes["body"].recurse("body", 4)
+     Composition: body.shapes has entries 'over', 'under'
+     call body.shapes["over"].recurse("over", 6)
+       Rectangle: over.shapes has entries 'rectangle'
+       call over.shapes["rectangle"].recurse("rectangle", 8)
+         reached "bottom" object Curve
+     call body.shapes["under"].recurse("under", 6)
+       Rectangle: under.shapes has entries 'rectangle'
+       call under.shapes["rectangle"].recurse("rectangle", 8)
+         reached "bottom" object Curve
+...</pre>
+</div>
+<p>This example should clearly demonstrate the principle that we
+can start at any object in the tree and do a recursive set
+of calls with that object as root.</p>
+<div class="section" id="scaling-translating-and-rotating-a-figure">
+<span id="sketcher-scaling"></span><h2>Scaling, Translating, and Rotating a Figure<a class="headerlink" href="#scaling-translating-and-rotating-a-figure" title="Permalink to this headline">¶</a></h2>
+<p>With recursion, as explained in the previous section, we can within
+minutes equip <em>all</em> classes in the <tt class="docutils literal"><span class="pre">Shape</span></tt> hierarchy, both present and
+future ones, with the ability to scale the figure, translate it,
+or rotate it. This added functionality requires only a few lines
+of code.</p>
+<div class="section" id="scaling">
+<h3>Scaling<a class="headerlink" href="#scaling" title="Permalink to this headline">¶</a></h3>
+<p>We start with the simplest of the three geometric transformations,
+namely scaling.
+For a <tt class="docutils literal"><span class="pre">Curve</span></tt> instance containing a set of <span class="math">\(n\)</span> coordinates
+<span class="math">\((x_i,y_i)\)</span> that make up a curve, scaling by
+a factor <span class="math">\(a\)</span> means that we multiply all the <span class="math">\(x\)</span> and <span class="math">\(y\)</span> coordinates
+by <span class="math">\(a\)</span>:</p>
+<div class="math">
+\[x_i \leftarrow ax_i,\quad y_i\leftarrow ay_i,
+\quad i=0,\ldots,n-1\thinspace .\]</div>
+<p>Here we apply the arrow as an assignment operator.
+The corresponding Python implementation in
+class <tt class="docutils literal"><span class="pre">Curve</span></tt> reads</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Curve</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">factor</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">factor</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>Note here that <tt class="docutils literal"><span class="pre">self.x</span></tt> and <tt class="docutils literal"><span class="pre">self.y</span></tt> are Numerical Python arrays,
+so that multiplication by a scalar number <tt class="docutils literal"><span class="pre">factor</span></tt> is
+a vectorized operation.</p>
+<p>An even more efficient implementation is
+to make use of in-place multiplication in the arrays, as this saves the creation
+of temporary arrays like <tt class="docutils literal"><span class="pre">factor*self.x</span></tt>, which is then assigned to
+<tt class="docutils literal"><span class="pre">self.x</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Curve</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*=</span> <span class="n">factor</span>
+</pre></div>
+</div>
+<p>In an instance of a subclass of <tt class="docutils literal"><span class="pre">Shape</span></tt>,
+the meaning of a method <tt class="docutils literal"><span class="pre">scale</span></tt> is
+to run through all objects in the dictionary <tt class="docutils literal"><span class="pre">shapes</span></tt> and ask
+each object to scale itself. This is the same delegation of actions
+to subclass instances as we do in the <tt class="docutils literal"><span class="pre">draw</span></tt> (or <tt class="docutils literal"><span class="pre">recurse</span></tt>) method. All
+all objects, except <tt class="docutils literal"><span class="pre">Curve</span></tt> instances, can share the same
+implementation of the <tt class="docutils literal"><span class="pre">scale</span></tt> method. Therefore, we place
+the <tt class="docutils literal"><span class="pre">scale</span></tt> method in the superclass <tt class="docutils literal"><span class="pre">Shape</span></tt> such that all
+subclasses inherit the method.
+Since <tt class="docutils literal"><span class="pre">scale</span></tt> and <tt class="docutils literal"><span class="pre">draw</span></tt> are so similar,
+we can easily implement the <tt class="docutils literal"><span class="pre">scale</span></tt> method in class <tt class="docutils literal"><span class="pre">Shape</span></tt> by
+copying and editing the <tt class="docutils literal"><span class="pre">draw</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Shape</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is all we have to do in order to equip all subclasses of
+<tt class="docutils literal"><span class="pre">Shape</span></tt> with scaling functionality!
+Any piece of the figure will scale itself, in the same manner
+as it can draw itself.</p>
+</div>
+<div class="section" id="translation">
+<h3>Translation<a class="headerlink" href="#translation" title="Permalink to this headline">¶</a></h3>
+<p>A set of coordinates <span class="math">\((x_i, y_i)\)</span> can be translated <span class="math">\(v_0\)</span> units in
+the <span class="math">\(x\)</span> direction and <span class="math">\(v_1\)</span> units in the <span class="math">\(y\)</span> direction using the formulas</p>
+<div class="math">
+\[x_i\leftarrow x_i+v_0,\quad y_i\leftarrow y_i+v_1,\quad i=0,\ldots,n-1\thinspace .\]</div>
+<p>The natural specification of the translation is in terms of a
+vector <span class="math">\(v=(v_0,v_1)\)</span>.
+The corresponding Python implementation in class <tt class="docutils literal"><span class="pre">Curve</span></tt> becomes</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Curve</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The translation operation for a shape object is very similar to the
+scaling and drawing operations. This means that we can implement a
+common method <tt class="docutils literal"><span class="pre">translate</span></tt> in the superclass <tt class="docutils literal"><span class="pre">Shape</span></tt>. The code
+is parallel to the <tt class="docutils literal"><span class="pre">scale</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Shape</span><span class="p">:</span>
+    <span class="o">....</span>
+    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rotation">
+<h3>Rotation<a class="headerlink" href="#rotation" title="Permalink to this headline">¶</a></h3>
+<p>Rotating a figure is more complicated than scaling and translating.
+A counter clockwise rotation of <span class="math">\(\theta\)</span> degrees for a set of
+coordinates <span class="math">\((x_i,y_i)\)</span> is given by</p>
+<div class="math">
+\[\begin{split}\bar x_i &amp;\leftarrow x_i\cos\theta - y_i\sin\theta,\\
+\bar y_i &amp;\leftarrow x_i\sin\theta + y_i\cos\theta\thinspace .\end{split}\]</div>
+<p>This rotation is performed around the origin. If we want the figure
+to be rotated with respect to a general point <span class="math">\((x,y)\)</span>, we need to
+extend the formulas above:</p>
+<div class="math">
+\[\begin{split}\bar x_i &amp;\leftarrow x + (x_i -x)\cos\theta - (y_i -y)\sin\theta,\\
+\bar y_i &amp;\leftarrow y + (x_i -x)\sin\theta + (y_i -y)\cos\theta\thinspace .\end{split}\]</div>
+<p>The Python implementation in class <tt class="docutils literal"><span class="pre">Curve</span></tt>, assuming that <span class="math">\(\theta\)</span>
+is given in degrees and not in radians, becomes</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">center</span><span class="p">):</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">center</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">);</span>  <span class="n">s</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="n">xnew</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">c</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">s</span>
+    <span class="n">ynew</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">c</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">xnew</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">ynew</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">rotate</span></tt> method in class <tt class="docutils literal"><span class="pre">Shape</span></tt> is identical to the
+<tt class="docutils literal"><span class="pre">draw</span></tt>, <tt class="docutils literal"><span class="pre">scale</span></tt>, and <tt class="docutils literal"><span class="pre">translate</span></tt> methods except that we
+recurse into <tt class="docutils literal"><span class="pre">self.rotate(angle,</span> <span class="pre">center)</span></tt>.</p>
+<p>We have already seen the <tt class="docutils literal"><span class="pre">rotate</span></tt> method in action when animating the
+rolling wheel at the end of the section <a class="reference internal" href="#sketcher-vehicle1-anim"><em>Animation: Rolling the Wheels</em></a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using Pysketcher to Create Principal Sketches of Physics Problems</a></li>
+<li><a class="reference internal" href="#a-first-glimpse-of-pysketcher">A First Glimpse of Pysketcher</a><ul>
+<li><a class="reference internal" href="#basic-construction-of-sketches">Basic Construction of Sketches</a><ul>
+<li><a class="reference internal" href="#basic-drawing">Basic Drawing</a></li>
+<li><a class="reference internal" href="#groups-of-objects">Groups of Objects</a></li>
+<li><a class="reference internal" href="#changing-line-styles-and-colors">Changing Line Styles and Colors</a></li>
+<li><a class="reference internal" href="#the-figure-composition-as-an-object-hierarchy">The Figure Composition as an Object Hierarchy</a></li>
+<li><a class="reference internal" href="#animation-translating-the-vehicle">Animation: Translating the Vehicle</a></li>
+<li><a class="reference internal" href="#animation-rolling-the-wheels">Animation: Rolling the Wheels</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#inner-workings-of-the-pysketcher-tool">Inner Workings of the Pysketcher Tool</a><ul>
+<li><a class="reference internal" href="#example-of-classes-for-geometric-objects">Example of Classes for Geometric Objects</a><ul>
+<li><a class="reference internal" href="#simple-geometric-objects">Simple Geometric Objects</a></li>
+<li><a class="reference internal" href="#class-curve">Class Curve</a></li>
+<li><a class="reference internal" href="#compound-geometric-objects">Compound Geometric Objects</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#adding-functionality-via-recursion">Adding Functionality via Recursion</a><ul>
+<li><a class="reference internal" href="#scaling-translating-and-rotating-a-figure">Scaling, Translating, and Rotating a Figure</a><ul>
+<li><a class="reference internal" href="#scaling">Scaling</a></li>
+<li><a class="reference internal" href="#translation">Translation</a></li>
+<li><a class="reference internal" href="#rotation">Rotation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Using Pysketcher to Create Principal Sketches of Physics Problems</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Using Pysketcher to Create Principal Sketches of Physics Problems"
+             >previous</a> |</li>
+        <li><a href="index.html">Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, 0.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
