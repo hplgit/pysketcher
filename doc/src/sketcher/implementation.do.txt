@@ -5,13 +5,26 @@
 ======= Inner Workings of the Pysketcher Tool =======
 # #endif
 
-We shall now explain how we can, quite easily, realize software
-with the capabilities demonstrated above. Each object in the
-figure is represented as a class in a class hierarchy. Using
-inheritance, classes can inherit properties from parent classes
-and add new geometric features.
+We shall now explain how we can, quite easily, realize software with
+the capabilities demonstrated in the previous examples. Each object in
+the figure is represented as a class in a class hierarchy. Using
+inheritance, classes can inherit properties from parent classes and
+add new geometric features.
 
 # #ifndef PRIMER_BOOK
+
+Class programming is a key technology for realizing Pysketcher.
+As soon as some classes are established, more are easily
+added. Enhanced functionality for all the classes is also easy to
+implement in common, generic code that can immediately be shared by
+all present and future classes. The fundamental data structure
+involved in the `pysketcher` package is a hierarchical tree, and much
+of the material on implementation issues targets how to traverse tree
+structures with recursive function calls in object hierarchies. This
+topic is of key relevance in a wide range of other applications as
+well. In total, the inner workings of Pysketcher constitute an
+excellent example on the power of class programming.
+
 ===== Example of Classes for Geometric Objects =====
 # #endif
 

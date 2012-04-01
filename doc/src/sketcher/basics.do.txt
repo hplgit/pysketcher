@@ -37,10 +37,16 @@ FIGURE: [figs-sketcher/wheel_on_inclined_plane.png, width=600] Sketch of a physi
 # #ifdef PRIMER_BOOK
 Classes are very suitable for implementing the various components that
 build up a sketch and their functionality. In particular, we shall
-demonstrate that as soon some classes are established, more are easily
-added. Enhanced functionality for all the classes is also easy to
-implement in common, generic code that can immediately be shared by all
-present and future classes.
+demonstrate that as soon as some classes are established, more are
+easily added. Enhanced functionality for all the classes is also easy
+to implement in common, generic code that can immediately be shared by
+all present and future classes. The fundamental data structure
+involved in this case study is a hierarchical tree, and much of the
+material on implementation issues targets how to traverse tree
+structures with recursive function calls in object hierarchies. This
+topic is of key relevance in a wide range of other applications as
+well. In total, the drawing program to be presented constitutes an
+excellent example on the power of class programming.
 
 ===== Using the Object Collection =====
 
@@ -275,7 +281,7 @@ working with complex figures that involve layers of subfigures.
 FIGURE: [figs-sketcher/vehicle0_hier2.png, width=500] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
 
 Any of the objects can in the program be reached through their names, e.g.,
-!bc pycodc
+!bc pycod
 fig['vehicle']
 fig['vehicle']['wheels']
 fig['vehicle']['wheels']['wheel2']
@@ -334,7 +340,7 @@ drawing will not be visible.
 
 Let us make a velocity function and move the object according
 to that velocity in small steps of time:
-!bc pydoc
+!bc pycod
 def v(t):
     return -8*R*t*(1 - t/(2*R))
 

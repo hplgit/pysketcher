@@ -1,6 +1,32 @@
-TITLE: Creating Principal Sketches of Physics Systems Using Pysketcher
+TITLE: Using Pysketcher to Create Principal Sketches of Physics Problems
 AUTHOR: Hans Petter Langtangen at Center for Biomedical Computing, Simula Research Laboratory and Department of Informatics, University of Oslo
 DATE: today
+
+__Abstract.__
+Pysketcher is a Python package which allows principal sketches of
+physics and mechanics problems to be realized through short programs
+instead of interactive (and potentially tedious and inaccurate)
+drawing.  Elements of the sketch, such as lines, circles, angles,
+forces, coordinate systems, etc., are realized as objects and
+collected in hierarchical structures. Parts of the hierarchical
+structures can easily change line styles and colors, or be copied,
+scaled, translated, and rotated. These features make it
+straightforward to move parts of the sketch to create animation,
+usually in accordance with the physics of the underlying problem.
+Exact dimensioning of the elements in the sketch is trivial to obtain
+since distances are specified in computer code.
+
+Pysketcher is easy to learn from a number of examples. Beyond
+essential Python programming and a knowledge about mechanics problems,
+no further background is required.
+
+
+# Task (can be questions): make sketches of physical problems, see fig
+#   through user-friendly composition of basic shapes
+# Desired knowledge: plotting curves, basic OO (ch. X.Y, ...)
+# Required knowledge?
+# Learning Goals: these targets the inner workings of pysketcher,
+# which is just a part of this document...
 
 # #include "basics.do.txt"
 
