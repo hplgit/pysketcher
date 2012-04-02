@@ -379,6 +379,10 @@ class Shape:
         self._for_all_shapes('set_filled_curves', color, pattern)
         return self
 
+    def set_shadow(self, pixel_displacement=3):
+        self._for_all_shapes('set_shadow', pixel_displacement)
+        return self
+
     def show_hierarchy(self, indent=0, format='std'):
         """Recursive pretty print of hierarchy of objects."""
         if not isinstance(self.shapes, dict):
@@ -437,6 +441,7 @@ class Curve(Shape):
         self.fillcolor = None
         self.fillpattern = None
         self.arrow = None
+        self.shadow = False
 
     def inside_plot_area(self, verbose=True):
         """Check that all coordinates are within drawing_tool's area."""
@@ -473,7 +478,8 @@ class Curve(Shape):
         drawing_tool.plot_curve(
             self.x, self.y,
             self.linestyle, self.linewidth, self.linecolor,
-            self.arrow, self.fillcolor, self.fillpattern)
+            self.arrow, self.fillcolor, self.fillpattern,
+            self.shadow)
 
     def rotate(self, angle, center):
         """
@@ -547,6 +553,10 @@ class Curve(Shape):
     def set_filled_curves(self, color='', pattern=''):
         self.fillcolor = color
         self.fillpattern = pattern
+        return self
+
+    def set_shadow(self, pixel_displacement=3):
+        self.shadow = pixel_displacement
         return self
 
     def show_hierarchy(self, indent=0, format='std'):
@@ -665,6 +675,10 @@ class Point(Shape):
 
     def _object_couplings(self, parent, couplings=[], classname=True):
         return
+
+    # No need for set_linecolor etc since self._for_all_shapes, which
+    # is always called for these functions, makes a test and stops
+    # calls if self.shapes is missing and the object is Point or Curve
 
     def show_hierarchy(self, indent=0, format='std'):
         s = '%s at (%g,%g)' % (self.__class__.__name__, self.x, self.y)
@@ -975,7 +989,7 @@ class Circle(Arc):
 
 
 class Wall(Shape):
-    def __init__(self, x, y, thickness, pattern='/'):
+    def __init__(self, x, y, thickness, pattern='/', transparent=False):
         is_sequence(x, y, length=len(x))
         if isinstance(x[0], (tuple,list,ndarray)):
             # x is list of curves
@@ -1002,12 +1016,13 @@ class Wall(Shape):
         y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
         self.shapes = {'wall': wall}
 
-        white_eraser = Curve(x, y)
-        white_eraser.set_linecolor('white')
         from collections import OrderedDict
         self.shapes = OrderedDict()
         self.shapes['wall'] = wall
-        self.shapes['eraser'] = white_eraser
+        if transparent:
+            white_eraser = Curve(x, y)
+            white_eraser.set_linecolor('white')
+            self.shapes['eraser'] = white_eraser
 
     def geometric_features(self):
         d = {'start': point(self.x1[0], self.y1[0]),

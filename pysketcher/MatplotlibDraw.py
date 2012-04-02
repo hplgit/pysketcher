@@ -2,6 +2,7 @@ import os
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as mpl
+import matplotlib.transforms as transforms
 import numpy as np
 
 class MatplotlibDraw:
@@ -214,7 +215,8 @@ ax.set_aspect('equal')
     def plot_curve(self, x, y,
                    linestyle=None, linewidth=None,
                    linecolor=None, arrow=None,
-                   fillcolor=None, fillpattern=None):
+                   fillcolor=None, fillpattern=None,
+                   shadow=0):
         """Define a curve with coordinates x and y (arrays)."""
         #if not self.allow_screen_graphics:
         #    mpl.ioff()
@@ -235,6 +237,8 @@ ax.set_aspect('equal')
             fillcolor = self.fillcolor
         if fillpattern is None:
             fillpattern = self.fillpattern
+        if shadow == 1:
+            shadow = 3   # smallest displacement that is visible
 
         if self.instruction_file:
             import pprint
@@ -248,15 +252,44 @@ ax.set_aspect('equal')
             if fillpattern != '':
                 fillcolor = 'white'
             #print '%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (x.size, fillcolor, linecolor, fillpattern)
-            self.ax.fill(x, y, fillcolor, edgecolor=linecolor,
-                         linewidth=linewidth, hatch=fillpattern)
+            [line] = self.ax.fill(x, y, fillcolor, edgecolor=linecolor,
+                                  linewidth=linewidth, hatch=fillpattern)
             if self.instruction_file:
-                self.instruction_file.write("ax.fill(x, y, '%s', edgecolor='%s', linewidth=%d, hatch='%s')\n" % (fillcolor, linecolor, linewidth, fillpattern))
+                self.instruction_file.write("[line] = ax.fill(x, y, '%s', edgecolor='%s', linewidth=%d, hatch='%s')\n" % (fillcolor, linecolor, linewidth, fillpattern))
         else:
-            self.ax.plot(x, y, linecolor, linewidth=linewidth,
-                         linestyle=linestyle)
+            [line] = self.ax.plot(x, y, linecolor, linewidth=linewidth,
+                                  linestyle=linestyle)
             if self.instruction_file:
-                self.instruction_file.write("ax.plot(x, y, '%s', linewidth=%d, linestyle='%s')\n" % (linecolor, linewidth, linestyle))
+                self.instruction_file.write("[line] = ax.plot(x, y, '%s', linewidth=%d, linestyle='%s')\n" % (linecolor, linewidth, linestyle))
+
+        if shadow:
+            # http://matplotlib.sourceforge.net/users/transforms_tutorial.html#using-offset-transforms-to-create-a-shadow-effect
+            # shift the object over 2 points, and down 2 points
+            dx, dy = shadow/72., -shadow/72.
+            offset = transforms.ScaledTranslation(
+                dx, dy, self.fig.dpi_scale_trans)
+            shadow_transform = self.ax.transData + offset
+            # now plot the same data with our offset transform;
+            # use the zorder to make sure we are below the line
+            if linewidth is None:
+                linewidth = 3
+            self.ax.plot(x, y, linewidth=linewidth, color='gray',
+                         transform=shadow_transform,
+                         zorder=0.5*line.get_zorder())
+
+
+            if self.instruction_file:
+                self.instruction_file.write("""
+# Shadow effect for last ax.plot
+dx, dy = 3/72., -3/72.
+offset = matplotlib.transforms.ScaledTranslation(dx, dy, fig.dpi_scale_trans)
+shadow_transform = ax.transData + offset
+self.ax.plot(x, y, linewidth=%d, color='gray',
+             transform=shadow_transform,
+             zorder=0.5*line.get_zorder())
+""" % linewidth)
+
+
         if arrow:
             if not arrow in ('->', '<-', '<->'):
                 raise ValueError("arrow argument must be '->', '<-', or '<->', not %s" % repr(arrow))

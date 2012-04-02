@@ -1,5 +1,11 @@
 #!/bin/sh
 
+python ~/hg/programs/spellcheck.py -d dictionary.txt *.do.txt
+if [ $? -ne 0 ]; then
+  echo "Misspellings!"  # use mydict.txt~.all~ as new dictionary.txt?
+  exit 1
+fi
+
 doconce format latex basics -DPRIMER_BOOK
 doconce format latex implementation -DPRIMER_BOOK
 doconce format latex exercises -DPRIMER_BOOK

@@ -1,4 +1,4 @@
-from shapes import *
+from pysketcher import *
 
 def inclined_plane():
     theta = 30.
@@ -10,6 +10,7 @@ def inclined_plane():
     drawing_tool.set_coordinate_system(xmin=xmin, xmax=xmin+1.5*L,
                                        ymin=ymin, ymax=ymin+L,
                                        #axis=True,
+                                       instruction_file='tmp_mpl.py'
                                        )
     #drawing_tool.set_grid(True)
     fontsize = 18
@@ -18,7 +19,8 @@ def inclined_plane():
     B = point(a+L, 0)
     A = point(a, tan(radians(theta))*L)
 
-    wall = Wall(x=[A[0], B[0]], y=[A[1], B[1]], thickness=-0.25)
+    wall = Wall(x=[A[0], B[0]], y=[A[1], B[1]], thickness=-0.25,
+                transparent=False)
 
     angle = Arc_wText(r'$\theta$', center=B, radius=3,
                       start_angle=180-theta, arc_angle=theta,
@@ -45,6 +47,7 @@ def inclined_plane():
     hole.set_filled_curves('white')
 
     wheel = Composition({'outer': outer_wheel, 'inner': hole})
+    wheel.set_shadow(4)
 
     drawing_tool.set_linecolor('black')
     N = Force(contact - 2*r*normal_vec, contact, r'$N$', text_pos='start')

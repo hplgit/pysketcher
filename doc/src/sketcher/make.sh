@@ -3,9 +3,9 @@
 # Run spellcheck
 python ~/hg/programs/spellcheck.py -d dictionary.txt *.do.txt
 if [ $? -ne 0 ]; then
-  exit
+  echo "Misspellings!"  # use mydict.txt~.all~ as new dictionary.txt?
+  exit 1
 fi
-
 
 main=wrap_sketcher
 doconce format html $main
