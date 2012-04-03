@@ -94,6 +94,7 @@ class MatplotlibDraw:
         if self.instruction_file:
             self.instruction_file.write("""\
 import matplotlib.pyplot as mpl
+import matplotlib.transforms as transforms
 
 mpl.ion()  # for interactive drawing
 """)

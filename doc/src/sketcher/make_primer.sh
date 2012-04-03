@@ -18,6 +18,7 @@ doconce subst '\\noindent\nFilename: \\code\{(.+?)\}' 'Name of program file: \\c
 
 # Figure refs are wrong
 doconce replace "figs-sketcher/" "figs/" *.p.tex
+doconce replace "wheel_on_inclined_plane" "wheel_on_inclined_plane_cropped" *.p.tex
 
 cp basics.p.tex pysketcher_basics.p.tex
 cp implementation.p.tex pysketcher_impl.p.tex
