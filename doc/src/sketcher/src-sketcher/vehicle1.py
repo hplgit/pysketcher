@@ -51,7 +51,7 @@ import numpy
 tp = numpy.linspace(0, 2*R, 25)
 dt = tp[1] - tp[0]  # time step
 
-def move_vehicle(t, fig):
+def move(t, fig):
     x_displacement = dt*v(t)
     fig['vehicle'].translate((x_displacement, 0))
 
@@ -65,7 +65,7 @@ def move_vehicle(t, fig):
     w2 = fig['vehicle']['wheels']['wheel2']
     w2.rotate(degrees(angle), center=(w_1 + L, R))
 
-files = animate(fig, tp, move_vehicle, moviefiles=True,
+files = animate(fig, tp, move, moviefiles=True,
                 pause_per_frame=0)
 
 from scitools.std import movie

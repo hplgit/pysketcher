@@ -20,6 +20,8 @@ doconce subst '\\noindent\nFilename: \\code\{(.+?)\}' 'Name of program file: \\c
 doconce replace "figs-sketcher/" "figs/" *.p.tex
 doconce replace "wheel_on_inclined_plane" "wheel_on_inclined_plane_cropped" *.p.tex
 
+doconce replace Section Chapter *.p.tex
+
 cp basics.p.tex pysketcher_basics.p.tex
 cp implementation.p.tex pysketcher_impl.p.tex
 cp exercises.p.tex pysketcher_ex.p.tex

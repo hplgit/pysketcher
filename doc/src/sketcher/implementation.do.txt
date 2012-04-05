@@ -35,7 +35,8 @@ This will be shown later.
 
 === Simple Geometric Objects ===
 
-One simple subclass is `Rectangle`:
+One simple subclass is `Rectangle`, specified by the coordinates of
+the lower left corner and its width and height:
 !bc pycod
 class Rectangle(Shape):
     def __init__(self, lower_left_corner, width, height):
@@ -46,23 +47,18 @@ class Rectangle(Shape):
              p[1] + height, p[1]]
         self.shapes = {'rectangle': Curve(x,y)}
 !ec
+
 Any subclass of `Shape` will have a constructor which takes
 geometric information about the shape of the object and
 creates a dictionary `self.shapes` with the shape built of
 simpler shapes. The most fundamental shape is `Curve`, which is
 just a collection of $(x,y)$ coordinates in two arrays `x` and `y`.
 Drawing the `Curve` object is a matter of plotting `y` versus `x`.
+For class `Rectangle` the `x` and `y` arrays contain the corner points
+of the rectangle in counterclockwise direction, starting and ending
+with in the lower left corner.
 
-The `Rectangle` class illustrates how the constructor takes information
-about the lower left corner, the width and the height, and
-creates coordinate arrays `x` and `y` consisting of the four corners,
-plus the first one repeated such that plotting `x` and `y` will
-form a closed four-sided rectangle. This construction procedure
-demands that the rectangle will always be aligned with the $x$ and
-$y$ axis. However, we may easily rotate the rectangle about
-any point once the object is constructed.
-
-Class `Line` constitutes a similar example:
+Class `Line` is also a simple class:
 !bc pycod
 class Line(Shape):
     def __init__(self, start, end):
@@ -71,7 +67,7 @@ class Line(Shape):
         self.shapes = {'line': Curve(x, y)}
 !ec
 Here we only need two points, the start and end point on the line.
-However, we may add some useful functionality, e.g., the ability
+However, we may want to add some useful functionality, e.g., the ability
 to give an $x$ coordinate and have the class calculate the
 corresponding $y$ coordinate:
 !bc pycod
@@ -82,12 +78,12 @@ corresponding $y$ coordinate:
         self.b = y[0] - self.a*x[0]
         return self.a*x + self.b
 !ec
-Unfortunately, this is too simplistic because vertical lines cannot
-be handled (infinite `self.a`). The source code of `Line` therefore
-provides a more general solution at the cost of significantly
-longer code with more tests.
+Unfortunately, this is too simplistic because vertical lines cannot be
+handled (infinite `self.a`). The true source code of `Line` therefore
+provides a more general solution at the cost of significantly longer
+code with more tests.
 
-A circle gives us somewhat increased complexity. Again we represent
+A circle implies a somewhat increased complexity. Again we represent
 the geometric object by a `Curve` object, but this time the `Curve`
 object needs to store a large number of points on the curve such
 that a plotting program produces a visually smooth curve.
@@ -102,9 +98,9 @@ y &= y_0 + R\sin (t),
 !et
 where $t\in [0, 2\pi]$. A discrete set of $t$ values in this
 interval gives the corresponding set of $(x,y)$ coordinates on
-the circle. The user must specify the resolution, i.e., the number
-of $t$ values, or equivalently, points on the circle. The circle's
-radius and center must of course also be specified.
+the circle. The user must specify the resolution as the number
+of $t$ values. The circle's radius and center must of course
+also be specified.
 
 We can write the `Circle` class as
 !bc pycod
@@ -134,19 +130,16 @@ a translation, scaling, or rotation of the circle.
 
 A part of a circle, an arc, is a frequent geometric object when
 drawing mechanical systems. The arc is constructed much like
-a circle, but $t$ runs in $[\theta_0, \theta_1]$. Giving
-$\theta_1$ and $\theta_2$ the slightly more descriptive names
+a circle, but $t$ runs in $[\theta_s, \theta_s + \theta_a]$. Giving
+$\theta_s$ and $\theta_a$ the slightly more descriptive names
 `start_angle` and `arc_angle`, the code looks like this:
 !bc pycod
 class Arc(Shape):
     def __init__(self, center, radius,
                  start_angle, arc_angle,
                  resolution=180):
-        self.center = center
-        self.radius = radius
-        self.start_angle = start_angle*pi/180  # radians
-        self.arc_angle = arc_angle*pi/180
-        self.resolution = resolution
+        self.start_angle = radians(start_angle)
+        self.arc_angle = radians(arc_angle)
 
         t = linspace(self.start_angle,
                      self.start_angle + self.arc_angle,
@@ -158,7 +151,7 @@ class Arc(Shape):
         self.shapes = {'arc': Curve(x, y)}
 !ec
 
-Having the `Arc` class, a `Circle` can alternatively befined as
+Having the `Arc` class, a `Circle` can alternatively be defined as
 a subclass specializing the arc to a circle:
 !bc pycod
 class Circle(Arc):
@@ -166,48 +159,24 @@ class Circle(Arc):
         Arc.__init__(self, center, radius, 0, 360, resolution)
 !ec
 
-A wall is about drawing a curve, displacing the curve vertically by
-some thickness, and then filling the space between the curves
-by some pattern. The input is the `x` and `y` coordinate arrays
-of the curve and a thickness parameter. The computed coordinates
-will be a polygon: going along the originally curve and then back again
-along the vertically displaced curve. The relevant code becomes
-!bc pycod
-class CurveWall(Shape):
-    def __init__(self, x, y, thickness):
-        # User's curve
-        x1 = asarray(x, float)
-        y1 = asarray(y, float)
-        # Displaced curve (according to thickness)
-        x2 = x1
-        y2 = y1 + thickness
-        # Combine x1,y1 with x2,y2 reversed
-        from numpy import concatenate
-        x = concatenate((x1, x2[-1::-1]))
-        y = concatenate((y1, y2[-1::-1]))
-        wall = Curve(x, y)
-        wall.set_filled_curves(color='white', pattern='/')
-        self.shapes = {'wall': wall}
-!ec
 
 === Class Curve ===
 
-Class `Curve` sits on the coordinates to be drawn, but how is
-that done? The constructor just stores the coordinates, while
-a method `draw` sends the coordinates to the plotting program
-to make a graph.
-Or more precisely, to avoid a lot of (e.g.) Matplotlib-specific
-plotting commands we have created a small layer with a
-simple programming interface to plotting programs. This makes it
-straightforward to change from Matplotlib to another plotting
-program. The programming interface is represented by the `drawing_tool`
-object and has a few functions:
+Class `Curve` sits on the coordinates to be drawn, but how is that
+done? The constructor of class `Curve` just stores the coordinates,
+while a method `draw` sends the coordinates to the plotting program to
+make a graph.  Or more precisely, to avoid a lot of (e.g.)
+Matplotlib-specific plotting commands in class `Curve` we have created
+a small layer with a simple programming interface to plotting
+programs. This makes it straightforward to change from Matplotlib to
+another plotting program. The programming interface is represented by
+the `drawing_tool` object and has a few functions:
 
   * `plot_curve` for sending a curve in terms of $x$ and $y$ coordinates
     to the plotting program,
   * `set_coordinate_system` for specifying the graphics area,
   * `erase` for deleting all elements of the graph,
-  * `set_grid` for turning on a grid (convenient while constructing the plot),
+  * `set_grid` for turning on a grid (convenient while constructing the figure),
   * `set_instruction_file` for creating a separate file with all
     plotting commands (Matplotlib commands in our case),
   * a series of `set_X` functions where `X` is some property like
@@ -217,7 +186,7 @@ This is basically all we need to communicate to a plotting program.
 
 Any class in the `Shape` hierarchy inherits `set_X` functions for
 setting properties of curves. This information is propagated to
-all other shape objects that make up the figure. Class
+all other shape objects in the `self.shapes` dictionary. Class
 `Curve` stores the line properties together with the coordinates
 of its curve and propagates this information to the plotting program.
 When saying `vehicle.set_linewidth(10)`, all objects that make
@@ -233,18 +202,10 @@ class Curve(Shape):
         self.x = asarray(x, dtype=float)
         self.y = asarray(y, dtype=float)
 
-        self.linestyle = None
-        self.linewidth = None
-        self.linecolor = None
-        self.fillcolor = None
-        self.fillpattern = None
-        self.arrow = None
-
     def draw(self):
         drawing_tool.plot_curve(
             self.x, self.y,
-            self.linestyle, self.linewidth, self.linecolor,
-            self.arrow, self.fillcolor, self.fillpattern)
+            self.linestyle, self.linewidth, self.linecolor, ...)
 
     def set_linewidth(self, width):
         self.linewidth = width
@@ -256,22 +217,24 @@ class Curve(Shape):
 
 === Compound Geometric Objects ===
 
-The simple classes `Line`, `Arc`, and `Circle` could define the geometric
-shape through just one `Curve` object. More complicated figure elements
-are built from instances of various subclasses of `Shape`. Classes used
+The simple classes `Line`, `Arc`, and `Circle` could can the geometric
+shape through just one `Curve` object. More complicated shapes are
+built from instances of various subclasses of `Shape`. Classes used
 for professional drawings soon get quite complex in composition and
-have a lot of geometric details, so here we prefer to make a very simple
-composition: the already drawn vehicle from
-Figure refref{sketcher:fig:vehicle0}.
-That is, instead of composing the drawing in a Python code we make a class
-`Vehicle0` for doing the same thing, and derive it from `Shape`.
+have a lot of geometric details, so here we prefer to make a very
+simple composition: the already drawn vehicle from Figure
+ref{sketcher:fig:vehicle0}.  That is, instead of composing the drawing
+in a Python program as shown above, we make a subclass `Vehicle0` in
+the `Shape` hierarchy for doing the same thing.
 
 The `Shape` hierarchy is found in the `pysketcher` package, so to use these
 classes or derive a new one, we need to import `pysketcher`. The constructor
 of class `Vehicle0` performs approximately the same statements as
 in the example program we developed for making the drawing in
-Figure refref{sketcher:fig:vehicle0}.
+Figure ref{sketcher:fig:vehicle0}.
 !bc pycod
+from pysketcher import *
+
 class Vehicle0(Shape):
     def __init__(self, w_1, R, L, H):
         wheel1 = Circle(center=(w_1, R), radius=R)
@@ -299,7 +262,9 @@ Any subclass of `Shape` *must* define the `shapes` attribute, otherwise
 the inherited `draw` method (and a lot of other methods too) will
 not work.
 
-The painting of the vehicle could be offered by a method:
+The painting of the vehicle, as shown in the right part of
+Figure ref{sketcher:fig:vehicle0:v2}, could in class `Vehicle0`
+be offered by a method:
 !bc pycod
     def colorful(self):
         wheels = self.shapes['vehicle']['wheels']
@@ -314,13 +279,13 @@ The painting of the vehicle could be offered by a method:
 !ec
 
 The usage of the class is simple: after having set up an appropriate
-coordinate system a s previously shown, we can do
+coordinate system as previously shown, we can do
 !bc pycod
 vehicle = Vehicle0(w_1, R, L, H)
 vehicle.draw()
 drawing_tool.display()
 !ec
-The color from Figure ref{sketcher:fig:vehicle0:v2} is realized by
+and go on the make a painted version by
 !bc pycod
 drawing_tool.erase()
 vehicle.colorful()
@@ -338,20 +303,21 @@ The `pysketcher` package contains a wide range of classes for various
 geometrical objects, particularly those that are frequently used in
 drawings of mechanical systems.
 
-======= Adding Functionality via Recursion =======
+===== Adding Functionality via Recursion =====
 
 The really powerful feature of our class hierarchy is that we can add
-much functionality to the superclass `Shape` and to the "bottom" classes
-`Curve`, and all other classes for all types of geometrical shapes
-immediately get the new functionality. To explain the idea we first have
-to look at the `draw` method, which all classes in the `Shape`
+much functionality to the superclass `Shape` and to the "bottom" class
+`Curve`, and then all other classes for various types of geometrical shapes
+immediately get the new functionality. To explain the idea we may
+look at the `draw` method, which all classes in the `Shape`
 hierarchy must have. The inner workings of the `draw` method explain
 the secrets of how a series of other useful operations on figures
 can be implemented.
 
 === Basic Principles of Recursion ===
 
-We work with two types of class hierarchies: one Python class hierarchy,
+Note that we work with two types of hierarchies in the
+present documentation: one Python *class hierarchy*,
 with `Shape` as superclass, and one *object hierarchy* of figure elements
 in a specific figure. A subclass of `Shape` stores its figure in the
 `self.shapes` dictionary. This dictionary represents the object hierarchy
@@ -379,7 +345,7 @@ whose `self.shapes` attributed has two elements: `wheels` and `body`.
 Since class `Composition` inherits the same `draw` method, this method will
 run through `self.shapes` and call `wheels.draw()` and `body.draw()`.
 Now, the `wheels` object is also a `Composition` with the same `draw`
-method, which will run through the `shapes` dictionary, now containing
+method, which will run through `self.shapes`, now containing
 the `wheel1` and and `wheel2` objects. The `wheel1` object is a `Circle`,
 so calling `wheel1.draw()` calls the `draw` method in class `Circle`,
 but this is the same `draw` method as shown above. This method will
@@ -405,9 +371,7 @@ structures like the figure structures we work with here. Even though the
 hierarchy of objects building up a figure are of different types, they
 all inherit the same `draw` method and therefore exhibit the same
 behavior with respect to drawing. Only the `Curve` object has a different
-`draw` method, which does not lead to more recursion. Without this
-different `draw` method in class `Curve`, the repeated `draw` calls would
-go on forever.
+`draw` method, which does not lead to more recursion.
 
 === Explaining Recursion ===
 
@@ -427,12 +391,13 @@ The `recurse` method is very similar to `draw`:
             self.shapes[shape].recurse(indent+2, shape)
 !ec
 The `indent` parameter governs how much the message from this
-`recurse` method is intended. We increase `indent` by 2 for every level
-in the hierarchy. This makes it easy to see on the printout how far
-down in the hierarchy we are.
+`recurse` method is intended. We increase `indent` by 2 for every
+level in the hierarchy, i.e., every row of objects in Figure
+ref{sketcher:fig:Vehicle0:hier2}. This indentation makes it easy to
+see on the printout how far down in the hierarchy we are.
 
-A typical message written by `recurse` when `name` is `body` and
-the `shapes` dictionary contains two entries, `over` and `under`,
+A typical message written by `recurse` when `name` is `'body'` and
+the `shapes` dictionary has the keys `'over'` and `'under'`,
 will be
 !bc dat
      Composition: body.shapes has entries 'over', 'under'
@@ -502,7 +467,6 @@ A recommended next step is to simulate the `recurse` method by hand and
 carefully check that what happens in the visits to `recurse` is
 consistent with the output listed below. Although tedious, this is
 a major exercise that guaranteed will help to demystify recursion.
-Also remember that it requires some efforts to understand recursion.
 
 A part of the printout of `v.recurse('vehicle')` looks like
 !bc dat
@@ -568,9 +532,7 @@ so that multiplication by a scalar number `factor` is
 a vectorized operation.
 
 An even more efficient implementation is
-to make use of in-place multiplication in the arrays, as this saves the creation
-of temporary arrays like `factor*self.x`, which is then assigned to
-`self.x`:
+to make use of in-place multiplication in the arrays,
 !bc cod
 class Curve:
     ...
@@ -578,19 +540,18 @@ class Curve:
         self.x *= factor
         self.y *= factor
 !ec
+as this saves the creation of temporary arrays like `factor*self.x`.
 
-In an instance of a subclass of `Shape`,
-the meaning of a method `scale` is
-to run through all objects in the dictionary `shapes` and ask
-each object to scale itself. This is the same delegation of actions
-to subclass instances as we do in the `draw` (or `recurse`) method. All
-all objects, except `Curve` instances, can share the same
-implementation of the `scale` method. Therefore, we place
-the `scale` method in the superclass `Shape` such that all
-subclasses inherit the method.
-Since `scale` and `draw` are so similar,
-we can easily implement the `scale` method in class `Shape` by
-copying and editing the `draw` method:
+In an instance of a subclass of `Shape`, the meaning of a method
+`scale` is to run through all objects in the dictionary `shapes` and
+ask each object to scale itself. This is the same delegation of
+actions to subclass instances as we do in the `draw` (or `recurse`)
+method. All objects, except `Curve` instances, can share the same
+implementation of the `scale` method. Therefore, we place the `scale`
+method in the superclass `Shape` such that all subclasses inherit the
+method.  Since `scale` and `draw` are so similar, we can easily
+implement the `scale` method in class `Shape` by copying and editing
+the `draw` method:
 !bc cod
 class Shape:
     ...
@@ -612,7 +573,7 @@ the $x$ direction and $v_1$ units in the $y$ direction using the formulas
 \begin{equation*}
 x_i\leftarrow x_i+v_0,\quad y_i\leftarrow y_i+v_1,\quad i=0,\ldots,n-1\thinspace . \end{equation*}
 !et
-The natural specification of the translation is in terms of a
+The natural specification of the translation is in terms of the
 vector $v=(v_0,v_1)$.
 The corresponding Python implementation in class `Curve` becomes
 !bc cod
@@ -666,9 +627,8 @@ is given in degrees and not in radians, becomes
         self.x = xnew
         self.y = ynew
 !ec
-The `rotate` method in class `Shape` is identical to the
-`draw`, `scale`, and `translate` methods except that we
-recurse into `self.rotate(angle, center)`.
+The `rotate` method in class `Shape` follows the principle of the
+`draw`, `scale`, and `translate` methods.
 
 We have already seen the `rotate` method in action when animating the
 rolling wheel at the end of Section ref{sketcher:vehicle1:anim}.

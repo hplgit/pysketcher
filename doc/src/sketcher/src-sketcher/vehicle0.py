@@ -60,11 +60,11 @@ import numpy
 tp = numpy.linspace(0, 2*R, 25)
 dt = tp[1] - tp[0]  # time step
 
-def move_vehicle(t, fig):
+def move(t, fig):
     x_displacement = dt*v(t)
     fig['vehicle'].translate((x_displacement, 0))
 
-files = animate(fig, tp, move_vehicle, moviefiles=True,
+files = animate(fig, tp, move, moviefiles=True,
                 pause_per_frame=0)
 
 os.system('convert -delay 20 %s anim.gif' % files)

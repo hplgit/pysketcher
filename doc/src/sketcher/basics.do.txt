@@ -6,7 +6,7 @@ develop the simpler parts of a relatively small and compact drawing
 program for making sketches of the type shown in Figure
 ref{sketcher:fig:inclinedplane}.  This is a typical *principal sketch*
 of a physics problem, here involving a rolling wheel on an inclined
-plane. This sketch
+plane. The sketch
 # #else
 
 ======= A First Glimpse of Pysketcher =======
@@ -19,34 +19,37 @@ The figure
 # #endif
 is made up many individual elements: a rectangle
 filled with a pattern (the inclined plane), a hollow circle with color
-(the wheel), arrows with label (the $N$ and $Mg$ forces, and the $x$
+(the wheel), arrows with labels (the $N$ and $Mg$ forces, and the $x$
 axis), an angle with symbol $\theta$, and a dashed line indicating the
-starting location of the wheel.  Drawing software and plotting
-programs can produce such figures quite easily in principle, but the
-amount of details the user needs to control with the mouse can be
-substantial. Software more tailored to producing sketches of this type
-would work with more convenient abstractions, such as circle, wall,
-angle, force arrow, axis, and so forth. And as soon we start
-*programming* to construct the figure we get a range of other
-powerful tools at disposal. For example, we can easily translate and
-rotate parts of the figure and make an animation that illustrates the
-physics of the problem.
+starting location of the wheel.
+
+Drawing software and plotting programs can produce such figures quite
+easily in principle, but the amount of details the user needs to
+control with the mouse can be substantial. Software more tailored to
+producing sketches of this type would work with more convenient
+abstractions, such as circle, wall, angle, force arrow, axis, and so
+forth. And as soon we start *programming* to construct the figure we
+get a range of other powerful tools at disposal. For example, we can
+easily translate and rotate parts of the figure and make an animation
+that illustrates the physics of the problem.
+Programming as a superior alternative to interactive drawing is
+the mantra of this section.
 
 FIGURE: [figs-sketcher/wheel_on_inclined_plane.png, width=600] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
 
 # #ifdef PRIMER_BOOK
 Classes are very suitable for implementing the various components that
-build up a sketch and their functionality. In particular, we shall
-demonstrate that as soon as some classes are established, more are
-easily added. Enhanced functionality for all the classes is also easy
-to implement in common, generic code that can immediately be shared by
-all present and future classes. The fundamental data structure
-involved in this case study is a hierarchical tree, and much of the
-material on implementation issues targets how to traverse tree
-structures with recursive function calls in object hierarchies. This
-topic is of key relevance in a wide range of other applications as
-well. In total, the drawing program to be presented constitutes an
-excellent example on the power of class programming.
+build up a sketch. In particular, we shall demonstrate that as soon as
+some classes are established, more are easily added. Enhanced
+functionality for all the classes is also easy to implement in common,
+generic code that can immediately be shared by all present and future
+classes.
+
+The fundamental data structure involved in this case study is a
+hierarchical tree, and much of the material on implementation issues
+targets how to traverse tree structures with recursive function calls.
+This topic is of key relevance in a wide range of other applications
+as well.
 
 ===== Using the Object Collection =====
 
@@ -74,24 +77,31 @@ FIGURE: [figs-sketcher/vehicle0_dim.png, width=600] Sketch of a simple figure. l
 
 A typical program creating these five elements is shown next.
 After importing the `pysketcher` package, the first task is always to
-define a coordinate system. Some graphics operations are done with
-a helper object called `drawing_tool` (imported from `pysketcher`).
-With the drawing area in place we can make the first `Circle` object
-in an intuitive fashion:
+define a coordinate system:
 !bc pycod
 from pysketcher import *
 
+drawing_tool.set_coordinate_system(
+    xmin=0, xmax=10, ymin=-1, ymax=8)
+!ec
+Instead of working with lengths expressed by specific numbers it is
+highly recommended to use variables to parameterize lengths as
+this makes it easier to change dimensions later.
+Here we introduce some key lengths for the radius of the wheels,
+distance between the wheels, etc.:
+!bc pycod
 R = 1    # radius of wheel
 L = 4    # distance between wheels
 H = 2    # height of vehicle body
 w_1 = 5  # position of front wheel
 drawing_tool.set_coordinate_system(xmin=0, xmax=w_1 + 2*L + 3*R,
                                    ymin=-1, ymax=2*R + 3*H)
-
+!ec
+With the drawing area in place we can make the first `Circle` object
+in an intuitive fashion:
+!bc pycod
 wheel1 = Circle(center=(w_1, R), radius=R)
 !ec
-By using symbols for characteristic lengths in the drawing, rather than
-absolute lengths, it is easier
 to change dimensions later.
 
 To translate the geometric information about the `wheel1` object to
@@ -108,13 +118,14 @@ drawing_tool.savefig('tmp.png')  # store picture
 !ec
 
 The next wheel can be made by taking a copy of `wheel1` and
-translating the object a distance (to the right) described by the
-vector $(4,0)$:
+translating the object to the right according to a
+displacement vector $(L,0)$:
 !bc pycod
 wheel2 = wheel1.copy()
 wheel2.translate((L,0))
 !ec
-The two rectangles are made in an intuitive way:
+
+The two rectangles are also made in an intuitive way:
 !bc pycod
 under = Rectangle(lower_left_corner=(w_1-2*R, 2*R),
                   width=2*R + L + 2*R, height=H)
@@ -129,7 +140,7 @@ group objects and call `draw`, or perform other operations, for
 the whole group. For example, we may collect the two wheels
 in a `wheels` group and the `over` and `under` rectangles
 in a `body` group. The whole vehicle is a composition
-of its `wheels` and `body` groups. The codes goes like
+of its `wheels` and `body` groups. The code goes like
 !bc pycod
 wheels  = Composition({'wheel1': wheel1, 'wheel2': wheel2})
 body    = Composition({'under': under, 'over': over})
@@ -160,7 +171,8 @@ drawing_tool.savefig('tmp.png')
 !ec
 The `fig.draw()` call will visit
 all subgroups, their subgroups,
-and so in the hierarchical tree structure that we have collected,
+and so forth in the hierarchical tree structure of
+figure elements,
 and call `draw` for every object.
 
 === Changing Line Styles and Colors ===
@@ -179,14 +191,14 @@ drawing_tool.set_linewidth(4)
 At the object level the properties are specified in a similar
 way:
 !bc pycod
-wheel1.set_linestyle('solid')
-wheel1.set_linecolor('red')
+wheels.set_linestyle('solid')
+wheels.set_linecolor('red')
 !ec
 and so on.
 
 Geometric figures can be specified as *filled*, either with a color or with a
 special visual pattern:
-!bc
+!bc pycod
 # Set filling of all curves
 drawing_tool.set_filled_curves(color='blue', pattern='/')
 
@@ -201,7 +213,8 @@ wheel1.set_filled_curves('red')
 
 === The Figure Composition as an Object Hierarchy ===
 
-The composition of objects is hierarchical, as in a family, where
+The composition of objects making up the figure
+is hierarchical, similar to a family, where
 each object has a parent and a number of children. Do a
 `print fig` to display the relations:
 !bc dat
@@ -228,6 +241,10 @@ This output is to be interpreted as follows:
   * `vehicle` contains two objects, `body` and `wheels`
   * `body` contains two objects, `over` and `under`
   * `wheels` contains two objects, `wheel1` and `wheel2`
+
+In this listing there are also objects not defined by the
+programmer: `rectangle` and `arc`. These are of type `Curve`
+and automatically generated by the classes `Rectangle` and `Circle`.
 
 More detailed information can be printed by
 !bc pycod
@@ -292,7 +309,7 @@ fig['vehicle']['wheels']['wheel2']['arc'].y  # y coords
 fig['vehicle']['wheels']['wheel2']['arc'].linestyle
 fig['vehicle']['wheels']['wheel2']['arc'].linetype
 !ec
-Grabbing a part of the figure this way is very handy for
+Grabbing a part of the figure this way is handy for
 changing properties of that part, for example, colors, line styles
 (see Figure ref{sketcher:fig:vehicle0:v2}):
 !bc pycod
@@ -333,72 +350,80 @@ drawing_tool.erase()
 fig.draw()
 drawing_tool.display()
 !ec
-Without erasing the old position of the vehicle will remain in
+Without erasing, the old drawing of the vehicle will remain in
 the figure so you get two vehicles. Without `fig.draw()` the
 new coordinates of the vehicle will not be communicated to
 the drawing tool, and without calling display the updated
 drawing will not be visible.
 
-Let us make a velocity function and move the object according
-to that velocity in small steps of time:
+A figure that moves in time is conveniently realized by the
+function `animate`:
+!bc pycod
+animate(fig, tp, action)
+!ec
+Here, `fig` is the entire figure, `tp` is an array of
+time points, and `action` is a user-specified function that changes
+`fig` at a specific time point. Typically, `action` will move
+parts of `fig`.
+
+In the present case we can define the movement through a velocity
+function `v(t)` and displace the figure `v(t)*dt` for small time
+intervals `dt`. A possible velocity function is
 !bc pycod
 def v(t):
     return -8*R*t*(1 - t/(2*R))
 
-animate(fig, tp, action)
 !ec
-For small time steps `dt` the corresponding displacement is
-well approximated by `dt*v(t)` (we could integrate the velocity
-to obtain the exact position, but we would anyway need to
-calculate the displacement from time step to time step).
-The `animate` function takes as arguments some figure `fig`, a set of
-time points `tp`, and a user function `action`,
-and then a new figure is drawn for each time point and the user
-can through the provided `action` function modify desired parts
-of the figure. Here the `action` function will move the vehicle:
+Our action function for horizontal displacements `v(t)*dt` becomes
 !bc pycod
-def move_vehicle(t, fig):
+def move(t, fig):
     x_displacement = dt*v(t)
     fig['vehicle'].translate((x_displacement, 0))
 !ec
-Defining a set of time points for the frames in the animation
-and performing the animation is done by
+Since our velocity is negative for $t\in [0,2R]$ the displacement is
+to the left.
+
+The `animate` function will for each time point `t` in `tp` erase
+the drawing, call `action(t, fig)`, and show the new figure by
+`fig.draw()` and `drawing_tool.display()`.
+Here we choose a resolution of the animation corresponding to
+25 time points in the time interval $[0,2R]$:
 !bc pycod
 import numpy
 tp = numpy.linspace(0, 2*R, 25)
 dt = tp[1] - tp[0]  # time step
 
-animate(fig, tp, move_vehicle, pause_per_frame=0.2)
+animate(fig, tp, move, pause_per_frame=0.2)
 !ec
 The `pause_per_frame` adds a pause, here 0.2 seconds, between
-each frame.
+each frame in the animation.
 
-We can also make a movie file of the animation:
+We can also ask `animate` to store each frame in a file:
 !bc pycod
 files = animate(fig, tp, move_vehicle, moviefiles=True,
                 pause_per_frame=0.2)
 !ec
-The `files` variable holds a string with the family of
-files constituting the frames in the movie, here
-`'tmp_frame*.png'`. Making a movie out of the individual
-frames can be done in many ways.
-A simple approach is to make an animated GIF file with help of
-`convert`, a program in the ImageMagick software suite:
+The `files` variable, here `'tmp_frame*.png'`,
+is a string expressing the family of frame files.
+This string can be used directly in commands for making a movie
+out of the files.
+A simple approach is to generate an animated GIF file with help of
+the `convert` program from the ImageMagick software suite:
 !bc sys
 Terminal> convert -delay 20 tmp_frame*.png anim.gif
 Terminal> animate anim.gif  # play movie
 !ec
 The delay between frames governs the speed of the movie.
 The `anim.gif` file can be embedded in a web page and shown as
-a movie the page is loaded into a web browser (just insert
-`<img src="anim.gif">` in the HTML code to play the GIF animation).
+a movie when the page is loaded into a web browser (just insert
+`<img src="anim.gif">` in the HTML code).
 
-The tool `ffmpeg` can alternatively be used, e.g.,
+The tool `ffmpeg` can alternatively be used to create an MPGE movie, e.g.,
 !bc sys
 Terminal> ffmpeg -i "tmp_frame_%04d.png" -b 800k -r 25 \
           -vcodec mpeg4 -y -qmin 2 -qmax 31 anim.mpeg
 !ec
-An easy-to-use interface to movie-making tools is provided by the
+An easy-to-use Python interface to movie-making tools is provided by the
 SciTools package:
 !bc pycod
 from scitools.std import movie
@@ -435,11 +460,9 @@ having run the present example in the file
 === Animation: Rolling the Wheels ===
 label{sketcher:vehicle1:anim}
 
-It is time to show rolling wheels. To this end, we make somewhat
-more complicated wheels with spokes as on a bicyle, formed by
-two crossing lines, see Figure ref{sketcher:fig:vehicle1}.
-The construction of the wheels will now involve a circle
-and two lines:
+It is time to show rolling wheels. To this end, we add spokes to the
+wheels, formed by two crossing lines, see Figure ref{sketcher:fig:vehicle1}.
+The construction of the wheels will now involve a circle and two lines:
 !bc pycod
 wheel1 = Composition({
     'wheel': Circle(center=(w_1, R), radius=R),
@@ -452,9 +475,9 @@ Observe that `wheel1.copy()` copies all the objects that make
 up the first wheel, and `wheel2.translate` translates all
 the copied objects.
 
-FIGURE: [figs-sketcher/vehicle1.png, width=400] Wheels with spokes to show rotation. label{sketcher:fig:vehicle1}
+FIGURE: [figs-sketcher/vehicle1.png, width=400] Wheels with spokes to illustrate rolling. label{sketcher:fig:vehicle1}
 
-The `move_vehicle` function now needs to displace all the objects in the
+The `move` function now needs to displace all the objects in the
 entire vehicle and also rotate the `cross1` and `cross2`
 objects in both wheels.
 The rotation angle follows from the fact that the arc length
@@ -478,12 +501,13 @@ w2 = fig['vehicle']['wheels']['wheel2']
 w2.rotate(degrees(angle), center=(w_1 + L, R))
 !ec
 That is, the angle is the same, but the rotation point is different.
-The update of the center point is done by `w_1 += displacement[0]`.
-The complete `move_vehicle` function then becomes
+The update of the center point is done by `w_1 += x_displacement`.
+The complete `move` function with translation of the entire
+vehicle and rotation of the weels then becomes
 !bc pycod
 w_1 = w_1 + L   # start position
 
-def move_vehicle(t, fig):
+def move(t, fig):
     x_displacement = dt*v(t)
     fig['vehicle'].translate((x_displacement, 0))
 
@@ -504,17 +528,17 @@ The complete example is found in the file
 "`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/movies-sketcher/anim.html_vehicle1/anim.html".
 # #endif
 
-The advantages with making figures this way through programming,
+The advantages with making figures this way, through programming
 rather than using interactive drawing programs, are numerous.  For
 example, the objects are parameterized by variables so that various
 dimensions can easily be changed.  Subparts of the figure, possible
-involving a lot of figure objects, can change
-color, linetype, filling or other properties through a *single* function
-call.  Subparts of the figure can be rotated, translated, or scaled.
-Subparts of the figure can also be copied and moved to other parts of the
-drawing area. However, the single most important feature is probably
-the ability to make animations governed by mathematical formulas or
-data coming from physics simulations of the problem sketched in
-the drawing, as very simplistically shown in the example above.
+involving a lot of figure objects, can change color, linetype, filling
+or other properties through a *single* function call.  Subparts of the
+figure can be rotated, translated, or scaled.  Subparts of the figure
+can also be copied and moved to other parts of the drawing
+area. However, the single most important feature is probably the
+ability to make animations governed by mathematical formulas or data
+coming from physics simulations of the problem, as very simplistically
+shown in the example above.
 
 
