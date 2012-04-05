@@ -1,2 +1,2 @@
 #!/bin/sh
-rm -rf anim*.* *~ tmp_* tmp*.png
+rm -rf anim*.* *~ tmp_* tmp*.png *.dot
