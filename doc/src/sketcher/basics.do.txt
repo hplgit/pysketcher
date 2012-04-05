@@ -418,7 +418,7 @@ The `anim.gif` file can be embedded in a web page and shown as
 a movie when the page is loaded into a web browser (just insert
 `<img src="anim.gif">` in the HTML code).
 
-The tool `ffmpeg` can alternatively be used to create an MPGE movie, e.g.,
+The tool `ffmpeg` can alternatively be used to create an MPEG movie, e.g.,
 !bc sys
 Terminal> ffmpeg -i "tmp_frame_%04d.png" -b 800k -r 25 \
           -vcodec mpeg4 -y -qmin 2 -qmax 31 anim.mpeg
@@ -503,7 +503,7 @@ w2.rotate(degrees(angle), center=(w_1 + L, R))
 That is, the angle is the same, but the rotation point is different.
 The update of the center point is done by `w_1 += x_displacement`.
 The complete `move` function with translation of the entire
-vehicle and rotation of the weels then becomes
+vehicle and rotation of the wheels then becomes
 !bc pycod
 w_1 = w_1 + L   # start position
 
