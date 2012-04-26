@@ -1,6 +1,6 @@
 #!/bin/sh
 
-python ~/hg/programs/spellcheck.py -d dictionary.txt *.do.txt
+python ~/hg/programs/spellcheck.py -d .dict4spell.txt *.do.txt
 if [ $? -ne 0 ]; then
   echo "Misspellings!"  # use mydict.txt~.all~ as new dictionary.txt?
   exit 1
@@ -19,6 +19,10 @@ doconce subst '\\noindent\nFilename: \\code\{(.+?)\}' 'Name of program file: \\c
 # Figure refs are wrong
 doconce replace "figs-sketcher/" "figs/" *.p.tex
 doconce replace "wheel_on_inclined_plane" "wheel_on_inclined_plane_cropped" *.p.tex
+
+# Fix exercises
+doconce subst '\\subsection\{' '\\begin{exercise}\n\\exerentry{' $file
+doconce subst 'Filename: \\code\{(.+?)\}\.' 'Name of program file: \\code{\g<1>}.\n\\hfill $\\diamond$\n\\end{exercise}' exercises.p.tex
 
 doconce replace Section Chapter *.p.tex
 

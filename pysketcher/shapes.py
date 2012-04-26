@@ -1765,6 +1765,43 @@ class Dashpot(Shape):
              }
         return d
 
+class Wavy(Shape):
+    def __init__(self, main_curve, interval, wavelength_of_perturbations,
+                 amplitude_of_perturbations, smoothness):
+        """
+        ============================ ====================================
+        Name                         Description
+        ============================ ====================================
+        main_curve                   f(x) Python function
+        interval                     interval for main_curve
+        wavelength_of_perturbations  dominant wavelength perturbed waves
+        amplitude_of_perturbations   amplitude of perturbed waves
+        smoothness                   in [0, 1]: smooth=0, rough=1
+        ============================ ====================================
+        """
+        xmin, xmax = interval
+        L = wavelength_of_perturbations
+        k_0 = 2*pi/L    # main frequency of waves
+        k_p = k_0*0.5
+        k_k = k_0/2*smoothness
+
+        A_0 = amplitude_of_perturbations
+        A_p = 0.3*A_0
+        A_k = k_0/2
+
+        x = linspace(xmin, xmax, 2001)
+
+        def w(x):
+            A = A_0 + A_p*sin(A_k*x)
+            k = k_0 + k_p*sin(k_k*x)
+            y = main_curve(x) + A*sin(k*x)
+            return y
+
+        self.shapes = {'wavy': Curve(x, w(x))}
+        # Use closure w to define __call__ - then we do not need
+        # to store all the parameters A_0, A_k, etc. as attributes
+        self.__call__ = w
+
 # COMPOSITE types:
 # MassSpringForce: Line(horizontal), Spring, Rectangle, Arrow/Line(w/arrow)
 # must be easy to find the tip of the arrow
@@ -1966,6 +2003,19 @@ def test_Dashpot():
     drawing_tool.display('Dashpot')
     drawing_tool.savefig('tmp_Dashpot.png')
 
+def test_Wavy():
+    drawing_tool.set_coordinate_system(xmin=0, xmax=1.5,
+                                       ymin=-0.5, ymax=5,
+                                       axis=True,
+                                       instruction_file='tmp_Wavy.py')
+    w = Wavy(main_curve=lambda x: 1 + sin(2*x),
+             interval=[0,1.5],
+             wavelength_of_perturbations=0.3,
+             amplitude_of_perturbations=0.1,
+             smoothness=0.05)
+    w.draw()
+    drawing_tool.display('Wavy')
+    drawing_tool.savefig('tmp_Wavy.png')
 
 def diff_files(files1, files2, mode='HTML'):
     import difflib, time

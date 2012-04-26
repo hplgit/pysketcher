@@ -17,16 +17,13 @@ in the `Shape` hierarchy.
 label{pysketcher:exer:person:class}
 file=Person.py
 
-Use the code from Exercise ref{pysketcher:exer:person:prog} to make
-a subclass of `Shape` that draws a person.
-Supply the following
-arguments to the constructor: the center point of the head and
-the radius $R$ of the head. Let the arms and the torso
-be of length $4R$, and the legs of length $6R$.
-The angle between the legs can be fixed (say 30 degrees),
-while the angle of the
-arms relative to the torso can be an argument to the constructor
-with a suitable default value.
+Use the code from Exercise ref{pysketcher:exer:person:prog} to make a
+subclass of `Shape` that draws a person.  Supply the following
+arguments to the constructor: the center point of the head and the
+radius $R$ of the head. Let the arms and the torso be of length $4R$,
+and the legs of length $6R$.  The angle between the legs can be fixed
+(say 30 degrees), while the angle of the arms relative to the torso
+can be an argument to the constructor with a suitable default value.
 
 ===== Exercise: Animate a person with waving hands =====
 label{pysketcher:exer:person:anim}
