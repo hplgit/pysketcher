@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Run spellcheck
-python ~/hg/programs/spellcheck.py -d .dict4spell.txt *.do.txt
+doconce spellcheck -d .dict4spell.txt *.do.txt
 if [ $? -ne 0 ]; then
-  echo "Misspellings!"  # use mydict.txt~.all~ as new dictionary.txt?
+  echo "Abort due to misspellings."
   exit 1
 fi
 

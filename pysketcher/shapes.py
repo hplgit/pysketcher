@@ -602,7 +602,10 @@ class Spline(Shape):
         return self.smooth(x)
 
 
-class SketchyFunc(Spline):
+class SketchyFunc1(Spline):
+    """
+    A typical function curve used to illustrate an "arbitrary" function.
+    """
     def __init__(self, name=None):
         x = [1, 2,   3,   4, 5,   6]
         y = [5, 3.5, 3.8, 3, 2.5, 2.4]
@@ -610,6 +613,24 @@ class SketchyFunc(Spline):
         self.shapes['smooth'].set_linecolor('black')
         if name is not None:
             self.shapes['name'] = Text(name, self.geometric_features()['start'] + point(0,0.1))
+
+
+class SketchyFunc2(Shape):
+    """
+    A typical function curve used to illustrate an "arbitrary" function.
+    """
+    def __init__(self, name=None):
+        def f(x):
+            return 0.5+x*(2-x)*(0.9-x) # on [0, 2.25]
+
+        a = 0; b = 2.25
+        resolution = 100
+        x = np.linspace(a, b, resolution+1)
+        y = f(x)
+        self.shapes['smooth'] = Curve(x, y)
+        self.shapes['smooth'].set_linecolor('black')
+        if name is not None:
+            self.shapes['name'] = Text(name, point(b, y(b)) + point(0,0.1))
 
 
 class Point(Shape):
