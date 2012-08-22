@@ -139,6 +139,13 @@ class Shape:
             'Do not call Shape.__init__!' % \
             self.__class__.__name__)
 
+    def set_name(self, name):
+        self.name = name
+        return self
+
+    def get_name(self):
+        return self.name if hasattr(self, 'name') else None
+
     def __iter__(self):
         # We iterate over self.shapes many places, and will
         # get here if self.shapes is just a Shape object and
@@ -546,10 +553,6 @@ class Curve(Shape):
         self.arrow = style
         return self
 
-    def set_name(self, name):
-        self.name = name
-        return self
-
     def set_filled_curves(self, color='', pattern=''):
         self.fillcolor = color
         self.fillpattern = pattern
@@ -606,32 +609,37 @@ class SketchyFunc1(Spline):
     """
     A typical function curve used to illustrate an "arbitrary" function.
     """
-    def __init__(self, name=None):
+    domain = [1, 6]
+    def __init__(self, name=None, name_pos='start'):
         x = [1, 2,   3,   4, 5,   6]
         y = [5, 3.5, 3.8, 3, 2.5, 2.4]
         Spline.__init__(self, x, y)
         self.shapes['smooth'].set_linecolor('black')
         if name is not None:
-            self.shapes['name'] = Text(name, self.geometric_features()['start'] + point(0,0.1))
+            self.shapes['name'] = Text(name, self.geometric_features()[name_pos] + point(0,0.1))
 
 
 class SketchyFunc2(Shape):
     """
     A typical function curve used to illustrate an "arbitrary" function.
     """
-    def __init__(self, name=None):
-        def f(x):
-            return 0.5+x*(2-x)*(0.9-x) # on [0, 2.25]
+    domain = [0, 2.25]
+    def __init__(self, name=None, name_pos='end'):
 
         a = 0; b = 2.25
         resolution = 100
-        x = np.linspace(a, b, resolution+1)
+        x = linspace(a, b, resolution+1)
+        f = self  # for calling __call__
         y = f(x)
-        self.shapes['smooth'] = Curve(x, y)
+        self.shapes = {'smooth': Curve(x, y)}
         self.shapes['smooth'].set_linecolor('black')
-        if name is not None:
-            self.shapes['name'] = Text(name, point(b, y(b)) + point(0,0.1))
 
+        pos = point(a, f(a)) if name_pos == 'start' else point(b, f(b))
+        if name is not None:
+            self.shapes['name'] = Text(name, pos + point(0,0.1))
+
+    def __call__(self, x):
+        return 0.5+x*(2-x)*(0.9-x) # on [0, 2.25]
 
 class Point(Shape):
     """A point (x,y) which can be rotated, translated, and scaled."""

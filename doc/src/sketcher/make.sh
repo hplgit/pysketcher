@@ -31,7 +31,7 @@ pdflatex -shell-escape $main
 doconce format sphinx $main --skip_inline_comments
 rm -rf sphinx-rootdir
 doconce sphinx_dir author="H. P. Langtangen" version=0.1 theme=pyramid $main
-python automake-sphinx.py
+python automake_sphinx.py
 
 cp ${main}_primer.pdf ../../tutorial/pysketcher_blue.pdf
 cp ${main}.pdf ../../tutorial/pysketcher.pdf
