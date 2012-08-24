@@ -144,7 +144,7 @@ class Shape:
         return self
 
     def get_name(self):
-        return self.name if hasattr(self, 'name') else None
+        return self.name if hasattr(self, 'name') else 'no_name'
 
     def __iter__(self):
         # We iterate over self.shapes many places, and will
@@ -613,6 +613,20 @@ class SketchyFunc1(Spline):
     def __init__(self, name=None, name_pos='start'):
         x = [1, 2,   3,   4, 5,   6]
         y = [5, 3.5, 3.8, 3, 2.5, 2.4]
+        Spline.__init__(self, x, y)
+        self.shapes['smooth'].set_linecolor('black')
+        if name is not None:
+            self.shapes['name'] = Text(name, self.geometric_features()[name_pos] + point(0,0.1))
+
+class SketchyFunc3(Spline):
+    """
+    A typical function curve used to illustrate an "arbitrary" function.
+    """
+    domain = [0, 6]
+    def __init__(self, name=None, name_pos='start'):
+        x = [0, 2,   3,   4, 5,   6]
+        y = [2, 3.5, 3.8, 2, 2.5, 2.6]
+        y = [0.5, 3.5, 3.8, 2, 2.5, 3.5]
         Spline.__init__(self, x, y)
         self.shapes['smooth'].set_linecolor('black')
         if name is not None:
@@ -1269,9 +1283,15 @@ class Axis(Shape):
         # Arrow is vertical arrow, make it horizontal
         arrow = Arrow3(start, length, rotation_angle=-90)
         arrow.rotate(rotation_angle, start)
-        spacing = drawing_tool.xrange*label_spacing
+        if isinstance(label_spacing, (list,tuple)) and len(label_spacing) == 2:
+            x_spacing = drawing_tool.xrange*label_spacing[0]
+            y_spacing = drawing_tool.yrange*label_spacing[1]
+        elif isinstance(label_spacing, (int,float)):
+            # just x spacing
+            x_spacing = drawing_tool.xrange*label_spacing
+            y_spacing = 0
         # should increase spacing for downward pointing axis
-        label_pos = [start[0] + length + spacing, start[1]]
+        label_pos = [start[0] + length + x_spacing, start[1] + y_spacing]
         label = Text(label, position=label_pos, fontsize=fontsize)
         label.rotate(rotation_angle, start)
         self.shapes = {'arrow': arrow, 'label': label}
