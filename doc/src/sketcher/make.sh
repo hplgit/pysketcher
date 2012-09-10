@@ -7,7 +7,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-main=wrap_sketcher
+main=main_sketcher
 doconce format html $main
 
 cp .ptex2tex.cfg-primer .ptex2tex.cfg
