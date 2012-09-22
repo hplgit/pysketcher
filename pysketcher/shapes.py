@@ -468,7 +468,7 @@ class Curve(Shape):
             inside = False
             if verbose:
                 print 'y_min=%g < plot area y_min=%g' % (ymin, t.ymin)
-        if xmax > t.xmax:
+        if ymax > t.ymax:
             inside = False
             if verbose:
                 print 'y_max=%g > plot area y_max=%g' % (ymax, t.ymax)

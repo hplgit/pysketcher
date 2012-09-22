@@ -323,9 +323,18 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
 
     def savefig(self, filename):
         """Save figure in file."""
-        self.mpl.savefig(filename)
+        # If filename is without extension, generate all important formats
+        ext = os.path.splitext(filename)[1]
+        if not ext:
+            self.mpl.savefig(filename + '.png', dpi=300)
+            self.mpl.savefig(filename + '.pdf')
+            #self.mpl.savefig(filename + '.eps')
+        else:
+            self.mpl.savefig(filename, dpi=300)
+
         if self.instruction_file:
-            self.instruction_file.write('mpl.savefig("%s")\n' % filename)
+            self.instruction_file.write('mpl.savefig("%s", dpi=600)\n' %
+                                        filename)
 
     def text(self, text, position, alignment='center', fontsize=0,
              arrow_tip=None):
