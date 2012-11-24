@@ -129,13 +129,11 @@ class Shape:
     """
     def __init__(self):
         """
-        Until new version of shapes.py is ready:
         Never to be called from subclasses.
         """
         raise NotImplementedError(
             'class %s must implement __init__,\nwhich defines '
-            'self.shapes as a list of Shape objects\n'
-            '(and preferably self._repr string).\n'
+            'self.shapes as a dict (or list) of Shape objects\n'
             'Do not call Shape.__init__!' % \
             self.__class__.__name__)
 
@@ -149,9 +147,9 @@ class Shape:
     def __iter__(self):
         # We iterate over self.shapes many places, and will
         # get here if self.shapes is just a Shape object and
-        # not the assumed list.
+        # not the assumed dict/list.
         print 'Warning: class %s does not define self.shapes\n'\
-              'as a *list* of Shape objects'
+              'as a dict of Shape objects'
         return [self]  # Make the iteration work
 
     def copy(self):
@@ -1443,6 +1441,11 @@ class Arc_wText(Shape):
 class Composition(Shape):
     def __init__(self, shapes):
         """shapes: list or dict of Shape objects."""
+        if isinstance(shapes, (tuple,list)):
+            # Convert to dict using the type of the list element as key
+            # (add a counter to make the keys unique)
+            shapes = {s.__class__.__name__ + '_' + str(i): s
+                      for i, s in enumerate(shapes)}
         self.shapes = shapes
 
 
