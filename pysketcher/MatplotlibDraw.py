@@ -327,14 +327,36 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
         ext = os.path.splitext(filename)[1]
         if not ext:
             self.mpl.savefig(filename + '.png', dpi=300)
+            failure = os.system('convert -trim %s.png %s.png' %
+                                (filename, filename))
+            if failure:
+                print 'convert from ImageMagick is not installed - needed for cropping PNG files'
             self.mpl.savefig(filename + '.pdf')
+            failure = os.system('pdfcrop %s.pdf %s.pdf' %
+                                (filename, filename))
+            if failure:
+                print 'pdfcrop is not installed - needed for cropping PDF files'
             #self.mpl.savefig(filename + '.eps')
+            if self.instruction_file:
+                self.instruction_file.write('mpl.savefig("%s.png", dpi=300)\n'
+                                            % filename)
+                self.instruction_file.write('mpl.savefig("%s.pdf")\n'
+                                            % filename)
         else:
             self.mpl.savefig(filename, dpi=300)
+            if ext == '.png':
+                failure = os.system('convert -trim %s %s' % (filename, filename))
+                if failure:
+                    print 'convert from ImageMagick is not installed - needed for cropping PNG files'
+            elif ext == '.pdf':
+                failure = os.system('pdfcrop %s %s' % (filename, filename))
+                if failure:
+                    print 'pdfcrop is not installed - needed for cropping PDF files'
 
-        if self.instruction_file:
-            self.instruction_file.write('mpl.savefig("%s", dpi=600)\n' %
-                                        filename)
+            if self.instruction_file:
+                self.instruction_file.write('mpl.savefig("%s", dpi=300)\n'
+                                            % filename)
+
 
     def text(self, text, position, alignment='center', fontsize=0,
              arrow_tip=None):
