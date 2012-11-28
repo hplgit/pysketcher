@@ -20,9 +20,9 @@ clamped = Rectangle(P0 + point(L, 0) - point(0,2*h), h, 6*h).set_filled_curves(p
 F_pt = point(P0[0]+L/2, P0[1]+H)
 force = Force(F_pt + point(0,2*H), F_pt, '$F$').set_linewidth(3)
 L_dim = Distance_wText((xpos,P0[1]-3*h), (xpos+L,P0[1]-3*h), '$L$')
-beam = Compose({'main': main, 'simply supported end': support,
-                'clamped end': clamped, 'force': force,
-                'L': L_dim})
+beam = Composition({'main': main, 'simply supported end': support,
+                    'clamped end': clamped, 'force': force,
+                    'L': L_dim})
 beam.draw()
 beam.draw_dimensions()
 drawing_tool.display()

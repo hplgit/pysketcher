@@ -35,7 +35,7 @@ that illustrates the physics of the problem.
 Programming as a superior alternative to interactive drawing is
 the mantra of this section.
 
-FIGURE: [fig-sketcher/wheel_on_inclined_plane.png, width=600] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
+FIGURE: [fig-tut/wheel_on_inclined_plane.png, width=600] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
 
 # #ifdef PRIMER_BOOK
 Classes are very suitable for implementing the various components that
@@ -71,7 +71,7 @@ several elements: two circles, two rectangles, and a "ground" element.
 
 # #endif
 
-FIGURE: [fig-sketcher/vehicle0_dim.png, width=600] Sketch of a simple figure. label{sketcher:fig:vehicle0}
+FIGURE: [fig-tut/vehicle0_dim.png, width=600] Sketch of a simple figure. label{sketcher:fig:vehicle0}
 
 === Basic Drawing ===
 
@@ -287,7 +287,7 @@ running the `dot` program:
 Terminal> dot -Tpng -o fig.png fig.dot
 !ec
 
-FIGURE: [fig-sketcher/vehicle0_hier1.png, width=500] Hierarchical relation between figure objects. label{sketcher:fig:vehicle0:hier1}
+FIGURE: [fig-tut/vehicle0_hier1.png, width=500] Hierarchical relation between figure objects. label{sketcher:fig:vehicle0:hier1}
 
 
 The call `fig.graphviz_dot('fig', classname=True)` makes a `fig.dot` file
@@ -296,7 +296,7 @@ Figure ref{sketcher:fig:vehicle0:hier2}. The ability to write out the
 object hierarchy or view it graphically can be of great help when
 working with complex figures that involve layers of subfigures.
 
-FIGURE: [fig-sketcher/vehicle0_hier2.png, width=500] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
+FIGURE: [fig-tut/vehicle0_hier2.png, width=500] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
 
 Any of the objects can in the program be reached through their names, e.g.,
 !bc pycod
@@ -328,7 +328,7 @@ accesses the `Rectangle` object which will then set the linewidth of
 its `Curve` object, and other objects if it had any.
 The result of the actions above is shown in Figure ref{sketcher:fig:vehicle0:v2}.
 
-FIGURE: [fig-sketcher/vehicle0.png, width=700] Left: Basic line-based drawing. Right: Thicker lines and filled parts. label{sketcher:fig:vehicle0:v2}
+FIGURE: [fig-tut/vehicle0.png, width=700] Left: Basic line-based drawing. Right: Thicker lines and filled parts. label{sketcher:fig:vehicle0:v2}
 
 We can also change position of parts of the figure and thereby make
 animations, as shown next.
@@ -454,7 +454,7 @@ having run the present example in the file
 # #ifdef PRIMER_BOOK
 `vehicle0.py`.
 # #else
-"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle0.py". Alternatively, you can view a ready-made "movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/mov-sketcher/anim.html_vehicle0/anim.html".
+"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-tut/vehicle0.py". Alternatively, you can view a ready-made "movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/mov-tut/anim.html_vehicle0/anim.html".
 # #endif
 
 === Animation: Rolling the Wheels ===
@@ -475,7 +475,7 @@ Observe that `wheel1.copy()` copies all the objects that make
 up the first wheel, and `wheel2.translate` translates all
 the copied objects.
 
-FIGURE: [fig-sketcher/vehicle1.png, width=400] Wheels with spokes to illustrate rolling. label{sketcher:fig:vehicle1}
+FIGURE: [fig-tut/vehicle1.png, width=400] Wheels with spokes to illustrate rolling. label{sketcher:fig:vehicle1}
 
 The `move` function now needs to displace all the objects in the
 entire vehicle and also rotate the `cross1` and `cross2`
@@ -525,7 +525,7 @@ The complete example is found in the file
 # #ifdef PRIMER_BOOK
 `vehicle1.py`.
 # #else
-"`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/mov-sketcher/anim.html_vehicle1/anim.html".
+"`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-tut/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/mov-tut/anim.html_vehicle1/anim.html".
 # #endif
 
 The advantages with making figures this way, through programming

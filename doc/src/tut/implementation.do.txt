@@ -296,7 +296,7 @@ A complete code defining and using class `Vehicle0` is found in the file
 # #ifdef PRIMER_BOOK
 `vehicle2.py`.
 # #else
-"`vehicle2.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-sketcher/vehicle2.py".
+"`vehicle2.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-tut/vehicle2.py".
 # #endif
 
 The `pysketcher` package contains a wide range of classes for various
@@ -453,7 +453,7 @@ that `vehicle` is the parent of `body` and that `body` is a child of
 `vehicle`. The term *node* is also often used to describe an element
 in a tree. A node may have several other nodes as *descendants*.
 
-FIGURE: [fig-sketcher/Vehicle0_hier2.png, width=600] Hierarchy of figure elements in an instance of class `Vehicle0`. label{sketcher:fig:Vehicle0:hier2}
+FIGURE: [fig-tut/Vehicle0_hier2.png, width=600] Hierarchy of figure elements in an instance of class `Vehicle0`. label{sketcher:fig:Vehicle0:hier2}
 
 Recursion is the principal programming technique to traverse tree structures.
 Any object in the tree can be viewed as a root of a subtree. For

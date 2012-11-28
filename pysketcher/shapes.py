@@ -1140,7 +1140,7 @@ class VelocityProfile(Shape):
             raise TypeError('VelocityProfile constructor: profile(y) function must return velocity vector (vx,vy), not %s' % type(r))
 
         for i in range(num_arrows):
-            y = i*dy
+            y = start[1] + i*dy
             vx, vy = profile(y)
             if abs(vx) < 1E-8:
                 continue
@@ -1154,7 +1154,7 @@ class VelocityProfile(Shape):
         n = 100
         dy = float(height)/n
         for i in range(n+2):
-            y = i*dy
+            y = start[1] + i*dy
             vx, vy = profile(y)
             vx *= scaling
             vy *= scaling
