@@ -6,11 +6,18 @@ from MatplotlibDraw import MatplotlibDraw
 drawing_tool = MatplotlibDraw()
 
 def point(x, y, check_inside=False):
-    if isinstance(x, (float,int)) and isinstance(y, (float,int)):
-        pass
-    else:
-        raise TypeError('x=%s,y=%s must be float,float, not %s,%s' %
-                        (x, y, type(x), type(y)))
+    for obj, name in zip([x, y], ['x', 'y']):
+        if isinstance(obj, (float,int)):
+            pass
+        elif isinstance(obj, ndarray):
+            if obj.size == 1:
+                pass
+            else:
+                raise TypeError('%s=%s of type %d has length=%d > 1' %
+                                (name, obj, type(obj), obj.size))
+        else:
+            raise TypeError('%s=%s is of wrong type %d' %
+                            (name, obj, type(obj)))
     if check_inside:
         ok, msg = drawing_tool.inside((x,y), exception=True)
         if not ok:
@@ -197,7 +204,8 @@ class Shape:
                 shape_name = shape
                 shape = self.shapes[shape]
             else:
-                shape_name = k
+                shape_name = k  # use index as name if list
+
             if not isinstance(shape, Shape):
                 if isinstance(shape, dict):
                     raise TypeError(
@@ -226,6 +234,8 @@ class Shape:
                         (self.__class__.__name__, shape_name, type(shape),
                          pprint.pformat(self.shapes)))
 
+            if isinstance(shape, Curve):
+                shape.name = shape_name
             getattr(shape, func)(*args, **kwargs)
 
     def draw(self):
@@ -447,6 +457,7 @@ class Curve(Shape):
         self.fillpattern = None
         self.arrow = None
         self.shadow = False
+        self.name = None  # name of object that this Curve represents
 
     def inside_plot_area(self, verbose=True):
         """Check that all coordinates are within drawing_tool's area."""
@@ -484,7 +495,7 @@ class Curve(Shape):
             self.x, self.y,
             self.linestyle, self.linewidth, self.linecolor,
             self.arrow, self.fillcolor, self.fillpattern,
-            self.shadow)
+            self.shadow, self.name)
 
     def rotate(self, angle, center):
         """
@@ -586,12 +597,14 @@ class Curve(Shape):
 
 
 class Spline(Shape):
+    # Note: UnivariateSpline interpolation may not work if
+    # the x[i] points are far from uniformly spaced
     def __init__(self, x, y, degree=3, resolution=501):
         from scipy.interpolate import UnivariateSpline
         self.smooth = UnivariateSpline(x, y, s=0, k=degree)
-        xs = linspace(x[0], x[-1], resolution)
-        ys = self.smooth(xs)
-        self.shapes = {'smooth': Curve(xs, ys)}
+        self.xcoor = linspace(x[0], x[-1], resolution)
+        ycoor = self.smooth(self.xcoor)
+        self.shapes = {'smooth': Curve(self.xcoor, ycoor)}
 
     def geometric_features(self):
         s = self.shapes['smooth']
@@ -601,6 +614,11 @@ class Spline(Shape):
 
     def __call__(self, x):
         return self.smooth(x)
+
+    # Can easily find the derivative and the integral as
+    # self.smooth.derivative(n=1) and self.smooth.antiderivative()
+
+
 
 
 class SketchyFunc1(Spline):
@@ -630,6 +648,19 @@ class SketchyFunc3(Spline):
         if name is not None:
             self.shapes['name'] = Text(name, self.geometric_features()[name_pos] + point(0,0.1))
 
+class SketchyFunc4(Spline):
+    """
+    A typical function curve used to illustrate an "arbitrary" function.
+    Can be a companion function to SketchyFunc3.
+    """
+    domain = [1, 6]
+    def __init__(self, name=None, name_pos='start'):
+        x = [0, 2,   3,   4, 5,   6]
+        y = [1.5, 1.3, 0.7, 0.5, 0.6, 0.8]
+        Spline.__init__(self, x, y)
+        self.shapes['smooth'].set_linecolor('black')
+        if name is not None:
+            self.shapes['name'] = Text(name, self.geometric_features()[name_pos] + point(0,0.1))
 
 class SketchyFunc2(Shape):
     """
@@ -771,6 +802,7 @@ class Rectangle(Shape):
         upper_right          Upper right corner point.
         lower_mid            Middle point on lower side.
         upper_mid            Middle point on upper side.
+        center               Center point
         ==================== =============================================
         """
         r = self.shapes['rectangle']
@@ -782,6 +814,7 @@ class Rectangle(Shape):
         d['upper_mid'] = 0.5*(d['upper_left'] + d['upper_right'])
         d['left_mid'] = 0.5*(d['lower_left'] + d['upper_left'])
         d['right_mid'] = 0.5*(d['lower_right'] + d['upper_right'])
+        d['center'] = point(d['lower_mid'][0], d['left_mid'][1])
         return d
 
 class Triangle(Shape):
@@ -1169,6 +1202,7 @@ class Arrow1(Shape):
     def __init__(self, start, end, style='->'):
         arrow = Line(start, end)
         arrow.set_arrow(style)
+        # Note:
         self.shapes = {'arrow': arrow}
 
     def geometric_features(self):

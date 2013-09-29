@@ -30,6 +30,11 @@ class MatplotlibDraw:
         self.instruction_file = None
         self.allow_screen_graphics = True  # does not work yet
 
+    def __del__(self):
+        if self.instruction_file:
+            self.instruction_file.write('\nmpl.draw()\nraw_input()\n')
+            self.instruction_file.close()
+
     def ok(self):
         """
         Return True if set_coordinate_system is called and
@@ -183,7 +188,7 @@ ax.set_aspect('equal')
         """
         Fill area inside curves with specified color and/or pattern.
         A common pattern is '/' (45 degree lines). Other patterns
-        include....
+        include '-', '+', 'x', '\\', '*', 'o', 'O', '.'.
         """
         if color is False:
             self.fillcolor = ''
@@ -217,7 +222,7 @@ ax.set_aspect('equal')
                    linestyle=None, linewidth=None,
                    linecolor=None, arrow=None,
                    fillcolor=None, fillpattern=None,
-                   shadow=0):
+                   shadow=0, name=None):
         """Define a curve with coordinates x and y (arrays)."""
         #if not self.allow_screen_graphics:
         #    mpl.ioff()
@@ -241,12 +246,17 @@ ax.set_aspect('equal')
         if shadow == 1:
             shadow = 3   # smallest displacement that is visible
 
+        # We can plot fillcolor/fillpattern, arrow or line
+
         if self.instruction_file:
             import pprint
-            self.instruction_file.write('x = %s\n' % \
-                                        pprint.pformat(self.xdata.tolist()))
-            self.instruction_file.write('y = %s\n' % \
-                                        pprint.pformat(self.ydata.tolist()))
+            if name is not None:
+                self.instruction_file.write('\n# %s\n' % name)
+            if not arrow:
+                self.instruction_file.write(
+                    'x = %s\n' % pprint.pformat(self.xdata.tolist()))
+                self.instruction_file.write(
+                    'y = %s\n' % pprint.pformat(self.ydata.tolist()))
 
 
         if fillcolor or fillpattern:
@@ -257,7 +267,28 @@ ax.set_aspect('equal')
                                   linewidth=linewidth, hatch=fillpattern)
             if self.instruction_file:
                 self.instruction_file.write("[line] = ax.fill(x, y, '%s', edgecolor='%s', linewidth=%d, hatch='%s')\n" % (fillcolor, linecolor, linewidth, fillpattern))
+
+        elif arrow:
+            # Note that a Matplotlib arrow is a line with the arrow tip
+            # (do not draw the line in addition)
+            if not arrow in ('->', '<-', '<->'):
+                raise ValueError("arrow argument must be '->', '<-', or '<->', not %s" % repr(arrow))
+
+            # Add arrow to first and/or last segment
+            start = arrow == '<-' or arrow == '<->'
+            end = arrow == '->' or arrow == '<->'
+            if start:
+                x_s, y_s = x[1], y[1]
+                dx_s, dy_s = x[0]-x[1], y[0]-y[1]
+                self._plot_arrow(x_s, y_s, dx_s, dy_s, '->',
+                                 linestyle, linewidth, linecolor)
+            if end:
+                x_e, y_e = x[-2], y[-2]
+                dx_e, dy_e = x[-1]-x[-2], y[-1]-y[-2]
+                self._plot_arrow(x_e, y_e, dx_e, dy_e, '->',
+                                 linestyle, linewidth, linecolor)
         else:
+            # Plain line
             [line] = self.ax.plot(x, y, linecolor, linewidth=linewidth,
                                   linestyle=linestyle)
             if self.instruction_file:
@@ -291,23 +322,6 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
 """ % linewidth)
 
 
-        if arrow:
-            if not arrow in ('->', '<-', '<->'):
-                raise ValueError("arrow argument must be '->', '<-', or '<->', not %s" % repr(arrow))
-
-            # Add arrow to first and/or last segment
-            start = arrow == '<-' or arrow == '<->'
-            end = arrow == '->' or arrow == '<->'
-            if start:
-                x_s, y_s = x[1], y[1]
-                dx_s, dy_s = x[0]-x[1], y[0]-y[1]
-                self.plot_arrow(x_s, y_s, dx_s, dy_s, '->',
-                                linestyle, linewidth, linecolor)
-            if end:
-                x_e, y_e = x[-2], y[-2]
-                dx_e, dy_e = x[-1]-x[-2], y[-1]-y[-2]
-                self.plot_arrow(x_e, y_e, dx_e, dy_e, '->',
-                                linestyle, linewidth, linecolor)
 
     def display(self, title=None):
         """Display the figure. Last possible command."""
@@ -422,8 +436,8 @@ ax.annotate('%s', xy=%s, xycoords='data',
 #http://matplotlib.sourceforge.net/users/annotations_intro.html
 #http://matplotlib.sourceforge.net/users/annotations_guide.html#plotting-guide-annotation
 
-    def plot_arrow(self, x, y, dx, dy, style='->',
-              linestyle=None, linewidth=None, linecolor=None):
+    def _plot_arrow(self, x, y, dx, dy, style='->',
+                    linestyle=None, linewidth=None, linecolor=None):
         """Draw arrow (dx,dy) at (x,y). `style` is '->', '<-' or '<->'."""
         if linestyle is None:
             # use "global" linestyle
@@ -437,6 +451,7 @@ ax.annotate('%s', xy=%s, xycoords='data',
             self.mpl.arrow(x, y, dx, dy, hold=True,
                            facecolor=linecolor,
                            edgecolor=linecolor,
+                           linestyle=linestyle,
                            linewidth=linewidth,
                            head_width=self.arrow_head_width,
                            #head_width=0.1,
@@ -447,10 +462,11 @@ ax.annotate('%s', xy=%s, xycoords='data',
                 self.instruction_file.write("""\
 mpl.arrow(x=%g, y=%g, dx=%g, dy=%g,
           facecolor='%s', edgecolor='%s',
+          linestyle='%s',
           linewidth=%g, head_width=0.1,
           length_includes_head=True,
           shape='full')
-""" % (x, y, dx, dy, linecolor, linecolor, linewidth))
+""" % (x, y, dx, dy, linecolor, linecolor, linestyle, linewidth))
         if style == '<-' or style == '<->':
             self.mpl.arrow(x+dx, y+dy, -dx, -dy, hold=True,
                            facecolor=linecolor,
