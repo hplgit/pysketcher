@@ -626,9 +626,14 @@ class SketchyFunc1(Spline):
     A typical function curve used to illustrate an "arbitrary" function.
     """
     domain = [1, 6]
-    def __init__(self, name=None, name_pos='start'):
-        x = [1, 2,   3,   4, 5,   6]
-        y = [5, 3.5, 3.8, 3, 2.5, 2.4]
+    def __init__(self, name=None, name_pos='start',
+                 xmin=1, xmax=6, ymin=2.4, ymax=5):
+        x = array([1, 2,   3,   4, 5,   6])
+        y = array([5, 3.5, 3.8, 3, 2.5, 2.4])
+        # Scale x and y
+        x = xmin - x.min() + x*(xmax - xmin)/(x.max()-x.min())
+        y = ymin - y.min() + y*(ymax - ymin)/(y.max()-y.min())
+
         Spline.__init__(self, x, y)
         self.shapes['smooth'].set_linecolor('black')
         if name is not None:
@@ -639,10 +644,15 @@ class SketchyFunc3(Spline):
     A typical function curve used to illustrate an "arbitrary" function.
     """
     domain = [0, 6]
-    def __init__(self, name=None, name_pos='start'):
-        x = [0, 2,   3,   4, 5,   6]
-        y = [2, 3.5, 3.8, 2, 2.5, 2.6]
-        y = [0.5, 3.5, 3.8, 2, 2.5, 3.5]
+    def __init__(self, name=None, name_pos='start',
+                 xmin=0, xmax=6, ymin=0.5, ymax=3.8):
+        x = array([0, 2,   3,   4, 5,   6])
+        #y = array([2, 3.5, 3.8, 2, 2.5, 2.6])
+        y = array([0.5, 3.5, 3.8, 2, 2.5, 3.5])
+        # Scale x and y
+        x = xmin - x.min() + x*(xmax - xmin)/(x.max()-x.min())
+        y = ymin - y.min() + y*(ymax - ymin)/(y.max()-y.min())
+
         Spline.__init__(self, x, y)
         self.shapes['smooth'].set_linecolor('black')
         if name is not None:
@@ -654,9 +664,14 @@ class SketchyFunc4(Spline):
     Can be a companion function to SketchyFunc3.
     """
     domain = [1, 6]
-    def __init__(self, name=None, name_pos='start'):
-        x = [0, 2,   3,   4, 5,   6]
-        y = [1.5, 1.3, 0.7, 0.5, 0.6, 0.8]
+    def __init__(self, name=None, name_pos='start',
+                 xmin=0, xmax=6, ymin=0.5, ymax=1.8):
+        x = array([0, 2,   3,   4, 5,   6])
+        y = array([1.5, 1.3, 0.7, 0.5, 0.6, 0.8])
+        # Scale x and y
+        x = xmin - x.min() + x*(xmax - xmin)/(x.max()-x.min())
+        y = ymin - y.min() + y*(ymax - ymin)/(y.max()-y.min())
+
         Spline.__init__(self, x, y)
         self.shapes['smooth'].set_linecolor('black')
         if name is not None:
@@ -667,13 +682,18 @@ class SketchyFunc2(Shape):
     A typical function curve used to illustrate an "arbitrary" function.
     """
     domain = [0, 2.25]
-    def __init__(self, name=None, name_pos='end'):
+    def __init__(self, name=None, name_pos='end',
+                 xmin=0, xmax=2.25, ymin=0.046679703125, ymax=1.259375):
 
         a = 0; b = 2.25
         resolution = 100
         x = linspace(a, b, resolution+1)
         f = self  # for calling __call__
         y = f(x)
+        # Scale x and y
+        x = xmin - x.min() + x*(xmax - xmin)/(x.max()-x.min())
+        y = ymin - y.min() + y*(ymax - ymin)/(y.max()-y.min())
+
         self.shapes = {'smooth': Curve(x, y)}
         self.shapes['smooth'].set_linecolor('black')
 
@@ -2244,7 +2264,7 @@ def rolling_wheel(total_rotation_angle):
     w1 = Wheel(center=center, radius=radius, inner_radius=0.5, nlines=7)
     for i in range(int(total_rotation_angle/angle)):
         w1.draw()
-        print 'XXXXXXXXXXXXXXXXXXXXXX BIG PROBLEM WITH ANIMATE!!!'
+        print 'XXXX BIG PROBLEM WITH ANIMATE!!!'
         display()
 
 

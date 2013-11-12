@@ -324,7 +324,7 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
 
 
     def display(self, title=None):
-        """Display the figure. Last possible command."""
+        """Display the figure."""
         if title is not None:
             self.mpl.title(title)
             if self.instruction_file:
@@ -335,12 +335,13 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
         if self.instruction_file:
             self.instruction_file.write('mpl.draw()\n')
 
-    def savefig(self, filename):
-        """Save figure in file."""
+    def savefig(self, filename, dpi=None):
+        """Save figure in file. Set dpi=300 for really high resolution."""
         # If filename is without extension, generate all important formats
         ext = os.path.splitext(filename)[1]
         if not ext:
-            self.mpl.savefig(filename + '.png', dpi=300)
+            self.mpl.savefig(filename + '.png', dpi=dpi)
+            # Crop the PNG file
             failure = os.system('convert -trim %s.png %s.png' %
                                 (filename, filename))
             if failure:
@@ -352,12 +353,12 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
                 print 'pdfcrop is not installed - needed for cropping PDF files'
             #self.mpl.savefig(filename + '.eps')
             if self.instruction_file:
-                self.instruction_file.write('mpl.savefig("%s.png", dpi=300)\n'
-                                            % filename)
+                self.instruction_file.write('mpl.savefig("%s.png", dpi=%s)\n'
+                                            % (filename, dpi))
                 self.instruction_file.write('mpl.savefig("%s.pdf")\n'
                                             % filename)
         else:
-            self.mpl.savefig(filename, dpi=300)
+            self.mpl.savefig(filename, dpi=dpi)
             if ext == '.png':
                 failure = os.system('convert -trim %s %s' % (filename, filename))
                 if failure:
@@ -368,8 +369,8 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
                     print 'pdfcrop is not installed - needed for cropping PDF files'
 
             if self.instruction_file:
-                self.instruction_file.write('mpl.savefig("%s", dpi=300)\n'
-                                            % filename)
+                self.instruction_file.write('mpl.savefig("%s", dpi=%s)\n'
+                                            % (filename, dpi))
 
 
     def text(self, text, position, alignment='center', fontsize=0,
