@@ -293,11 +293,8 @@ vehicle.draw()
 drawing_tool.display()
 !ec
 A complete code defining and using class `Vehicle0` is found in the file
-# #ifdef PRIMER_BOOK
-`vehicle2.py`.
-# #else
-"`vehicle2.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-tut/vehicle2.py".
-# #endif
+"`vehicle2.py`": "${src_path_pysketcher}/vehicle2.py".
+
 
 The `pysketcher` package contains a wide range of classes for various
 geometrical objects, particularly those that are frequently used in

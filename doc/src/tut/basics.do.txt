@@ -451,11 +451,7 @@ first `movie` command above), is a safe method that you always
 can rely on.
 You can try loading `anim.html` into a web browser, after first
 having run the present example in the file
-# #ifdef PRIMER_BOOK
-`vehicle0.py`.
-# #else
-"`vehicle0.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-tut/vehicle0.py". Alternatively, you can view a ready-made "movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/mov-tut/anim.html_vehicle0/anim.html".
-# #endif
+"`vehicle0.py`": "${src_path_pysketcher}/vehicle0.py". Alternatively, you can view a ready-made "movie": "${src_path_tut}/mov-tut/anim.html_vehicle0/anim.html".
 
 === Animation: Rolling the Wheels ===
 label{sketcher:vehicle1:anim}
@@ -522,11 +518,8 @@ def move(t, fig):
     w2.rotate(degrees(angle), center=(w_1 + L, R))
 !ec
 The complete example is found in the file
-# #ifdef PRIMER_BOOK
-`vehicle1.py`.
-# #else
-"`vehicle1.py`": "http://hplgit.github.com/pysketcher/doc/src/sketcher/src-tut/vehicle1.py". You may run this file or watch a "ready-made movie": "http://hplgit.github.com/pysketcher/doc/src/sketcher/mov-tut/anim.html_vehicle1/anim.html".
-# #endif
+"`vehicle1.py`": "${src_path_pysketcher}/vehicle1.py". You may run this file or watch a "ready-made movie": "${src_path_tut}/mov-tut/anim.html_vehicle1/anim.html".
+
 
 The advantages with making figures this way, through programming
 rather than using interactive drawing programs, are numerous.  For

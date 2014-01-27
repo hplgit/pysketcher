@@ -2,6 +2,13 @@ TITLE: Using Pysketcher to Create Principal Sketches of Physics Problems
 AUTHOR: Hans Petter Langtangen at Center for Biomedical Computing, Simula Research Laboratory and Department of Informatics, University of Oslo
 DATE: today
 
+<%
+#src_path_tut = 'http://hplgit.github.com/pysketcher/doc/src/tut'
+src_path_tut = 'http://tinyurl.com/oou9lp7'
+#src_path_pysketcher = 'https://github.com/hplgit/pysketcher/tree/master/doc/src/tut/src-tut'
+src_path_pysketcher = 'http://tinyurl.com/ot733jn'
+%>
+
 __Abstract.__
 Pysketcher is a Python package which allows principal sketches of
 physics and mechanics problems to be realized through short programs
