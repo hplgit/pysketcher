@@ -58,16 +58,16 @@ sketches of the type in Figure ref{sketcher:fig:inclinedplane}.
 However, it is more appropriate to start with a significantly simpler
 example as depicted in Figure ref{sketcher:fig:vehicle0}.  This toy
 sketch consists of several elements: two circles, two rectangles, and
-a "ground" element.
+a ``ground'' element.
 
 # #else
 
 ===== Basic Construction of Sketches =====
 
 Before attacking real-life sketches as in Figure ref{sketcher:fig1}
-we focus on the significantly simpler drawing shown in
+we focus on the significantly simpler drawing shown
 in Figure ref{sketcher:fig:vehicle0}.  This toy sketch consists of
-several elements: two circles, two rectangles, and a "ground" element.
+several elements: two circles, two rectangles, and a ``ground'' element.
 
 # #endif
 
@@ -151,7 +151,7 @@ vehicle = Composition({'wheels': wheels, 'body': body})
 The ground is illustrated by an object of type `Wall`,
 mostly used to indicate walls in sketches of mechanical systems.
 A `Wall` takes the `x` and `y` coordinates of some curve,
-and a `thickness` parameter, and creates a "thick" curve filled
+and a `thickness` parameter, and creates a thick curve filled
 with a simple pattern. In this case the curve is just a flat
 line so the construction is made of two points on the
 ground line ($(w_1-L,0)$ and $(w_1+3L,0)$):
@@ -161,7 +161,7 @@ ground = Wall(x=[w_1 - L, w_1 + 3*L], y=[0, 0], thickness=-0.3*R)
 The negative thickness makes the pattern-filled rectangle appear below
 the defined line, otherwise it appears above.
 
-We may now collect all the objects in a "top" object that contains
+We may now collect all the objects in a ``top'' object that contains
 the whole figure:
 !bc pycod
 fig = Composition({'vehicle': vehicle, 'ground': ground})
@@ -531,7 +531,6 @@ figure can be rotated, translated, or scaled.  Subparts of the figure
 can also be copied and moved to other parts of the drawing
 area. However, the single most important feature is probably the
 ability to make animations governed by mathematical formulas or data
-coming from physics simulations of the problem, as very simplistically
-shown in the example above.
+coming from physics simulations of the problem, as shown in the example above.
 
 

@@ -303,7 +303,7 @@ drawings of mechanical systems.
 ===== Adding Functionality via Recursion =====
 
 The really powerful feature of our class hierarchy is that we can add
-much functionality to the superclass `Shape` and to the "bottom" class
+much functionality to the superclass `Shape` and to the ``bottom'' class
 `Curve`, and then all other classes for various types of geometrical shapes
 immediately get the new functionality. To explain the idea we may
 look at the `draw` method, which all classes in the `Shape`
@@ -343,21 +343,21 @@ Since class `Composition` inherits the same `draw` method, this method will
 run through `self.shapes` and call `wheels.draw()` and `body.draw()`.
 Now, the `wheels` object is also a `Composition` with the same `draw`
 method, which will run through `self.shapes`, now containing
-the `wheel1` and and `wheel2` objects. The `wheel1` object is a `Circle`,
+the `wheel1` and `wheel2` objects. The `wheel1` object is a `Circle`,
 so calling `wheel1.draw()` calls the `draw` method in class `Circle`,
 but this is the same `draw` method as shown above. This method will
 therefore traverse the circle's `shapes` dictionary, which we have seen
 consists of one `Curve` element.
 
 The `Curve` object holds the coordinates to be plotted so here `draw`
-really needs to do something "physical", namely send the coordinates to
+really needs to do something ``physical'', namely send the coordinates to
 the plotting program. The `draw` method is outlined in the short listing
 of class `Curve` shown previously.
 
 We can go to any of the other shape objects that appear in the figure
 hierarchy and follow their `draw` calls in the similar way. Every time,
 a `draw` call will invoke a new `draw` call, until we eventually hit
-a `Curve` object in the "botton" of the figure hierarchy, and then that part
+a `Curve` object at the ``bottom'' of the figure hierarchy, and then that part
 of the figure is really plotted (or more precisely, the coordinates
 are sent to a plotting program).
 
