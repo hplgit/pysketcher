@@ -1,5 +1,7 @@
 
 # #ifdef PRIMER_BOOK
+idx{`pysketcher`}
+
 Implementing a drawing program provides a very good example on the
 usefulness of object-oriented programming. In the following we shall
 develop the simpler parts of a relatively small and compact drawing

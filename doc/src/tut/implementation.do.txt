@@ -13,6 +13,8 @@ add new geometric features.
 
 # #ifndef PRIMER_BOOK
 
+idx{tree data structure}
+
 Class programming is a key technology for realizing Pysketcher.
 As soon as some classes are established, more are easily
 added. Enhanced functionality for all the classes is also easy to
@@ -48,15 +50,15 @@ class Rectangle(Shape):
         self.shapes = {'rectangle': Curve(x,y)}
 !ec
 
-Any subclass of `Shape` will have a constructor which takes
-geometric information about the shape of the object and
-creates a dictionary `self.shapes` with the shape built of
-simpler shapes. The most fundamental shape is `Curve`, which is
-just a collection of $(x,y)$ coordinates in two arrays `x` and `y`.
-Drawing the `Curve` object is a matter of plotting `y` versus `x`.
-For class `Rectangle` the `x` and `y` arrays contain the corner points
-of the rectangle in counterclockwise direction, starting and ending
-with in the lower left corner.
+Any subclass of `Shape` will have a constructor which takes geometric
+information about the shape of the object and creates a dictionary
+`self.shapes` with the shape built of simpler shapes. The most
+fundamental shape is `Curve`, which is just a collection of $(x,y)$
+coordinates in two arrays `x` and `y`.  Drawing the `Curve` object is
+a matter of plotting `y` versus `x`.  For class `Rectangle` the `x`
+and `y` arrays contain the corner points of the rectangle in
+counterclockwise direction, starting and ending with in the lower left
+corner.
 
 Class `Line` is also a simple class:
 !bc pycod
@@ -70,6 +72,7 @@ Here we only need two points, the start and end point on the line.
 However, we may want to add some useful functionality, e.g., the ability
 to give an $x$ coordinate and have the class calculate the
 corresponding $y$ coordinate:
+
 !bc pycod
     def __call__(self, x):
         """Given x, return y on the line."""
@@ -85,11 +88,12 @@ code with more tests.
 
 A circle implies a somewhat increased complexity. Again we represent
 the geometric object by a `Curve` object, but this time the `Curve`
-object needs to store a large number of points on the curve such
-that a plotting program produces a visually smooth curve.
-The points on the circle must be calculated manually in the constructor
-of class `Circle`. The formulas for points $(x,y)$ on a curve with radius
-$R$ and center at $(x_0, y_0)$ are given by
+object needs to store a large number of points on the curve such that
+a plotting program produces a visually smooth curve.  The points on
+the circle must be calculated manually in the constructor of class
+`Circle`. The formulas for points $(x,y)$ on a curve with radius $R$
+and center at $(x_0, y_0)$ are given by
+
 !bt
 \begin{align*}
 x &= x_0 + R\cos (t),\\
@@ -103,6 +107,7 @@ of $t$ values. The circle's radius and center must of course
 also be specified.
 
 We can write the `Circle` class as
+
 !bc pycod
 class Circle(Shape):
     def __init__(self, center, radius, resolution=180):
@@ -119,6 +124,7 @@ class Circle(Shape):
 As in class `Line` we can offer the possibility to give an angle
 $\theta$ (equivalent to $t$ in the formulas above)
 and then get the corresponding $x$ and $y$ coordinates:
+
 !bc pycod
     def __call__(self, theta):
         """Return (x, y) point corresponding to angle theta."""
@@ -133,6 +139,7 @@ drawing mechanical systems. The arc is constructed much like
 a circle, but $t$ runs in $[\theta_s, \theta_s + \theta_a]$. Giving
 $\theta_s$ and $\theta_a$ the slightly more descriptive names
 `start_angle` and `arc_angle`, the code looks like this:
+
 !bc pycod
 class Arc(Shape):
     def __init__(self, center, radius,
@@ -195,6 +202,7 @@ but only the `Curve` object at the end of the chain will actually
 store the information and send it to the plotting program.
 
 A rough sketch of class `Curve` reads
+
 !bc pycod
 class Curve(Shape):
     """General curve as a sequence of (x,y) coordintes."""
@@ -232,6 +240,7 @@ classes or derive a new one, we need to import `pysketcher`. The constructor
 of class `Vehicle0` performs approximately the same statements as
 in the example program we developed for making the drawing in
 Figure ref{sketcher:fig:vehicle0}.
+
 !bc pycod
 from pysketcher import *
 
@@ -265,6 +274,7 @@ not work.
 The painting of the vehicle, as shown in the right part of
 Figure ref{sketcher:fig:vehicle0:v2}, could in class `Vehicle0`
 be offered by a method:
+
 !bc pycod
     def colorful(self):
         wheels = self.shapes['vehicle']['wheels']
@@ -280,12 +290,14 @@ be offered by a method:
 
 The usage of the class is simple: after having set up an appropriate
 coordinate system as previously shown, we can do
+
 !bc pycod
 vehicle = Vehicle0(w_1, R, L, H)
 vehicle.draw()
 drawing_tool.display()
 !ec
 and go on the make a painted version by
+
 !bc pycod
 drawing_tool.erase()
 vehicle.colorful()
@@ -301,6 +313,8 @@ geometrical objects, particularly those that are frequently used in
 drawings of mechanical systems.
 
 ===== Adding Functionality via Recursion =====
+
+idx{recursive function calls}
 
 The really powerful feature of our class hierarchy is that we can add
 much functionality to the superclass `Shape` and to the ``bottom'' class
@@ -380,6 +394,7 @@ This feature allows us to trace the execution and see exactly where
 we are in the hierarchy and which objects that are visited.
 
 The `recurse` method is very similar to `draw`:
+
 !bc pycod
     def recurse(self, name, indent=0):
         # print message where we are (name is where we come from)
@@ -396,12 +411,14 @@ see on the printout how far down in the hierarchy we are.
 A typical message written by `recurse` when `name` is `'body'` and
 the `shapes` dictionary has the keys `'over'` and `'under'`,
 will be
+
 !bc dat
      Composition: body.shapes has entries 'over', 'under'
      call body.shapes["over"].recurse("over", 6)
 !ec
 The number of leading blanks on each line corresponds to the value of
 `indent`. The code printing out such messages looks like
+
 !bc pycod
     def recurse(self, name, indent=0):
         space = ' '*indent
@@ -420,6 +437,7 @@ Let us follow a `v.recurse('vehicle')` call in detail, `v` being
 a `Vehicle0` instance. Before looking into the output from `recurse`,
 let us get an overview of the figure hierarchy in the `v` object
 (as produced by `print v`)
+
 !bc dat
 ground
     wall
@@ -466,6 +484,7 @@ consistent with the output listed below. Although tedious, this is
 a major exercise that guaranteed will help to demystify recursion.
 
 A part of the printout of `v.recurse('vehicle')` looks like
+
 !bc dat
  Vehicle0: vehicle.shapes has entries 'ground', 'vehicle'
  call vehicle.shapes["ground"].recurse("ground", 2)
@@ -503,11 +522,10 @@ of code.
 === Scaling ===
 
 We start with the simplest of the three geometric transformations,
-namely scaling.
-For a `Curve` instance containing a set of $n$ coordinates
-$(x_i,y_i)$ that make up a curve, scaling by
-a factor $a$ means that we multiply all the $x$ and $y$ coordinates
-by $a$:
+namely scaling.  For a `Curve` instance containing a set of $n$
+coordinates $(x_i,y_i)$ that make up a curve, scaling by a factor $a$
+means that we multiply all the $x$ and $y$ coordinates by $a$:
+
 !bt
 \[
 x_i \leftarrow ax_i,\quad y_i\leftarrow ay_i,
@@ -517,7 +535,8 @@ x_i \leftarrow ax_i,\quad y_i\leftarrow ay_i,
 Here we apply the arrow as an assignment operator.
 The corresponding Python implementation in
 class `Curve` reads
-!bc cod
+
+!bc pycod
 class Curve:
     ...
     def scale(self, factor):
@@ -528,9 +547,10 @@ Note here that `self.x` and `self.y` are Numerical Python arrays,
 so that multiplication by a scalar number `factor` is
 a vectorized operation.
 
-An even more efficient implementation is
-to make use of in-place multiplication in the arrays,
-!bc cod
+An even more efficient implementation is to make use of in-place
+multiplication in the arrays,
+
+!bc pycod
 class Curve:
     ...
     def scale(self, factor):
@@ -549,7 +569,8 @@ method in the superclass `Shape` such that all subclasses inherit the
 method.  Since `scale` and `draw` are so similar, we can easily
 implement the `scale` method in class `Shape` by copying and editing
 the `draw` method:
-!bc cod
+
+!bc pycod
 class Shape:
     ...
     def scale(self, factor):
@@ -566,14 +587,18 @@ as it can draw itself.
 
 A set of coordinates $(x_i, y_i)$ can be translated $v_0$ units in
 the $x$ direction and $v_1$ units in the $y$ direction using the formulas
+
 !bt
 \begin{equation*}
-x_i\leftarrow x_i+v_0,\quad y_i\leftarrow y_i+v_1,\quad i=0,\ldots,n-1\thinspace . \end{equation*}
+x_i\leftarrow x_i+v_0,\quad y_i\leftarrow y_i+v_1,
+\quad i=0,\ldots,n-1\thinspace .
+\end{equation*}
 !et
 The natural specification of the translation is in terms of the
 vector $v=(v_0,v_1)$.
 The corresponding Python implementation in class `Curve` becomes
-!bc cod
+
+!bc pycod
 class Curve:
     ...
     def translate(self, v):
@@ -584,7 +609,8 @@ The translation operation for a shape object is very similar to the
 scaling and drawing operations. This means that we can implement a
 common method `translate` in the superclass `Shape`. The code
 is parallel to the `scale` method:
-!bc cod
+
+!bc pycod
 class Shape:
     ....
     def translate(self, v):
@@ -597,6 +623,7 @@ class Shape:
 Rotating a figure is more complicated than scaling and translating.
 A counter clockwise rotation of $\theta$ degrees for a set of
 coordinates $(x_i,y_i)$ is given by
+
 !bt
 \begin{align*}
  \bar x_i &\leftarrow x_i\cos\theta - y_i\sin\theta,\\
@@ -606,6 +633,7 @@ coordinates $(x_i,y_i)$ is given by
 This rotation is performed around the origin. If we want the figure
 to be rotated with respect to a general point $(x,y)$, we need to
 extend the formulas above:
+
 !bt
 \begin{align*}
  \bar x_i &\leftarrow x + (x_i -x)\cos\theta - (y_i -y)\sin\theta,\\
@@ -614,7 +642,8 @@ extend the formulas above:
 !et
 The Python implementation in class `Curve`, assuming that $\theta$
 is given in degrees and not in radians, becomes
-!bc cod
+
+!bc pycod
     def rotate(self, angle, center):
         angle = radians(angle)
         x, y = center
