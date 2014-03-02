@@ -326,7 +326,7 @@ fig['vehicle']['body']['over'].set_linewidth(14)
 fig['vehicle']['body']['over']['rectangle'].linewidth = 4
 !ec
 The last line accesses the `Curve` object directly, while the line above,
-accesses the `Rectangle` object which will then set the linewidth of
+accesses the `Rectangle` object, which will then set the linewidth of
 its `Curve` object, and other objects if it had any.
 The result of the actions above is shown in Figure ref{sketcher:fig:vehicle0:v2}.
 
