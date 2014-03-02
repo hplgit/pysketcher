@@ -50,7 +50,7 @@ class Rectangle(Shape):
         self.shapes = {'rectangle': Curve(x,y)}
 !ec
 
-Any subclass of `Shape` will have a constructor which takes geometric
+Any subclass of `Shape` will have a constructor that takes geometric
 information about the shape of the object and creates a dictionary
 `self.shapes` with the shape built of simpler shapes. The most
 fundamental shape is `Curve`, which is just a collection of $(x,y)$
@@ -388,7 +388,7 @@ behavior with respect to drawing. Only the `Curve` object has a different
 
 Understanding recursion is usually a challenge. To get a better idea of
 how recursion works, we have equipped class `Shape` with a method `recurse`
-which just visits all the objects in the `shapes` dictionary and prints
+that just visits all the objects in the `shapes` dictionary and prints
 out a message for each object.
 This feature allows us to trace the execution and see exactly where
 we are in the hierarchy and which objects that are visited.
@@ -468,7 +468,7 @@ that `vehicle` is the parent of `body` and that `body` is a child of
 `vehicle`. The term *node* is also often used to describe an element
 in a tree. A node may have several other nodes as *descendants*.
 
-FIGURE: [fig-tut/Vehicle0_hier2.png, width=600] Hierarchy of figure elements in an instance of class `Vehicle0`. label{sketcher:fig:Vehicle0:hier2}
+FIGURE: [fig-tut/Vehicle0_hier2, width=600] Hierarchy of figure elements in an instance of class `Vehicle0`. label{sketcher:fig:Vehicle0:hier2}
 
 Recursion is the principal programming technique to traverse tree structures.
 Any object in the tree can be viewed as a root of a subtree. For
