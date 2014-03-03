@@ -68,7 +68,13 @@ def move(t, fig):
 files = animate(fig, tp, move, moviefiles=True,
                 pause_per_frame=0)
 
+files_wildcard = files.split('%')[0]) + '*.png'
+os.system('convert -delay 20 %s* anim.gif' % (files_wildcard)
+os.system('ffmpeg -r 12 -i %s -c:v flv anim.flv' % files)
+os.system('ffmpeg -r 12 -i %s -c:v libvpx anim.webm' % files)
+os.system('ffmpeg -r 12 -i %s -c:v libtheora anim.ogg' % files)
+os.system('ffmpeg -r 12 -i %s -c:v flv anim.flv' % files)
 from scitools.std import movie
-movie(files, encoder='html', output_file='anim')
+movie(files_wildcard, encoder='html', output_file='anim')
 
 raw_input()

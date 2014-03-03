@@ -125,7 +125,7 @@ def animate(fig, time_points, action, moviefiles=False,
             drawing_tool.savefig('%s%04d.png' % (framefilestem, n))
 
     if moviefiles:
-        return '%s*.png' % framefilestem
+        return '%s%%04d.png' % framefilestem
 
 
 class Shape:
