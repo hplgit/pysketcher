@@ -67,8 +67,11 @@ def move(t, fig):
 files = animate(fig, tp, move, moviefiles=True,
                 pause_per_frame=0)
 
-os.system('convert -delay 20 %s anim.gif' % files)
-os.system('ffmpeg -i "tmp_frame_%04d.png" -b 800k -r 25 -vcodec mpeg4 -y -qmin 2 -qmax 31 anim.mpeg')
+files_wildcard = files.split('%')[0]) + '*.png'
+os.system('convert -delay 20 %s* anim.gif' % (files_wildcard)
+os.system('ffmpeg -r 12 -i %s -c:v flv anim.flv' % files)
+os.system('ffmpeg -r 12 -i %s -c:v libvpx anim.webm' % files)
+os.system('ffmpeg -r 12 -i %s -c:v libtheora anim.ogg' % files)
 
 try:
     from scitools.std import movie
@@ -78,22 +81,7 @@ except ImportError:
         'scitools is installed by sudo apt-get install python-scitools\n'
         'on Ubuntu or by sudo python setup.py install if the code is\n'
         'downloaded from http://code.google.com/p/scitools.')
-
 # HTML page showing individual frames
-movie(files, encoder='html', fps=4, output_file='anim.html')
-
-# Standard GIF file
-movie(files, encoder='convert', fps=4, output_file='anim2.gif')
-
-# AVI format
-movie('tmp_*.png', encoder='ffmpeg', fps=4,
-      output_file='anim.avi') # requires ffmpeg package
-
-# MPEG format
-movie('tmp_*.png', encoder='ffmpeg', fps=4,
-      output_file='anim3.mpeg', vodec='mpeg2video')
-# or
-movie(files, encoder='ppmtompeg', fps=24,
-      output_file='anim2.mpeg')  # requires the netpbm package
+movie(files_wildcard, encoder='html', fps=4, output_file='anim.html')
 
 raw_input()

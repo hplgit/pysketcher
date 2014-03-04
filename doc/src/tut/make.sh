@@ -10,16 +10,6 @@ fi
 main=main_sketcher
 doconce format html $main
 
-cp .ptex2tex.cfg-primer .ptex2tex.cfg
-doconce format latex $main -DPRIMER_BOOK
-ptex2tex $main
-latex $main
-makeindex $main
-latex $main
-latex $main
-dvipdf $main
-mv $main.pdf ${main}_primer.pdf
-
 cp .ptex2tex.cfg-minted .ptex2tex.cfg
 doconce format pdflatex $main
 ptex2tex -DMINTED $main
