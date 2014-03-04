@@ -468,7 +468,7 @@ that `vehicle` is the parent of `body` and that `body` is a child of
 `vehicle`. The term *node* is also often used to describe an element
 in a tree. A node may have several other nodes as *descendants*.
 
-FIGURE: [fig-tut/Vehicle0_hier2.png, width=600] Hierarchy of figure elements in an instance of class `Vehicle0`. label{sketcher:fig:Vehicle0:hier2}
+FIGURE: [fig-tut/Vehicle0_hier2, width=600 frac=0.8] Hierarchy of figure elements in an instance of class `Vehicle0`. label{sketcher:fig:Vehicle0:hier2}
 
 Recursion is the principal programming technique to traverse tree structures.
 Any object in the tree can be viewed as a root of a subtree. For

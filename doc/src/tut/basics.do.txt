@@ -37,7 +37,7 @@ that illustrates the physics of the problem.
 Programming as a superior alternative to interactive drawing is
 the mantra of this section.
 
-FIGURE: [fig-tut/wheel_on_inclined_plane.png, width=600] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
+FIGURE: [fig-tut/wheel_on_inclined_plane, width=600] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
 
 # #ifdef PRIMER_BOOK
 Classes are very suitable for implementing the various components that
@@ -73,7 +73,7 @@ several elements: two circles, two rectangles, and a ``ground'' element.
 
 # #endif
 
-FIGURE: [fig-tut/vehicle0_dim.png, width=600] Sketch of a simple figure. label{sketcher:fig:vehicle0}
+FIGURE: [fig-tut/vehicle0_dim, width=600] Sketch of a simple figure. label{sketcher:fig:vehicle0}
 
 === Basic Drawing ===
 
@@ -289,7 +289,7 @@ running the `dot` program:
 Terminal> dot -Tpng -o fig.png fig.dot
 !ec
 
-FIGURE: [fig-tut/vehicle0_hier1.png, width=500] Hierarchical relation between figure objects. label{sketcher:fig:vehicle0:hier1}
+FIGURE: [fig-tut/vehicle0_hier1, width=500 frac=0.8] Hierarchical relation between figure objects. label{sketcher:fig:vehicle0:hier1}
 
 
 The call `fig.graphviz_dot('fig', classname=True)` makes a `fig.dot` file
@@ -298,7 +298,7 @@ Figure ref{sketcher:fig:vehicle0:hier2}. The ability to write out the
 object hierarchy or view it graphically can be of great help when
 working with complex figures that involve layers of subfigures.
 
-FIGURE: [fig-tut/vehicle0_hier2.png, width=500] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
+FIGURE: [fig-tut/vehicle0_hier2, width=500 frac=0.8] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
 
 Any of the objects can in the program be reached through their names, e.g.,
 !bc pycod
@@ -330,7 +330,7 @@ accesses the `Rectangle` object which will then set the linewidth of
 its `Curve` object, and other objects if it had any.
 The result of the actions above is shown in Figure ref{sketcher:fig:vehicle0:v2}.
 
-FIGURE: [fig-tut/vehicle0.png, width=700] Left: Basic line-based drawing. Right: Thicker lines and filled parts. label{sketcher:fig:vehicle0:v2}
+FIGURE: [fig-tut/vehicle0, width=700] Left: Basic line-based drawing. Right: Thicker lines and filled parts. label{sketcher:fig:vehicle0:v2}
 
 We can also change position of parts of the figure and thereby make
 animations, as shown next.
@@ -473,7 +473,7 @@ Observe that `wheel1.copy()` copies all the objects that make
 up the first wheel, and `wheel2.translate` translates all
 the copied objects.
 
-FIGURE: [fig-tut/vehicle1.png, width=400] Wheels with spokes to illustrate rolling. label{sketcher:fig:vehicle1}
+FIGURE: [fig-tut/vehicle1, width=400 frac=0.8] Wheels with spokes to illustrate rolling. label{sketcher:fig:vehicle1}
 
 The `move` function now needs to displace all the objects in the
 entire vehicle and also rotate the `cross1` and `cross2`
