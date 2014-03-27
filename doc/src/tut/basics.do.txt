@@ -11,6 +11,11 @@ of a physics problem, here involving a rolling wheel on an inclined
 plane. The sketch
 # #else
 
+2DO:
+ * two wheels of different radii on inclined plane coupled to
+   correct solution
+ * "Pygame backend": "http://inventwithpython.com/chapter17.html"
+
 ======= A First Glimpse of Pysketcher =======
 
 Formulation of physical problems makes heavy use of *principal sketches*
