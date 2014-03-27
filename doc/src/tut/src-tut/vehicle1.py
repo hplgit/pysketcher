@@ -33,6 +33,7 @@ fig.draw()  # send all figures to plotting backend
 
 drawing_tool.display()
 drawing_tool.savefig('tmp1.png')
+drawing_tool.savefig('tmp1.pdf')
 
 print fig
 
@@ -68,13 +69,14 @@ def move(t, fig):
 files = animate(fig, tp, move, moviefiles=True,
                 pause_per_frame=0)
 
-files_wildcard = files.split('%')[0]) + '*.png'
-os.system('convert -delay 20 %s* anim.gif' % (files_wildcard)
-os.system('ffmpeg -r 12 -i %s -c:v flv anim.flv' % files)
-os.system('ffmpeg -r 12 -i %s -c:v libvpx anim.webm' % files)
-os.system('ffmpeg -r 12 -i %s -c:v libtheora anim.ogg' % files)
-os.system('ffmpeg -r 12 -i %s -c:v flv anim.flv' % files)
+files_wildcard = files.split('%')[0] + '*.png'
+os.system('convert -delay 20 %s* vehicle1.gif' % (files_wildcard))
+os.system('avconv -r 12 -i %s -c:v flv vehicle1.flv' % files)
+os.system('avconv -r 12 -i %s -c:v libvpx vehicle1.webm' % files)
+os.system('avconv -r 12 -i %s -c:v libtheora vehicle1.ogg' % files)
+os.system('avconv -r 12 -i %s -c:v flv vehicle1.flv' % files)
+os.system('avconv -r 12 -i %s -c:v libx264 -s:v 1000x520 vehicle1.mp4' % files)
 from scitools.std import movie
-movie(files_wildcard, encoder='html', output_file='anim')
+movie(files_wildcard, encoder='html', output_file='vehicle1')
 
 raw_input()

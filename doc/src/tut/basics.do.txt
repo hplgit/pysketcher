@@ -37,7 +37,7 @@ that illustrates the physics of the problem.
 Programming as a superior alternative to interactive drawing is
 the mantra of this section.
 
-FIGURE: [fig-tut/wheel_on_inclined_plane, width=600] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
+FIGURE: [fig-tut/wheel_on_inclined_plane, width=400 frac=0.5] Sketch of a physics problem. label{sketcher:fig:inclinedplane}
 
 # #ifdef PRIMER_BOOK
 Classes are very suitable for implementing the various components that
@@ -412,40 +412,40 @@ as Ubuntu). Videos in the Flash and WebM formats can be created
 by
 
 !bc sys
-Terminal> ffmpeg -r 12 -i tmp_frame_%04d.png -c:v flv anim.flv
-Terminal> ffmpeg -r 12 -i tmp_frame_%04d.png -c:v libvpx anim.webm
+Terminal> ffmpeg -r 12 -i tmp_frame_%04d.png -vcodec flv mov.flv
+Terminal> ffmpeg -r 12 -i tmp_frame_%04d.png -vcodec libvpx mov.webm
 !ec
 An animated GIF movie can also be made using the `convert` program
 from the ImageMagick software suite:
 
 !bc sys
-Terminal> convert -delay 20 tmp_frame*.png anim.gif
-Terminal> animate anim.gif  # play movie
+Terminal> convert -delay 20 tmp_frame*.png mov.gif
+Terminal> animate mov.gif  # play movie
 !ec
 The delay between frames, in units of 1/100 s,
 governs the speed of the movie.
 To play the animated GIF file in a web page, simply insert
-`<img src="anim.gif">` in the HTML code.
+`<img src="mov.gif">` in the HTML code.
 
 The individual PNG frames can be directly played in a web
 browser by running
 
 !bc sys
-Terminal> scitools movie output_file=anim.html fps=5 tmp_frame*
+Terminal> scitools movie output_file=mov.html fps=5 tmp_frame*
 !ec
 or calling
 
 !bc pycod
 from scitools.std import movie
-movie(files, encoder='html', output_file='anim.html')
+movie(files, encoder='html', output_file='mov.html')
 !ec
-in Python. Load the resulting file `anim.html` into a web browser
+in Python. Load the resulting file `mov.html` into a web browser
 to play the movie.
 
 Try to run "`vehicle0.py`": "${src_path_pysketcher}/vehicle0.py" and
-then load `anim.html` into a browser, or play one of the `anim.*`
+then load `mov.html` into a browser, or play one of the `mov.*`
 video files.  Alternatively, you can view a ready-made "movie":
-"${src_path_tut}/mov-tut/anim.html_vehicle0/anim.html".
+"${src_path_tut}/mov-tut/vehicle0.html".
 
 === Animation: Rolling the Wheels ===
 label{sketcher:vehicle1:anim}
@@ -512,7 +512,7 @@ def move(t, fig):
     w2.rotate(degrees(angle), center=(w_1 + L, R))
 !ec
 The complete example is found in the file
-"`vehicle1.py`": "${src_path_pysketcher}/vehicle1.py". You may run this file or watch a "ready-made movie": "${src_path_tut}/mov-tut/anim.html_vehicle1/anim.html".
+"`vehicle1.py`": "${src_path_pysketcher}/vehicle1.py". You may run this file or watch a "ready-made movie": "${src_path_tut}/mov-tut/vehicle1.html".
 
 
 The advantages with making figures this way, through programming

@@ -30,6 +30,7 @@ fig.draw()  # send all figures to plotting backend
 
 drawing_tool.display()
 drawing_tool.savefig('tmp1.png')
+drawing_tool.savefig('tmp1.pdf')
 
 fig['vehicle']['wheels'].set_filled_curves('blue')
 fig['vehicle']['wheels'].set_linewidth(6)
@@ -42,6 +43,7 @@ drawing_tool.erase()  # avoid drawing old and new fig on top of each other
 fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp2.png')
+drawing_tool.savefig('tmp2.pdf')
 
 print fig
 fig.recurse('fig')
@@ -67,11 +69,12 @@ def move(t, fig):
 files = animate(fig, tp, move, moviefiles=True,
                 pause_per_frame=0)
 
-files_wildcard = files.split('%')[0]) + '*.png'
-os.system('convert -delay 20 %s* anim.gif' % (files_wildcard)
-os.system('ffmpeg -r 12 -i %s -c:v flv anim.flv' % files)
-os.system('ffmpeg -r 12 -i %s -c:v libvpx anim.webm' % files)
-os.system('ffmpeg -r 12 -i %s -c:v libtheora anim.ogg' % files)
+files_wildcard = files.split('%')[0] + '*.png'
+os.system('convert -delay 20 %s* vehicle0.gif' % (files_wildcard))
+os.system('avconv -r 12 -i %s -c:v flv vehicle0.flv' % files)
+os.system('avconv -r 12 -i %s -c:v libvpx vehicle0.webm' % files)
+os.system('avconv -r 12 -i %s -c:v libtheora vehicle0.ogg' % files)
+os.system('avconv -r 12 -i %s -c:v libx264 -s:v 1000x520 vehicle0.mp4' % files)
 
 try:
     from scitools.std import movie
@@ -82,6 +85,6 @@ except ImportError:
         'on Ubuntu or by sudo python setup.py install if the code is\n'
         'downloaded from http://code.google.com/p/scitools.')
 # HTML page showing individual frames
-movie(files_wildcard, encoder='html', fps=4, output_file='anim.html')
+movie(files_wildcard, encoder='html', fps=4, output_file='vehicle0.html')
 
 raw_input()
