@@ -70,6 +70,7 @@ def inclined_plane():
 
     fig.draw()
     drawing_tool.savefig('tmp.png')
+    drawing_tool.savefig('tmp.pdf')
     drawing_tool.display()
     import time
     time.sleep(1)

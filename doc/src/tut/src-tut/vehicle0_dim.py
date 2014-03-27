@@ -52,6 +52,7 @@ fig.draw()  # send all figures to plotting backend
 
 drawing_tool.display()
 drawing_tool.savefig('tmp1.png')
+drawing_tool.savefig('tmp1.pdf')
 
 print fig
 
