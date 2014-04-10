@@ -340,6 +340,7 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
         # If filename is without extension, generate all important formats
         ext = os.path.splitext(filename)[1]
         if not ext:
+            # Create both PNG and PDF file
             self.mpl.savefig(filename + '.png', dpi=dpi)
             # Crop the PNG file
             failure = os.system('convert -trim %s.png %s.png' %
