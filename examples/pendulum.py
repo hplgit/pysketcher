@@ -5,7 +5,7 @@ W = 6.
 
 drawing_tool.set_coordinate_system(xmin=0, xmax=W,
                                    ymin=0, ymax=H,
-                                   axis=True)
+                                   axis=False)
 drawing_tool.set_linecolor('blue')
 #drawing_tool.set_grid(True)
 
@@ -25,14 +25,15 @@ path = Arc(P, L, -90, a)
 angle = Arc_wText(r'$\theta$', P, L/4, -90, a, text_spacing=1/30.)
 vertical = Line(P, P-point(0,L))
 
-rod = Line(P, P + L*point(sin(radians(a)), -cos(radians(a))))
+rod = Line(P, P + L*point(sin(radians(a)), -L*cos(radians(a))))
 # or shorter (and more reliable)
-mass_pt = path.end
+mass_pt = path.geometric_features()['end']
 rod = Line(P, mass_pt)
 
 mass = Circle(center=mass_pt, radius=L/20.)
 mass.set_filled_curves(color='blue')
-mass_symbol = Text('$m$', mass_pt + L/10*unit_vec(rod.end-rod.start))
+rod_vec = rod.geometric_features()['end'] - rod.geometric_features()['start']
+mass_symbol = Text('$m$', mass_pt + L/10*unit_vec(rod_vec))
 
 length = Distance_wText(P, mass_pt, '$L$')
 # Displace length indication
@@ -41,43 +42,51 @@ gravity = Gravity(start=P+point(0.8*L,0), length=L/3)
 
 set_dashed_thin_blackline(vertical, path)
 
-dims = Compose({'vertical': vertical, 'theta': angle, 'path': path,
-                'g': gravity, 'L': length, 'm': mass_symbol})
+dims = Composition(
+    {'vertical': vertical, 'theta': angle, 'path': path,
+     'g': gravity, 'L': length, 'm': mass_symbol})
 
-fig = Compose({'body': mass, 'rod': rod, 'dims': dims})
+fig = Composition({'body': mass, 'rod': rod, 'dims': dims})
 
 #drawing_tool.ax.set_xlim(4,10)
 #drawing_tool.ax.set_ylim(1,8)
 fig.draw()
 drawing_tool.display()
-drawing_tool.savefig('tmp_pendulum1.png')
+drawing_tool.savefig('tmp_pendulum1')
 
 # Draw body diagram
-#raw_input('Press Return to make body diagram: ')
-import time; time.sleep(2)
+raw_input('Press Return to make body diagram: ')
+#import time; time.sleep(3)
 drawing_tool.erase()
 
 drawing_tool.set_linecolor('black')
-mg_force = Force(mass_pt, mass_pt + L/3*point(0,-1), '$mg$', text_pos='end')
-rod_force = Force(mass_pt, mass_pt + L/3*unit_vec(rod.start-rod.end),
+mg_force = Force(mass_pt, mass_pt + L/5*point(0,-1), '$mg$', text_pos='end')
+rod_force = Force(mass_pt, mass_pt - L/3*unit_vec(rod_vec),
                   '$S$', text_pos='end')
-vertical2 = Line(rod_force.end, rod_force.end + point(0,-L/3))
-set_dashed_thin_blackline(vertical2)
-angle2 = Arc_wText(r'$\theta$', rod_force.end, L/6, -90, a, text_spacing=1/30.)
-path2 = Arc(P, L, -90+a-a/2., a)
-path2.set_arrow('<-')
-path2.set_linestyle('dashed')
 
-body_diagram = Compose({'mg': mg_force, 'S': rod_force,
-                        'vertical': vertical2, 'theta': angle2,
-                        'path': path2, 'body': mass, 'm': mass_symbol})
+rod_start = rod.geometric_features()['start']
+vertical2 = Line(rod_start, rod_start + point(0,-L/3))
+set_dashed_thin_blackline(vertical2)
+set_dashed_thin_blackline(rod)
+angle2 = Arc_wText(r'$\theta$', rod_start, L/6, -90, a, text_spacing=1/30.)
+
+# Cannot understand this one:
+#path2 = Arc(P, L, -90+a-a/2., a)
+#path2.set_arrow('<-')
+#path2.set_linestyle('dashed')
+
+body_diagram = Composition(
+    {'mg': mg_force, 'S': rod_force, 'rod': rod,
+     'vertical': vertical2, 'theta': angle2,
+     #'path': path2,
+     'body': mass, 'm': mass_symbol})
+
 body_diagram.draw()
 drawing_tool.display('Body diagram')
-drawing_tool.savefig('tmp_pendulum2.png')
+drawing_tool.savefig('tmp_pendulum2')
 
-time.sleep(1)
 drawing_tool.adjust_coordinate_system(body_diagram.minmax_coordinates(), 90)
 drawing_tool.display('Body diagram')
-drawing_tool.savefig('tmp_pendulum3.png')
+drawing_tool.savefig('tmp_pendulum3')
 
 raw_input()
