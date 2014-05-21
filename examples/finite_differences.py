@@ -43,6 +43,22 @@ mesh = Composition({
         set_linecolor('black').set_linewidth(1)}),
     })
 
+# 1D mesh with three points for Crank-Nicolson
+mesh_cn = Composition({
+    'tnm1': Text('$t_{n}$', pb0 - point(0, 0.3)),
+    'tn': Text(r'$t_{n+\frac{1}{2}}$', p0 - point(0, 0.3)),
+    'tnp1': Text('$t_{n+1}$', pf0 - point(0, 0.3)),
+    'axis': Composition({
+        'hline': Line(pf0-point(3,0), pb0+point(3,0)).\
+        set_linecolor('black').set_linewidth(1),
+        'tick_m1': Line(pf0+point(0,tick), pf0-point(0,tick)).\
+        set_linecolor('black').set_linewidth(1),
+        'tick_n':  Line(p0+point(0,tick), p0-point(0,tick)).\
+        set_linecolor('black').set_linewidth(1),
+        'tick_p1': Line(pb0+point(0,tick), pb0-point(0,tick)).\
+        set_linecolor('black').set_linewidth(1)}),
+    })
+
 # Vertical dotted lines at each mesh point
 vlinec = Line(p, p0).set_linestyle('dotted').\
          set_linecolor('blue').set_linewidth(1)
@@ -108,5 +124,12 @@ for fig in forward, backward, centered, all:
     mesh.draw()
     drawing_tool.display()
     drawing_tool.savefig('fd_'+fig.get_name())
+# Crank-Nicolson around t_n+1/2
+drawing_tool.erase()
+centered.draw()
+mesh_cn.draw()
+drawing_tool.display()
+drawing_tool.savefig('fd_centered_CN')
+
 raw_input()
 
