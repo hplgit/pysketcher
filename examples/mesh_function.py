@@ -26,9 +26,9 @@ drawing_tool.set_linecolor('black')
 r = 0.005*(t_max-t_min)     # radius of circles placed at mesh points
 u_discrete = Composition({i: Composition(dict(
     circle=Circle(point(t, u(t)), r).set_filled_curves('black'),
-    u_point=Text('$u_%d$' % i,
-                 point(t, u(t)) + (point(0,5*r)
-                                   if i > 0 else point(-5*r,0))),
+    u_point=Text('$u^%d$' % i,
+                 point(t, u(t)) + (point(0,3*r)
+                                   if i > 0 else point(-3*r,0))),
     )) for i, t in enumerate(t_mesh)})
 
 interpolant = Composition({
@@ -56,16 +56,24 @@ illustration.draw()
 drawing_tool.display()
 drawing_tool.savefig(illustration.get_name())
 
-# Exact u line (u is a Spline Shape that applies 500 intervals by default
+# Add exact u line (u is a Spline Shape that applies 500 intervals by default
 # for drawing the curve)
 exact = u.set_linestyle('dashed').set_linewidth(1)
 exact.draw()
 drawing_tool.display()
 drawing_tool.savefig('%s_ue' % illustration.get_name())
 
+# Add linear interpolant
 interpolant.draw()
 drawing_tool.display()
 drawing_tool.savefig('%s_uei' % illustration.get_name())
+
+# Linear interpolant without exact, smooth line
+drawing_tool.erase()
+illustration.draw()
+interpolant.draw()
+drawing_tool.display()
+drawing_tool.savefig('%s_ui' % illustration.get_name())
 
 raw_input()
 
