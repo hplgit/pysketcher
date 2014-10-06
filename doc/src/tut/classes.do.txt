@@ -1,0 +1,95 @@
+======= Basic Shapes =======
+
+===== Axis =====
+
+The `Axis` object gives the possibility draw a single axis to
+notify a coordinate system. Here is an example where we
+draw $x$ and $y$ axis of three coordinate systems of different
+rotation:
+
+FIGURE: [fig-tut/Axis, width=500 frac=0.7]
+
+The corresponding code looks like this:
+
+@@@CODE ../../../pysketcher/shapes.py fromto: def test_Axis@drawing_tool.savefig\('tmp_Axis'\)
+
+===== Distance with Text =====
+
+The object `Distance_wText` is used to display an arrow, to indicate
+a distance in a sketch, with an additional text in the middle of the arrow.
+
+The figure
+
+FIGURE: [fig-tut/Distance_wText, width=500 frac=0.7]
+
+was produced by this code:
+
+@@@CODE ../../../pysketcher/shapes.py fromto: def test_Distance_wText@drawing_tool.savefig\('tmp_Distance
+Note the use of `Text_wArrow` to write an explaining text with an
+associated arrow, here used to explain how
+the `text_spacing` and `alignment` arguments can be used to adjust
+the appearance of the text that goes with the distance arrow.
+
+===== Rectangle =====
+
+FIGURE: [fig-tut/Rectangle, width=500 frac=0.7]
+
+
+@@@CODE ../../../pysketcher/shapes.py fromto: def test_Rectangle@drawing_tool.savefig\('tmp_Rectangle
+
+The `draw_dimension` method adds explanation of dimensions and various
+important argument in the construction of a shape.
+
+===== Triangle =====
+
+FIGURE: [fig-tut/Triangle, width=500 frac=0.7]
+
+
+@@@CODE ../../../pysketcher/shapes.py fromto: def test_Triangle@drawing_tool.savefig\('tmp_Triangle
+Here, the `draw_dimension` method writes the name of the corners at the
+position of the corners, which does not always look nice (the present figure
+is an example). For a high-quality sketch one would add some spacing
+to the location of the p1, p2, and even p3 texts.
+
+===== Arc =====
+
+FIGURE: [fig-tut/Arc, width=400 frac=0.5]
+
+
+@@@CODE ../../../pysketcher/shapes.py fromto: def test_Arc@drawing_tool.savefig\('tmp_Arc
+
+===== Spring =====
+
+FIGURE: [fig-tut/Spring, width=800 frac=1]
+
+
+@@@CODE ../../../pysketcher/shapes.py fromto: def test_Spring@drawing_tool.savefig\('tmp_Spring
+
+===== Dashpot =====
+
+FIGURE: [fig-tut/Dashpot, width=600 frac=0.8]
+
+
+@@@CODE ../../../pysketcher/shapes.py fromto: def test_Dashpot@drawing_tool.savefig\('tmp_Dashpot
+
+===== Wavy =====
+
+Looks strange. Fix x axis.
+
+===== Stochastic curves =====
+
+The `StochasticWavyCurve` object offers three pre-computed
+graphcs that have a random variation:
+
+FIGURE: [fig-tut/StochasticWavyCurve.png, width=600 frac=1]
+
+The usage is simple. The construction
+
+!bc pycod
+curve = StochasticWavyCurve(curve_no=1, percentage=40)
+!ec
+picks the second curve (the three are numbered 0, 1, and 2),
+and the first 40% of that curve. In case one desires another extent
+of the axis, one can just scale the coordinates directly as these
+are stored in the arrays `curve.x[curve_no]` and
+`curve.y[curve_no]`.
