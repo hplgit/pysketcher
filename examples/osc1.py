@@ -33,7 +33,7 @@ ground = Wall(x=[-L/2,L], y=[0,0], thickness=-H/10)
 wheel1 = Circle((H,H/2), H/2)
 wheel2 = wheel1.copy()
 wheel2.translate(point(2*H, 0))
-fig = Compose({
+fig = Composition({
     'dashpot': d, 'spring': s, 'mass': M, 'left wall': left_wall,
     'ground': ground, 'wheel1': wheel1, 'wheel2': wheel2})
 
@@ -43,4 +43,5 @@ print s
 print s.shapes['bar1']['line'].x, s.shapes['bar1']['line'].y
 print s.shapes['bar2']['line'].x, s.shapes['bar2']['line'].y
 drawing_tool.display()
+drawing_tool.savefig('oscillator')
 raw_input()

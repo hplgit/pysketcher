@@ -2466,34 +2466,40 @@ def test_Axis():
     drawing_tool.set_coordinate_system(
         xmin=0, xmax=15, ymin=-7, ymax=8, axis=True,
         instruction_file='tmp_Axis.py')
+    # Draw normal x and y axis with origin at (7.5, 2)
+    # in the coordinate system of the sketch: [0,15]x[-7,8]
     x_axis = Axis((7.5,2), 5, 'x', rotation_angle=0)
     y_axis = Axis((7.5,2), 5, 'y', rotation_angle=90)
     system = Composition({'x axis': x_axis, 'y axis': y_axis})
     system.draw()
     drawing_tool.display()
+
+    # Rotate this system 40 degrees counter clockwise
+    # and draw it with dashed lines
     system.set_linestyle('dashed')
     system.rotate(40, (7.5,2))
     system.draw()
     drawing_tool.display()
 
+    # Rotate this system another 220 degrees and show
+    # with dotted lines
     system.set_linestyle('dotted')
     system.rotate(220, (7.5,2))
     system.draw()
     drawing_tool.display()
 
     drawing_tool.display('Axis')
-    drawing_tool.savefig('tmp_Axis.png')
+    drawing_tool.savefig('tmp_Axis')
     print repr(system)
 
 def test_Distance_wText():
-    drawing_tool.set_coordinate_system(xmin=0, xmax=10,
-                                       ymin=0, ymax=6,
-                                       axis=True,
-                                       instruction_file='tmp_Distance_wText.py')
-    #drawing_tool.arrow_head_width = 0.1
+    drawing_tool.set_coordinate_system(
+        xmin=0, xmax=10, ymin=0, ymax=6,
+        axis=True, instruction_file='tmp_Distance_wText.py')
+
     fontsize=14
-    t = r'$ 2\pi R^2 $'
-    dims2 = Composition({
+    t = r'$ 2\pi R^2 $'  # sample text
+    examples = Composition({
         'a0': Distance_wText((4,5), (8, 5), t, fontsize),
         'a6': Distance_wText((4,5), (4, 4), t, fontsize),
         'a1': Distance_wText((0,2), (2, 4.5), t, fontsize),
@@ -2510,18 +2516,17 @@ def test_Distance_wText():
                           (4, 0.5), (9, 1.2),
                           fontsize=10, alignment='left'),
         })
-    dims2.draw()
+    examples.draw()
     drawing_tool.display('Distance_wText and text positioning')
-    drawing_tool.savefig('tmp_Distance_wText.png')
+    drawing_tool.savefig('tmp_Distance_wText')
 
 def test_Rectangle():
     L = 3.0
     W = 4.0
 
-    drawing_tool.set_coordinate_system(xmin=0, xmax=2*W,
-                                       ymin=-L/2, ymax=2*L,
-                                       axis=True,
-                                       instruction_file='tmp_Rectangle.py')
+    drawing_tool.set_coordinate_system(
+        xmin=0, xmax=2*W, ymin=-L/2, ymax=2*L,
+        axis=True, instruction_file='tmp_Rectangle.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
@@ -2530,17 +2535,16 @@ def test_Rectangle():
     r.draw()
     r.draw_dimensions()
     drawing_tool.display('Rectangle')
-    drawing_tool.savefig('tmp_Rectangle.png')
+    drawing_tool.savefig('tmp_Rectangle')
 
 
 def test_Triangle():
     L = 3.0
     W = 4.0
 
-    drawing_tool.set_coordinate_system(xmin=0, xmax=2*W,
-                                       ymin=-L/2, ymax=1.2*L,
-                                       axis=True,
-                                       instruction_file='tmp_Triangle.py')
+    drawing_tool.set_coordinate_system(
+        xmin=0, xmax=2*W, ymin=-L/2, ymax=1.2*L,
+        axis=True, instruction_file='tmp_Triangle.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
@@ -2549,16 +2553,15 @@ def test_Triangle():
     t.draw()
     t.draw_dimensions()
     drawing_tool.display('Triangle')
-    drawing_tool.savefig('tmp_Triangle.png')
+    drawing_tool.savefig('tmp_Triangle')
 
 def test_Arc():
     L = 4.0
     W = 4.0
 
-    drawing_tool.set_coordinate_system(xmin=-W/2, xmax=W,
-                                       ymin=-L/2, ymax=1.5*L,
-                                       axis=True,
-                                       instruction_file='tmp_Arc.py')
+    drawing_tool.set_coordinate_system(
+        xmin=-W/2, xmax=W, ymin=-L/2, ymax=1.5*L,
+        axis=True, instruction_file='tmp_Arc.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
@@ -2599,23 +2602,23 @@ def test_Arc():
 
     a.draw_dimensions()
     drawing_tool.display('Arc')
-    drawing_tool.savefig('tmp_Arc.png')
+    drawing_tool.savefig('tmp_Arc')
 
 
 def test_Spring():
     L = 5.0
     W = 2.0
 
-    drawing_tool.set_coordinate_system(xmin=0, xmax=7*W,
-                                       ymin=-L/2, ymax=1.5*L,
-                                       axis=True,
-                                       instruction_file='tmp_Spring.py')
+    drawing_tool.set_coordinate_system(
+        xmin=0, xmax=7*W, ymin=-L/2, ymax=1.5*L,
+        axis=True, instruction_file='tmp_Spring.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     xpos = W
     s1 = Spring((W,0), L, teeth=True)
-    s1_title = Text('Default Spring', s1.geometric_features()['end'] + point(0,L/10))
+    s1_title = Text('Default Spring',
+                    s1.geometric_features()['end'] + point(0,L/10))
     s1.draw()
     s1_title.draw()
     #s1.draw_dimensions()
@@ -2625,7 +2628,7 @@ def test_Spring():
     s2.draw()
     s2.draw_dimensions()
     drawing_tool.display('Spring')
-    drawing_tool.savefig('tmp_Spring.png')
+    drawing_tool.savefig('tmp_Spring')
 
 
 def test_Dashpot():
@@ -2633,17 +2636,17 @@ def test_Dashpot():
     W = 2.0
     xpos = 0
 
-    drawing_tool.set_coordinate_system(xmin=xpos, xmax=xpos+5.5*W,
-                                       ymin=-L/2, ymax=1.5*L,
-                                       axis=True,
-                                       instruction_file='tmp_Dashpot.py')
+    drawing_tool.set_coordinate_system(
+        xmin=xpos, xmax=xpos+5.5*W, ymin=-L/2, ymax=1.5*L,
+        axis=True, instruction_file='tmp_Dashpot.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     # Default (simple) dashpot
     xpos = 1.5
     d1 = Dashpot(start=(xpos,0), total_length=L)
-    d1_title = Text('Dashpot (default)', d1.geometric_features()['end'] + point(0,L/10))
+    d1_title = Text('Dashpot (default)',
+                    d1.geometric_features()['end'] + point(0,L/10))
     d1.draw()
     d1_title.draw()
 
@@ -2656,7 +2659,7 @@ def test_Dashpot():
     d2.draw_dimensions()
 
     drawing_tool.display('Dashpot')
-    drawing_tool.savefig('tmp_Dashpot.png')
+    drawing_tool.savefig('tmp_Dashpot')
 
 def test_Wavy():
     drawing_tool.set_coordinate_system(xmin=0, xmax=1.5,
@@ -2670,7 +2673,7 @@ def test_Wavy():
              smoothness=0.05)
     w.draw()
     drawing_tool.display('Wavy')
-    drawing_tool.savefig('tmp_Wavy.png')
+    drawing_tool.savefig('tmp_Wavy')
 
 def diff_files(files1, files2, mode='HTML'):
     import difflib, time
