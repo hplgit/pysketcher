@@ -57,7 +57,7 @@ class MatplotlibDraw:
         self.ax.set_ylim(minmax['ymin']-y_space/2., minmax['ymax']+y_space/2.)
 
     def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
-                              instruction_file=None):
+                              instruction_file=None, new_figure=True):
         """
         Define the drawing area [xmin,xmax]x[ymin,ymax].
         axis: None or False means that axes with tickmarks
@@ -111,7 +111,7 @@ mpl.ion()  # for interactive drawing
         self.set_fontsize(14)
         self.arrow_head_width = 0.2*self.xrange/16
 
-        self._make_axes(new_figure=True)
+        self._make_axes(new_figure=new_figure)
 
         manager = self.mpl.get_current_fig_manager()
         manager.window.wm_geometry(geometry)
@@ -323,14 +323,15 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
 
 
 
-    def display(self, title=None):
+    def display(self, title=None, show=True):
         """Display the figure."""
         if title is not None:
             self.mpl.title(title)
             if self.instruction_file:
                 self.instruction_file.write('mpl.title("%s")\n' % title)
 
-        self.mpl.draw()
+        if show:
+            self.mpl.draw()
 
         if self.instruction_file:
             self.instruction_file.write('mpl.draw()\n')
