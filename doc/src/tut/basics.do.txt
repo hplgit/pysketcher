@@ -71,7 +71,7 @@ a ``ground'' element.
 
 ===== Basic Construction of Sketches =====
 
-Before attacking real-life sketches as in Figure ref{sketcher:fig1}
+Before attacking real-life sketches as in Figure ref{sketcher:fig:inclinedplane}
 we focus on the significantly simpler drawing shown
 in Figure ref{sketcher:fig:vehicle0}.  This toy sketch consists of
 several elements: two circles, two rectangles, and a ``ground'' element.
@@ -302,7 +302,7 @@ Figure ref{sketcher:fig:vehicle0:hier2}. The ability to write out the
 object hierarchy or view it graphically can be of great help when
 working with complex figures that involve layers of subfigures.
 
-FIGURE: [fig-tut/vehicle0_hier2, width=500 frac=0.8] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
+FIGURE: [fig-tut/Vehicle0_hier2, width=500 frac=0.8] Hierarchical relation between figure objects, including their class names. label{sketcher:fig:vehicle0:hier2}
 
 Any of the objects can in the program be reached through their names, e.g.,
 !bc pycod
@@ -531,5 +531,3 @@ can also be copied and moved to other parts of the drawing
 area. However, the single most important feature is probably the
 ability to make animations governed by mathematical formulas or data
 coming from physics simulations of the problem, as shown in the example above.
-
-

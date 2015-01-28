@@ -98,7 +98,9 @@ def is_sequence(*sequences, **kwargs):
 
 
 def animate(fig, time_points, action, moviefiles=False,
-            pause_per_frame=0.5, **action_kwargs):
+            pause_per_frame=0.5, show_screen_graphics=True,
+            title=None,
+            **action_kwargs):
     if moviefiles:
         # Clean up old frame files
         framefilestem = 'tmp_frame_'
@@ -119,7 +121,7 @@ def animate(fig, time_points, action, moviefiles=False,
         #        '(a Shape object with the whole figure)')
 
         fig.draw()
-        drawing_tool.display()
+        drawing_tool.display(title=title, show=show_screen_graphics)
 
         if moviefiles:
             drawing_tool.savefig('%s%04d.png' % (framefilestem, n))
@@ -183,7 +185,21 @@ class Shape:
                             (name, self.__class__.__name__))
                     return self.shapes[shape][name]
         else:
-            raise Exception('This is a bug')
+            raise Exception('This is a bug in __getitem__')
+
+    def __setitem__(self, name, value):
+        """
+        Allow assignment like::
+
+           obj1['name1']['name2'] = value
+
+        all the way down to ``Curve`` or ``Point`` (``Text``)
+        objects.
+        """
+        if hasattr(self, 'shapes'):
+            self.shapes[name] = value
+        else:
+            raise Exception('Cannot assign')
 
 
     def _for_all_shapes(self, func, *args, **kwargs):
