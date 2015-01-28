@@ -7,9 +7,9 @@ Using Pysketcher to Create Principal Sketches of Physics Problems
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   wrap_sketcher
+   main_sketcher
 
 
 Indices and tables

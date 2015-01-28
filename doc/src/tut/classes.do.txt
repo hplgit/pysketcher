@@ -34,6 +34,7 @@ the appearance of the text that goes with the distance arrow.
 
 FIGURE: [fig-tut/Rectangle, width=500 frac=0.7]
 
+The above figure can be produced by the following code.
 
 @@@CODE ../../../pysketcher/shapes.py fromto: def test_Rectangle@drawing_tool.savefig\('tmp_Rectangle
 
@@ -44,6 +45,7 @@ important argument in the construction of a shape.
 
 FIGURE: [fig-tut/Triangle, width=500 frac=0.7]
 
+The code below produces the figure.
 
 @@@CODE ../../../pysketcher/shapes.py fromto: def test_Triangle@drawing_tool.savefig\('tmp_Triangle
 Here, the `draw_dimension` method writes the name of the corners at the
@@ -53,8 +55,11 @@ to the location of the p1, p2, and even p3 texts.
 
 ===== Arc =====
 
+An arc like
+
 FIGURE: [fig-tut/Arc, width=400 frac=0.5]
 
+is produced by
 
 @@@CODE ../../../pysketcher/shapes.py fromto: def test_Arc@drawing_tool.savefig\('tmp_Arc
 
@@ -62,6 +67,7 @@ FIGURE: [fig-tut/Arc, width=400 frac=0.5]
 
 FIGURE: [fig-tut/Spring, width=800 frac=1]
 
+The code for making this spring is
 
 @@@CODE ../../../pysketcher/shapes.py fromto: def test_Spring@drawing_tool.savefig\('tmp_Spring
 
@@ -69,6 +75,7 @@ FIGURE: [fig-tut/Spring, width=800 frac=1]
 
 FIGURE: [fig-tut/Dashpot, width=600 frac=0.8]
 
+This dashpot is produced by
 
 @@@CODE ../../../pysketcher/shapes.py fromto: def test_Dashpot@drawing_tool.savefig\('tmp_Dashpot
 

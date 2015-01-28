@@ -7,15 +7,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Using Pysketcher to Create Principal Sketches of Physics Problems &mdash; Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation</title>
+    <title>Using Pysketcher to Create Principal Sketches of Physics Problems</title>
     
     <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '1.0',
+        URL_ROOT:    './',
+        VERSION:     '0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,15 +25,41 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation" href="#" />
-    <link rel="next" title="Using Pysketcher to Create Principal Sketches of Physics Problems" href="wrap_sketcher.html" />
+
+        <script src="http://sagecell.sagemath.org/static/jquery.min.js"></script>
+        <script src="http://sagecell.sagemath.org/static/embedded_sagecell.js"></script>
+
+        <script>sagecell.makeSagecell({inputLocation: ".sage"});</script>
+
+        <style type="text/css">
+                .sagecell .CodeMirror-scroll {
+                        overflow-y: hidden;
+                        overflow-x: auto;
+                }
+                .sagecell .CodeMirror {
+                        height: auto;
+                }
+        </style>
+
+    
+    <link rel="top" title="Using Pysketcher to Create Principal Sketches of Physics Problems" href="#" />
+    <link rel="next" title="Using Pysketcher to Create Principal Sketches of Physics Problems" href="main_sketcher.html" />
+
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
 <!--[if lte IE 6]>
 <link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
 <![endif]-->
 
+  
+   <style type="text/css">
+     div.admonition {
+       background-color: whiteSmoke;
+       border: 1px solid #bababa;
+     }
+   </style>
   </head>
+
   <body>
 
     <div class="related">
@@ -43,9 +69,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="wrap_sketcher.html" title="Using Pysketcher to Create Principal Sketches of Physics Problems"
+          <a href="main_sketcher.html" title="Using Pysketcher to Create Principal Sketches of Physics Problems"
              accesskey="N">next</a> |</li>
-        <li><a href="#">Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation</a> &raquo;</li> 
+        <li><a href="#">Using Pysketcher to Create Principal Sketches of Physics Problems</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,17 +85,29 @@
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="wrap_sketcher.html">Using Pysketcher to Create Principal Sketches of Physics Problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wrap_sketcher.html#a-first-glimpse-of-pysketcher">A First Glimpse of Pysketcher</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="wrap_sketcher.html#basic-construction-of-sketches">Basic Construction of Sketches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_sketcher.html">Using Pysketcher to Create Principal Sketches of Physics Problems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="main_sketcher.html#a-first-glimpse-of-pysketcher">A First Glimpse of Pysketcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#basic-construction-of-sketches">Basic Construction of Sketches</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="wrap_sketcher.html#inner-workings-of-the-pysketcher-tool">Inner Workings of the Pysketcher Tool</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="wrap_sketcher.html#example-of-classes-for-geometric-objects">Example of Classes for Geometric Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main_sketcher.html#basic-shapes">Basic Shapes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#axis">Axis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#distance-with-text">Distance with Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#rectangle">Rectangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#triangle">Triangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#arc">Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#spring">Spring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#dashpot">Dashpot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#wavy">Wavy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#stochastic-curves">Stochastic curves</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="wrap_sketcher.html#adding-functionality-via-recursion">Adding Functionality via Recursion</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="wrap_sketcher.html#scaling-translating-and-rotating-a-figure">Scaling, Translating, and Rotating a Figure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main_sketcher.html#inner-workings-of-the-pysketcher-tool">Inner Workings of the Pysketcher Tool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#example-of-classes-for-geometric-objects">Example of Classes for Geometric Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#adding-functionality-via-recursion">Adding Functionality via Recursion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="main_sketcher.html#scaling-translating-and-rotating-a-figure">Scaling, Translating, and Rotating a Figure</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -92,14 +130,12 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Using Pysketcher to Create Principal Sketches of Physics Problems</a><ul>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Using Pysketcher to Create Principal Sketches of Physics Problems</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="wrap_sketcher.html"
+  <p class="topless"><a href="main_sketcher.html"
                         title="next chapter">Using Pysketcher to Create Principal Sketches of Physics Problems</a></p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
@@ -125,14 +161,14 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="wrap_sketcher.html" title="Using Pysketcher to Create Principal Sketches of Physics Problems"
+          <a href="main_sketcher.html" title="Using Pysketcher to Create Principal Sketches of Physics Problems"
              >next</a> |</li>
-        <li><a href="#">Using Pysketcher to Create Principal Sketches of Physics Problems 1.0 documentation</a> &raquo;</li> 
+        <li><a href="#">Using Pysketcher to Create Principal Sketches of Physics Problems</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2012, 0.1.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+        &copy; Copyright 2015, H. P. Langtangen.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>
