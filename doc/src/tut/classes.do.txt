@@ -78,8 +78,8 @@ Looks strange. Fix x axis.
 
 ===== Stochastic curves =====
 
-The `StochasticWavyCurve` object offers three pre-computed
-graphcs that have a random variation:
+The `StochasticWavyCurve` object offers three precomputed
+graphics that have a random variation:
 
 FIGURE: [fig-tut/StochasticWavyCurve.png, width=600 frac=1]
 
