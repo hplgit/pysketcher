@@ -57,7 +57,8 @@ class MatplotlibDraw:
         self.ax.set_ylim(minmax['ymin']-y_space/2., minmax['ymax']+y_space/2.)
 
     def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
-                              instruction_file=None, new_figure=True):
+                              instruction_file=None, new_figure=True,
+                              xkcd=False):
         """
         Define the drawing area [xmin,xmax]x[ymin,ymax].
         axis: None or False means that axes with tickmarks
@@ -76,6 +77,9 @@ class MatplotlibDraw:
                 self.instruction_file.close()  # make new py file for commands
 
         self.mpl = mpl
+        if xkcd:
+            self.mpl.xkcd()
+
         self.xmin, self.xmax, self.ymin, self.ymax = \
              float(xmin), float(xmax), float(ymin), float(ymax)
         self.xrange = self.xmax - self.xmin
