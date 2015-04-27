@@ -19,8 +19,9 @@ pdflatex -shell-escape $name
 pdflatex -shell-escape $name
 cp $name.pdf pysketcher.pdf
 
-doconce format html $name --skip_inline_comments --html_style=boostrap_bluegray --html_output=pysketcher
-doconce split_html $name.html
+html=pysketcher
+doconce format html $name --skip_inline_comments --html_style=boostrap_bluegray --html_output=$html
+doconce split_html ${html}.html
 
 doconce format sphinx $name --skip_inline_comments
 doconce sphinx_dir author="H. P. Langtangen" version=0.1 theme=pyramid $name
@@ -28,6 +29,7 @@ python automake_sphinx.py
 
 # Publish
 dest=../../pub/tutorial
+name=pysketcher
 cp ${name}.html ._${name}*.html ${name}.pdf $dest/
 rm -rf $dest/html
 cp -r sphinx-rootdir/_build/html $dest/html
