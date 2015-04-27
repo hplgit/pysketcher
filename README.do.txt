@@ -38,13 +38,27 @@ the tutorial in Chapter 9 in "A Primer on Scientific Programming with Python": "
 
 ===== Examples =====
 
-See the `examples` directory for some examples.
+See the `examples` directory for some examples beyond the more basic
+ones in the tutorial.
 For example, a pendulum and its body diagram,
 
 FIGURE: [examples/pendulum2, width=800 frac=1]
 
 can be created by the program "`examples/pendulum.py`": "https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py".
 
+===== Technology =====
+
+Pysketcher applies Matplotlib to make the drawings, but it is quite
+easy to replace the backend `MatplotlibDraw.py` by similar code utilizing
+TikZ or another plotting package. The Pysketcher software is a thin
+layer basically constructing a tree structure of elements in the
+sketch. A lot of classes are offered for different type of basic
+elements, such as Circle, Rectangle, Text, Text with arrow, Force,
+arbitrary curve, etc.
+Complicated figures can be created by sticking one
+figure into another
+(i.e., hierarchical building of figures by sticking one tree
+structure into another).
 
 ===== Citation =====
 
