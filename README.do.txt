@@ -114,4 +114,4 @@ Pysketcher was first constructed as a powerful educational example on
 object-oriented programming for the book
 *A Primer on Scientific Programming With Python*, but the tool quickly
 became so useful for the author that it was further developed and
-heavily used for creating figures in other books by the author.
+heavily used for creating figures in other documents.
