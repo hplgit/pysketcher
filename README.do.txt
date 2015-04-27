@@ -36,6 +36,16 @@ FIGURE: [http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_
 For an introduction to Pysketcher, see the tutorial in "HTML": "http://hplgit.github.io/pysketcher/doc/pub/pysketcher.html", "Sphinx": "http://hplgit.github.io/pysketcher/doc/pub/html/index.html", or "PDF": "http://hplgit/github.io/pysketcher/doc/pub/pysketcher.pdf" format (or a simplified version of
 the tutorial in Chapter 9 in "A Primer on Scientific Programming with Python": "http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen", by H. P. Langtangen, Springer, 2014).
 
+===== Examples =====
+
+See the `examples` directory for some examples.
+For example, a pendulum and its body diagram,
+
+FIGURE: [examples/pendulum2, width=800 frac=1]
+
+can be created by the "`examples/pendulum.py`": "https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py".
+
+
 ===== Citation =====
 
 If you use Pysketcher and want to cite it, you can either cite this

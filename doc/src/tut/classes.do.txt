@@ -5,6 +5,9 @@ This section presents many of the basic shapes in Pysketcher:
 `Spring`, `Dashpot`, and `Wavy`.
 Each shape is demonstrated with a figure and a
 unit test that shows how the figure is constructed in Python code.
+These demos rely heavily on the method `draw_dimensions` in
+the shape classes, which annotates the basic drawing of the shape
+with the various geometric parameters that govern the shape.
 
 
 ===== Axis =====
@@ -62,8 +65,9 @@ The above figure can be produced by the following code.
 
 @@@CODE ../../../pysketcher/shapes.py fromto: def test_Rectangle@drawing_tool.savefig\('tmp_Rectangle
 
-The `draw_dimension` method adds explanation of dimensions and various
-important argument in the construction of a shape.
+Note that the `draw_dimension` method adds explanation of dimensions and various
+important argument in the construction of a shape. It adapts the annotations
+to the geometry of the current shape.
 
 ===== Triangle =====
 
@@ -98,7 +102,7 @@ FIGURE: [fig-tut/Spring, width=800 frac=1]
 <linebreak>
 <linebreak>
 
-The code for making this spring is
+The code for making these two springs goes like this:
 
 @@@CODE ../../../pysketcher/shapes.py fromto: def test_Spring@drawing_tool.savefig\('tmp_Spring
 
