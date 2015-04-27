@@ -1,4 +1,7 @@
+"""Comic strip for illustrating numerical integration."""
+
 from pysketcher import *
+xdcd = True
 
 def f(x):
     return 3*np.exp(-x**4)
@@ -6,7 +9,7 @@ def f(x):
 xmin = -2
 drawing_tool.set_coordinate_system(xmin=xmin, xmax=4,
                                    ymin=0, ymax=4,
-                                   axis=True, xkcd=True)
+                                   axis=True, xkcd=xkcd)
 drawing_tool.set_linecolor('blue')
 
 import numpy as np
@@ -77,7 +80,8 @@ drawing_tool.display()
 drawing_tool.savefig('tmp3')
 
 import os
-os.system('doconce combine_images pdf -3 tmp1 tmp2 tmp3 integral_comic_strip')
-os.system('doconce combine_images png -3 tmp1 tmp2 tmp3 integral_comic_strip')
+comic = 'comic' if xkcd else 'non_comic'
+os.system('doconce combine_images pdf -3 tmp1 tmp2 tmp3 integral_%s_strip' % comic)
+os.system('doconce combine_images png -3 tmp1 tmp2 tmp3 integral_%s_strip' % comic)
 
 raw_input()

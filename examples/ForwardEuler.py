@@ -1,10 +1,13 @@
+"""Comic strip for illustrating Euler's method for ODEs."""
+
 from pysketcher import *
 import numpy as np
+xkcd = True
 
 xmin = 0
 drawing_tool.set_coordinate_system(xmin=xmin, xmax=4,
                                    ymin=0, ymax=2.5,
-                                   axis=True, xkcd=True)
+                                   axis=True, xkcd=xkcd)
 drawing_tool.set_linecolor('blue')
 
 def ForwardEuler(I, a, T, dt):
@@ -16,7 +19,7 @@ def ForwardEuler(I, a, T, dt):
         t.append(t[-1] + dt)
     return np.array(u), np.array(t)
 
-def make_fig(dt=0.5):
+def make_fig(dt=0.5, heading=''):
     I = 2
     a = 0.5
     T_e = 3
@@ -49,35 +52,37 @@ def make_fig(dt=0.5):
     text_exact = Text_wArrow("exact solution", (2.5, 1), (2.5, I*np.exp(-a*2.5)),
                              alignment='left')
 
-    text_predict = Text_wArrow("Here we know the slope:\n$u'=-au$!\nLet the solution continue\nalong that slope.",
+    text_predict = Text_wArrow("Here we know the slope:\n$u'=f(u,t)$!\nLet the solution continue\nalong that slope.",
                                (1.7, 1.7), (t[-1], u[-1]),
                                alignment='left')
     text_next = Text_wArrow("This is the next\npredicted point",
                             (1, 0.25), (t_next, u_next),
                             alignment='left')
 
+    text_comment = Text(heading, (0.3, 2.05), alignment='left')
+
     fig = Composition(dict(curves=curves,
                            circles=circles,
                            exact=text_exact,
                            predict=text_predict,
-                           next=text_next))
+                           next=text_next,
+                           comment=text_comment))
     return fig
 
-fig = make_fig(dt=0.5)
+fig = make_fig(dt=0.5, heading="Differential equations $u'=f(u,t)$\nare hard to solve,\nbut not with programming!")
 fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp1')
 
 drawing_tool.erase()
-text_comment = Text('Just reduce the time step to\nmake more accurate predictions!', (1, 2.25))
-fig = make_fig(dt=0.24)
-fig = Composition(dict(prev_fig=fig, comment=text_comment))
+fig = make_fig(dt=0.24, heading='Just reduce the time step\nto make more accurate\npredictions!')
 fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp2')
 
 import os
-os.system('doconce combine_images pdf -2 tmp1 tmp2 FE_strip')
-os.system('doconce combine_images png -2 tmp1 tmp2 FE_strip')
+comic = 'comic' if xkcd else 'non_comic'
+os.system('doconce combine_images pdf -2 tmp1 tmp2 FE_%s_strip' % comic)
+os.system('doconce combine_images png -2 tmp1 tmp2 FE_%s_strip' % comic)
 
 raw_input()

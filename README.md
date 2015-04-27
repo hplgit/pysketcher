@@ -1,4 +1,38 @@
-Python-based drawing tool for making sketches of mechanics problems.
+## Pysketcher
+
+Tool for defining sketches of physics problems in terms of Python code.
+
+### Purpose
+
+Pysketcher can typically be used to draw figures like
+
+<!-- <img src="doc/src/tut/fig-tut/wheel_on_inclined_plane.png" width=600> -->
+![](doc/src/tut/fig-tut/wheel_on_inclined_plane.png)
+
+Such figures can easily be *interactively* made using a lot of drawing programs.
+A Pysketcher figure, however, is defined in terms of computer code. This gives
+a great advantage: geometric features can be parameterized in term
+of variables, as here:
+
+<!-- <img src="doc/src/tut/fig-tut/vehicle0_dim.png" width=600> -->
+![](doc/src/tut/fig-tut/vehicle0_dim.png)
+
+One can then quickly change parameters, here to
+`R=0.5; L=5; H=2` and `R=2; L=7; H=1`, and get new figures that would be
+tedious to draw manually in an interactive tool.
+
+<!-- <img src="doc/src/tut/fig-tut/vehicle_v23.png" width=800> -->
+![](doc/src/tut/fig-tut/vehicle_v23.png)
+
+Another major feature of Pysketcher is the ability to let animate the
+sketch. Here is an example of a very simple vehicle on a bumpy road,
+where the solution of a differential equation (upper blue line) is fed
+back to the sketch to make a vertical displacement of the spring and
+other objects in the vehicle, [view animation](http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/index.html).
+
+<!-- <img src="http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_0000.png" width=600> -->
+![](http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_0000.png)
+
 
 ### Tutorial
 

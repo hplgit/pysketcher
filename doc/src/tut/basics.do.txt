@@ -80,11 +80,33 @@ several elements: two circles, two rectangles, and a ``ground'' element.
 
 FIGURE: [fig-tut/vehicle0_dim, width=600] Sketch of a simple figure. label{sketcher:fig:vehicle0}
 
+When the sketch is defined in terms of computer code, it is natural to
+parameterize geometric features, such as the radius of the wheel ($R$),
+the center point of the left wheel ($w_1$), as well as the height ($H$) and
+length ($L$) of the main part. The simple vehicle in
+Figure ref{sketcher:fig:vehicle0} is quickly drawn in almost any interactive
+tool. However, if we want to change the radius of the wheels, you need a
+sophosticated drawing tool to avoid redrawing the whole figure, while
+in computer code this is a matter of changing the $R$ parameter and
+rerunning the program.
+For example, below are two variations of the drawing in
+Figure ref{sketcher:fig:vehicle0} obtained by just setting
+$R=0.5$, $L=5$, $H=2$ and $R=2$, $L=7$, $H=1$, respectively. Being able
+to quickly change geometric sizes is key to many problem settings in
+physics and engineering, but then a program must define the geometry.
+
+<linebreak>
+<linebreak>
+
+FIGURE: [fig-tut/vehicle_v23, width=800]
+
+
 === Basic Drawing ===
 
 A typical program creating these five elements is shown next.
 After importing the `pysketcher` package, the first task is always to
 define a coordinate system:
+
 !bc pycod
 from pysketcher import *
 

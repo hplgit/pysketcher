@@ -41,8 +41,11 @@ no further background is required.
 # Learning Goals: these targets the inner workings of pysketcher,
 # which is just a part of this document...
 
+!split
 # #include "basics.do.txt"
 
+!split
 # #include "classes.do.txt"
 
+!split
 # #include "implementation.do.txt"
