@@ -43,7 +43,7 @@ For example, a pendulum and its body diagram,
 
 FIGURE: [examples/pendulum2, width=800 frac=1]
 
-can be created by the "`examples/pendulum.py`": "https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py".
+can be created by the program "`examples/pendulum.py`": "https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py".
 
 
 ===== Citation =====

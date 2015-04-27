@@ -48,7 +48,7 @@ For example, a pendulum and its body diagram,
 <!-- <img src="examples/pendulum2.png" width=800> -->
 ![](examples/pendulum2.png)
 
-can be created by the [`examples/pendulum.py`](https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py).
+can be created by the program [`examples/pendulum.py`](https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py).
 
 
 ### Citation
