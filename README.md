@@ -28,7 +28,8 @@ Another major feature of Pysketcher is the ability to let animate the
 sketch. Here is an example of a very simple vehicle on a bumpy road,
 where the solution of a differential equation (upper blue line) is fed
 back to the sketch to make a vertical displacement of the spring and
-other objects in the vehicle, [view animation](http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/index.html).
+other objects in the vehicle, [view animation](http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/index.html) (the animation was created by
+[this Pysketcher script](https://github.com/hplgit/bumpy/blob/master/doc/src/fig-bumpy/bumpy_road_fig.py)).
 
 <!-- <img src="http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_0030.png" width=600> -->
 ![](http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_0030.png)
@@ -88,4 +89,12 @@ Publish format:
    sortkey:   Pysketcher
    note:      \url{https://github.com/hplgit/pysketcher}
 ```
+
+### History
+
+Pysketcher was first constructed as a powerful educational example on
+object-oriented programming for the book
+*A Primer on Scientific Programming With Python*, but the tool quickly
+became so useful for the author that it was further developed and
+heavily used for creating figures in other books by the author.
 
