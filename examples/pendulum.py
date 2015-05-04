@@ -60,7 +60,7 @@ drawing_tool.erase()
 drawing_tool.set_linecolor('black')
 mg_force = Force(mass_pt, mass_pt + L/5*point(0,-1), '$mg$', text_pos='end')
 rod_force = Force(mass_pt, mass_pt - L/3*unit_vec(rod_vec),
-                  '$S$', text_pos='end')
+                  '$S$', text_pos='end', text_spacing=(0.03, 0.01))
 
 rod_start = rod.geometric_features()['start']
 vertical2 = Line(rod_start, rod_start + point(0,-L/3))
@@ -80,11 +80,32 @@ body_diagram = Composition(
      'body': mass, 'm': mass_symbol})
 
 body_diagram.draw()
-drawing_tool.display('Body diagram')
+#drawing_tool.display('Body diagram')
 drawing_tool.savefig('tmp_pendulum2')
 
 drawing_tool.adjust_coordinate_system(body_diagram.minmax_coordinates(), 90)
-drawing_tool.display('Body diagram')
+#drawing_tool.display('Body diagram')
 drawing_tool.savefig('tmp_pendulum3')
+
+drawing_tool.erase()
+air_force = Force(mass_pt, mass_pt - L/6*unit_vec((rod_vec[1], -rod_vec[0])),
+                  '$\sim|v|v$', text_pos='end', text_spacing=(0.04,0.005))
+
+body_diagram['air'] = air_force
+body_diagram.draw()
+#drawing_tool.display('Body diagram')
+drawing_tool.savefig('tmp_pendulum4')
+
+drawing_tool.erase()
+ir = Force(P, P + L/10*unit_vec(rod_vec),
+           r'${\bf i}_r$', text_pos='end', text_spacing=(0.015,0))
+ith = Force(P, P + L/10*unit_vec((-rod_vec[1], rod_vec[0])),
+           r'${\bf i}_{\theta}$', text_pos='end', text_spacing=(0.02,0.005))
+
+body_diagram['ir'] = ir
+body_diagram['ith'] = ith
+body_diagram.draw()
+#drawing_tool.display('Body diagram')
+drawing_tool.savefig('tmp_pendulum5')
 
 raw_input()
