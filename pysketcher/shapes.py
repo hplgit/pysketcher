@@ -1348,10 +1348,13 @@ class Axis(Shape):
         Then return `rotation_angle` (in degrees).
         The `label_spacing` denotes the space between the label
         and the arrow tip as a fraction of the length of the plot
-        in x direction. With `label_alignment` one can place
+        in x direction. A tuple can be given to adjust the position
+        in both the x and y directions (with one parameter, the
+        x position is adjusted).
+        With `label_alignment` one can place
         the axis label text such that the arrow tip is to the 'left',
         'right', or 'center' with respect to the text field.
-        The `label_spacing` and `label_alignment` parameters can
+        The `label_spacing` and `label_alignment`parameters can
         be used to fine-tune the location of the label.
         """
         # Arrow is vertical arrow, make it horizontal
@@ -1387,7 +1390,15 @@ class Force(Arrow1):
     def __init__(self, start, end, text, text_spacing=1./60,
                  fontsize=0, text_pos='start', text_alignment='center'):
         Arrow1.__init__(self, start, end, style='->')
-        spacing = drawing_tool.xrange*text_spacing
+        if isinstance(text_spacing, (tuple,list)):
+            if len(text_spacing) == 2:
+                spacing = point(drawing_tool.xrange*text_spacing[0],
+                                drawing_tool.xrange*text_spacing[1])
+            else:
+                spacing = drawing_tool.xrange*text_spacing[0]
+        else:
+            # just a number, this is x spacing
+            spacing = drawing_tool.xrange*text_spacing
         start, end = arr2D(start), arr2D(end)
 
         # Two cases: label at bottom of line or top, need more
@@ -1400,12 +1411,18 @@ class Force(Arrow1):
                 spacing_dir = unit_vec(start - end)
                 if upward:
                     spacing *= 1.7
-                text_pos = start + spacing*spacing_dir
+                if isinstance(spacing, (int, float)):
+                    text_pos = start + spacing*spacing_dir
+                else:
+                    text_pos = start + spacing
             elif text_pos == 'end':
                 spacing_dir = unit_vec(end - start)
                 if downward:
                     spacing *= 1.7
-                text_pos = end + spacing*spacing_dir
+                if isinstance(spacing, (int, float)):
+                    text_pos = end + spacing*spacing_dir
+                else:
+                    text_pos = end + spacing
         self.shapes['text'] = Text(text, text_pos, fontsize=fontsize,
                                    alignment=text_alignment)
 
