@@ -49,7 +49,7 @@ fig = Composition({
 
 fig.draw()
 drawing_tool.display()
-drawing_tool.savefig('oscillator2_spring')
+drawing_tool.savefig('tmp_oscillator2_spring')
 
 drawing_tool.erase()
 
@@ -60,7 +60,7 @@ fig['text_bv'] = text_bv
 fig.draw()
 
 drawing_tool.display()
-drawing_tool.savefig('oscillator2')
+drawing_tool.savefig('tmp_oscillator2')
 
 drawing_tool.erase()
 
@@ -68,6 +68,6 @@ F_force = Force((4*H, H+2*H), (4*H+H, H+2*H), '$F(t)$',
                 text_spacing=(0.035, -0.01), text_pos='end', fontsize=fontsize)
 fig['F_force'] = F_force
 fig.draw()
-drawing_tool.savefig('oscillator2_force')
+drawing_tool.savefig('tmp_oscillator2_force')
 
 raw_input()
