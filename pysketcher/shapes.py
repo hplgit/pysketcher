@@ -1348,10 +1348,13 @@ class Axis(Shape):
         Then return `rotation_angle` (in degrees).
         The `label_spacing` denotes the space between the label
         and the arrow tip as a fraction of the length of the plot
-        in x direction. With `label_alignment` one can place
+        in x direction. A tuple can be given to adjust the position
+        in both the x and y directions (with one parameter, the
+        x position is adjusted).
+        With `label_alignment` one can place
         the axis label text such that the arrow tip is to the 'left',
         'right', or 'center' with respect to the text field.
-        The `label_spacing` and `label_alignment` parameters can
+        The `label_spacing` and `label_alignment`parameters can
         be used to fine-tune the location of the label.
         """
         # Arrow is vertical arrow, make it horizontal

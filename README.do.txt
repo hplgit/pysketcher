@@ -11,21 +11,26 @@ FIGURE: [doc/src/tut/fig-tut/wheel_on_inclined_plane, width=600 frac=0.6]
 Such figures can easily be *interactively* made using a lot of drawing programs.
 A Pysketcher figure, however, is defined in terms of computer code. This gives
 a great advantage: geometric features can be parameterized in term
-of variables, as here:
+of variables. Geometric variations are then trivially generated, and
+complicated figures can be built as a hierarchy of simpler elements.
+
+Here is a very simple figure that illustrates how geometric features are
+parameterized by variables (H, R, L, etc.):
 
 FIGURE: [doc/src/tut/fig-tut/vehicle0_dim, width=600 frac=0.6]
 
-One can then quickly change parameters, here to
+One can then quickly change parameters, below to
 `R=0.5; L=5; H=2` and `R=2; L=7; H=1`, and get new figures that would be
 tedious to draw manually in an interactive tool.
 
 FIGURE: [doc/src/tut/fig-tut/vehicle_v23, width=800]
 
-Another major feature of Pysketcher is the ability to let animate the
-sketch. Here is an example of a very simple vehicle on a bumpy road,
+Another major feature of Pysketcher is the ability to let the
+sketch be dynamic and make an animation of the time evolution.
+Here is an example of a very simple vehicle on a bumpy road,
 where the solution of a differential equation (upper blue line) is fed
 back to the sketch to make a vertical displacement of the spring and
-other objects in the vehicle, "view animation": "http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/index.html" (the animation was created by
+other objects in the vehicle. "View animation": "http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/index.html" (the animation was created by
 "this Pysketcher script": "https://github.com/hplgit/bumpy/blob/master/doc/src/fig-bumpy/bumpy_road_fig.py").
 
 FIGURE: [http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_0030.png, width=600]
