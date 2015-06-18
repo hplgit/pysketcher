@@ -1,0 +1,523 @@
+<!--
+Automatically generated HTML file from DocOnce source
+(https://github.com/hplgit/doconce/)
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="DocOnce: https://github.com/hplgit/doconce/" />
+<meta name="description" content="Using Pysketcher to Create Principal Sketches of Physics Problems">
+<meta name="keywords" content="tree data structure,recursive function calls">
+
+<title>Using Pysketcher to Create Principal Sketches of Physics Problems</title>
+
+
+<style type="text/css">
+/* blueish style */
+
+/* Color definitions:  http://www.december.com/html/spec/color0.html
+   CSS examples:       http://www.w3schools.com/css/css_examples.asp */
+
+body {
+  margin-top: 1.0em;
+  background-color: #ffffff;
+  font-family: Helvetica, Arial, FreeSans, san-serif;
+  color: #000000;
+}
+h1 { font-size: 1.8em; color: #1e36ce; }
+h2 { font-size: 1.6em; color: #1e36ce; }
+h3 { font-size: 1.4em; color: #1e36ce; }
+a { color: #1e36ce; text-decoration:none; }
+tt { font-family: "Courier New", Courier; }
+/* pre style removed because it will interfer with pygments */
+p { text-indent: 0px; }
+hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+p.caption { width: 80%; font-style: normal; text-align: left; }
+hr.figure { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+
+div { text-align: justify; text-justify: inter-word; }
+</style>
+
+
+</head>
+
+<!-- tocinfo
+{'highest level': 1,
+ 'sections': [(' A First Glimpse of Pysketcher ', 1, None, '___sec0'),
+              (' Basic Construction of Sketches ', 2, None, '___sec1'),
+              (' Basic Drawing ', 3, None, '___sec2'),
+              (' Groups of Objects ', 3, None, '___sec3'),
+              (' Changing Line Styles and Colors ', 3, None, '___sec4'),
+              (' The Figure Composition as an Object Hierarchy ',
+               3,
+               None,
+               '___sec5'),
+              (' Animation: Translating the Vehicle ', 3, None, '___sec6'),
+              (' Animation: Rolling the Wheels ',
+               3,
+               'sketcher:vehicle1:anim',
+               'sketcher:vehicle1:anim'),
+              (' Basic Shapes ', 1, None, '___sec8'),
+              (' Axis ', 2, None, '___sec9'),
+              (' Distance with Text ', 2, None, '___sec10'),
+              (' Rectangle ', 2, None, '___sec11'),
+              (' Triangle ', 2, None, '___sec12'),
+              (' Arc ', 2, None, '___sec13'),
+              (' Spring ', 2, None, '___sec14'),
+              (' Dashpot ', 2, None, '___sec15'),
+              (' Wavy ', 2, None, '___sec16'),
+              (' Stochastic curves ', 2, None, '___sec17'),
+              (' Inner Workings of the Pysketcher Tool ',
+               1,
+               None,
+               '___sec18'),
+              (' Example of Classes for Geometric Objects ',
+               2,
+               None,
+               '___sec19'),
+              (' Simple Geometric Objects ', 3, None, '___sec20'),
+              (' Class Curve ', 3, None, '___sec21'),
+              (' Compound Geometric Objects ', 3, None, '___sec22'),
+              (' Adding Functionality via Recursion ', 2, None, '___sec23'),
+              (' Basic Principles of Recursion ', 3, None, '___sec24'),
+              (' Explaining Recursion ', 3, None, '___sec25'),
+              (' Scaling, Translating, and Rotating a Figure ',
+               2,
+               'sketcher:scaling',
+               'sketcher:scaling'),
+              (' Scaling ', 3, None, '___sec27'),
+              (' Translation ', 3, None, '___sec28'),
+              (' Rotation ', 3, None, '___sec29')]}
+end of tocinfo -->
+
+<body>
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: {
+     equationNumbers: {  autoNumber: "none"  },
+     extensions: ["AMSmath.js", "AMSsymbols.js", "autobold.js", "color.js"]
+  }
+});
+</script>
+<script type="text/javascript"
+ src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+    
+<a name="part0002"></a>
+<p>
+<!-- begin top navigation -->
+<table style="width: 100%"><tr><td>
+<div style="text-align: left;"><a href="._pysketcher001.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/prev1.png" border=0 alt="&laquo; Previous"></a></div>
+</td><td>
+<div style="text-align: right;"><a href="._pysketcher003.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/next1.png" border=0 alt="Next &raquo;"></a></div>
+</td></tr></table>
+<!-- end top navigation -->
+</p>
+
+<p>
+<!-- !split -->
+
+<h1 id="___sec8">Basic Shapes </h1>
+
+<p>
+This section presents many of the basic shapes in Pysketcher:
+<code>Axis</code>, <code>Distance_wText</code>, <code>Rectangle</code>, 	<code>Triangle</code>, <code>Arc</code>,
+<code>Spring</code>, <code>Dashpot</code>, and <code>Wavy</code>.
+Each shape is demonstrated with a figure and a
+unit test that shows how the figure is constructed in Python code.
+
+<h2 id="___sec9">Axis </h2>
+
+<p>
+The <code>Axis</code> object gives the possibility draw a single axis to
+notify a coordinate system. Here is an example where we
+draw \( x \) and \( y \) axis of three coordinate systems of different
+rotation:
+
+<p>
+<br />
+<br />
+
+<p>
+<center><p><img src="fig-tut/Axis.png" align="bottom" width=500></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+The corresponding code looks like this:
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test_Axis</span>():
+    drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=15</span>, ymin<span style="color: #666666">=-7</span>, ymax<span style="color: #666666">=8</span>, axis<span style="color: #666666">=</span><span style="color: #008000">True</span>,
+        instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Axis.py&#39;</span>)
+    <span style="color: #408080; font-style: italic"># Draw normal x and y axis with origin at (7.5, 2)</span>
+    <span style="color: #408080; font-style: italic"># in the coordinate system of the sketch: [0,15]x[-7,8]</span>
+    x_axis <span style="color: #666666">=</span> Axis((<span style="color: #666666">7.5</span>,<span style="color: #666666">2</span>), <span style="color: #666666">5</span>, <span style="color: #BA2121">&#39;x&#39;</span>, rotation_angle<span style="color: #666666">=0</span>)
+    y_axis <span style="color: #666666">=</span> Axis((<span style="color: #666666">7.5</span>,<span style="color: #666666">2</span>), <span style="color: #666666">5</span>, <span style="color: #BA2121">&#39;y&#39;</span>, rotation_angle<span style="color: #666666">=90</span>)
+    system <span style="color: #666666">=</span> Composition({<span style="color: #BA2121">&#39;x axis&#39;</span>: x_axis, <span style="color: #BA2121">&#39;y axis&#39;</span>: y_axis})
+    system<span style="color: #666666">.</span>draw()
+    drawing_tool<span style="color: #666666">.</span>display()
+
+    <span style="color: #408080; font-style: italic"># Rotate this system 40 degrees counter clockwise</span>
+    <span style="color: #408080; font-style: italic"># and draw it with dashed lines</span>
+    system<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>)
+    system<span style="color: #666666">.</span>rotate(<span style="color: #666666">40</span>, (<span style="color: #666666">7.5</span>,<span style="color: #666666">2</span>))
+    system<span style="color: #666666">.</span>draw()
+    drawing_tool<span style="color: #666666">.</span>display()
+
+    <span style="color: #408080; font-style: italic"># Rotate this system another 220 degrees and show</span>
+    <span style="color: #408080; font-style: italic"># with dotted lines</span>
+    system<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dotted&#39;</span>)
+    system<span style="color: #666666">.</span>rotate(<span style="color: #666666">220</span>, (<span style="color: #666666">7.5</span>,<span style="color: #666666">2</span>))
+    system<span style="color: #666666">.</span>draw()
+    drawing_tool<span style="color: #666666">.</span>display()
+
+    drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Axis&#39;</span>)
+</pre></div>
+
+<h2 id="___sec10">Distance with Text </h2>
+
+<p>
+The object <code>Distance_wText</code> is used to display an arrow, to indicate
+a distance in a sketch, with an additional text in the middle of the arrow.
+
+<p>
+The figure
+
+<p>
+<br />
+<br />
+
+<p>
+<center><p><img src="fig-tut/Distance_wText.png" align="bottom" width=500></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+was produced by this code:
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test_Distance_wText</span>():
+    drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=10</span>, ymin<span style="color: #666666">=0</span>, ymax<span style="color: #666666">=6</span>,
+        axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Distance_wText.py&#39;</span>)
+
+    fontsize<span style="color: #666666">=14</span>
+    t <span style="color: #666666">=</span> <span style="color: #BA2121">r&#39;$ 2\pi R^2 $&#39;</span>  <span style="color: #408080; font-style: italic"># sample text</span>
+    examples <span style="color: #666666">=</span> Composition({
+        <span style="color: #BA2121">&#39;a0&#39;</span>: Distance_wText((<span style="color: #666666">4</span>,<span style="color: #666666">5</span>), (<span style="color: #666666">8</span>, <span style="color: #666666">5</span>), t, fontsize),
+        <span style="color: #BA2121">&#39;a6&#39;</span>: Distance_wText((<span style="color: #666666">4</span>,<span style="color: #666666">5</span>), (<span style="color: #666666">4</span>, <span style="color: #666666">4</span>), t, fontsize),
+        <span style="color: #BA2121">&#39;a1&#39;</span>: Distance_wText((<span style="color: #666666">0</span>,<span style="color: #666666">2</span>), (<span style="color: #666666">2</span>, <span style="color: #666666">4.5</span>), t, fontsize),
+        <span style="color: #BA2121">&#39;a2&#39;</span>: Distance_wText((<span style="color: #666666">0</span>,<span style="color: #666666">2</span>), (<span style="color: #666666">2</span>, <span style="color: #666666">0</span>), t, fontsize),
+        <span style="color: #BA2121">&#39;a3&#39;</span>: Distance_wText((<span style="color: #666666">2</span>,<span style="color: #666666">4.5</span>), (<span style="color: #666666">0</span>, <span style="color: #666666">5.5</span>), t, fontsize),
+        <span style="color: #BA2121">&#39;a4&#39;</span>: Distance_wText((<span style="color: #666666">8</span>,<span style="color: #666666">4</span>), (<span style="color: #666666">10</span>, <span style="color: #666666">3</span>), t, fontsize,
+                             text_spacing<span style="color: #666666">=-1./60</span>),
+        <span style="color: #BA2121">&#39;a5&#39;</span>: Distance_wText((<span style="color: #666666">8</span>,<span style="color: #666666">2</span>), (<span style="color: #666666">10</span>, <span style="color: #666666">1</span>), t, fontsize,
+                             text_spacing<span style="color: #666666">=-1./40</span>, alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;right&#39;</span>),
+        <span style="color: #BA2121">&#39;c1&#39;</span>: Text_wArrow(<span style="color: #BA2121">&#39;text_spacing=-1./60&#39;</span>,
+                          (<span style="color: #666666">4</span>, <span style="color: #666666">3.5</span>), (<span style="color: #666666">9</span>, <span style="color: #666666">3.2</span>),
+                          fontsize<span style="color: #666666">=10</span>, alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;left&#39;</span>),
+        <span style="color: #BA2121">&#39;c2&#39;</span>: Text_wArrow(<span style="color: #BA2121">&#39;text_spacing=-1./40, alignment=&quot;right&quot;&#39;</span>,
+                          (<span style="color: #666666">4</span>, <span style="color: #666666">0.5</span>), (<span style="color: #666666">9</span>, <span style="color: #666666">1.2</span>),
+                          fontsize<span style="color: #666666">=10</span>, alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;left&#39;</span>),
+        })
+    examples<span style="color: #666666">.</span>draw()
+    drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Distance_wText and text positioning&#39;</span>)
+</pre></div>
+<p>
+Note the use of <code>Text_wArrow</code> to write an explaining text with an
+associated arrow, here used to explain how
+the <code>text_spacing</code> and <code>alignment</code> arguments can be used to adjust
+the appearance of the text that goes with the distance arrow.
+
+<h2 id="___sec11">Rectangle </h2>
+
+<p>
+<center><p><img src="fig-tut/Rectangle.png" align="bottom" width=500></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+The above figure can be produced by the following code.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test_Rectangle</span>():
+    L <span style="color: #666666">=</span> <span style="color: #666666">3.0</span>
+    W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
+
+    drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=2*</span>L,
+        axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Rectangle.py&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
+
+    xpos <span style="color: #666666">=</span> W<span style="color: #666666">/2</span>
+    r <span style="color: #666666">=</span> Rectangle(lower_left_corner<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), width<span style="color: #666666">=</span>W, height<span style="color: #666666">=</span>L)
+    r<span style="color: #666666">.</span>draw()
+    r<span style="color: #666666">.</span>draw_dimensions()
+    drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Rectangle&#39;</span>)
+</pre></div>
+<p>
+The <code>draw_dimension</code> method adds explanation of dimensions and various
+important argument in the construction of a shape.
+
+<h2 id="___sec12">Triangle </h2>
+
+<p>
+<center><p><img src="fig-tut/Triangle.png" align="bottom" width=500></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+The code below produces the figure.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test_Triangle</span>():
+    L <span style="color: #666666">=</span> <span style="color: #666666">3.0</span>
+    W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
+
+    drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.2*</span>L,
+        axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Triangle.py&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
+
+    xpos <span style="color: #666666">=</span> <span style="color: #666666">1</span>
+    t <span style="color: #666666">=</span> Triangle(p1<span style="color: #666666">=</span>(W<span style="color: #666666">/2</span>,<span style="color: #666666">0</span>), p2<span style="color: #666666">=</span>(<span style="color: #666666">3*</span>W<span style="color: #666666">/2</span>,W<span style="color: #666666">/2</span>), p3<span style="color: #666666">=</span>(<span style="color: #666666">4*</span>W<span style="color: #666666">/5.</span>,L))
+    t<span style="color: #666666">.</span>draw()
+    t<span style="color: #666666">.</span>draw_dimensions()
+    drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Triangle&#39;</span>)
+</pre></div>
+<p>
+Here, the <code>draw_dimension</code> method writes the name of the corners at the
+position of the corners, which does not always look nice (the present figure
+is an example). For a high-quality sketch one would add some spacing
+to the location of the p1, p2, and even p3 texts.
+
+<h2 id="___sec13">Arc </h2>
+
+<p>
+<center><p><img src="fig-tut/Arc.png" align="bottom" width=400></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+An arc like the one above is produced by
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test_Arc</span>():
+    L <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
+    W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
+
+    drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
+        xmin<span style="color: #666666">=-</span>W<span style="color: #666666">/2</span>, xmax<span style="color: #666666">=</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
+        axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Arc.py&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
+
+    center <span style="color: #666666">=</span> point(<span style="color: #666666">0</span>,<span style="color: #666666">0</span>)
+    radius <span style="color: #666666">=</span> L<span style="color: #666666">/2</span>
+    start_angle <span style="color: #666666">=</span> <span style="color: #666666">60</span>
+    arc_angle <span style="color: #666666">=</span> <span style="color: #666666">45</span>
+    a <span style="color: #666666">=</span> Arc(center, radius, start_angle, arc_angle)
+    a<span style="color: #666666">.</span>set_arrow(<span style="color: #BA2121">&#39;-&gt;&#39;</span>)
+    a<span style="color: #666666">.</span>draw()
+
+    R1 <span style="color: #666666">=</span> <span style="color: #666666">1.25*</span>radius
+    R2 <span style="color: #666666">=</span> <span style="color: #666666">1.5*</span>radius
+    R <span style="color: #666666">=</span> <span style="color: #666666">2*</span>radius
+    a<span style="color: #666666">.</span>dimensions <span style="color: #666666">=</span> {
+        <span style="color: #BA2121">&#39;start_angle&#39;</span>: Arc_wText(
+            <span style="color: #BA2121">&#39;start_angle&#39;</span>, center, R1, start_angle<span style="color: #666666">=0</span>,
+            arc_angle<span style="color: #666666">=</span>start_angle, text_spacing<span style="color: #666666">=1/10.</span>),
+        <span style="color: #BA2121">&#39;arc_angle&#39;</span>: Arc_wText(
+            <span style="color: #BA2121">&#39;arc_angle&#39;</span>, center, R2, start_angle<span style="color: #666666">=</span>start_angle,
+            arc_angle<span style="color: #666666">=</span>arc_angle, text_spacing<span style="color: #666666">=1/20.</span>),
+        <span style="color: #BA2121">&#39;r=0&#39;</span>: Line(center, center <span style="color: #666666">+</span>
+                    point(R<span style="color: #666666">*</span>cos(radians(start_angle)),
+                          R<span style="color: #666666">*</span>sin(radians(start_angle)))),
+        <span style="color: #BA2121">&#39;r=start_angle&#39;</span>: Line(center, center <span style="color: #666666">+</span>
+                              point(R<span style="color: #666666">*</span>cos(radians(start_angle<span style="color: #666666">+</span>arc_angle)),
+                                    R<span style="color: #666666">*</span>sin(radians(start_angle<span style="color: #666666">+</span>arc_angle)))),
+        <span style="color: #BA2121">&#39;r=start+arc_angle&#39;</span>:  Line(center, center <span style="color: #666666">+</span>
+                                   point(R, <span style="color: #666666">0</span>))<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>),
+        <span style="color: #BA2121">&#39;radius&#39;</span>: Distance_wText(center, a(<span style="color: #666666">0</span>), <span style="color: #BA2121">&#39;radius&#39;</span>, text_spacing<span style="color: #666666">=1/40.</span>),
+        <span style="color: #BA2121">&#39;center&#39;</span>: Text(<span style="color: #BA2121">&#39;center&#39;</span>, center<span style="color: #666666">-</span>point(radius<span style="color: #666666">/10.</span>, radius<span style="color: #666666">/10.</span>)),
+        }
+    <span style="color: #008000; font-weight: bold">for</span> dimension <span style="color: #AA22FF; font-weight: bold">in</span> a<span style="color: #666666">.</span>dimensions:
+        dim <span style="color: #666666">=</span> a<span style="color: #666666">.</span>dimensions[dimension]
+        dim<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>)
+        dim<span style="color: #666666">.</span>set_linewidth(<span style="color: #666666">1</span>)
+        dim<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;black&#39;</span>)
+
+    a<span style="color: #666666">.</span>draw_dimensions()
+    drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Arc&#39;</span>)
+</pre></div>
+
+<h2 id="___sec14">Spring </h2>
+
+<p>
+<center><p><img src="fig-tut/Spring.png" align="bottom" width=800></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+The code for making this spring is
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test_Spring</span>():
+    L <span style="color: #666666">=</span> <span style="color: #666666">5.0</span>
+    W <span style="color: #666666">=</span> <span style="color: #666666">2.0</span>
+
+    drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=7*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
+        axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Spring.py&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
+
+    xpos <span style="color: #666666">=</span> W
+    s1 <span style="color: #666666">=</span> Spring((W,<span style="color: #666666">0</span>), L, teeth<span style="color: #666666">=</span><span style="color: #008000">True</span>)
+    s1_title <span style="color: #666666">=</span> Text(<span style="color: #BA2121">&#39;Default Spring&#39;</span>,
+                    s1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,L<span style="color: #666666">/10</span>))
+    s1<span style="color: #666666">.</span>draw()
+    s1_title<span style="color: #666666">.</span>draw()
+    <span style="color: #408080; font-style: italic">#s1.draw_dimensions()</span>
+    xpos <span style="color: #666666">+=</span> <span style="color: #666666">3*</span>W
+    s2 <span style="color: #666666">=</span> Spring(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), length<span style="color: #666666">=</span>L, width<span style="color: #666666">=</span>W<span style="color: #666666">/2.</span>,
+                bar_length<span style="color: #666666">=</span>L<span style="color: #666666">/6.</span>, teeth<span style="color: #666666">=</span><span style="color: #008000">False</span>)
+    s2<span style="color: #666666">.</span>draw()
+    s2<span style="color: #666666">.</span>draw_dimensions()
+    drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Spring&#39;</span>)
+</pre></div>
+
+<h2 id="___sec15">Dashpot </h2>
+
+<p>
+<center><p><img src="fig-tut/Dashpot.png" align="bottom" width=600></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+This dashpot is produced by
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test_Dashpot</span>():
+    L <span style="color: #666666">=</span> <span style="color: #666666">5.0</span>
+    W <span style="color: #666666">=</span> <span style="color: #666666">2.0</span>
+    xpos <span style="color: #666666">=</span> <span style="color: #666666">0</span>
+
+    drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
+        xmin<span style="color: #666666">=</span>xpos, xmax<span style="color: #666666">=</span>xpos<span style="color: #666666">+5.5*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
+        axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Dashpot.py&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
+    drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
+
+    <span style="color: #408080; font-style: italic"># Default (simple) dashpot</span>
+    xpos <span style="color: #666666">=</span> <span style="color: #666666">1.5</span>
+    d1 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=</span>L)
+    d1_title <span style="color: #666666">=</span> Text(<span style="color: #BA2121">&#39;Dashpot (default)&#39;</span>,
+                    d1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,L<span style="color: #666666">/10</span>))
+    d1<span style="color: #666666">.</span>draw()
+    d1_title<span style="color: #666666">.</span>draw()
+
+    <span style="color: #408080; font-style: italic"># Dashpot for animation with fixed bar_length, dashpot_length and</span>
+    <span style="color: #408080; font-style: italic"># prescribed piston_pos</span>
+    xpos <span style="color: #666666">+=</span> <span style="color: #666666">2.5*</span>W
+    d2 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=1.2*</span>L, width<span style="color: #666666">=</span>W<span style="color: #666666">/2</span>,
+                 bar_length<span style="color: #666666">=</span>W, dashpot_length<span style="color: #666666">=</span>L<span style="color: #666666">/2</span>, piston_pos<span style="color: #666666">=2*</span>W)
+    d2<span style="color: #666666">.</span>draw()
+    d2<span style="color: #666666">.</span>draw_dimensions()
+
+    drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Dashpot&#39;</span>)
+</pre></div>
+
+<h2 id="___sec16">Wavy </h2>
+
+<p>
+Looks strange. Fix x axis.
+
+<h2 id="___sec17">Stochastic curves </h2>
+
+<p>
+The <code>StochasticWavyCurve</code> object offers three precomputed
+graphics that have a random variation:
+
+<p>
+<br />
+<br />
+
+<p>
+<center><p><img src="fig-tut/StochasticWavyCurve.png" align="bottom" width=600></p></center>
+
+<p>
+<br />
+<br />
+
+<p>
+The usage is simple. The construction
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">curve <span style="color: #666666">=</span> StochasticWavyCurve(curve_no<span style="color: #666666">=1</span>, percentage<span style="color: #666666">=40</span>)
+</pre></div>
+<p>
+picks the second curve (the three are numbered 0, 1, and 2),
+and the first 40% of that curve. In case one desires another extent
+of the axis, one can just scale the coordinates directly as these
+are stored in the arrays <code>curve.x[curve_no]</code> and
+<code>curve.y[curve_no]</code>.
+
+<p>
+<p>
+<!-- begin bottom navigation -->
+<table style="width: 100%"><tr><td>
+<div style="text-align: left;"><a href="._pysketcher001.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/prev1.png" border=0 alt="&laquo; Previous"></a></div>
+</td><td>
+<div style="text-align: right;"><a href="._pysketcher003.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/next1.png" border=0 alt="Next &raquo;"></a></div>
+</td></tr></table>
+<!-- end bottom navigation -->
+</p>
+
+<!-- ------------------- end of main content --------------- -->
+
+
+</body>
+</html>
+    
+

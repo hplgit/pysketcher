@@ -9,6 +9,12 @@ src_path_tut = 'http://tinyurl.com/oou9lp7'
 src_path_pysketcher = 'http://tinyurl.com/ot733jn'
 %>
 
+!bbox
+This document is derived from Chapter 9 in the book
+"A Primer on Scientific Programming with Python": "http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen", by H. P. Langtangen,
+4th edition, Springer, 2014.
+!ebox
+
 __Abstract.__
 Pysketcher is a Python package which allows principal sketches of
 physics and mechanics problems to be realized through short programs
@@ -35,8 +41,11 @@ no further background is required.
 # Learning Goals: these targets the inner workings of pysketcher,
 # which is just a part of this document...
 
+!split
 # #include "basics.do.txt"
 
+!split
 # #include "classes.do.txt"
 
+!split
 # #include "implementation.do.txt"

@@ -45,22 +45,22 @@ M1.set_linecolor('black')
 ab_level = point(0, 3*h)
 a_dim = Distance_wText(A - ab_level, B - ab_level, '$a$')
 b_dim = Distance_wText(B - ab_level, C - ab_level, '$b$')
-dims = Compose({'a': a_dim, 'b': b_dim})
-symbols = Compose({'R1': R1, 'R2': R2, 'M1': M1,
-                   'w': load, 'w text': load_text,
-                   'A': Text('$A$', A+point(0.7*h,-0.9*h)),
-                   'B': Text('$B$', support.mid_support-point(h,0)),
-                   'C': Text('$C$', C+point(h/2,-h/2))})
+dims = Composition({'a': a_dim, 'b': b_dim})
+symbols = Composition({'R1': R1, 'R2': R2, 'M1': M1,
+                       'w': load, 'w text': load_text,
+                       'A': Text('$A$', A+point(0.7*h,-0.9*h)),
+                       'B': Text('$B$', support.mid_support-point(h,0)),
+                       'C': Text('$C$', C+point(h/2,-h/2))})
 
 x_axis = Axis(A + point(L+h, H/2), 2*H, '$x$',).set_linecolor('black')
 y_axis = Axis(A + point(0,H/2), 3.5*H, '$y$',
               below=False, rotation_angle=90).set_linecolor('black')
-axes = Compose({'x axis': x_axis, 'y axis': y_axis})
+axes = Composition({'x axis': x_axis, 'y axis': y_axis})
 
-annotations = Compose({'dims': dims, 'symbols': symbols,
-                'axes': axes})
-fig = Compose({'beam': beam, 'support': support,
-               'clamped end': clamped, 'load': load})
+annotations = Composition({'dims': dims, 'symbols': symbols,
+                           'axes': axes})
+fig = Composition({'beam': beam, 'support': support,
+                   'clamped end': clamped, 'load': load})
 
 def deflection(x, a, b, w):
     import numpy as np

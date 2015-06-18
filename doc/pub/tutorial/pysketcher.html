@@ -1,0 +1,197 @@
+<!--
+Automatically generated HTML file from DocOnce source
+(https://github.com/hplgit/doconce/)
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="DocOnce: https://github.com/hplgit/doconce/" />
+<meta name="description" content="Using Pysketcher to Create Principal Sketches of Physics Problems">
+<meta name="keywords" content="tree data structure,recursive function calls">
+
+<title>Using Pysketcher to Create Principal Sketches of Physics Problems</title>
+
+
+<style type="text/css">
+/* blueish style */
+
+/* Color definitions:  http://www.december.com/html/spec/color0.html
+   CSS examples:       http://www.w3schools.com/css/css_examples.asp */
+
+body {
+  margin-top: 1.0em;
+  background-color: #ffffff;
+  font-family: Helvetica, Arial, FreeSans, san-serif;
+  color: #000000;
+}
+h1 { font-size: 1.8em; color: #1e36ce; }
+h2 { font-size: 1.6em; color: #1e36ce; }
+h3 { font-size: 1.4em; color: #1e36ce; }
+a { color: #1e36ce; text-decoration:none; }
+tt { font-family: "Courier New", Courier; }
+/* pre style removed because it will interfer with pygments */
+p { text-indent: 0px; }
+hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+p.caption { width: 80%; font-style: normal; text-align: left; }
+hr.figure { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+
+div { text-align: justify; text-justify: inter-word; }
+</style>
+
+
+</head>
+
+<!-- tocinfo
+{'highest level': 1,
+ 'sections': [(' A First Glimpse of Pysketcher ', 1, None, '___sec0'),
+              (' Basic Construction of Sketches ', 2, None, '___sec1'),
+              (' Basic Drawing ', 3, None, '___sec2'),
+              (' Groups of Objects ', 3, None, '___sec3'),
+              (' Changing Line Styles and Colors ', 3, None, '___sec4'),
+              (' The Figure Composition as an Object Hierarchy ',
+               3,
+               None,
+               '___sec5'),
+              (' Animation: Translating the Vehicle ', 3, None, '___sec6'),
+              (' Animation: Rolling the Wheels ',
+               3,
+               'sketcher:vehicle1:anim',
+               'sketcher:vehicle1:anim'),
+              (' Basic Shapes ', 1, None, '___sec8'),
+              (' Axis ', 2, None, '___sec9'),
+              (' Distance with Text ', 2, None, '___sec10'),
+              (' Rectangle ', 2, None, '___sec11'),
+              (' Triangle ', 2, None, '___sec12'),
+              (' Arc ', 2, None, '___sec13'),
+              (' Spring ', 2, None, '___sec14'),
+              (' Dashpot ', 2, None, '___sec15'),
+              (' Wavy ', 2, None, '___sec16'),
+              (' Stochastic curves ', 2, None, '___sec17'),
+              (' Inner Workings of the Pysketcher Tool ',
+               1,
+               None,
+               '___sec18'),
+              (' Example of Classes for Geometric Objects ',
+               2,
+               None,
+               '___sec19'),
+              (' Simple Geometric Objects ', 3, None, '___sec20'),
+              (' Class Curve ', 3, None, '___sec21'),
+              (' Compound Geometric Objects ', 3, None, '___sec22'),
+              (' Adding Functionality via Recursion ', 2, None, '___sec23'),
+              (' Basic Principles of Recursion ', 3, None, '___sec24'),
+              (' Explaining Recursion ', 3, None, '___sec25'),
+              (' Scaling, Translating, and Rotating a Figure ',
+               2,
+               'sketcher:scaling',
+               'sketcher:scaling'),
+              (' Scaling ', 3, None, '___sec27'),
+              (' Translation ', 3, None, '___sec28'),
+              (' Rotation ', 3, None, '___sec29')]}
+end of tocinfo -->
+
+<body>
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: {
+     equationNumbers: {  autoNumber: "none"  },
+     extensions: ["AMSmath.js", "AMSsymbols.js", "autobold.js", "color.js"]
+  }
+});
+</script>
+<script type="text/javascript"
+ src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+    
+<a name="part0000"></a>
+<p>
+<!-- begin top navigation -->
+<table style="width: 100%"><tr><td>
+</td><td>
+<div style="text-align: right;"><a href="._pysketcher001.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/next1.png" border=0 alt="Next &raquo;"></a></div>
+</td></tr></table>
+<!-- end top navigation -->
+</p>
+
+<p>
+<!-- ------------------- main content ---------------------- -->
+
+
+
+<center><h1>Using Pysketcher to Create Principal Sketches of Physics Problems</h1></center>  <!-- document title -->
+
+<p>
+<!-- author(s): Hans Petter Langtangen -->
+
+<center>
+<b>Hans Petter Langtangen</b> [1, 2]
+</center>
+
+<p>
+<!-- institution(s) -->
+
+<center>[1] <b>Center for Biomedical Computing, Simula Research Laboratory</b></center>
+<center>[2] <b>Department of Informatics, University of Oslo</b></center>
+<p>
+<center><h4>Apr 27, 2015</h4></center> <!-- date -->
+<p>
+
+<!-- begin box -->
+<div style="width: 95%; padding: 10px; border: 1px solid #000; border-radius: 4px;">
+This document is derived from Chapter 9 in the book
+<a href="http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen" target="_self">A Primer on Scientific Programming with Python</a>, by H. P. Langtangen,
+4th edition, Springer, 2014.
+</div>
+<!-- end box -->
+
+
+<p>
+<b>Abstract.</b> Pysketcher is a Python package which allows principal sketches of
+physics and mechanics problems to be realized through short programs
+instead of interactive (and potentially tedious and inaccurate)
+drawing.  Elements of the sketch, such as lines, circles, angles,
+forces, coordinate systems, etc., are realized as objects and
+collected in hierarchical structures. Parts of the hierarchical
+structures can easily change line styles and colors, or be copied,
+scaled, translated, and rotated. These features make it
+straightforward to move parts of the sketch to create animation,
+usually in accordance with the physics of the underlying problem.
+Exact dimensioning of the elements in the sketch is trivial to obtain
+since distances are specified in computer code.
+
+<p>
+Pysketcher is easy to learn from a number of examples. Beyond
+essential Python programming and a knowledge about mechanics problems,
+no further background is required.
+
+<p>
+<!-- Task (can be questions): make sketches of physical problems, see fig -->
+<!-- through user-friendly composition of basic shapes -->
+<!-- Desired knowledge: plotting curves, basic OO (ch. X.Y, ...) -->
+<!-- Required knowledge? -->
+<!-- Learning Goals: these targets the inner workings of pysketcher, -->
+<!-- which is just a part of this document... -->
+
+<p>
+<p>
+<!-- begin bottom navigation -->
+<table style="width: 100%"><tr><td>
+</td><td>
+<div style="text-align: right;"><a href="._pysketcher001.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/next1.png" border=0 alt="Next &raquo;"></a></div>
+</td></tr></table>
+<!-- end bottom navigation -->
+</p>
+
+<!-- ------------------- end of main content --------------- -->
+
+
+</body>
+</html>
+    
+
