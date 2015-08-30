@@ -24,7 +24,7 @@ doconce format html $name --skip_inline_comments --html_style=boostrap_bluegray 
 doconce split_html ${html}.html
 
 doconce format sphinx $name --skip_inline_comments
-doconce sphinx_dir author="H. P. Langtangen" version=0.1 theme=pyramid $name
+doconce sphinx_dir copyright="H. P. Langtangen" version=0.1 theme=pyramid $name
 python automake_sphinx.py
 
 # Publish
