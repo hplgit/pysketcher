@@ -24,16 +24,23 @@ drawing_tool.set_coordinate_system(t_min, t_max, u_min, u_max, axis=False)
 drawing_tool.set_linecolor('black')
 
 r = 0.005*(t_max-t_min)     # radius of circles placed at mesh points
-u_discrete = Composition({i: Composition(dict(
-    circle=Circle(point(t, u(t)), r).set_filled_curves('black'),
-    u_point=Text('$u^%d$' % i,
-                 point(t, u(t)) + (point(0,3*r)
-                                   if i > 0 else point(-3*r,0))),
-    )) for i, t in enumerate(t_mesh)})
+#import random; random.seed(12)
+perturbations = [0, 0.1, 0.1, 0.2, -0.4, -0.1]
+u_points = {}
+u_values = []
+for i, t in enumerate(t_mesh):
+    u_value = u(t) + perturbations[i]
+    u_values.append(u_value)
+    u_points[i] = Composition(dict(
+        circle=Circle(point(t, u_value), r).set_filled_curves('black'),
+        u_point=Text('$u^%d$' % i,
+                     point(t, u_value) + (point(0,3*r)
+                                          if i > 0 else point(-3*r,0)))))
+u_discrete = Composition(u_points)
 
 interpolant = Composition({
-    i: Line(point(t_mesh[i-1], u(t_mesh[i-1])),
-            point(t_mesh[i], u(t_mesh[i]))).set_linewidth(1)
+    i: Line(point(t_mesh[i-1], u_values[i-1]),
+            point(t_mesh[i], u_values[i])).set_linewidth(1)
     for i in range(1, len(t_mesh))})
 
 axes = Composition(dict(
