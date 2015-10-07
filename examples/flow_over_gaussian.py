@@ -19,7 +19,8 @@ def gaussian(x):
 
 x = linspace(0, W+L, 51)
 y = gaussian(x)
-wall = Wall(x, y, thickness=-0.3, pattern='|').set_linecolor('brown')
+wall = Wall(x, y, thickness=-0.3, pattern='|', transparent=True).\
+       set_linecolor('brown')
 wall['eraser'].set_linecolor('white')
 def velprofile(y):
     return [2*y*(2*H-y)/H**2, 0]
@@ -55,7 +56,6 @@ symbols = Composition(symbols)
 symbols.draw()
 
 drawing_tool.display()
-drawing_tool.savefig('tmp1.png')
-
+drawing_tool.savefig('tmp1')
 
 raw_input()
