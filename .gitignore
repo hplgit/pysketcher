@@ -1,8 +1,10 @@
+syntax: glob
 # compiled files:
 *.o
 *.so
 *.a
 # temporary files:
+build
 *.bak
 *.swp
 *~
@@ -28,3 +30,10 @@ temp*
 *.project
 # misc:
 .DS_Store
+.idea
+__pycache__
+_minted-*
+# doconce:
+.*_html_file_collection
+.*.exerinfo
+.*.copyright
