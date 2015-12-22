@@ -1,3 +1,12 @@
+from __future__ import division
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import *
+from past.utils import old_div
 from pysketcher import *
 
 def equal_dict(d1, d2):
@@ -79,9 +88,9 @@ def test_Distance_wText():
         'a2': Distance_wText((0,2), (2, 0), t, fontsize),
         'a3': Distance_wText((2,4.5), (0, 5.5), t, fontsize),
         'a4': Distance_wText((8,4), (10, 3), t, fontsize,
-                             text_spacing=-1./60),
+                             text_spacing=old_div(-1.,60)),
         'a5': Distance_wText((8,2), (10, 1), t, fontsize,
-                             text_spacing=-1./40, alignment='right'),
+                             text_spacing=old_div(-1.,40), alignment='right'),
         'c1': Text_wArrow('text_spacing=-1./60',
                           (4, 3.5), (9, 3.2),
                           fontsize=10, alignment='left'),
@@ -136,12 +145,12 @@ def test_Rectangle():
     W = 4.0
 
     drawing_tool.set_coordinate_system(
-        xmin=0, xmax=2*W, ymin=-L/2, ymax=2*L,
+        xmin=0, xmax=2*W, ymin=old_div(-L,2), ymax=2*L,
         axis=True, instruction_file='tmp_Rectangle.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
-    xpos = W/2
+    xpos = old_div(W,2)
     r = Rectangle(lower_left_corner=(xpos,0), width=W, height=L)
     r.draw()
     r.draw_dimensions()
@@ -158,13 +167,13 @@ def test_Triangle():
     W = 4.0
 
     drawing_tool.set_coordinate_system(
-        xmin=0, xmax=2*W, ymin=-L/2, ymax=1.2*L,
+        xmin=0, xmax=2*W, ymin=old_div(-L,2), ymax=1.2*L,
         axis=True, instruction_file='tmp_Triangle.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     xpos = 1
-    t = Triangle(p1=(W/2,0), p2=(3*W/2,W/2), p3=(4*W/5.,L))
+    t = Triangle(p1=(old_div(W,2),0), p2=(3*W/2,old_div(W,2)), p3=(4*W/5.,L))
     t.draw()
     t.draw_dimensions()
     drawing_tool.display('Triangle')
@@ -181,13 +190,13 @@ def test_Arc():
     W = 4.0
 
     drawing_tool.set_coordinate_system(
-        xmin=-W/2, xmax=W, ymin=-L/2, ymax=1.5*L,
+        xmin=old_div(-W,2), xmax=W, ymin=old_div(-L,2), ymax=1.5*L,
         axis=True, instruction_file='tmp_Arc.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     center = point(0,0)
-    radius = L/2
+    radius = old_div(L,2)
     start_angle = 60
     arc_angle = 45
     a = Arc(center, radius, start_angle, arc_angle)
@@ -200,11 +209,11 @@ def test_Arc():
         'start_angle':
         Arc_wText(
             'start_angle', center, R1, start_angle=0,
-            arc_angle=start_angle, text_spacing=1/10.),
+            arc_angle=start_angle, text_spacing=old_div(1,10.)),
         'arc_angle':
         Arc_wText(
             'arc_angle', center, R2, start_angle=start_angle,
-            arc_angle=arc_angle, text_spacing=1/20.),
+            arc_angle=arc_angle, text_spacing=old_div(1,20.)),
         'r=0':
         Line(center, center +
              point(R*cos(radians(start_angle)),
@@ -216,8 +225,8 @@ def test_Arc():
         'r=start+arc_angle':
         Line(center, center +
              point(R, 0)).set_linestyle('dashed'),
-        'radius': Distance_wText(center, a(0), 'radius', text_spacing=1/40.),
-        'center': Text('center', center-point(radius/10., radius/10.)),
+        'radius': Distance_wText(center, a(0), 'radius', text_spacing=old_div(1,40.)),
+        'center': Text('center', center-point(old_div(radius,10.), old_div(radius,10.))),
         }
     for dimension in a.dimensions:
         if dimension.startswith('r='):
@@ -258,7 +267,7 @@ def test_Spring():
     W = 2.0
 
     drawing_tool.set_coordinate_system(
-        xmin=0, xmax=7*W, ymin=-L/2, ymax=1.5*L,
+        xmin=0, xmax=7*W, ymin=old_div(-L,2), ymax=1.5*L,
         axis=True, instruction_file='tmp_Spring.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
@@ -266,13 +275,13 @@ def test_Spring():
     xpos = W
     s1 = Spring((W,0), L, teeth=True)
     s1_title = Text('Default Spring',
-                    s1.geometric_features()['end'] + point(0,L/10))
+                    s1.geometric_features()['end'] + point(0,old_div(L,10)))
     s1.draw()
     s1_title.draw()
     #s1.draw_dimensions()
     xpos += 3*W
-    s2 = Spring(start=(xpos,0), length=L, width=W/2.,
-                bar_length=L/6., teeth=False)
+    s2 = Spring(start=(xpos,0), length=L, width=old_div(W,2.),
+                bar_length=old_div(L,6.), teeth=False)
     s2.draw()
     s2.draw_dimensions()
     drawing_tool.display('Spring')
@@ -314,7 +323,7 @@ def test_Dashpot():
     xpos = 0
 
     drawing_tool.set_coordinate_system(
-        xmin=xpos, xmax=xpos+5.5*W, ymin=-L/2, ymax=1.5*L,
+        xmin=xpos, xmax=xpos+5.5*W, ymin=old_div(-L,2), ymax=1.5*L,
         axis=True, instruction_file='tmp_Dashpot.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
@@ -323,15 +332,15 @@ def test_Dashpot():
     xpos = 1.5
     d1 = Dashpot(start=(xpos,0), total_length=L)
     d1_title = Text('Dashpot (default)',
-                    d1.geometric_features()['end'] + point(0,L/10))
+                    d1.geometric_features()['end'] + point(0,old_div(L,10)))
     d1.draw()
     d1_title.draw()
 
     # Dashpot for animation with fixed bar_length, dashpot_length and
     # prescribed piston_pos
     xpos += 2.5*W
-    d2 = Dashpot(start=(xpos,0), total_length=1.2*L, width=W/2,
-                 bar_length=W, dashpot_length=L/2, piston_pos=2*W)
+    d2 = Dashpot(start=(xpos,0), total_length=1.2*L, width=old_div(W,2),
+                 bar_length=W, dashpot_length=old_div(L,2), piston_pos=2*W)
     d2.draw()
     d2.draw_dimensions()
 
@@ -415,7 +424,7 @@ def diff_files(files1, files2, mode='HTML'):
         f.close()
         size = os.path.getsize(filename_plain)
         if size > 4:
-            print 'found differences:', fromfile, tofile
+            print('found differences:', fromfile, tofile)
             f = open(filename_html, 'w')
             f.writelines(diff_html)
             f.close()
