@@ -1,5 +1,24 @@
 from pysketcher import *
 
+def equal_dict(d1, d2):
+    """Return True if nested dicts d1 and d2 are equal."""
+    for k in d1:
+        #print 'comparing', k
+        if k not in d2:
+            return False
+        else:
+            if isinstance(d1[k], dict):
+                if not equal_dict(d1[k], d2[k]):
+                    return False
+            else:
+                # Hack: remove u' for unicode if present
+                d1_k = d1[k].replace("u'", "'")
+                d2_k = d2[k].replace("u'", "'")
+                if d1_k != d2_k:
+                    #print 'values differ: [%s] vs [%s]' % (d1_k, d2_k)
+                    return False
+    return True
+
 def test_Axis():
     drawing_tool.set_coordinate_system(
         xmin=0, xmax=15, ymin=-7, ymax=8, axis=True,
@@ -41,8 +60,9 @@ def test_Axis():
                 'line': {'line': "2 (x,y) coords linestyle='dotted'",},
                 'head right': {'line': "2 (x,y) coords linestyle='dotted'",},},
             'label': "Text at (12.7523,1.07388)",},}
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(system)))
-    assert eval(repr(system)) == expected, msg
+    computed = eval(repr(system))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 
 def test_Distance_wText():
@@ -106,8 +126,9 @@ def test_Distance_wText():
         'c2': "Text_wArrow at (4,0.5)",
         'c1': "Text_wArrow at (4,3.5)",
         }
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(examples)))
-    assert eval(repr(examples)) == expected, msg
+    computed = eval(repr(examples))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 
 def test_Rectangle():
@@ -128,8 +149,9 @@ def test_Rectangle():
     drawing_tool.savefig('tmp_Rectangle')
 
     expected = {'rectangle': "5 (x,y) coords",}
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(r)))
-    assert eval(repr(r)) == expected, msg
+    computed = eval(repr(r))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 def test_Triangle():
     L = 3.0
@@ -149,8 +171,9 @@ def test_Triangle():
     drawing_tool.savefig('tmp_Triangle')
 
     expected = {'triangle': "4 (x,y) coords",}
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(t)))
-    assert eval(repr(t)) == expected, msg
+    computed = eval(repr(t))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 
 def test_Arc():
@@ -208,8 +231,10 @@ def test_Arc():
     drawing_tool.savefig('tmp_Arc')
 
     expected = {'arc': "181 (x,y) coords"}
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(a)))
-    assert eval(repr(a)) == expected, msg
+    computed = eval(repr(a))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
+
     expected = {
         'center': 'text "center" at (-0.2,-0.2)',
         'start_angle': {'text': "Text at (2.68468,1.55)",
@@ -224,8 +249,9 @@ def test_Arc():
         'arc_angle': {'text': "Text at (0.430736,3.27177)",
                       'arc': {'arc': "181 (x,y) coords",},}
         }
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(a.dimensions)))
-    assert eval(repr(a.dimensions)) == expected, msg
+    computed = eval(repr(a.dimensions))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 def test_Spring():
     L = 5.0
@@ -257,8 +283,9 @@ def test_Spring():
         'bar1': {'line': "2 (x,y) coords",},
         'bar2': {'line': "2 (x,y) coords",},
         'spiral': "45 (x,y) coords",}
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(s1)))
-    assert eval(repr(s1)) == expected, msg
+    computed = eval(repr(s1))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
     expected = {
         'bar_length1': {'text': "Text_wArrow at (-1.5,1.75)",
@@ -276,8 +303,9 @@ def test_Spring():
                        'line': "2 (x,y) coords linecolor='k' linewidth=1 arrow='<->'",},},},
         'num_windings': 'annotation "num_windings" at (3,5.5) with arrow to (2.6,2.5)'
         }
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(s1.dimensions)))
-    assert eval(repr(s1.dimensions)) == expected, msg
+    computed = eval(repr(s1.dimensions))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 
 def test_Dashpot():
@@ -318,8 +346,9 @@ def test_Dashpot():
                 'rectangle': "5 (x,y) coords fillcolor='' fillpattern='X'",},},
         'pot': "4 (x,y) coords",
         }
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(d2)))
-    assert eval(repr(d2)) == expected, msg
+    computed = eval(repr(d2))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
     expected = {
         'width': {'text': "Text at (6.5,-1.56667)",
@@ -339,8 +368,9 @@ def test_Dashpot():
                        'arrow': {'arrow': {
                            'line': "2 (x,y) coords linecolor='k' linewidth=1 arrow='<->'",},},}
         }
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(d2.dimensions)))
-    assert eval(repr(d2.dimensions)) == expected, msg
+    computed = eval(repr(d2.dimensions))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 def test_Wavy():
     drawing_tool.set_coordinate_system(xmin=0, xmax=1.5,
@@ -357,8 +387,9 @@ def test_Wavy():
     drawing_tool.savefig('tmp_Wavy')
 
     expected = {'wavy': "2001 (x,y) coords",}
-    msg = 'expected=%s, a=%s' % (expected, eval(repr(w)))
-    assert eval(repr(w)) == expected, msg
+    computed = eval(repr(w))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 
 def diff_files(files1, files2, mode='HTML'):
@@ -404,3 +435,5 @@ def _test_test():
         resfile = mplfile.replace('tmp_', 'res_')
         res_files.append(resfile)
     diff_files(new_files, res_files)
+
+test_Arc()

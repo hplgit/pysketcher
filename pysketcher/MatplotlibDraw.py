@@ -1,3 +1,14 @@
+from __future__ import division
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import input
+from builtins import str
+from builtins import *
+from builtins import object
+from past.utils import old_div
 import os
 import matplotlib
 matplotlib.use('TkAgg')
@@ -5,7 +16,7 @@ import matplotlib.pyplot as mpl
 import matplotlib.transforms as transforms
 import numpy as np
 
-class MatplotlibDraw:
+class MatplotlibDraw(object):
     """
     Simple interface for plotting. This interface makes use of
     Matplotlib for plotting.
@@ -53,8 +64,8 @@ class MatplotlibDraw:
         x_space = new_x_range - x_range
         new_y_range = y_range*100./occupation_percent
         y_space = new_y_range - y_range
-        self.ax.set_xlim(minmax['xmin']-x_space/2., minmax['xmax']+x_space/2.)
-        self.ax.set_ylim(minmax['ymin']-y_space/2., minmax['ymax']+y_space/2.)
+        self.ax.set_xlim(minmax['xmin']-old_div(x_space,2.), minmax['xmax']+old_div(x_space,2.))
+        self.ax.set_ylim(minmax['ymin']-old_div(y_space,2.), minmax['ymax']+old_div(y_space,2.))
 
     def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
                               instruction_file=None, new_figure=True,
@@ -88,7 +99,7 @@ class MatplotlibDraw:
 
         # Compute the right X11 geometry on the screen based on the
         # x-y ratio of axis ranges
-        ratio = (self.ymax-self.ymin)/(self.xmax-self.xmin)
+        ratio = old_div((self.ymax-self.ymin),(self.xmax-self.xmin))
         self.xsize = 800  # pixel size
         self.ysize = self.xsize*ratio
         geometry = '%dx%d' % (self.xsize, self.ysize)
@@ -301,7 +312,7 @@ ax.set_aspect('equal')
         if shadow:
             # http://matplotlib.sourceforge.net/users/transforms_tutorial.html#using-offset-transforms-to-create-a-shadow-effect
             # shift the object over 2 points, and down 2 points
-            dx, dy = shadow/72., -shadow/72.
+            dx, dy = old_div(shadow,72.), old_div(-shadow,72.)
             offset = transforms.ScaledTranslation(
                 dx, dy, self.fig.dpi_scale_trans)
             shadow_transform = self.ax.transData + offset
@@ -351,12 +362,12 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
             failure = os.system('convert -trim %s.png %s.png' %
                                 (filename, filename))
             if failure:
-                print 'convert from ImageMagick is not installed - needed for cropping PNG files'
+                print('convert from ImageMagick is not installed - needed for cropping PNG files')
             self.mpl.savefig(filename + '.pdf')
             failure = os.system('pdfcrop %s.pdf %s.pdf' %
                                 (filename, filename))
             if failure:
-                print 'pdfcrop is not installed - needed for cropping PDF files'
+                print('pdfcrop is not installed - needed for cropping PDF files')
             #self.mpl.savefig(filename + '.eps')
             if self.instruction_file:
                 self.instruction_file.write('mpl.savefig("%s.png", dpi=%s)\n'
@@ -368,11 +379,11 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
             if ext == '.png':
                 failure = os.system('convert -trim %s %s' % (filename, filename))
                 if failure:
-                    print 'convert from ImageMagick is not installed - needed for cropping PNG files'
+                    print('convert from ImageMagick is not installed - needed for cropping PNG files')
             elif ext == '.pdf':
                 failure = os.system('pdfcrop %s %s' % (filename, filename))
                 if failure:
-                    print 'pdfcrop is not installed - needed for cropping PDF files'
+                    print('pdfcrop is not installed - needed for cropping PDF files')
 
             if self.instruction_file:
                 self.instruction_file.write('mpl.savefig("%s", dpi=%s)\n'
@@ -535,7 +546,7 @@ def _test():
     y = 4.5 + 0.45*np.cos(0.5*np.pi*x)
     d.plot_curve(x, y, arrow='end')
     d.display()
-    raw_input()
+    input()
 
 if __name__ == '__main__':
     _test()
