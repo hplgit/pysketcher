@@ -11,31 +11,20 @@ Automatically generated HTML file from DocOnce source
 
 <title>Using Pysketcher to Create Principal Sketches of Physics Problems</title>
 
+<!-- Bootstrap style: bootswatch_readable -->
+<link href="http://netdna.bootstrapcdn.com/bootswatch/3.1.1/readable/bootstrap.min.css" rel="stylesheet">
+<!-- not necessary
+<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+-->
 
 <style type="text/css">
-/* blueish style */
 
-/* Color definitions:  http://www.december.com/html/spec/color0.html
-   CSS examples:       http://www.w3schools.com/css/css_examples.asp */
-
-body {
-  margin-top: 1.0em;
-  background-color: #ffffff;
-  font-family: Helvetica, Arial, FreeSans, san-serif;
-  color: #000000;
+/* Add scrollbar to dropdown menus in bootstrap navigation bar */
+.dropdown-menu {
+   height: auto;
+   max-height: 400px;
+   overflow-x: hidden;
 }
-h1 { font-size: 1.8em; color: #1e36ce; }
-h2 { font-size: 1.6em; color: #1e36ce; }
-h3 { font-size: 1.4em; color: #1e36ce; }
-a { color: #1e36ce; text-decoration:none; }
-tt { font-family: "Courier New", Courier; }
-/* pre style removed because it will interfer with pygments */
-p { text-indent: 0px; }
-hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-p.caption { width: 80%; font-style: normal; text-align: left; }
-hr.figure { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-
-div { text-align: justify; text-justify: inter-word; }
 </style>
 
 
@@ -43,51 +32,48 @@ div { text-align: justify; text-justify: inter-word; }
 
 <!-- tocinfo
 {'highest level': 1,
- 'sections': [(' A First Glimpse of Pysketcher ', 1, None, '___sec0'),
-              (' Basic Construction of Sketches ', 2, None, '___sec1'),
-              (' Basic Drawing ', 3, None, '___sec2'),
-              (' Groups of Objects ', 3, None, '___sec3'),
-              (' Changing Line Styles and Colors ', 3, None, '___sec4'),
-              (' The Figure Composition as an Object Hierarchy ',
+ 'sections': [('A First Glimpse of Pysketcher', 1, None, '___sec0'),
+              ('Basic Construction of Sketches', 2, None, '___sec1'),
+              ('Basic Drawing', 3, None, '___sec2'),
+              ('Groups of Objects', 3, None, '___sec3'),
+              ('Changing Line Styles and Colors', 3, None, '___sec4'),
+              ('The Figure Composition as an Object Hierarchy',
                3,
                None,
                '___sec5'),
-              (' Animation: Translating the Vehicle ', 3, None, '___sec6'),
-              (' Animation: Rolling the Wheels ',
+              ('Animation: Translating the Vehicle', 3, None, '___sec6'),
+              ('Animation: Rolling the Wheels',
                3,
                'sketcher:vehicle1:anim',
                'sketcher:vehicle1:anim'),
-              (' Basic Shapes ', 1, None, '___sec8'),
-              (' Axis ', 2, None, '___sec9'),
-              (' Distance with Text ', 2, None, '___sec10'),
-              (' Rectangle ', 2, None, '___sec11'),
-              (' Triangle ', 2, None, '___sec12'),
-              (' Arc ', 2, None, '___sec13'),
-              (' Spring ', 2, None, '___sec14'),
-              (' Dashpot ', 2, None, '___sec15'),
-              (' Wavy ', 2, None, '___sec16'),
-              (' Stochastic curves ', 2, None, '___sec17'),
-              (' Inner Workings of the Pysketcher Tool ',
-               1,
-               None,
-               '___sec18'),
-              (' Example of Classes for Geometric Objects ',
+              ('Basic Shapes', 1, None, '___sec8'),
+              ('Axis', 2, None, '___sec9'),
+              ('Distance with Text', 2, None, '___sec10'),
+              ('Rectangle', 2, None, '___sec11'),
+              ('Triangle', 2, None, '___sec12'),
+              ('Arc', 2, None, '___sec13'),
+              ('Spring', 2, None, '___sec14'),
+              ('Dashpot', 2, None, '___sec15'),
+              ('Wavy', 2, None, '___sec16'),
+              ('Stochastic curves', 2, None, '___sec17'),
+              ('Inner Workings of the Pysketcher Tool', 1, None, '___sec18'),
+              ('Example of Classes for Geometric Objects',
                2,
                None,
                '___sec19'),
-              (' Simple Geometric Objects ', 3, None, '___sec20'),
-              (' Class Curve ', 3, None, '___sec21'),
-              (' Compound Geometric Objects ', 3, None, '___sec22'),
-              (' Adding Functionality via Recursion ', 2, None, '___sec23'),
-              (' Basic Principles of Recursion ', 3, None, '___sec24'),
-              (' Explaining Recursion ', 3, None, '___sec25'),
-              (' Scaling, Translating, and Rotating a Figure ',
+              ('Simple Geometric Objects', 3, None, '___sec20'),
+              ('Class Curve', 3, None, '___sec21'),
+              ('Compound Geometric Objects', 3, None, '___sec22'),
+              ('Adding Functionality via Recursion', 2, None, '___sec23'),
+              ('Basic Principles of Recursion', 3, None, '___sec24'),
+              ('Explaining Recursion', 3, None, '___sec25'),
+              ('Scaling, Translating, and Rotating a Figure',
                2,
                'sketcher:scaling',
                'sketcher:scaling'),
-              (' Scaling ', 3, None, '___sec27'),
-              (' Translation ', 3, None, '___sec28'),
-              (' Rotation ', 3, None, '___sec29')]}
+              ('Scaling', 3, None, '___sec27'),
+              ('Translation', 3, None, '___sec28'),
+              ('Rotation', 3, None, '___sec29')]}
 end of tocinfo -->
 
 <body>
@@ -109,18 +95,65 @@ MathJax.Hub.Config({
 
 
     
-<a name="part0002"></a>
-<p>
-<!-- begin top navigation -->
-<table style="width: 100%"><tr><td>
-<div style="text-align: left;"><a href="._pysketcher001.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/prev1.png" border=0 alt="&laquo; Previous"></a></div>
-</td><td>
-<div style="text-align: right;"><a href="._pysketcher003.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/next1.png" border=0 alt="Next &raquo;"></a></div>
-</td></tr></table>
-<!-- end top navigation -->
-</p>
+<!-- Bootstrap navigation bar -->
+<div class="navbar navbar-default navbar-fixed-top">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="pysketcher.html">Using Pysketcher to Create Principal Sketches of Physics Problems</a>
+  </div>
 
-<p>
+  <div class="navbar-collapse collapse navbar-responsive-collapse">
+    <ul class="nav navbar-nav navbar-right">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contents <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#___sec0" style="font-size: 80%;"><b>A First Glimpse of Pysketcher</b></a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#___sec1" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Basic Construction of Sketches</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#___sec2" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Basic Drawing</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#___sec3" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Groups of Objects</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#___sec4" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Changing Line Styles and Colors</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#___sec5" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Figure Composition as an Object Hierarchy</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#___sec6" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Animation: Translating the Vehicle</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher001.html#sketcher:vehicle1:anim" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Animation: Rolling the Wheels</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec8" style="font-size: 80%;"><b>Basic Shapes</b></a></li>
+     <!-- navigation toc: --> <li><a href="#___sec9" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Axis</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec10" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Distance with Text</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec11" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Rectangle</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec12" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Triangle</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec13" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Arc</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec14" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Spring</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec15" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Dashpot</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec16" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Wavy</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec17" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Stochastic curves</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec18" style="font-size: 80%;"><b>Inner Workings of the Pysketcher Tool</b></a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec19" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Example of Classes for Geometric Objects</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec20" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Simple Geometric Objects</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec21" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Class Curve</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec22" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compound Geometric Objects</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec23" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Adding Functionality via Recursion</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec24" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Basic Principles of Recursion</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec25" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Explaining Recursion</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#sketcher:scaling" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;Scaling, Translating, and Rotating a Figure</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec27" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scaling</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec28" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Translation</a></li>
+     <!-- navigation toc: --> <li><a href="._pysketcher003.html#___sec29" style="font-size: 80%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotation</a></li>
+
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+</div> <!-- end of navigation bar -->
+
+<div class="container">
+
+<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p> <!-- add vertical space -->
+
+<a name="part0002"></a>
 <!-- !split -->
 
 <h1 id="___sec8">Basic Shapes </h1>
@@ -131,6 +164,9 @@ This section presents many of the basic shapes in Pysketcher:
 <code>Spring</code>, <code>Dashpot</code>, and <code>Wavy</code>.
 Each shape is demonstrated with a figure and a
 unit test that shows how the figure is constructed in Python code.
+These demos rely heavily on the method <code>draw_dimensions</code> in
+the shape classes, which annotates the basic drawing of the shape
+with the various geometric parameters that govern the shape.
 
 <h2 id="___sec9">Axis </h2>
 
@@ -226,9 +262,9 @@ was produced by this code:
         <span style="color: #BA2121">&#39;a2&#39;</span>: Distance_wText((<span style="color: #666666">0</span>,<span style="color: #666666">2</span>), (<span style="color: #666666">2</span>, <span style="color: #666666">0</span>), t, fontsize),
         <span style="color: #BA2121">&#39;a3&#39;</span>: Distance_wText((<span style="color: #666666">2</span>,<span style="color: #666666">4.5</span>), (<span style="color: #666666">0</span>, <span style="color: #666666">5.5</span>), t, fontsize),
         <span style="color: #BA2121">&#39;a4&#39;</span>: Distance_wText((<span style="color: #666666">8</span>,<span style="color: #666666">4</span>), (<span style="color: #666666">10</span>, <span style="color: #666666">3</span>), t, fontsize,
-                             text_spacing<span style="color: #666666">=-1./60</span>),
+                             text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">-1.</span>,<span style="color: #666666">60</span>)),
         <span style="color: #BA2121">&#39;a5&#39;</span>: Distance_wText((<span style="color: #666666">8</span>,<span style="color: #666666">2</span>), (<span style="color: #666666">10</span>, <span style="color: #666666">1</span>), t, fontsize,
-                             text_spacing<span style="color: #666666">=-1./40</span>, alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;right&#39;</span>),
+                             text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">-1.</span>,<span style="color: #666666">40</span>), alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;right&#39;</span>),
         <span style="color: #BA2121">&#39;c1&#39;</span>: Text_wArrow(<span style="color: #BA2121">&#39;text_spacing=-1./60&#39;</span>,
                           (<span style="color: #666666">4</span>, <span style="color: #666666">3.5</span>), (<span style="color: #666666">9</span>, <span style="color: #666666">3.2</span>),
                           fontsize<span style="color: #666666">=10</span>, alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;left&#39;</span>),
@@ -265,20 +301,21 @@ The above figure can be produced by the following code.
     W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=2*</span>L,
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=2*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Rectangle.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
 
-    xpos <span style="color: #666666">=</span> W<span style="color: #666666">/2</span>
+    xpos <span style="color: #666666">=</span> old_div(W,<span style="color: #666666">2</span>)
     r <span style="color: #666666">=</span> Rectangle(lower_left_corner<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), width<span style="color: #666666">=</span>W, height<span style="color: #666666">=</span>L)
     r<span style="color: #666666">.</span>draw()
     r<span style="color: #666666">.</span>draw_dimensions()
     drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Rectangle&#39;</span>)
 </pre></div>
 <p>
-The <code>draw_dimension</code> method adds explanation of dimensions and various
-important argument in the construction of a shape.
+Note that the <code>draw_dimension</code> method adds explanation of dimensions and various
+important argument in the construction of a shape. It adapts the annotations
+to the geometry of the current shape.
 
 <h2 id="___sec12">Triangle </h2>
 
@@ -300,13 +337,13 @@ The code below produces the figure.
     W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.2*</span>L,
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.2*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Triangle.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
 
     xpos <span style="color: #666666">=</span> <span style="color: #666666">1</span>
-    t <span style="color: #666666">=</span> Triangle(p1<span style="color: #666666">=</span>(W<span style="color: #666666">/2</span>,<span style="color: #666666">0</span>), p2<span style="color: #666666">=</span>(<span style="color: #666666">3*</span>W<span style="color: #666666">/2</span>,W<span style="color: #666666">/2</span>), p3<span style="color: #666666">=</span>(<span style="color: #666666">4*</span>W<span style="color: #666666">/5.</span>,L))
+    t <span style="color: #666666">=</span> Triangle(p1<span style="color: #666666">=</span>(old_div(W,<span style="color: #666666">2</span>),<span style="color: #666666">0</span>), p2<span style="color: #666666">=</span>(<span style="color: #666666">3*</span>W<span style="color: #666666">/2</span>,old_div(W,<span style="color: #666666">2</span>)), p3<span style="color: #666666">=</span>(<span style="color: #666666">4*</span>W<span style="color: #666666">/5.</span>,L))
     t<span style="color: #666666">.</span>draw()
     t<span style="color: #666666">.</span>draw_dimensions()
     drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Triangle&#39;</span>)
@@ -337,45 +374,50 @@ An arc like the one above is produced by
     W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=-</span>W<span style="color: #666666">/2</span>, xmax<span style="color: #666666">=</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
+        xmin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>W,<span style="color: #666666">2</span>), xmax<span style="color: #666666">=</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.5*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Arc.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
 
     center <span style="color: #666666">=</span> point(<span style="color: #666666">0</span>,<span style="color: #666666">0</span>)
-    radius <span style="color: #666666">=</span> L<span style="color: #666666">/2</span>
+    radius <span style="color: #666666">=</span> old_div(L,<span style="color: #666666">2</span>)
     start_angle <span style="color: #666666">=</span> <span style="color: #666666">60</span>
     arc_angle <span style="color: #666666">=</span> <span style="color: #666666">45</span>
     a <span style="color: #666666">=</span> Arc(center, radius, start_angle, arc_angle)
-    a<span style="color: #666666">.</span>set_arrow(<span style="color: #BA2121">&#39;-&gt;&#39;</span>)
     a<span style="color: #666666">.</span>draw()
 
     R1 <span style="color: #666666">=</span> <span style="color: #666666">1.25*</span>radius
     R2 <span style="color: #666666">=</span> <span style="color: #666666">1.5*</span>radius
     R <span style="color: #666666">=</span> <span style="color: #666666">2*</span>radius
     a<span style="color: #666666">.</span>dimensions <span style="color: #666666">=</span> {
-        <span style="color: #BA2121">&#39;start_angle&#39;</span>: Arc_wText(
+        <span style="color: #BA2121">&#39;start_angle&#39;</span>:
+        Arc_wText(
             <span style="color: #BA2121">&#39;start_angle&#39;</span>, center, R1, start_angle<span style="color: #666666">=0</span>,
-            arc_angle<span style="color: #666666">=</span>start_angle, text_spacing<span style="color: #666666">=1/10.</span>),
-        <span style="color: #BA2121">&#39;arc_angle&#39;</span>: Arc_wText(
+            arc_angle<span style="color: #666666">=</span>start_angle, text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">1</span>,<span style="color: #666666">10.</span>)),
+        <span style="color: #BA2121">&#39;arc_angle&#39;</span>:
+        Arc_wText(
             <span style="color: #BA2121">&#39;arc_angle&#39;</span>, center, R2, start_angle<span style="color: #666666">=</span>start_angle,
-            arc_angle<span style="color: #666666">=</span>arc_angle, text_spacing<span style="color: #666666">=1/20.</span>),
-        <span style="color: #BA2121">&#39;r=0&#39;</span>: Line(center, center <span style="color: #666666">+</span>
-                    point(R<span style="color: #666666">*</span>cos(radians(start_angle)),
-                          R<span style="color: #666666">*</span>sin(radians(start_angle)))),
-        <span style="color: #BA2121">&#39;r=start_angle&#39;</span>: Line(center, center <span style="color: #666666">+</span>
-                              point(R<span style="color: #666666">*</span>cos(radians(start_angle<span style="color: #666666">+</span>arc_angle)),
-                                    R<span style="color: #666666">*</span>sin(radians(start_angle<span style="color: #666666">+</span>arc_angle)))),
-        <span style="color: #BA2121">&#39;r=start+arc_angle&#39;</span>:  Line(center, center <span style="color: #666666">+</span>
-                                   point(R, <span style="color: #666666">0</span>))<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>),
-        <span style="color: #BA2121">&#39;radius&#39;</span>: Distance_wText(center, a(<span style="color: #666666">0</span>), <span style="color: #BA2121">&#39;radius&#39;</span>, text_spacing<span style="color: #666666">=1/40.</span>),
-        <span style="color: #BA2121">&#39;center&#39;</span>: Text(<span style="color: #BA2121">&#39;center&#39;</span>, center<span style="color: #666666">-</span>point(radius<span style="color: #666666">/10.</span>, radius<span style="color: #666666">/10.</span>)),
+            arc_angle<span style="color: #666666">=</span>arc_angle, text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">1</span>,<span style="color: #666666">20.</span>)),
+        <span style="color: #BA2121">&#39;r=0&#39;</span>:
+        Line(center, center <span style="color: #666666">+</span>
+             point(R<span style="color: #666666">*</span>cos(radians(start_angle)),
+                   R<span style="color: #666666">*</span>sin(radians(start_angle)))),
+        <span style="color: #BA2121">&#39;r=start_angle&#39;</span>:
+        Line(center, center <span style="color: #666666">+</span>
+             point(R<span style="color: #666666">*</span>cos(radians(start_angle<span style="color: #666666">+</span>arc_angle)),
+                   R<span style="color: #666666">*</span>sin(radians(start_angle<span style="color: #666666">+</span>arc_angle)))),
+        <span style="color: #BA2121">&#39;r=start+arc_angle&#39;</span>:
+        Line(center, center <span style="color: #666666">+</span>
+             point(R, <span style="color: #666666">0</span>))<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>),
+        <span style="color: #BA2121">&#39;radius&#39;</span>: Distance_wText(center, a(<span style="color: #666666">0</span>), <span style="color: #BA2121">&#39;radius&#39;</span>, text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">1</span>,<span style="color: #666666">40.</span>)),
+        <span style="color: #BA2121">&#39;center&#39;</span>: Text(<span style="color: #BA2121">&#39;center&#39;</span>, center<span style="color: #666666">-</span>point(old_div(radius,<span style="color: #666666">10.</span>), old_div(radius,<span style="color: #666666">10.</span>))),
         }
     <span style="color: #008000; font-weight: bold">for</span> dimension <span style="color: #AA22FF; font-weight: bold">in</span> a<span style="color: #666666">.</span>dimensions:
-        dim <span style="color: #666666">=</span> a<span style="color: #666666">.</span>dimensions[dimension]
-        dim<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>)
-        dim<span style="color: #666666">.</span>set_linewidth(<span style="color: #666666">1</span>)
-        dim<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;black&#39;</span>)
+        <span style="color: #008000; font-weight: bold">if</span> dimension<span style="color: #666666">.</span>startswith(<span style="color: #BA2121">&#39;r=&#39;</span>):
+            dim <span style="color: #666666">=</span> a<span style="color: #666666">.</span>dimensions[dimension]
+            dim<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>)
+            dim<span style="color: #666666">.</span>set_linewidth(<span style="color: #666666">1</span>)
+            dim<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;black&#39;</span>)
 
     a<span style="color: #666666">.</span>draw_dimensions()
     drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Arc&#39;</span>)
@@ -391,7 +433,7 @@ An arc like the one above is produced by
 <br />
 
 <p>
-The code for making this spring is
+The code for making these two springs goes like this:
 
 <p>
 
@@ -401,7 +443,7 @@ The code for making this spring is
     W <span style="color: #666666">=</span> <span style="color: #666666">2.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=7*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=7*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.5*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Spring.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
@@ -409,13 +451,13 @@ The code for making this spring is
     xpos <span style="color: #666666">=</span> W
     s1 <span style="color: #666666">=</span> Spring((W,<span style="color: #666666">0</span>), L, teeth<span style="color: #666666">=</span><span style="color: #008000">True</span>)
     s1_title <span style="color: #666666">=</span> Text(<span style="color: #BA2121">&#39;Default Spring&#39;</span>,
-                    s1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,L<span style="color: #666666">/10</span>))
+                    s1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,old_div(L,<span style="color: #666666">10</span>)))
     s1<span style="color: #666666">.</span>draw()
     s1_title<span style="color: #666666">.</span>draw()
     <span style="color: #408080; font-style: italic">#s1.draw_dimensions()</span>
     xpos <span style="color: #666666">+=</span> <span style="color: #666666">3*</span>W
-    s2 <span style="color: #666666">=</span> Spring(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), length<span style="color: #666666">=</span>L, width<span style="color: #666666">=</span>W<span style="color: #666666">/2.</span>,
-                bar_length<span style="color: #666666">=</span>L<span style="color: #666666">/6.</span>, teeth<span style="color: #666666">=</span><span style="color: #008000">False</span>)
+    s2 <span style="color: #666666">=</span> Spring(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), length<span style="color: #666666">=</span>L, width<span style="color: #666666">=</span>old_div(W,<span style="color: #666666">2.</span>),
+                bar_length<span style="color: #666666">=</span>old_div(L,<span style="color: #666666">6.</span>), teeth<span style="color: #666666">=</span><span style="color: #008000">False</span>)
     s2<span style="color: #666666">.</span>draw()
     s2<span style="color: #666666">.</span>draw_dimensions()
     drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Spring&#39;</span>)
@@ -442,7 +484,7 @@ This dashpot is produced by
     xpos <span style="color: #666666">=</span> <span style="color: #666666">0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=</span>xpos, xmax<span style="color: #666666">=</span>xpos<span style="color: #666666">+5.5*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
+        xmin<span style="color: #666666">=</span>xpos, xmax<span style="color: #666666">=</span>xpos<span style="color: #666666">+5.5*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.5*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Dashpot.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
@@ -451,15 +493,15 @@ This dashpot is produced by
     xpos <span style="color: #666666">=</span> <span style="color: #666666">1.5</span>
     d1 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=</span>L)
     d1_title <span style="color: #666666">=</span> Text(<span style="color: #BA2121">&#39;Dashpot (default)&#39;</span>,
-                    d1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,L<span style="color: #666666">/10</span>))
+                    d1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,old_div(L,<span style="color: #666666">10</span>)))
     d1<span style="color: #666666">.</span>draw()
     d1_title<span style="color: #666666">.</span>draw()
 
     <span style="color: #408080; font-style: italic"># Dashpot for animation with fixed bar_length, dashpot_length and</span>
     <span style="color: #408080; font-style: italic"># prescribed piston_pos</span>
     xpos <span style="color: #666666">+=</span> <span style="color: #666666">2.5*</span>W
-    d2 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=1.2*</span>L, width<span style="color: #666666">=</span>W<span style="color: #666666">/2</span>,
-                 bar_length<span style="color: #666666">=</span>W, dashpot_length<span style="color: #666666">=</span>L<span style="color: #666666">/2</span>, piston_pos<span style="color: #666666">=2*</span>W)
+    d2 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=1.2*</span>L, width<span style="color: #666666">=</span>old_div(W,<span style="color: #666666">2</span>),
+                 bar_length<span style="color: #666666">=</span>W, dashpot_length<span style="color: #666666">=</span>old_div(L,<span style="color: #666666">2</span>), piston_pos<span style="color: #666666">=2*</span>W)
     d2<span style="color: #666666">.</span>draw()
     d2<span style="color: #666666">.</span>draw_dimensions()
 
@@ -505,16 +547,27 @@ are stored in the arrays <code>curve.x[curve_no]</code> and
 
 <p>
 <p>
-<!-- begin bottom navigation -->
-<table style="width: 100%"><tr><td>
-<div style="text-align: left;"><a href="._pysketcher001.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/prev1.png" border=0 alt="&laquo; Previous"></a></div>
-</td><td>
-<div style="text-align: right;"><a href="._pysketcher003.html"><img src="http://hplgit.github.io/doconce/bundled/html_images/next1.png" border=0 alt="Next &raquo;"></a></div>
-</td></tr></table>
-<!-- end bottom navigation -->
-</p>
-
+<!-- navigation buttons at the bottom of the page -->
+<ul class="pagination">
+<li><a href="._pysketcher001.html">&laquo;</a></li>
+  <li><a href="._pysketcher000.html">1</a></li>
+  <li><a href="._pysketcher001.html">2</a></li>
+  <li class="active"><a href="._pysketcher002.html">3</a></li>
+  <li><a href="._pysketcher003.html">4</a></li>
+  <li><a href="._pysketcher003.html">&raquo;</a></li>
+</ul>
 <!-- ------------------- end of main content --------------- -->
+
+</div>  <!-- end container -->
+<!-- include javascript, jQuery *first* -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<!-- Bootstrap footer
+<footer>
+<a href="http://..."><img width="250" align=right src="http://..."></a>
+</footer>
+-->
 
 
 </body>
