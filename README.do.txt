@@ -1,6 +1,6 @@
 ======= Pysketcher =======
 
-Tool for defining sketches of physics problems in terms of Python code.
+Tool for creating sketches of physics problems in terms of Python code.
 
 ===== Purpose =====
 
@@ -8,11 +8,13 @@ Pysketcher can typically be used to draw figures like
 
 FIGURE: [doc/src/tut/fig-tut/wheel_on_inclined_plane, width=600 frac=0.6]
 
-Such figures can easily be *interactively* made using a lot of drawing programs.
-A Pysketcher figure, however, is defined in terms of computer code. This gives
-a great advantage: geometric features can be parameterized in term
-of variables. Geometric variations are then trivially generated, and
-complicated figures can be built as a hierarchy of simpler elements.
+Such figures can easily be *interactively* made using a lot of drawing
+programs.  A Pysketcher figure, however, is defined in terms of
+computer code. This gives a great advantage: geometric features can be
+parameterized in term of variables. Geometric variations are then
+trivially generated, and complicated figures can be built as a
+hierarchy of simpler elements.  The figure can easily be made to move
+according to, e.g., a solution of a differential equation.
 
 Here is a very simple figure that illustrates how geometric features are
 parameterized by variables (H, R, L, etc.):
