@@ -93,8 +93,8 @@ def inclined_plane():
     animate(fig, time_points, move, pause_per_frame=0,
             dt=time_points[1]-time_points[0])
 
-    print str(fig)
-    print repr(fig)
+    print(str(fig))
+    print(repr(fig))
 
 inclined_plane()
 raw_input()

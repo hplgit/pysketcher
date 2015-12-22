@@ -104,6 +104,8 @@ ith = Force(P, P + L/10*unit_vec((-rod_vec[1], rod_vec[0])),
 
 body_diagram['ir'] = ir
 body_diagram['ith'] = ith
+body_diagram['origin'] = Text('$(x_0,y_0)$', P + point(-0.4,-0.1))
+
 body_diagram.draw()
 #drawing_tool.display('Body diagram')
 drawing_tool.savefig('tmp_pendulum5')

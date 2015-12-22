@@ -45,7 +45,7 @@ drawing_tool.display()
 drawing_tool.savefig('tmp2.png')
 drawing_tool.savefig('tmp2.pdf')
 
-print fig
+print(fig)
 fig.recurse('fig')
 fig.graphviz_dot('fig', False)
 
