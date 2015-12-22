@@ -434,7 +434,7 @@ class Shape:
             else:
                 class_str = ' (%s)' % \
                             self.shapes[shape].__class__.__name__
-            s += '\n%s%s%s %s' % (
+            s += '\n%s%s%s %s,' % (
                 ' '*indent,
                 shape_str,
                 class_str,
@@ -1310,7 +1310,7 @@ class Text(Point):
         return 'text "%s" at (%g,%g)' % (self.text, self.x, self.y)
 
     def __repr__(self):
-        return str(self)
+        return repr(str(self))
 
 
 class Text_wArrow(Text):
@@ -1335,7 +1335,7 @@ class Text_wArrow(Text):
                 self.arrow_tip[0], self.arrow_tip[1])
 
     def __repr__(self):
-        return str(self)
+        return repr(str(self))
 
 
 class Axis(Shape):
@@ -1728,7 +1728,7 @@ class Spring(Shape):
         q = linspace(0, n, n*resolution + 1)
         x = P0[0] + w*sin(2*pi*q)
         y = P0[1] + q*t
-        shapes['sprial'] = Curve(x, y)
+        shapes['spiral'] = Curve(x, y)
         shapes['bar2'] = Line(P1,P2)
         self.shapes = shapes
 
@@ -2494,262 +2494,6 @@ See also hplgit.github.io/pysketcher/doc/src/tut/fig-tut/StochasticWavyCurve.png
 # MassSpringForce: Line(horizontal), Spring, Rectangle, Arrow/Line(w/arrow)
 # must be easy to find the tip of the arrow
 # Maybe extra dict: self.name['mass'] = Rectangle object - YES!
-
-def test_Axis():
-    drawing_tool.set_coordinate_system(
-        xmin=0, xmax=15, ymin=-7, ymax=8, axis=True,
-        instruction_file='tmp_Axis.py')
-    # Draw normal x and y axis with origin at (7.5, 2)
-    # in the coordinate system of the sketch: [0,15]x[-7,8]
-    x_axis = Axis((7.5,2), 5, 'x', rotation_angle=0)
-    y_axis = Axis((7.5,2), 5, 'y', rotation_angle=90)
-    system = Composition({'x axis': x_axis, 'y axis': y_axis})
-    system.draw()
-    drawing_tool.display()
-
-    # Rotate this system 40 degrees counter clockwise
-    # and draw it with dashed lines
-    system.set_linestyle('dashed')
-    system.rotate(40, (7.5,2))
-    system.draw()
-    drawing_tool.display()
-
-    # Rotate this system another 220 degrees and show
-    # with dotted lines
-    system.set_linestyle('dotted')
-    system.rotate(220, (7.5,2))
-    system.draw()
-    drawing_tool.display()
-
-    drawing_tool.display('Axis')
-    drawing_tool.savefig('tmp_Axis')
-    print repr(system)
-
-def test_Distance_wText():
-    drawing_tool.set_coordinate_system(
-        xmin=0, xmax=10, ymin=0, ymax=6,
-        axis=True, instruction_file='tmp_Distance_wText.py')
-
-    fontsize=14
-    t = r'$ 2\pi R^2 $'  # sample text
-    examples = Composition({
-        'a0': Distance_wText((4,5), (8, 5), t, fontsize),
-        'a6': Distance_wText((4,5), (4, 4), t, fontsize),
-        'a1': Distance_wText((0,2), (2, 4.5), t, fontsize),
-        'a2': Distance_wText((0,2), (2, 0), t, fontsize),
-        'a3': Distance_wText((2,4.5), (0, 5.5), t, fontsize),
-        'a4': Distance_wText((8,4), (10, 3), t, fontsize,
-                             text_spacing=-1./60),
-        'a5': Distance_wText((8,2), (10, 1), t, fontsize,
-                             text_spacing=-1./40, alignment='right'),
-        'c1': Text_wArrow('text_spacing=-1./60',
-                          (4, 3.5), (9, 3.2),
-                          fontsize=10, alignment='left'),
-        'c2': Text_wArrow('text_spacing=-1./40, alignment="right"',
-                          (4, 0.5), (9, 1.2),
-                          fontsize=10, alignment='left'),
-        })
-    examples.draw()
-    drawing_tool.display('Distance_wText and text positioning')
-    drawing_tool.savefig('tmp_Distance_wText')
-
-def test_Rectangle():
-    L = 3.0
-    W = 4.0
-
-    drawing_tool.set_coordinate_system(
-        xmin=0, xmax=2*W, ymin=-L/2, ymax=2*L,
-        axis=True, instruction_file='tmp_Rectangle.py')
-    drawing_tool.set_linecolor('blue')
-    drawing_tool.set_grid(True)
-
-    xpos = W/2
-    r = Rectangle(lower_left_corner=(xpos,0), width=W, height=L)
-    r.draw()
-    r.draw_dimensions()
-    drawing_tool.display('Rectangle')
-    drawing_tool.savefig('tmp_Rectangle')
-
-
-def test_Triangle():
-    L = 3.0
-    W = 4.0
-
-    drawing_tool.set_coordinate_system(
-        xmin=0, xmax=2*W, ymin=-L/2, ymax=1.2*L,
-        axis=True, instruction_file='tmp_Triangle.py')
-    drawing_tool.set_linecolor('blue')
-    drawing_tool.set_grid(True)
-
-    xpos = 1
-    t = Triangle(p1=(W/2,0), p2=(3*W/2,W/2), p3=(4*W/5.,L))
-    t.draw()
-    t.draw_dimensions()
-    drawing_tool.display('Triangle')
-    drawing_tool.savefig('tmp_Triangle')
-
-def test_Arc():
-    L = 4.0
-    W = 4.0
-
-    drawing_tool.set_coordinate_system(
-        xmin=-W/2, xmax=W, ymin=-L/2, ymax=1.5*L,
-        axis=True, instruction_file='tmp_Arc.py')
-    drawing_tool.set_linecolor('blue')
-    drawing_tool.set_grid(True)
-
-    center = point(0,0)
-    radius = L/2
-    start_angle = 60
-    arc_angle = 45
-    a = Arc(center, radius, start_angle, arc_angle)
-    a.set_arrow('->')
-    a.draw()
-
-    R1 = 1.25*radius
-    R2 = 1.5*radius
-    R = 2*radius
-    a.dimensions = {
-        'start_angle': Arc_wText(
-            'start_angle', center, R1, start_angle=0,
-            arc_angle=start_angle, text_spacing=1/10.),
-        'arc_angle': Arc_wText(
-            'arc_angle', center, R2, start_angle=start_angle,
-            arc_angle=arc_angle, text_spacing=1/20.),
-        'r=0': Line(center, center +
-                    point(R*cos(radians(start_angle)),
-                          R*sin(radians(start_angle)))),
-        'r=start_angle': Line(center, center +
-                              point(R*cos(radians(start_angle+arc_angle)),
-                                    R*sin(radians(start_angle+arc_angle)))),
-        'r=start+arc_angle':  Line(center, center +
-                                   point(R, 0)).set_linestyle('dashed'),
-        'radius': Distance_wText(center, a(0), 'radius', text_spacing=1/40.),
-        'center': Text('center', center-point(radius/10., radius/10.)),
-        }
-    for dimension in a.dimensions:
-        dim = a.dimensions[dimension]
-        dim.set_linestyle('dashed')
-        dim.set_linewidth(1)
-        dim.set_linecolor('black')
-
-    a.draw_dimensions()
-    drawing_tool.display('Arc')
-    drawing_tool.savefig('tmp_Arc')
-
-
-def test_Spring():
-    L = 5.0
-    W = 2.0
-
-    drawing_tool.set_coordinate_system(
-        xmin=0, xmax=7*W, ymin=-L/2, ymax=1.5*L,
-        axis=True, instruction_file='tmp_Spring.py')
-    drawing_tool.set_linecolor('blue')
-    drawing_tool.set_grid(True)
-
-    xpos = W
-    s1 = Spring((W,0), L, teeth=True)
-    s1_title = Text('Default Spring',
-                    s1.geometric_features()['end'] + point(0,L/10))
-    s1.draw()
-    s1_title.draw()
-    #s1.draw_dimensions()
-    xpos += 3*W
-    s2 = Spring(start=(xpos,0), length=L, width=W/2.,
-                bar_length=L/6., teeth=False)
-    s2.draw()
-    s2.draw_dimensions()
-    drawing_tool.display('Spring')
-    drawing_tool.savefig('tmp_Spring')
-
-
-def test_Dashpot():
-    L = 5.0
-    W = 2.0
-    xpos = 0
-
-    drawing_tool.set_coordinate_system(
-        xmin=xpos, xmax=xpos+5.5*W, ymin=-L/2, ymax=1.5*L,
-        axis=True, instruction_file='tmp_Dashpot.py')
-    drawing_tool.set_linecolor('blue')
-    drawing_tool.set_grid(True)
-
-    # Default (simple) dashpot
-    xpos = 1.5
-    d1 = Dashpot(start=(xpos,0), total_length=L)
-    d1_title = Text('Dashpot (default)',
-                    d1.geometric_features()['end'] + point(0,L/10))
-    d1.draw()
-    d1_title.draw()
-
-    # Dashpot for animation with fixed bar_length, dashpot_length and
-    # prescribed piston_pos
-    xpos += 2.5*W
-    d2 = Dashpot(start=(xpos,0), total_length=1.2*L, width=W/2,
-                 bar_length=W, dashpot_length=L/2, piston_pos=2*W)
-    d2.draw()
-    d2.draw_dimensions()
-
-    drawing_tool.display('Dashpot')
-    drawing_tool.savefig('tmp_Dashpot')
-
-def test_Wavy():
-    drawing_tool.set_coordinate_system(xmin=0, xmax=1.5,
-                                       ymin=-0.5, ymax=5,
-                                       axis=True,
-                                       instruction_file='tmp_Wavy.py')
-    w = Wavy(main_curve=lambda x: 1 + sin(2*x),
-             interval=[0,1.5],
-             wavelength_of_perturbations=0.3,
-             amplitude_of_perturbations=0.1,
-             smoothness=0.05)
-    w.draw()
-    drawing_tool.display('Wavy')
-    drawing_tool.savefig('tmp_Wavy')
-
-def diff_files(files1, files2, mode='HTML'):
-    import difflib, time
-    n = 3
-    for fromfile, tofile in zip(files1, files2):
-        fromdate = time.ctime(os.stat(fromfile).st_mtime)
-        todate = time.ctime(os.stat(tofile).st_mtime)
-        fromlines = open(fromfile, 'U').readlines()
-        tolines = open(tofile, 'U').readlines()
-        diff_html = difflib.HtmlDiff().\
-                    make_file(fromlines,tolines,
-                              fromfile,tofile,context=True,numlines=n)
-        diff_plain = difflib.unified_diff(fromlines, tolines, fromfile, tofile, fromdate, todate, n=n)
-        filename_plain = fromfile + '.diff.txt'
-        filename_html = fromfile + '.diff.html'
-        if os.path.isfile(filename_plain):
-            os.remove(filename_plain)
-        if os.path.isfile(filename_html):
-            os.remove(filename_html)
-        f = open(filename_plain, 'w')
-        f.writelines(diff_plain)
-        f.close()
-        size = os.path.getsize(filename_plain)
-        if size > 4:
-            print 'found differences:', fromfile, tofile
-            f = open(filename_html, 'w')
-            f.writelines(diff_html)
-            f.close()
-
-
-def test_test():
-    os.chdir('test')
-    funcs = [name for name in globals() if name.startswith('test_') and callable(globals()[name])]
-    funcs.remove('test_test')
-    new_files = []
-    res_files = []
-    for func in funcs:
-        mplfile = func.replace('test_', 'tmp_') + '.py'
-        #exec(func + '()')
-        new_files.append(mplfile)
-        resfile = mplfile.replace('tmp_', 'res_')
-        res_files.append(resfile)
-    diff_files(new_files, res_files)
 
 
 def _test1():
