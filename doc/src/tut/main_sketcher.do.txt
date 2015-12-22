@@ -47,6 +47,9 @@ no further background is required.
 # which is just a part of this document...
 
 !split
+TOC: on
+
+!split
 # #include "basics.do.txt"
 
 !split
