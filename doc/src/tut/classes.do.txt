@@ -27,7 +27,7 @@ FIGURE: [fig-tut/Axis, width=500 frac=0.7]
 
 The corresponding code looks like this:
 
-@@@CODE ../../../pysketcher/shapes.py fromto: def test_Axis@drawing_tool.savefig\('tmp_Axis'\)
+@@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Axis@drawing_tool.savefig\('tmp_Axis'\)
 
 ===== Distance with Text =====
 
@@ -48,7 +48,7 @@ FIGURE: [fig-tut/Distance_wText, width=500 frac=0.7]
 
 was produced by this code:
 
-@@@CODE ../../../pysketcher/shapes.py fromto: def test_Distance_wText@drawing_tool.savefig\('tmp_Distance
+@@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Distance_wText@drawing_tool.savefig\('tmp_Distance
 Note the use of `Text_wArrow` to write an explaining text with an
 associated arrow, here used to explain how
 the `text_spacing` and `alignment` arguments can be used to adjust
@@ -63,7 +63,7 @@ FIGURE: [fig-tut/Rectangle, width=500 frac=0.7]
 
 The above figure can be produced by the following code.
 
-@@@CODE ../../../pysketcher/shapes.py fromto: def test_Rectangle@drawing_tool.savefig\('tmp_Rectangle
+@@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Rectangle@drawing_tool.savefig\('tmp_Rectangle
 
 Note that the `draw_dimension` method adds explanation of dimensions and various
 important argument in the construction of a shape. It adapts the annotations
@@ -78,7 +78,7 @@ FIGURE: [fig-tut/Triangle, width=500 frac=0.7]
 
 The code below produces the figure.
 
-@@@CODE ../../../pysketcher/shapes.py fromto: def test_Triangle@drawing_tool.savefig\('tmp_Triangle
+@@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Triangle@drawing_tool.savefig\('tmp_Triangle
 Here, the `draw_dimension` method writes the name of the corners at the
 position of the corners, which does not always look nice (the present figure
 is an example). For a high-quality sketch one would add some spacing
@@ -93,7 +93,7 @@ FIGURE: [fig-tut/Arc, width=400 frac=0.5]
 
 An arc like the one above is produced by
 
-@@@CODE ../../../pysketcher/shapes.py fromto: def test_Arc@drawing_tool.savefig\('tmp_Arc
+@@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Arc@drawing_tool.savefig\('tmp_Arc
 
 ===== Spring =====
 
@@ -104,7 +104,7 @@ FIGURE: [fig-tut/Spring, width=800 frac=1]
 
 The code for making these two springs goes like this:
 
-@@@CODE ../../../pysketcher/shapes.py fromto: def test_Spring@drawing_tool.savefig\('tmp_Spring
+@@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Spring@drawing_tool.savefig\('tmp_Spring
 
 ===== Dashpot =====
 
@@ -115,7 +115,7 @@ FIGURE: [fig-tut/Dashpot, width=600 frac=0.8]
 
 This dashpot is produced by
 
-@@@CODE ../../../pysketcher/shapes.py fromto: def test_Dashpot@drawing_tool.savefig\('tmp_Dashpot
+@@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Dashpot@drawing_tool.savefig\('tmp_Dashpot
 
 ===== Wavy =====
 
