@@ -8,7 +8,7 @@ Pysketcher: Create Principal Sketches of Physics Problems
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    main_sketcher
 
