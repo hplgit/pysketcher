@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +9,7 @@
     
     <title>Pysketcher: Create Principal Sketches of Physics Problems</title>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -24,6 +25,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
 
         <script src="http://sagecell.sagemath.org/static/jquery.min.js"></script>
         <script src="http://sagecell.sagemath.org/static/embedded_sagecell.js"></script>
@@ -43,11 +45,7 @@
     
     <link rel="top" title="Pysketcher: Create Principal Sketches of Physics Problems" href="index.html" />
     <link rel="prev" title="Pysketcher: Create Principal Sketches of Physics Problems" href="index.html" />
-
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+ 
   
        <style type="text/css">
          div.admonition {
@@ -57,7 +55,19 @@
        </style>
       </head>
     
-  <body role="document">  
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Pysketcher: Create Principal Sketches of Physics Problems"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Pysketcher: Create Principal Sketches of Physics Problems</a> &raquo;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -95,7 +105,7 @@ since distances are specified in computer code.</p>
 essential Python programming and a knowledge about mechanics problems,
 no further background is required.</p>
 <div class="section" id="a-first-glimpse-of-pysketcher">
-<h2>A First Glimpse of Pysketcher<a class="headerlink" href="#a-first-glimpse-of-pysketcher" title="Permalink to this headline">¶</a></h2>
+<h2>A first glimpse of Pysketcher<a class="headerlink" href="#a-first-glimpse-of-pysketcher" title="Permalink to this headline">¶</a></h2>
 <p>Formulation of physical problems makes heavy use of <em>principal sketches</em>
 such as the one in Figure <a class="reference internal" href="#sketcher-fig-inclinedplane"><span class="std std-ref">Sketch of a physics problem</span></a>.
 This particular sketch illustrates the classical mechanics problem
@@ -122,7 +132,7 @@ the mantra of this section.</p>
 <p class="caption"><span class="caption-text"><em>Sketch of a physics problem</em></span></p>
 </div>
 <div class="section" id="basic-construction-of-sketches">
-<h3>Basic Construction of Sketches<a class="headerlink" href="#basic-construction-of-sketches" title="Permalink to this headline">¶</a></h3>
+<h3>Basic construction of sketches<a class="headerlink" href="#basic-construction-of-sketches" title="Permalink to this headline">¶</a></h3>
 <p>Before attacking real-life sketches as in Figure <a class="reference internal" href="#sketcher-fig-inclinedplane"><span class="std std-ref">Sketch of a physics problem</span></a>
 we focus on the significantly simpler drawing shown
 in Figure <a class="reference internal" href="#sketcher-fig-vehicle0"><span class="std std-ref">Sketch of a simple figure</span></a>.  This toy sketch consists of
@@ -151,7 +161,7 @@ physics and engineering, but then a program must define the geometry.</p>
 <p class="caption"><span class="caption-text"><em>Redrawing a figure with other geometric parameters</em></span></p>
 </div>
 <div class="section" id="basic-drawing">
-<h4>Basic Drawing<a class="headerlink" href="#basic-drawing" title="Permalink to this headline">¶</a></h4>
+<h4>Basic drawing<a class="headerlink" href="#basic-drawing" title="Permalink to this headline">¶</a></h4>
 <p>A typical program creating these five elements is shown next.
 After importing the <code class="docutils literal"><span class="pre">pysketcher</span></code> package, the first task is always to
 define a coordinate system:</p>
@@ -208,7 +218,7 @@ displacement vector <span class="math">\((L,0)\)</span>:</p>
 </div>
 </div>
 <div class="section" id="groups-of-objects">
-<h4>Groups of Objects<a class="headerlink" href="#groups-of-objects" title="Permalink to this headline">¶</a></h4>
+<h4>Groups of objects<a class="headerlink" href="#groups-of-objects" title="Permalink to this headline">¶</a></h4>
 <p>Instead of calling the <code class="docutils literal"><span class="pre">draw</span></code> method of every object, we can
 group objects and call <code class="docutils literal"><span class="pre">draw</span></code>, or perform other operations, for
 the whole group. For example, we may collect the two wheels
@@ -248,7 +258,7 @@ figure elements,
 and call <code class="docutils literal"><span class="pre">draw</span></code> for every object.</p>
 </div>
 <div class="section" id="changing-line-styles-and-colors">
-<h4>Changing Line Styles and Colors<a class="headerlink" href="#changing-line-styles-and-colors" title="Permalink to this headline">¶</a></h4>
+<h4>Changing line styles and colors<a class="headerlink" href="#changing-line-styles-and-colors" title="Permalink to this headline">¶</a></h4>
 <p>Controlling the line style, line color, and line width is
 fundamental when designing figures. The <code class="docutils literal"><span class="pre">pysketcher</span></code>
 package allows the user to control such properties in
@@ -281,7 +291,7 @@ special visual pattern:</p>
 </div>
 </div>
 <div class="section" id="the-figure-composition-as-an-object-hierarchy">
-<h4>The Figure Composition as an Object Hierarchy<a class="headerlink" href="#the-figure-composition-as-an-object-hierarchy" title="Permalink to this headline">¶</a></h4>
+<h4>The figure composition as an object hierarchy<a class="headerlink" href="#the-figure-composition-as-an-object-hierarchy" title="Permalink to this headline">¶</a></h4>
 <p>The composition of objects making up the figure
 is hierarchical, similar to a family, where
 each object has a parent and a number of children. Do a
@@ -405,7 +415,7 @@ The result of the actions above is shown in Figure <a class="reference internal"
 animations, as shown next.</p>
 </div>
 <div class="section" id="animation-translating-the-vehicle">
-<h4>Animation: Translating the Vehicle<a class="headerlink" href="#animation-translating-the-vehicle" title="Permalink to this headline">¶</a></h4>
+<h4>Animation: translating the vehicle<a class="headerlink" href="#animation-translating-the-vehicle" title="Permalink to this headline">¶</a></h4>
 <p>Can we make our little vehicle roll? A first attempt will be to
 fake rolling by just displacing all parts of the vehicle.
 The relevant parts constitute the <code class="docutils literal"><span class="pre">fig['vehicle']</span></code> object.
@@ -506,7 +516,7 @@ then load <code class="docutils literal"><span class="pre">mov.html</span></code
 video files.  Alternatively, you can view a ready-made <a class="reference external" href="http://tinyurl.com/oou9lp7/mov-tut/vehicle0.html">movie</a>.</p>
 </div>
 <div class="section" id="animation-rolling-the-wheels">
-<span id="sketcher-vehicle1-anim"></span><h4>Animation: Rolling the Wheels<a class="headerlink" href="#animation-rolling-the-wheels" title="Permalink to this headline">¶</a></h4>
+<span id="sketcher-vehicle1-anim"></span><h4>Animation: rolling the wheels<a class="headerlink" href="#animation-rolling-the-wheels" title="Permalink to this headline">¶</a></h4>
 <p>It is time to show rolling wheels. To this end, we add spokes to the
 wheels, formed by two crossing lines, see Figure <a class="reference internal" href="#sketcher-fig-vehicle1"><span class="std std-ref">Wheels with spokes to illustrate rolling</span></a>.
 The construction of the wheels will now involve a circle and two lines:</p>
@@ -586,7 +596,7 @@ coming from physics simulations of the problem, as shown in the example above.</
 </div>
 </div>
 <div class="section" id="basic-shapes">
-<h2>Basic Shapes<a class="headerlink" href="#basic-shapes" title="Permalink to this headline">¶</a></h2>
+<h2>Basic shapes<a class="headerlink" href="#basic-shapes" title="Permalink to this headline">¶</a></h2>
 <p>This section presents many of the basic shapes in Pysketcher:
 <code class="docutils literal"><span class="pre">Axis</span></code>, <code class="docutils literal"><span class="pre">Distance_wText</span></code>, <code class="docutils literal"><span class="pre">Rectangle</span></code>,    <code class="docutils literal"><span class="pre">Triangle</span></code>, <code class="docutils literal"><span class="pre">Arc</span></code>,
 <code class="docutils literal"><span class="pre">Spring</span></code>, <code class="docutils literal"><span class="pre">Dashpot</span></code>, and <code class="docutils literal"><span class="pre">Wavy</span></code>.
@@ -644,7 +654,7 @@ rotation:</p>
 </div>
 </div>
 <div class="section" id="distance-with-text">
-<h3>Distance with Text<a class="headerlink" href="#distance-with-text" title="Permalink to this headline">¶</a></h3>
+<h3>Distance with text<a class="headerlink" href="#distance-with-text" title="Permalink to this headline">¶</a></h3>
 <p>The object <code class="docutils literal"><span class="pre">Distance_wText</span></code> is used to display an arrow, to indicate
 a distance in a sketch, with an additional text in the middle of the arrow.</p>
 <p>The figure</p>
@@ -929,7 +939,7 @@ are stored in the arrays <code class="docutils literal"><span class="pre">curve.
 </div>
 </div>
 <div class="section" id="inner-workings-of-the-pysketcher-tool">
-<h2>Inner Workings of the Pysketcher Tool<a class="headerlink" href="#inner-workings-of-the-pysketcher-tool" title="Permalink to this headline">¶</a></h2>
+<h2>Inner workings of the Pysketcher tool<a class="headerlink" href="#inner-workings-of-the-pysketcher-tool" title="Permalink to this headline">¶</a></h2>
 <p>We shall now explain how we can, quite easily, realize software with
 the capabilities demonstrated in the previous examples. Each object in
 the figure is represented as a class in a class hierarchy. Using
@@ -947,13 +957,13 @@ topic is of key relevance in a wide range of other applications as
 well. In total, the inner workings of Pysketcher constitute an
 excellent example on the power of class programming.</p>
 <div class="section" id="example-of-classes-for-geometric-objects">
-<h3>Example of Classes for Geometric Objects<a class="headerlink" href="#example-of-classes-for-geometric-objects" title="Permalink to this headline">¶</a></h3>
+<h3>Example of classes for geometric objects<a class="headerlink" href="#example-of-classes-for-geometric-objects" title="Permalink to this headline">¶</a></h3>
 <p>We introduce class <code class="docutils literal"><span class="pre">Shape</span></code> as superclass for all specialized objects
 in a figure. This class does not store any data, but provides a
 series of functions that add functionality to all the subclasses.
 This will be shown later.</p>
 <div class="section" id="simple-geometric-objects">
-<h4>Simple Geometric Objects<a class="headerlink" href="#simple-geometric-objects" title="Permalink to this headline">¶</a></h4>
+<h4>Simple geometric objects<a class="headerlink" href="#simple-geometric-objects" title="Permalink to this headline">¶</a></h4>
 <p>One simple subclass is <code class="docutils literal"><span class="pre">Rectangle</span></code>, specified by the coordinates of
 the lower left corner and its width and height:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Rectangle</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
@@ -1070,7 +1080,7 @@ a subclass specializing the arc to a circle:</p>
 </div>
 </div>
 <div class="section" id="class-curve">
-<h4>Class Curve<a class="headerlink" href="#class-curve" title="Permalink to this headline">¶</a></h4>
+<h4>Class curve<a class="headerlink" href="#class-curve" title="Permalink to this headline">¶</a></h4>
 <p>Class <code class="docutils literal"><span class="pre">Curve</span></code> sits on the coordinates to be drawn, but how is that
 done? The constructor of class <code class="docutils literal"><span class="pre">Curve</span></code> just stores the coordinates,
 while a method <code class="docutils literal"><span class="pre">draw</span></code> sends the coordinates to the plotting program to
@@ -1125,7 +1135,7 @@ store the information and send it to the plotting program.</p>
 </div>
 </div>
 <div class="section" id="compound-geometric-objects">
-<h4>Compound Geometric Objects<a class="headerlink" href="#compound-geometric-objects" title="Permalink to this headline">¶</a></h4>
+<h4>Compound geometric objects<a class="headerlink" href="#compound-geometric-objects" title="Permalink to this headline">¶</a></h4>
 <p>The simple classes <code class="docutils literal"><span class="pre">Line</span></code>, <code class="docutils literal"><span class="pre">Arc</span></code>, and <code class="docutils literal"><span class="pre">Circle</span></code> could can the geometric
 shape through just one <code class="docutils literal"><span class="pre">Curve</span></code> object. More complicated shapes are
 built from instances of various subclasses of <code class="docutils literal"><span class="pre">Shape</span></code>. Classes used
@@ -1205,7 +1215,7 @@ drawings of mechanical systems.</p>
 </div>
 </div>
 <div class="section" id="adding-functionality-via-recursion">
-<h3>Adding Functionality via Recursion<a class="headerlink" href="#adding-functionality-via-recursion" title="Permalink to this headline">¶</a></h3>
+<h3>Adding functionality via recursion<a class="headerlink" href="#adding-functionality-via-recursion" title="Permalink to this headline">¶</a></h3>
 <p id="index-1">The really powerful feature of our class hierarchy is that we can add
 much functionality to the superclass <code class="docutils literal"><span class="pre">Shape</span></code> and to the &#8220;bottom&#8221; class
 <code class="docutils literal"><span class="pre">Curve</span></code>, and then all other classes for various types of geometrical shapes
@@ -1215,7 +1225,7 @@ hierarchy must have. The inner workings of the <code class="docutils literal"><s
 the secrets of how a series of other useful operations on figures
 can be implemented.</p>
 <div class="section" id="basic-principles-of-recursion">
-<h4>Basic Principles of Recursion<a class="headerlink" href="#basic-principles-of-recursion" title="Permalink to this headline">¶</a></h4>
+<h4>Basic principles of recursion<a class="headerlink" href="#basic-principles-of-recursion" title="Permalink to this headline">¶</a></h4>
 <p>Note that we work with two types of hierarchies in the
 present documentation: one Python <em>class hierarchy</em>,
 with <code class="docutils literal"><span class="pre">Shape</span></code> as superclass, and one <em>object hierarchy</em> of figure elements
@@ -1270,7 +1280,7 @@ behavior with respect to drawing. Only the <code class="docutils literal"><span 
 <code class="docutils literal"><span class="pre">draw</span></code> method, which does not lead to more recursion.</p>
 </div>
 <div class="section" id="explaining-recursion">
-<h4>Explaining Recursion<a class="headerlink" href="#explaining-recursion" title="Permalink to this headline">¶</a></h4>
+<h4>Explaining recursion<a class="headerlink" href="#explaining-recursion" title="Permalink to this headline">¶</a></h4>
 <p>Understanding recursion is usually a challenge. To get a better idea of
 how recursion works, we have equipped class <code class="docutils literal"><span class="pre">Shape</span></code> with a method <code class="docutils literal"><span class="pre">recurse</span></code>
 that just visits all the objects in the <code class="docutils literal"><span class="pre">shapes</span></code> dictionary and prints
@@ -1386,7 +1396,7 @@ of calls with that object as root.</p>
 </div>
 </div>
 <div class="section" id="scaling-translating-and-rotating-a-figure">
-<span id="sketcher-scaling"></span><h3>Scaling, Translating, and Rotating a Figure<a class="headerlink" href="#scaling-translating-and-rotating-a-figure" title="Permalink to this headline">¶</a></h3>
+<span id="sketcher-scaling"></span><h3>Scaling, translating, and rotating a figure<a class="headerlink" href="#scaling-translating-and-rotating-a-figure" title="Permalink to this headline">¶</a></h3>
 <p>With recursion, as explained in the previous section, we can within
 minutes equip <em>all</em> classes in the <code class="docutils literal"><span class="pre">Shape</span></code> hierarchy, both present and
 future ones, with the ability to scale the figure, translate it,
@@ -1504,7 +1514,7 @@ is given in degrees and not in radians, becomes</p>
 <p>The <code class="docutils literal"><span class="pre">rotate</span></code> method in class <code class="docutils literal"><span class="pre">Shape</span></code> follows the principle of the
 <code class="docutils literal"><span class="pre">draw</span></code>, <code class="docutils literal"><span class="pre">scale</span></code>, and <code class="docutils literal"><span class="pre">translate</span></code> methods.</p>
 <p>We have already seen the <code class="docutils literal"><span class="pre">rotate</span></code> method in action when animating the
-rolling wheel at the end of the section <a class="reference internal" href="#sketcher-vehicle1-anim"><span class="std std-ref">Animation: Rolling the Wheels</span></a>.</p>
+rolling wheel at the end of the section <a class="reference internal" href="#sketcher-vehicle1-anim"><span class="std std-ref">Animation: rolling the wheels</span></a>.</p>
 </div>
 </div>
 </div>
@@ -1516,24 +1526,29 @@ rolling wheel at the end of the section <a class="reference internal" href="#ske
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+            <center>
+            <p class="logo"><a href="http://cbc.simula.no/" title="Go to Center for Biomedical Computing">
+              <img class="logo" src="_static/cbc_logo.png" alt="Logo"/>
+            </a></p>
+            </center>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Pysketcher: Create Principal Sketches of Physics Problems</a><ul>
-<li><a class="reference internal" href="#a-first-glimpse-of-pysketcher">A First Glimpse of Pysketcher</a><ul>
-<li><a class="reference internal" href="#basic-construction-of-sketches">Basic Construction of Sketches</a><ul>
-<li><a class="reference internal" href="#basic-drawing">Basic Drawing</a></li>
-<li><a class="reference internal" href="#groups-of-objects">Groups of Objects</a></li>
-<li><a class="reference internal" href="#changing-line-styles-and-colors">Changing Line Styles and Colors</a></li>
-<li><a class="reference internal" href="#the-figure-composition-as-an-object-hierarchy">The Figure Composition as an Object Hierarchy</a></li>
-<li><a class="reference internal" href="#animation-translating-the-vehicle">Animation: Translating the Vehicle</a></li>
-<li><a class="reference internal" href="#animation-rolling-the-wheels">Animation: Rolling the Wheels</a></li>
+<li><a class="reference internal" href="#a-first-glimpse-of-pysketcher">A first glimpse of Pysketcher</a><ul>
+<li><a class="reference internal" href="#basic-construction-of-sketches">Basic construction of sketches</a><ul>
+<li><a class="reference internal" href="#basic-drawing">Basic drawing</a></li>
+<li><a class="reference internal" href="#groups-of-objects">Groups of objects</a></li>
+<li><a class="reference internal" href="#changing-line-styles-and-colors">Changing line styles and colors</a></li>
+<li><a class="reference internal" href="#the-figure-composition-as-an-object-hierarchy">The figure composition as an object hierarchy</a></li>
+<li><a class="reference internal" href="#animation-translating-the-vehicle">Animation: translating the vehicle</a></li>
+<li><a class="reference internal" href="#animation-rolling-the-wheels">Animation: rolling the wheels</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#basic-shapes">Basic Shapes</a><ul>
+<li><a class="reference internal" href="#basic-shapes">Basic shapes</a><ul>
 <li><a class="reference internal" href="#axis">Axis</a></li>
-<li><a class="reference internal" href="#distance-with-text">Distance with Text</a></li>
+<li><a class="reference internal" href="#distance-with-text">Distance with text</a></li>
 <li><a class="reference internal" href="#rectangle">Rectangle</a></li>
 <li><a class="reference internal" href="#triangle">Triangle</a></li>
 <li><a class="reference internal" href="#arc">Arc</a></li>
@@ -1543,19 +1558,19 @@ rolling wheel at the end of the section <a class="reference internal" href="#ske
 <li><a class="reference internal" href="#stochastic-curves">Stochastic curves</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#inner-workings-of-the-pysketcher-tool">Inner Workings of the Pysketcher Tool</a><ul>
-<li><a class="reference internal" href="#example-of-classes-for-geometric-objects">Example of Classes for Geometric Objects</a><ul>
-<li><a class="reference internal" href="#simple-geometric-objects">Simple Geometric Objects</a></li>
-<li><a class="reference internal" href="#class-curve">Class Curve</a></li>
-<li><a class="reference internal" href="#compound-geometric-objects">Compound Geometric Objects</a></li>
+<li><a class="reference internal" href="#inner-workings-of-the-pysketcher-tool">Inner workings of the Pysketcher tool</a><ul>
+<li><a class="reference internal" href="#example-of-classes-for-geometric-objects">Example of classes for geometric objects</a><ul>
+<li><a class="reference internal" href="#simple-geometric-objects">Simple geometric objects</a></li>
+<li><a class="reference internal" href="#class-curve">Class curve</a></li>
+<li><a class="reference internal" href="#compound-geometric-objects">Compound geometric objects</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#adding-functionality-via-recursion">Adding Functionality via Recursion</a><ul>
-<li><a class="reference internal" href="#basic-principles-of-recursion">Basic Principles of Recursion</a></li>
-<li><a class="reference internal" href="#explaining-recursion">Explaining Recursion</a></li>
+<li><a class="reference internal" href="#adding-functionality-via-recursion">Adding functionality via recursion</a><ul>
+<li><a class="reference internal" href="#basic-principles-of-recursion">Basic principles of recursion</a></li>
+<li><a class="reference internal" href="#explaining-recursion">Explaining recursion</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#scaling-translating-and-rotating-a-figure">Scaling, Translating, and Rotating a Figure</a><ul>
+<li><a class="reference internal" href="#scaling-translating-and-rotating-a-figure">Scaling, translating, and rotating a figure</a><ul>
 <li><a class="reference internal" href="#scaling">Scaling</a></li>
 <li><a class="reference internal" href="#translation">Translation</a></li>
 <li><a class="reference internal" href="#rotation">Rotation</a></li>
@@ -1566,14 +1581,10 @@ rolling wheel at the end of the section <a class="reference internal" href="#ske
 </ul>
 </li>
 </ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Pysketcher: Create Principal Sketches of Physics Problems</a></li>
-  </ul></li>
-</ul>
-</div>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Pysketcher: Create Principal Sketches of Physics Problems</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -1598,20 +1609,26 @@ rolling wheel at the end of the section <a class="reference internal" href="#ske
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2015, Hans Petter Langtangen.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4a0+</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
-      
-      |
-      <a href="_sources/main_sketcher.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Pysketcher: Create Principal Sketches of Physics Problems"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Pysketcher: Create Principal Sketches of Physics Problems</a> &raquo;</li> 
+      </ul>
     </div>
+<div class="wrapper">
+  <div class="footer">
+    <a href="http://cbc.simula.no"><img src="_static/cbc_banner.png" width="100%"><a>
+    <br />
+    <br />
+      &copy;2015, Hans Petter Langtangen.
+  </div>
+</div>
 
-    
-
-    
   </body>
 </html>

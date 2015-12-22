@@ -52,7 +52,7 @@ no further background is required.
 
 .. !split
 
-A First Glimpse of Pysketcher
+A first glimpse of Pysketcher
 =============================
 
 Formulation of physical problems makes heavy use of *principal sketches*
@@ -85,7 +85,7 @@ the mantra of this section.
 
    *Sketch of a physics problem*
 
-Basic Construction of Sketches
+Basic construction of sketches
 ------------------------------
 
 Before attacking real-life sketches as in Figure :ref:`sketcher:fig:inclinedplane`
@@ -123,7 +123,7 @@ physics and engineering, but then a program must define the geometry.
 
    *Redrawing a figure with other geometric parameters*
 
-Basic Drawing
+Basic drawing
 ~~~~~~~~~~~~~
 
 A typical program creating these five elements is shown next.
@@ -193,7 +193,7 @@ The two rectangles are also made in an intuitive way:
         over  = Rectangle(lower_left_corner=(w_1, 2*R + H),
                           width=2.5*R, height=1.25*H)
 
-Groups of Objects
+Groups of objects
 ~~~~~~~~~~~~~~~~~
 
 Instead of calling the ``draw`` method of every object, we can
@@ -241,7 +241,7 @@ and so forth in the hierarchical tree structure of
 figure elements,
 and call ``draw`` for every object.
 
-Changing Line Styles and Colors
+Changing line styles and colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Controlling the line style, line color, and line width is
@@ -283,7 +283,7 @@ special visual pattern:
 
 .. `<http://packages.python.org/ete2/>`_ for visualizing tree structures!
 
-The Figure Composition as an Object Hierarchy
+The figure composition as an object hierarchy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The composition of objects making up the figure
@@ -435,7 +435,7 @@ The result of the actions above is shown in Figure :ref:`sketcher:fig:vehicle0:v
 We can also change position of parts of the figure and thereby make
 animations, as shown next.
 
-Animation: Translating the Vehicle
+Animation: translating the vehicle
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Can we make our little vehicle roll? A first attempt will be to
@@ -568,7 +568,7 @@ video files.  Alternatively, you can view a ready-made `movie <http://tinyurl.co
 
 .. _sketcher:vehicle1:anim:
 
-Animation: Rolling the Wheels
+Animation: rolling the wheels
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is time to show rolling wheels. To this end, we add spokes to the
@@ -664,7 +664,7 @@ coming from physics simulations of the problem, as shown in the example above.
 
 .. !split
 
-Basic Shapes
+Basic shapes
 ============
 
 This section presents many of the basic shapes in Pysketcher:
@@ -725,7 +725,7 @@ The corresponding code looks like this:
         
             drawing_tool.display('Axis')
 
-Distance with Text
+Distance with text
 ------------------
 
 The object ``Distance_wText`` is used to display an arrow, to indicate
@@ -1024,7 +1024,7 @@ are stored in the arrays ``curve.x[curve_no]`` and
 
 .. !split
 
-Inner Workings of the Pysketcher Tool
+Inner workings of the Pysketcher tool
 =====================================
 
 We shall now explain how we can, quite easily, realize software with
@@ -1047,7 +1047,7 @@ topic is of key relevance in a wide range of other applications as
 well. In total, the inner workings of Pysketcher constitute an
 excellent example on the power of class programming.
 
-Example of Classes for Geometric Objects
+Example of classes for geometric objects
 ----------------------------------------
 
 We introduce class ``Shape`` as superclass for all specialized objects
@@ -1055,7 +1055,7 @@ in a figure. This class does not store any data, but provides a
 series of functions that add functionality to all the subclasses.
 This will be shown later.
 
-Simple Geometric Objects
+Simple geometric objects
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 One simple subclass is ``Rectangle``, specified by the coordinates of
@@ -1194,7 +1194,7 @@ a subclass specializing the arc to a circle:
             def __init__(self, center, radius, resolution=180):
                 Arc.__init__(self, center, radius, 0, 360, resolution)
 
-Class Curve
+Class curve
 ~~~~~~~~~~~
 
 Class ``Curve`` sits on the coordinates to be drawn, but how is that
@@ -1256,7 +1256,7 @@ A rough sketch of class ``Curve`` reads
                 self.linestyle = style
             ...
 
-Compound Geometric Objects
+Compound geometric objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simple classes ``Line``, ``Arc``, and ``Circle`` could can the geometric
@@ -1347,7 +1347,7 @@ The ``pysketcher`` package contains a wide range of classes for various
 geometrical objects, particularly those that are frequently used in
 drawings of mechanical systems.
 
-Adding Functionality via Recursion
+Adding functionality via recursion
 ----------------------------------
 
 .. index:: recursive function calls
@@ -1361,7 +1361,7 @@ hierarchy must have. The inner workings of the ``draw`` method explain
 the secrets of how a series of other useful operations on figures
 can be implemented.
 
-Basic Principles of Recursion
+Basic principles of recursion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Note that we work with two types of hierarchies in the
@@ -1425,7 +1425,7 @@ all inherit the same ``draw`` method and therefore exhibit the same
 behavior with respect to drawing. Only the ``Curve`` object has a different
 ``draw`` method, which does not lead to more recursion.
 
-Explaining Recursion
+Explaining recursion
 ~~~~~~~~~~~~~~~~~~~~
 
 Understanding recursion is usually a challenge. To get a better idea of
@@ -1562,7 +1562,7 @@ of calls with that object as root.
 
 .. _sketcher:scaling:
 
-Scaling, Translating, and Rotating a Figure
+Scaling, translating, and rotating a figure
 -------------------------------------------
 
 With recursion, as explained in the previous section, we can within

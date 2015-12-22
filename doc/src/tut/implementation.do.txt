@@ -1,8 +1,8 @@
 
 # #ifdef PRIMER_BOOK
-===== Example of Classes for Geometric Objects =====
+===== Example of classes for geometric objects =====
 # #else
-======= Inner Workings of the Pysketcher Tool =======
+======= Inner workings of the Pysketcher tool =======
 # #endif
 
 We shall now explain how we can, quite easily, realize software with
@@ -27,7 +27,7 @@ topic is of key relevance in a wide range of other applications as
 well. In total, the inner workings of Pysketcher constitute an
 excellent example on the power of class programming.
 
-===== Example of Classes for Geometric Objects =====
+===== Example of classes for geometric objects =====
 # #endif
 
 We introduce class `Shape` as superclass for all specialized objects
@@ -35,7 +35,7 @@ in a figure. This class does not store any data, but provides a
 series of functions that add functionality to all the subclasses.
 This will be shown later.
 
-=== Simple Geometric Objects ===
+=== Simple geometric objects ===
 
 One simple subclass is `Rectangle`, specified by the coordinates of
 the lower left corner and its width and height:
@@ -167,7 +167,7 @@ class Circle(Arc):
 !ec
 
 
-=== Class Curve ===
+=== Class curve ===
 
 Class `Curve` sits on the coordinates to be drawn, but how is that
 done? The constructor of class `Curve` just stores the coordinates,
@@ -223,7 +223,7 @@ class Curve(Shape):
     ...
 !ec
 
-=== Compound Geometric Objects ===
+=== Compound geometric objects ===
 
 The simple classes `Line`, `Arc`, and `Circle` could can the geometric
 shape through just one `Curve` object. More complicated shapes are
@@ -312,7 +312,7 @@ The `pysketcher` package contains a wide range of classes for various
 geometrical objects, particularly those that are frequently used in
 drawings of mechanical systems.
 
-===== Adding Functionality via Recursion =====
+===== Adding functionality via recursion =====
 
 idx{recursive function calls}
 
@@ -325,7 +325,7 @@ hierarchy must have. The inner workings of the `draw` method explain
 the secrets of how a series of other useful operations on figures
 can be implemented.
 
-=== Basic Principles of Recursion ===
+=== Basic principles of recursion ===
 
 Note that we work with two types of hierarchies in the
 present documentation: one Python *class hierarchy*,
@@ -384,7 +384,7 @@ all inherit the same `draw` method and therefore exhibit the same
 behavior with respect to drawing. Only the `Curve` object has a different
 `draw` method, which does not lead to more recursion.
 
-=== Explaining Recursion ===
+=== Explaining recursion ===
 
 Understanding recursion is usually a challenge. To get a better idea of
 how recursion works, we have equipped class `Shape` with a method `recurse`
@@ -510,7 +510,7 @@ can start at any object in the tree and do a recursive set
 of calls with that object as root.
 
 
-===== Scaling, Translating, and Rotating a Figure =====
+===== Scaling, translating, and rotating a figure =====
 label{sketcher:scaling}
 
 With recursion, as explained in the previous section, we can within

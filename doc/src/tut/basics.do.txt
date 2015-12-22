@@ -18,7 +18,7 @@ plane. The sketch
  * "Pygame backend": "http://inventwithpython.com/chapter17.html"
 # #endif
 
-======= A First Glimpse of Pysketcher =======
+======= A first glimpse of Pysketcher =======
 
 Formulation of physical problems makes heavy use of *principal sketches*
 such as the one in Figure ref{sketcher:fig:inclinedplane}.
@@ -60,7 +60,7 @@ targets how to traverse tree structures with recursive function calls.
 This topic is of key relevance in a wide range of other applications
 as well.
 
-===== Using the Object Collection =====
+===== Using the object collection =====
 
 We start by demonstrating a convenient user interface for making
 sketches of the type in Figure ref{sketcher:fig:inclinedplane}.
@@ -71,7 +71,7 @@ a ``ground'' element.
 
 # #else
 
-===== Basic Construction of Sketches =====
+===== Basic construction of sketches =====
 
 Before attacking real-life sketches as in Figure ref{sketcher:fig:inclinedplane}
 we focus on the significantly simpler drawing shown
@@ -102,7 +102,7 @@ physics and engineering, but then a program must define the geometry.
 FIGURE: [fig-tut/vehicle_v2, width=500 frac=0.6] Redrawing a figure with other geometric parameters. label{sketcher:fig:vehicle0b}
 
 
-=== Basic Drawing ===
+=== Basic drawing ===
 
 A typical program creating these five elements is shown next.
 After importing the `pysketcher` package, the first task is always to
@@ -163,7 +163,7 @@ over  = Rectangle(lower_left_corner=(w_1, 2*R + H),
                   width=2.5*R, height=1.25*H)
 !ec
 
-=== Groups of Objects ===
+=== Groups of objects ===
 
 Instead of calling the `draw` method of every object, we can
 group objects and call `draw`, or perform other operations, for
@@ -205,7 +205,7 @@ and so forth in the hierarchical tree structure of
 figure elements,
 and call `draw` for every object.
 
-=== Changing Line Styles and Colors ===
+=== Changing line styles and colors ===
 
 Controlling the line style, line color, and line width is
 fundamental when designing figures. The `pysketcher`
@@ -241,7 +241,7 @@ wheel1.set_filled_curves('red')
 
 # http://packages.python.org/ete2/ for visualizing tree structures!
 
-=== The Figure Composition as an Object Hierarchy ===
+=== The figure composition as an object hierarchy ===
 
 The composition of objects making up the figure
 is hierarchical, similar to a family, where
@@ -362,7 +362,7 @@ FIGURE: [fig-tut/vehicle0, width=700] Left: Basic line-based drawing. Right: Thi
 We can also change position of parts of the figure and thereby make
 animations, as shown next.
 
-=== Animation: Translating the Vehicle ===
+=== Animation: translating the vehicle ===
 
 Can we make our little vehicle roll? A first attempt will be to
 fake rolling by just displacing all parts of the vehicle.
@@ -475,7 +475,7 @@ then load `mov.html` into a browser, or play one of the `mov.*`
 video files.  Alternatively, you can view a ready-made "movie":
 "${src_path_tut}/mov-tut/vehicle0.html".
 
-=== Animation: Rolling the Wheels ===
+=== Animation: rolling the wheels ===
 label{sketcher:vehicle1:anim}
 
 It is time to show rolling wheels. To this end, we add spokes to the
