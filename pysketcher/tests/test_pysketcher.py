@@ -12,7 +12,7 @@ from pysketcher import *
 def equal_dict(d1, d2):
     """Return True if nested dicts d1 and d2 are equal."""
     for k in d1:
-        #print 'comparing', k
+        #print('comparing', k)
         if k not in d2:
             return False
         else:
@@ -24,7 +24,7 @@ def equal_dict(d1, d2):
                 d1_k = d1[k].replace("u'", "'")
                 d2_k = d2[k].replace("u'", "'")
                 if d1_k != d2_k:
-                    #print 'values differ: [%s] vs [%s]' % (d1_k, d2_k)
+                    #print('values differ: [%s] vs [%s]' % (d1_k, d2_k))
                     return False
     return True
 

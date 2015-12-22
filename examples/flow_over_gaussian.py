@@ -31,7 +31,6 @@ symmetry_line.set_linestyle('dashed')
 outlet = Line((W+L,0), (W+L,H))
 outlet.set_linestyle('dashed')
 
-#print repr(inlet_profile)
 fig = Composition({
     'bottom': wall,
     'inlet': inlet_profile,

@@ -277,7 +277,7 @@ ax.set_aspect('equal')
         if fillcolor or fillpattern:
             if fillpattern != '':
                 fillcolor = 'white'
-            #print '%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (x.size, fillcolor, linecolor, fillpattern)
+            #print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (x.size, fillcolor, linecolor, fillpattern))
             [line] = self.ax.fill(x, y, fillcolor, edgecolor=linecolor,
                                   linewidth=linewidth, hatch=fillpattern)
             if self.instruction_file:
