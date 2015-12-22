@@ -31,7 +31,7 @@ system doconce format html $name --skip_inline_comments --html_style=bootswatch_
 system doconce split_html ${html}.html --pagination
 
 system doconce format sphinx $name --skip_inline_comments
-system doconce sphinx_dir theme=alabaster $name
+system doconce sphinx_dir theme=cbc $name
 python automake_sphinx.py
 
 # Publish

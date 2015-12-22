@@ -1,4 +1,4 @@
-======= Basic Shapes =======
+======= Basic shapes =======
 
 This section presents many of the basic shapes in Pysketcher:
 `Axis`, `Distance_wText`, `Rectangle`, 	`Triangle`, `Arc`,
@@ -29,7 +29,7 @@ The corresponding code looks like this:
 
 @@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Axis@drawing_tool.savefig\('tmp_Axis'\)
 
-===== Distance with Text =====
+===== Distance with text =====
 
 The object `Distance_wText` is used to display an arrow, to indicate
 a distance in a sketch, with an additional text in the middle of the arrow.
