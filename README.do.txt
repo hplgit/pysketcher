@@ -54,16 +54,31 @@ can be created by the program "`examples/pendulum.py`": "https://github.com/hplg
 ===== Technology =====
 
 Pysketcher applies Matplotlib to make the drawings, but it is quite
-easy to replace the backend `MatplotlibDraw.py` by similar code utilizing
-TikZ or another plotting package. The Pysketcher software is a thin
-layer basically constructing a tree structure of elements in the
-sketch. A lot of classes are offered for different type of basic
+easy to replace the backend `MatplotlibDraw.py` by similar code
+utilizing TikZ or another plotting package. The Pysketcher software is
+a thin layer basically constructing a tree structure of elements in
+the sketch. A lot of classes are offered for different type of basic
 elements, such as Circle, Rectangle, Text, Text with arrow, Force,
-arbitrary curve, etc.
-Complicated figures can be created by sticking one
-figure into another
-(i.e., hierarchical building of figures by sticking one tree
-structure into another).
+arbitrary curve, etc.  Complicated figures can be created by sticking
+one figure into another (i.e., hierarchical building of figures by
+sticking one tree structure into another).
+
+===== Install =====
+
+Pysketcher is pure Python code and
+works with Python version 2 and 3. Just do the standard
+
+!bc sys
+Terminal> sudo python setup.py install
+!ec
+
+Pysketcher demands installation of the following packages:
+
+ * Matplotlib (`sudp pip install matplotlib`)
+ * Future (`sudo pip install future`)
+ * NumPy (`sudo pip install numpy`)
+
+The `Spline` object in Pysketcher also requires SciPy (`sudo pip install scipy`).
 
 ===== Citation =====
 
