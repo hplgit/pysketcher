@@ -6,7 +6,6 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import zip
 from builtins import *
-from past.utils import old_div
 from pysketcher import *
 
 def equal_dict(d1, d2):
@@ -88,9 +87,9 @@ def test_Distance_wText():
         'a2': Distance_wText((0,2), (2, 0), t, fontsize),
         'a3': Distance_wText((2,4.5), (0, 5.5), t, fontsize),
         'a4': Distance_wText((8,4), (10, 3), t, fontsize,
-                             text_spacing=old_div(-1.,60)),
+                             text_spacing=-1./60),
         'a5': Distance_wText((8,2), (10, 1), t, fontsize,
-                             text_spacing=old_div(-1.,40), alignment='right'),
+                             text_spacing=-1./40, alignment='right'),
         'c1': Text_wArrow('text_spacing=-1./60',
                           (4, 3.5), (9, 3.2),
                           fontsize=10, alignment='left'),
@@ -145,12 +144,12 @@ def test_Rectangle():
     W = 4.0
 
     drawing_tool.set_coordinate_system(
-        xmin=0, xmax=2*W, ymin=old_div(-L,2), ymax=2*L,
+        xmin=0, xmax=2*W, ymin=-L/2, ymax=2*L,
         axis=True, instruction_file='tmp_Rectangle.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
-    xpos = old_div(W,2)
+    xpos = W/2
     r = Rectangle(lower_left_corner=(xpos,0), width=W, height=L)
     r.draw()
     r.draw_dimensions()
@@ -167,13 +166,13 @@ def test_Triangle():
     W = 4.0
 
     drawing_tool.set_coordinate_system(
-        xmin=0, xmax=2*W, ymin=old_div(-L,2), ymax=1.2*L,
+        xmin=0, xmax=2*W, ymin=-L/2, ymax=1.2*L,
         axis=True, instruction_file='tmp_Triangle.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     xpos = 1
-    t = Triangle(p1=(old_div(W,2),0), p2=(3*W/2,old_div(W,2)), p3=(4*W/5.,L))
+    t = Triangle(p1=(W/2,0), p2=(3*W/2,W/2), p3=(4*W/5.,L))
     t.draw()
     t.draw_dimensions()
     drawing_tool.display('Triangle')
@@ -190,13 +189,13 @@ def test_Arc():
     W = 4.0
 
     drawing_tool.set_coordinate_system(
-        xmin=old_div(-W,2), xmax=W, ymin=old_div(-L,2), ymax=1.5*L,
+        xmin=-W/2, xmax=W, ymin=-L/2, ymax=1.5*L,
         axis=True, instruction_file='tmp_Arc.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
 
     center = point(0,0)
-    radius = old_div(L,2)
+    radius = L/2
     start_angle = 60
     arc_angle = 45
     a = Arc(center, radius, start_angle, arc_angle)
@@ -209,11 +208,11 @@ def test_Arc():
         'start_angle':
         Arc_wText(
             'start_angle', center, R1, start_angle=0,
-            arc_angle=start_angle, text_spacing=old_div(1,10.)),
+            arc_angle=start_angle, text_spacing=1/10.),
         'arc_angle':
         Arc_wText(
             'arc_angle', center, R2, start_angle=start_angle,
-            arc_angle=arc_angle, text_spacing=old_div(1,20.)),
+            arc_angle=arc_angle, text_spacing=1/20.),
         'r=0':
         Line(center, center +
              point(R*cos(radians(start_angle)),
@@ -225,8 +224,8 @@ def test_Arc():
         'r=start+arc_angle':
         Line(center, center +
              point(R, 0)).set_linestyle('dashed'),
-        'radius': Distance_wText(center, a(0), 'radius', text_spacing=old_div(1,40.)),
-        'center': Text('center', center-point(old_div(radius,10.), old_div(radius,10.))),
+        'radius': Distance_wText(center, a(0), 'radius', text_spacing=1/40.),
+        'center': Text('center', center-point(radius/10., radius/10.)),
         }
     for dimension in a.dimensions:
         if dimension.startswith('r='):
@@ -267,7 +266,7 @@ def test_Spring():
     W = 2.0
 
     drawing_tool.set_coordinate_system(
-        xmin=0, xmax=7*W, ymin=old_div(-L,2), ymax=1.5*L,
+        xmin=0, xmax=7*W, ymin=-L/2, ymax=1.5*L,
         axis=True, instruction_file='tmp_Spring.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
@@ -275,13 +274,13 @@ def test_Spring():
     xpos = W
     s1 = Spring((W,0), L, teeth=True)
     s1_title = Text('Default Spring',
-                    s1.geometric_features()['end'] + point(0,old_div(L,10)))
+                    s1.geometric_features()['end'] + point(0,L/10))
     s1.draw()
     s1_title.draw()
     #s1.draw_dimensions()
     xpos += 3*W
-    s2 = Spring(start=(xpos,0), length=L, width=old_div(W,2.),
-                bar_length=old_div(L,6.), teeth=False)
+    s2 = Spring(start=(xpos,0), length=L, width=W/2.,
+                bar_length=L/6., teeth=False)
     s2.draw()
     s2.draw_dimensions()
     drawing_tool.display('Spring')
@@ -323,7 +322,7 @@ def test_Dashpot():
     xpos = 0
 
     drawing_tool.set_coordinate_system(
-        xmin=xpos, xmax=xpos+5.5*W, ymin=old_div(-L,2), ymax=1.5*L,
+        xmin=xpos, xmax=xpos+5.5*W, ymin=-L/2, ymax=1.5*L,
         axis=True, instruction_file='tmp_Dashpot.py')
     drawing_tool.set_linecolor('blue')
     drawing_tool.set_grid(True)
@@ -332,15 +331,15 @@ def test_Dashpot():
     xpos = 1.5
     d1 = Dashpot(start=(xpos,0), total_length=L)
     d1_title = Text('Dashpot (default)',
-                    d1.geometric_features()['end'] + point(0,old_div(L,10)))
+                    d1.geometric_features()['end'] + point(0,L/10))
     d1.draw()
     d1_title.draw()
 
     # Dashpot for animation with fixed bar_length, dashpot_length and
     # prescribed piston_pos
     xpos += 2.5*W
-    d2 = Dashpot(start=(xpos,0), total_length=1.2*L, width=old_div(W,2),
-                 bar_length=W, dashpot_length=old_div(L,2), piston_pos=2*W)
+    d2 = Dashpot(start=(xpos,0), total_length=1.2*L, width=W/2,
+                 bar_length=W, dashpot_length=L/2, piston_pos=2*W)
     d2.draw()
     d2.draw_dimensions()
 
@@ -400,6 +399,202 @@ def test_Wavy():
     msg = 'expected=%s, computed=%s' % (expected, computed)
     assert equal_dict(computed, expected), msg
 
+def test_beam():
+    L = 8.0
+    a = 3*L/4
+    b = L - a
+    H = 1.0
+    xpos = 0.0
+    ypos = 3.0
+
+    drawing_tool.set_coordinate_system(
+        xmin=-3, xmax=xpos+1.5*L,
+        ymin=0, ymax=ypos+5*H,
+        axis=False)
+    drawing_tool.set_linecolor('blue')
+    #drawing_tool.set_grid(True)
+    drawing_tool.set_fontsize(16)
+
+    A = point(xpos,ypos)
+
+    beam = Rectangle(A, L, H)
+
+    h = L/16  # size of support, clamped wall etc
+
+    clamped = Rectangle(A - point(h,0) - point(0,2*h), h,
+                        6*h).set_filled_curves(pattern='/')
+
+    load = ConstantBeamLoad(A + point(0,H), L, H)
+    load.set_linewidth(1).set_linecolor('black')
+    load_text = Text('$w$',
+                     load.geometric_features()['mid_top'] +
+                     point(0,h/2.))
+
+    B = A + point(a, 0)
+    C = B + point(b, 0)
+
+    support = SimplySupportedBeam(B, h)  # pt B is simply supported
+
+
+    R1 = Force(A-point(0,2*H), A, '$R_1$', text_spacing=1./50)
+    R1.set_linewidth(3).set_linecolor('black')
+    R2 = Force(B-point(0,2*H),
+               support.geometric_features()['mid_support'],
+               '$R_2$', text_spacing=1./50)
+    R2.set_linewidth(3).set_linecolor('black')
+    M1 = Moment('$M_1$', center=A + point(-H, H/2), radius=H/2,
+                left=True, text_spacing=1/30.)
+    M1.set_linecolor('black')
+
+    ab_level = point(0, 3*h)
+    a_dim = Distance_wText(A - ab_level, B - ab_level, '$a$')
+    b_dim = Distance_wText(B - ab_level, C - ab_level, '$b$')
+    dims = Composition({'a': a_dim, 'b': b_dim})
+    symbols = Composition(
+        {'R1': R1, 'R2': R2, 'M1': M1,
+         'w': load, 'w text': load_text,
+         'A': Text('$A$', A+point(0.7*h,-0.9*h)),
+         'B': Text('$B$',
+                   support.geometric_features()['mid_support']-
+                   point(1.25*h,0)),
+         'C': Text('$C$', C+point(h/2,-h/2))})
+
+    x_axis = Axis(A + point(L+h, H/2), 2*H, '$x$',).\
+             set_linecolor('black')
+    y_axis = Axis(A + point(0,H/2), 3.5*H, '$y$',
+                  label_alignment='left',
+                  rotation_angle=90).set_linecolor('black')
+    axes = Composition({'x axis': x_axis, 'y axis': y_axis})
+
+    annotations = Composition({'dims': dims, 'symbols': symbols,
+                               'axes': axes})
+    beam = Composition({'beam': beam, 'support': support,
+                        'clamped end': clamped, 'load': load})
+
+    def deflection(x, a, b, w):
+        import numpy as np
+        R1 = 5./8*w*a - 3*w*b**2/(4*a)
+        R2 = 3./8*w*a + w*b + 3*w*b**2/(4*a)
+        M1 = R1*a/3 - w*a**2/12
+        y = -(M1/2.)*x**2 + 1./6*R1*x**3 - w/24.*x**4 + \
+            1./6*R2*np.where(x > a, 1, 0)*(x-a)**3
+        return y
+
+    x = linspace(0, L, 101)
+    y = deflection(x, a, b, w=1.0)
+    y /= abs(y.max() - y.min())
+    y += ypos + H/2
+
+    elastic_line = Curve(x, y).\
+                   set_linecolor('red').\
+                   set_linestyle('dashed').\
+                   set_linewidth(3)
+
+    beam.draw()
+    drawing_tool.display()
+
+    import time
+    time.sleep(1.5)
+
+    annotations.draw()
+    drawing_tool.display()
+    time.sleep(1.5)
+
+    elastic_line.draw()
+    drawing_tool.display()
+    #beam.draw_dimensions()
+    drawing_tool.savefig('tmp_beam')
+
+    all = Composition({'beam': beam, 'text': annotations,
+                       'deflection': elastic_line})
+    expected = {
+        'beam': {
+            'load': {
+                u'box': {
+                    u'rectangle': "5 (x,y) coords linecolor=u'k' linewidth=1",},
+                u'arrow9': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow8': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow7': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow6': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow5': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow4': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow3': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow2': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow1': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                u'arrow0': {u'arrow': {
+                    u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},},
+            'beam': {
+                u'rectangle': "5 (x,y) coords",},
+            'support': {
+                u'triangle': {u'triangle': "4 (x,y) coords",},
+                u'rectangle': {u'rectangle': "5 (x,y) coords fillcolor=u'' fillpattern=u'/'",},},
+            'clamped end': {
+                u'rectangle': "5 (x,y) coords fillcolor=u'' fillpattern='/'",},},
+        'deflection': "101 (x,y) coords linecolor='red' linewidth=3 linestyle='dashed'",
+        'text': {
+            'symbols': {
+                'A': "Text at (0.35,2.55)",
+                'w': {u'box': {u'rectangle': "5 (x,y) coords linecolor=u'k' linewidth=1",},
+                      u'arrow9': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow8': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow7': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow6': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow5': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow4': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow3': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow2': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow1': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},
+                      u'arrow0': {u'arrow': {
+                          u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'->'",},},},
+                'C': "Text at (8.25,2.75)",
+                'B': "Text at (5.375,2.275)",
+                'M1': {
+                    u'text': "Text at (-2,3.5)",
+                    u'arc': {u'arc': "181 (x,y) coords linecolor=u'k' arrow=u'->'",},},
+                'R1': {
+                    u'text': "Text at (0,0.49)",
+                    u'arrow': {u'line': "2 (x,y) coords linecolor=u'k' linewidth=3 arrow=u'->'",},},
+                'R2': {
+                    u'text': "Text at (6,0.49)",
+                    u'arrow': {u'line': "2 (x,y) coords linecolor=u'k' linewidth=3 arrow=u'->'",},},
+                'w text': "Text at (4,5.25)",},
+            'dims': {
+                'a': {
+                    u'text': "Text at (3,1.75)",
+                    u'arrow': {u'arrow': {
+                        u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'<->'",},},},
+                'b': {
+                    u'text': "Text at (7,1.75)",
+                    u'arrow': {u'arrow': {
+                        u'line': "2 (x,y) coords linecolor=u'k' linewidth=1 arrow=u'<->'",},},},},
+            'axes': {'x axis': {
+                u'arrow': {u'head left': {u'line': "2 (x,y) coords linecolor=u'k' linestyle=u'solid'",}, u'line': {u'line': "2 (x,y) coords linecolor=u'k'",}, u'head right': {u'line': "2 (x,y) coords linecolor=u'k' linestyle=u'solid'",},}, u'label': "Text at (10.8333,3.5)",},
+                     'y axis': {
+                u'arrow': {u'head left': {u'line': "2 (x,y) coords linecolor=u'k' linestyle=u'solid'",}, u'line': {u'line': "2 (x,y) coords linecolor=u'k'",}, u'head right': {u'line': "2 (x,y) coords linecolor=u'k' linestyle=u'solid'",},}, u'label': "Text at (2.34724e-16,7.33333)",},
+                     },
+            },
+        }
+    computed = eval(repr(all))
+    msg = 'expected=%s, computed=%s' % (expected, computed)
+    assert equal_dict(computed, expected), msg
 
 def diff_files(files1, files2, mode='HTML'):
     import difflib, time

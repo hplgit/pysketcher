@@ -10,7 +10,6 @@ from builtins import str
 from builtins import range
 from builtins import *
 from builtins import object
-from past.utils import old_div
 from numpy import linspace, sin, cos, pi, array, asarray, ndarray, sqrt, abs
 import pprint, copy, glob, os
 from math import radians
@@ -48,7 +47,7 @@ def unit_vec(x, y=None):
     if isinstance(x, (float,int)) and isinstance(y, (float,int)):
         x = point(x, y)
     elif isinstance(x, (list,tuple,ndarray)) and y is None:
-        return old_div(arr2D(x),sqrt(x[0]**2 + x[1]**2))
+        return arr2D(x)/sqrt(x[0]**2 + x[1]**2)
     else:
         raise TypeError('x=%s is %s, must be float or ndarray 2D point' %
                         (x, type(x)))
@@ -233,7 +232,7 @@ class Shape(object):
                 shape_name = shape
                 shape = self.shapes[shape]
             else:
-                shape_name = k  # use index as name if list
+                shape_name = k  # use index as name if list (not dict)
 
             if not isinstance(shape, Shape):
                 if isinstance(shape, dict):
@@ -833,14 +832,14 @@ class Rectangle(Shape):
 
         # Dimensions
         dims = {
-            'width': Distance_wText(p + point(0, old_div(-height,5.)),
-                                    p + point(width, old_div(-height,5.)),
+            'width': Distance_wText(p + point(0, -height/5.),
+                                    p + point(width, -height/5.),
                                     'width'),
-            'height': Distance_wText(p + point(width + old_div(width,5.), 0),
-                                     p + point(width + old_div(width,5.), height),
+            'height': Distance_wText(p + point(width + width/5., 0),
+                                     p + point(width + width/5., height),
                                    'height'),
             'lower_left_corner': Text_wArrow('lower_left_corner',
-                                             p - point(old_div(width,5.), old_div(height,5.)), p)
+                                             p - point(width/5., height/5.), p)
             }
         self.dimensions = dims
 
@@ -920,7 +919,7 @@ class Line(Shape):
         # Define equations for line:
         # y = a*x + b,  x = c*y + d
         try:
-            self.a = old_div((y[1] - y[0]),(x[1] - x[0]))
+            self.a = (y[1] - y[0])/(x[1] - x[0])
             self.b = y[0] - self.a*x[0]
         except ZeroDivisionError:
             # Vertical line, y is not a function of x
@@ -930,7 +929,7 @@ class Line(Shape):
             if self.a is None:
                 self.c = 0
             else:
-                self.c = old_div(1,float(self.a))
+                self.c = 1/float(self.a)
             if self.b is None:
                 self.d = x[1]
         except ZeroDivisionError:
@@ -945,7 +944,7 @@ class Line(Shape):
         # Define equations for line:
         # y = a*x + b,  x = c*y + d
         if abs(x[1] - x[0]) > tol:
-            self.a = old_div((y[1] - y[0]),(x[1] - x[0]))
+            self.a = (y[1] - y[0])/(x[1] - x[0])
             self.b = y[0] - self.a*x[0]
         else:
             # Vertical line, y is not a function of x
@@ -954,7 +953,7 @@ class Line(Shape):
         if self.a is None:
             self.c = 0
         elif abs(self.a) > tol:
-            self.c = old_div(1,float(self.a))
+            self.c = 1/float(self.a)
             self.d = x[1]
         else:  # self.a is 0
             # Horizontal line, x is not a function of y
@@ -1033,10 +1032,9 @@ class Arc(Shape):
         # Cannot set dimensions (Arc_wText recurses into this
         # constructor forever). Set in test_Arc instead.
 
-        # Stored geometric features
     def geometric_features(self):
         a = self.shapes['arc']
-        m = old_div(len(a.x),2)  # mid point in array
+        m = len(a.x)//2  # mid point in array
         d = {'start': point(a.x[0], a.y[0]),
              'end': point(a.x[-1], a.y[-1]),
              'mid': point(a.x[m], a.y[m])}
@@ -1220,7 +1218,7 @@ class VelocityProfile(Shape):
         shapes['start line'] = Line(start, (start[0], start[1]+height))
 
         # Draw velocity arrows
-        dy = old_div(float(height),(num_arrows-1))
+        dy = float(height)/(num_arrows-1)
         x = start[0]
         y = start[1]
         r = profile(y)  # Test on return type
@@ -1240,7 +1238,7 @@ class VelocityProfile(Shape):
         xs = []
         ys = []
         n = 100
-        dy = old_div(float(height),n)
+        dy = float(height)/n
         for i in range(n+2):
             y = start[1] + i*dy
             vx, vy = profile(y)
@@ -1276,7 +1274,7 @@ class Arrow3(Shape):
         top = (self.bottom[0], self.bottom[1] + self.length)
         main = Line(self.bottom, top)
         #head_length = self.length/8.0
-        head_length = old_div(drawing_tool.xrange,50.)
+        head_length = drawing_tool.xrange/50.
         head_degrees = radians(30)
         head_left_pt = (top[0] - head_length*sin(head_degrees),
                         top[1] - head_length*cos(head_degrees))
@@ -1354,7 +1352,7 @@ class Text_wArrow(Text):
 class Axis(Shape):
     def __init__(self, start, length, label,
                  rotation_angle=0, fontsize=0,
-                 label_spacing=old_div(1.,45), label_alignment='left'):
+                 label_spacing=1./45, label_alignment='left'):
         """
         Draw axis from start with `length` to the right
         (x axis). Place label at the end of the arrow tip.
@@ -1400,7 +1398,7 @@ class Force(Arrow1):
     a distance `text_spacing` times the width of the total plotting
     area away from the specified point.
     """
-    def __init__(self, start, end, text, text_spacing=old_div(1.,60),
+    def __init__(self, start, end, text, text_spacing=1./60,
                  fontsize=0, text_pos='start', text_alignment='center'):
         Arrow1.__init__(self, start, end, style='->')
         if isinstance(text_spacing, (tuple,list)):
@@ -1447,7 +1445,7 @@ class Force(Arrow1):
 class Axis2(Force):
     def __init__(self, start, length, label,
                  rotation_angle=0, fontsize=0,
-                 label_spacing=old_div(1.,45), label_alignment='left'):
+                 label_spacing=1./45, label_alignment='left'):
         direction = point(cos(radians(rotation_angle)),
                           sin(radians(rotation_angle)))
         Force.__init__(start=start, end=length*direction, text=label,
@@ -1464,7 +1462,7 @@ class Gravity(Axis):
     """Downward-pointing gravity arrow with the symbol g."""
     def __init__(self, start, length, fontsize=0):
         Axis.__init__(self, start, length, '$g$', below=False,
-                      rotation_angle=-90, label_spacing=old_div(1.,30),
+                      rotation_angle=-90, label_spacing=1./30,
                       fontsize=fontsize)
         self.shapes['arrow'].set_linecolor('black')
 
@@ -1473,7 +1471,7 @@ class Gravity(Force):
     """Downward-pointing gravity arrow with the symbol g."""
     def __init__(self, start, length, text='$g$', fontsize=0):
         Force.__init__(self, start, (start[0], start[1]-length),
-                       text, text_spacing=old_div(1.,60),
+                       text, text_spacing=1./60,
                        fontsize=0, text_pos='end')
         self.shapes['arrow'].set_linecolor('black')
 
@@ -1488,7 +1486,7 @@ class Distance_wText(Shape):
     horizontal-like arrows, the text is placed the same distance
     above, but aligned 'center' by default (when `alignment` is None).
     """
-    def __init__(self, start, end, text, fontsize=0, text_spacing=old_div(1,60.),
+    def __init__(self, start, end, text, fontsize=0, text_spacing=1/60.,
                  alignment=None, text_pos='mid'):
         start = arr2D(start)
         end   = arr2D(end)
@@ -1535,10 +1533,10 @@ class Distance_wText(Shape):
 class Arc_wText(Shape):
     def __init__(self, text, center, radius,
                  start_angle, arc_angle, fontsize=0,
-                 resolution=180, text_spacing=old_div(1,60.)):
+                 resolution=180, text_spacing=1/60.):
         arc = Arc(center, radius, start_angle, arc_angle,
                   resolution)
-        mid = arr2D(arc(old_div(arc_angle,2.)))
+        mid = arr2D(arc(arc_angle/2.))
         normal = unit_vec(mid - arr2D(center))
         text_pos = mid + normal*drawing_tool.xrange*text_spacing
         self.shapes = {'arc': arc,
@@ -1568,11 +1566,11 @@ class Composition(Shape):
 class SimplySupportedBeam(Shape):
     def __init__(self, pos, size):
         pos = arr2D(pos)
-        P0 = (pos[0] - old_div(size,2.), pos[1]-size)
-        P1 = (pos[0] + old_div(size,2.), pos[1]-size)
+        P0 = (pos[0] - size/2., pos[1]-size)
+        P1 = (pos[0] + size/2., pos[1]-size)
         triangle = Triangle(P0, P1, pos)
-        gap = old_div(size,5.)
-        h = old_div(size,4.)  # height of rectangle
+        gap = size/5.
+        h = size/4.  # height of rectangle
         P2 = (P0[0], P0[1]-gap-h)
         rectangle = Rectangle(P2, size, h).set_filled_curves(pattern='/')
         self.shapes = {'triangle': triangle, 'rectangle': rectangle}
@@ -1607,7 +1605,7 @@ class ConstantBeamLoad(Shape):
     def __init__(self, lower_left_corner, width, height, num_arrows=10):
         box = Rectangle(lower_left_corner, width, height)
         self.shapes = {'box': box}
-        dx = old_div(float(width),(num_arrows-1))
+        dx = float(width)/(num_arrows-1)
         y_top = lower_left_corner[1] + height
         y_tip = lower_left_corner[1]
         for i in range(num_arrows):
@@ -1621,7 +1619,7 @@ class ConstantBeamLoad(Shape):
 class Moment(Arc_wText):
     def __init__(self, text, center, radius,
                  left=True, counter_clockwise=True,
-                 fontsize=0, text_spacing=old_div(1,60.)):
+                 fontsize=0, text_spacing=1/60.):
         style = '->' if counter_clockwise else '<-'
         start_angle = 90 if left else -90
         Arc_wText.__init__(self, text, center, radius,
@@ -1629,13 +1627,13 @@ class Moment(Arc_wText):
                            arc_angle=180, fontsize=fontsize,
                            text_spacing=text_spacing,
                            resolution=180)
-        self.shapes['arc'].set_arrow(style)
+        self.shapes['arc']['arc'].set_arrow(style)  # Curve object
 
 
 class Wheel(Shape):
     def __init__(self, center, radius, inner_radius=None, nlines=10):
         if inner_radius is None:
-            inner_radius = old_div(radius,5.0)
+            inner_radius = radius/5.0
 
         outer = Circle(center, radius)
         inner = Circle(center, inner_radius)
@@ -1666,7 +1664,7 @@ class SineWave(Shape):
         self.amplitude = amplitude
         self.mean_level = mean_level
 
-        npoints = old_div((self.xstop - self.xstart),(old_div(self.wavelength,61.0)))
+        npoints = (self.xstop - self.xstart)/(self.wavelength/61.0)
         x = linspace(self.xstart, self.xstop, npoints)
         k = 2*pi/self.wavelength # frequency
         y = self.mean_level + self.amplitude*sin(k*x)
@@ -1687,7 +1685,7 @@ class Spring(Shape):
     (these parameters can later be extracted as attributes, see table
     below).
     """
-    spring_fraction = old_div(1.,2)  # fraction of total length occupied by spring
+    spring_fraction = 1./2  # fraction of total length occupied by spring
 
     def __init__(self, start, length, width=None, bar_length=None,
                  num_windings=11, teeth=False):
@@ -1700,9 +1698,9 @@ class Spring(Shape):
             n = n+1
         L = length
         if width is None:
-            w = old_div(L,10.)
+            w = L/10.
         else:
-            w = old_div(width,2.0)
+            w = width/2.0
         s = bar_length
 
         # [0, x, L-x, L], f = (L-2*x)/L
@@ -1733,7 +1731,7 @@ class Spring(Shape):
 
         shapes['bar1'] = Line(B, P0)
         spring_length = L - 2*s
-        t = old_div(spring_length,n)  # height increment per winding
+        t = spring_length/n  # height increment per winding
         if teeth:
             resolution = 4
         else:
@@ -1753,7 +1751,7 @@ class Spring(Shape):
                                 'length')
         num_windings = Text_wArrow('num_windings',
                                    (B[0]+2*w,P2[1]+w),
-                                   (B[0]+1.2*w, B[1]+old_div(L,2.)))
+                                   (B[0]+1.2*w, B[1]+L/2.))
         blength1 = Distance_wText((B[0]-2*w, B[1]), (B[0]-2*w, P0[1]),
                                        'bar_length',
                                        text_pos=(P0[0]-7*w, P0[1]+w))
@@ -1802,18 +1800,18 @@ class Dashpot(Shape):
     ``geometric_features``.
 
     """
-    dashpot_fraction = old_div(1.,2)            # fraction of total_length
-    piston_gap_fraction = old_div(1.,6)         # fraction of width
-    piston_thickness_fraction = old_div(1.,8)   # fraction of dashplot_length
+    dashpot_fraction = 1./2            # fraction of total_length
+    piston_gap_fraction = 1./6         # fraction of width
+    piston_thickness_fraction = 1./8   # fraction of dashplot_length
 
     def __init__(self, start, total_length, bar_length=None,
                  width=None, dashpot_length=None, piston_pos=None):
         B = start
         L = total_length
         if width is None:
-            w = old_div(L,10.)    # total width 1/5 of length
+            w = L/10.    # total width 1/5 of length
         else:
-            w = old_div(width,2.0)
+            w = width/2.0
         s = bar_length
 
         # [0, x, L-x, L], f = (L-2*x)/L
@@ -1837,7 +1835,7 @@ class Dashpot(Shape):
             dashpot_length = f*L
         else:
             if s is None:
-                f = old_div(1.,2)  # the bar lengths are taken as f*dashpot_length
+                f = 1./2  # the bar lengths are taken as f*dashpot_length
                 s = f*dashpot_length # default
             P1 = (B[0], B[1]+s+dashpot_length)
         P0 = (B[0], B[1]+s)
@@ -1950,7 +1948,7 @@ class Wavy(Shape):
 
         A_0 = amplitude_of_perturbations
         A_p = 0.3*A_0
-        A_k = old_div(k_0,2)
+        A_k = k_0/2
 
         x = linspace(xmin, xmax, 2001)
 
@@ -2583,8 +2581,8 @@ def _test5():
     c = 6.  # center point of box
     w = 2.  # size of box
     L = 3
-    r1 = Rectangle((c-old_div(w,2), c-old_div(w,2)), w, w)
-    l1 = Line((c,c-old_div(w,2)), (c,c-old_div(w,2)-L))
+    r1 = Rectangle((c-w/2, c-w/2), w, w)
+    l1 = Line((c,c-w/2), (c,c-w/2-L))
     linecolor('blue')
     filled_curves(True)
     r1.draw()
@@ -2604,9 +2602,9 @@ def rolling_wheel(total_rotation_angle):
     angle = 2.0
     pngfiles = []
     w1 = Wheel(center=center, radius=radius, inner_radius=0.5, nlines=7)
-    for i in range(int(old_div(total_rotation_angle,angle))):
+    for i in range(int(total_rotation_angle/angle)):
         w1.draw()
-        print('XXXX BIG PROBLEM WITH ANIMATE!!!')
+        print('BIG PROBLEM WITH ANIMATE!!!')
         display()
 
 
