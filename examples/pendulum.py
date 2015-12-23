@@ -53,7 +53,7 @@ drawing_tool.display()
 drawing_tool.savefig('tmp_pendulum1')
 
 # Draw body diagram
-raw_input('Press Return to make body diagram: ')
+input('Press Return to make body diagram: ')
 #import time; time.sleep(3)
 drawing_tool.erase()
 
@@ -110,4 +110,4 @@ body_diagram.draw()
 #drawing_tool.display('Body diagram')
 drawing_tool.savefig('tmp_pendulum5')
 
-raw_input()
+input()

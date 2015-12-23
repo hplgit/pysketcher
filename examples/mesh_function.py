@@ -82,5 +82,5 @@ interpolant.draw()
 drawing_tool.display()
 drawing_tool.savefig('%s_ui' % illustration.get_name())
 
-raw_input()
+input()
 

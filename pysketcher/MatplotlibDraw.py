@@ -8,7 +8,7 @@ from builtins import input
 from builtins import str
 from builtins import *
 from builtins import object
-from past.utils import old_div
+
 import os
 import matplotlib
 matplotlib.use('TkAgg')
@@ -64,8 +64,8 @@ class MatplotlibDraw(object):
         x_space = new_x_range - x_range
         new_y_range = y_range*100./occupation_percent
         y_space = new_y_range - y_range
-        self.ax.set_xlim(minmax['xmin']-old_div(x_space,2.), minmax['xmax']+old_div(x_space,2.))
-        self.ax.set_ylim(minmax['ymin']-old_div(y_space,2.), minmax['ymax']+old_div(y_space,2.))
+        self.ax.set_xlim(minmax['xmin']-x_space/2., minmax['xmax']+x_space/2.)
+        self.ax.set_ylim(minmax['ymin']-y_space/2., minmax['ymax']+y_space/2.)
 
     def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
                               instruction_file=None, new_figure=True,
@@ -99,7 +99,7 @@ class MatplotlibDraw(object):
 
         # Compute the right X11 geometry on the screen based on the
         # x-y ratio of axis ranges
-        ratio = old_div((self.ymax-self.ymin),(self.xmax-self.xmin))
+        ratio = (self.ymax-self.ymin)/(self.xmax-self.xmin)
         self.xsize = 800  # pixel size
         self.ysize = self.xsize*ratio
         geometry = '%dx%d' % (self.xsize, self.ysize)
@@ -283,9 +283,15 @@ ax.set_aspect('equal')
             if self.instruction_file:
                 self.instruction_file.write("[line] = ax.fill(x, y, '%s', edgecolor='%s', linewidth=%d, hatch='%s')\n" % (fillcolor, linecolor, linewidth, fillpattern))
 
-        elif arrow:
+        else:
+            # Plain line
+            [line] = self.ax.plot(x, y, linecolor, linewidth=linewidth,
+                                  linestyle=linestyle)
+            if self.instruction_file:
+                self.instruction_file.write("[line] = ax.plot(x, y, '%s', linewidth=%d, linestyle='%s')\n" % (linecolor, linewidth, linestyle))
+
+        if arrow:
             # Note that a Matplotlib arrow is a line with the arrow tip
-            # (do not draw the line in addition)
             if not arrow in ('->', '<-', '<->'):
                 raise ValueError("arrow argument must be '->', '<-', or '<->', not %s" % repr(arrow))
 
@@ -302,17 +308,10 @@ ax.set_aspect('equal')
                 dx_e, dy_e = x[-1]-x[-2], y[-1]-y[-2]
                 self._plot_arrow(x_e, y_e, dx_e, dy_e, '->',
                                  linestyle, linewidth, linecolor)
-        else:
-            # Plain line
-            [line] = self.ax.plot(x, y, linecolor, linewidth=linewidth,
-                                  linestyle=linestyle)
-            if self.instruction_file:
-                self.instruction_file.write("[line] = ax.plot(x, y, '%s', linewidth=%d, linestyle='%s')\n" % (linecolor, linewidth, linestyle))
-
         if shadow:
             # http://matplotlib.sourceforge.net/users/transforms_tutorial.html#using-offset-transforms-to-create-a-shadow-effect
             # shift the object over 2 points, and down 2 points
-            dx, dy = old_div(shadow,72.), old_div(-shadow,72.)
+            dx, dy = shadow/72., -shadow/72.
             offset = transforms.ScaledTranslation(
                 dx, dy, self.fig.dpi_scale_trans)
             shadow_transform = self.ax.transData + offset
@@ -446,7 +445,8 @@ ax.annotate('%s', xy=%s, xycoords='data',
                             linewidth=2,
                             shrinkA=5,
                             shrinkB=5))
-""" % (text, pt, position, alignment, fontsize))
+""" % (text, pt.tolist() if isinstance(pt, np.ndarray) else pt,
+       position, alignment, fontsize))
 
 # Drawing annotations with arrows:
 #http://matplotlib.sourceforge.net/users/annotations_intro.html

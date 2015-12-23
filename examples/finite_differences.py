@@ -131,5 +131,5 @@ mesh_cn.draw()
 drawing_tool.display()
 drawing_tool.savefig('fd_centered_CN')
 
-raw_input()
+input()
 

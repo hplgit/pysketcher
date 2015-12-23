@@ -262,9 +262,9 @@ was produced by this code:
         <span style="color: #BA2121">&#39;a2&#39;</span>: Distance_wText((<span style="color: #666666">0</span>,<span style="color: #666666">2</span>), (<span style="color: #666666">2</span>, <span style="color: #666666">0</span>), t, fontsize),
         <span style="color: #BA2121">&#39;a3&#39;</span>: Distance_wText((<span style="color: #666666">2</span>,<span style="color: #666666">4.5</span>), (<span style="color: #666666">0</span>, <span style="color: #666666">5.5</span>), t, fontsize),
         <span style="color: #BA2121">&#39;a4&#39;</span>: Distance_wText((<span style="color: #666666">8</span>,<span style="color: #666666">4</span>), (<span style="color: #666666">10</span>, <span style="color: #666666">3</span>), t, fontsize,
-                             text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">-1.</span>,<span style="color: #666666">60</span>)),
+                             text_spacing<span style="color: #666666">=-1./60</span>),
         <span style="color: #BA2121">&#39;a5&#39;</span>: Distance_wText((<span style="color: #666666">8</span>,<span style="color: #666666">2</span>), (<span style="color: #666666">10</span>, <span style="color: #666666">1</span>), t, fontsize,
-                             text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">-1.</span>,<span style="color: #666666">40</span>), alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;right&#39;</span>),
+                             text_spacing<span style="color: #666666">=-1./40</span>, alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;right&#39;</span>),
         <span style="color: #BA2121">&#39;c1&#39;</span>: Text_wArrow(<span style="color: #BA2121">&#39;text_spacing=-1./60&#39;</span>,
                           (<span style="color: #666666">4</span>, <span style="color: #666666">3.5</span>), (<span style="color: #666666">9</span>, <span style="color: #666666">3.2</span>),
                           fontsize<span style="color: #666666">=10</span>, alignment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;left&#39;</span>),
@@ -301,12 +301,12 @@ The above figure can be produced by the following code.
     W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=2*</span>L,
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=2*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Rectangle.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
 
-    xpos <span style="color: #666666">=</span> old_div(W,<span style="color: #666666">2</span>)
+    xpos <span style="color: #666666">=</span> W<span style="color: #666666">/2</span>
     r <span style="color: #666666">=</span> Rectangle(lower_left_corner<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), width<span style="color: #666666">=</span>W, height<span style="color: #666666">=</span>L)
     r<span style="color: #666666">.</span>draw()
     r<span style="color: #666666">.</span>draw_dimensions()
@@ -337,13 +337,13 @@ The code below produces the figure.
     W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.2*</span>L,
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=2*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.2*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Triangle.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
 
     xpos <span style="color: #666666">=</span> <span style="color: #666666">1</span>
-    t <span style="color: #666666">=</span> Triangle(p1<span style="color: #666666">=</span>(old_div(W,<span style="color: #666666">2</span>),<span style="color: #666666">0</span>), p2<span style="color: #666666">=</span>(<span style="color: #666666">3*</span>W<span style="color: #666666">/2</span>,old_div(W,<span style="color: #666666">2</span>)), p3<span style="color: #666666">=</span>(<span style="color: #666666">4*</span>W<span style="color: #666666">/5.</span>,L))
+    t <span style="color: #666666">=</span> Triangle(p1<span style="color: #666666">=</span>(W<span style="color: #666666">/2</span>,<span style="color: #666666">0</span>), p2<span style="color: #666666">=</span>(<span style="color: #666666">3*</span>W<span style="color: #666666">/2</span>,W<span style="color: #666666">/2</span>), p3<span style="color: #666666">=</span>(<span style="color: #666666">4*</span>W<span style="color: #666666">/5.</span>,L))
     t<span style="color: #666666">.</span>draw()
     t<span style="color: #666666">.</span>draw_dimensions()
     drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Triangle&#39;</span>)
@@ -374,13 +374,13 @@ An arc like the one above is produced by
     W <span style="color: #666666">=</span> <span style="color: #666666">4.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>W,<span style="color: #666666">2</span>), xmax<span style="color: #666666">=</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.5*</span>L,
+        xmin<span style="color: #666666">=-</span>W<span style="color: #666666">/2</span>, xmax<span style="color: #666666">=</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Arc.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
 
     center <span style="color: #666666">=</span> point(<span style="color: #666666">0</span>,<span style="color: #666666">0</span>)
-    radius <span style="color: #666666">=</span> old_div(L,<span style="color: #666666">2</span>)
+    radius <span style="color: #666666">=</span> L<span style="color: #666666">/2</span>
     start_angle <span style="color: #666666">=</span> <span style="color: #666666">60</span>
     arc_angle <span style="color: #666666">=</span> <span style="color: #666666">45</span>
     a <span style="color: #666666">=</span> Arc(center, radius, start_angle, arc_angle)
@@ -393,11 +393,11 @@ An arc like the one above is produced by
         <span style="color: #BA2121">&#39;start_angle&#39;</span>:
         Arc_wText(
             <span style="color: #BA2121">&#39;start_angle&#39;</span>, center, R1, start_angle<span style="color: #666666">=0</span>,
-            arc_angle<span style="color: #666666">=</span>start_angle, text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">1</span>,<span style="color: #666666">10.</span>)),
+            arc_angle<span style="color: #666666">=</span>start_angle, text_spacing<span style="color: #666666">=1/10.</span>),
         <span style="color: #BA2121">&#39;arc_angle&#39;</span>:
         Arc_wText(
             <span style="color: #BA2121">&#39;arc_angle&#39;</span>, center, R2, start_angle<span style="color: #666666">=</span>start_angle,
-            arc_angle<span style="color: #666666">=</span>arc_angle, text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">1</span>,<span style="color: #666666">20.</span>)),
+            arc_angle<span style="color: #666666">=</span>arc_angle, text_spacing<span style="color: #666666">=1/20.</span>),
         <span style="color: #BA2121">&#39;r=0&#39;</span>:
         Line(center, center <span style="color: #666666">+</span>
              point(R<span style="color: #666666">*</span>cos(radians(start_angle)),
@@ -409,8 +409,8 @@ An arc like the one above is produced by
         <span style="color: #BA2121">&#39;r=start+arc_angle&#39;</span>:
         Line(center, center <span style="color: #666666">+</span>
              point(R, <span style="color: #666666">0</span>))<span style="color: #666666">.</span>set_linestyle(<span style="color: #BA2121">&#39;dashed&#39;</span>),
-        <span style="color: #BA2121">&#39;radius&#39;</span>: Distance_wText(center, a(<span style="color: #666666">0</span>), <span style="color: #BA2121">&#39;radius&#39;</span>, text_spacing<span style="color: #666666">=</span>old_div(<span style="color: #666666">1</span>,<span style="color: #666666">40.</span>)),
-        <span style="color: #BA2121">&#39;center&#39;</span>: Text(<span style="color: #BA2121">&#39;center&#39;</span>, center<span style="color: #666666">-</span>point(old_div(radius,<span style="color: #666666">10.</span>), old_div(radius,<span style="color: #666666">10.</span>))),
+        <span style="color: #BA2121">&#39;radius&#39;</span>: Distance_wText(center, a(<span style="color: #666666">0</span>), <span style="color: #BA2121">&#39;radius&#39;</span>, text_spacing<span style="color: #666666">=1/40.</span>),
+        <span style="color: #BA2121">&#39;center&#39;</span>: Text(<span style="color: #BA2121">&#39;center&#39;</span>, center<span style="color: #666666">-</span>point(radius<span style="color: #666666">/10.</span>, radius<span style="color: #666666">/10.</span>)),
         }
     <span style="color: #008000; font-weight: bold">for</span> dimension <span style="color: #AA22FF; font-weight: bold">in</span> a<span style="color: #666666">.</span>dimensions:
         <span style="color: #008000; font-weight: bold">if</span> dimension<span style="color: #666666">.</span>startswith(<span style="color: #BA2121">&#39;r=&#39;</span>):
@@ -443,7 +443,7 @@ The code for making these two springs goes like this:
     W <span style="color: #666666">=</span> <span style="color: #666666">2.0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=7*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.5*</span>L,
+        xmin<span style="color: #666666">=0</span>, xmax<span style="color: #666666">=7*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Spring.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
@@ -451,13 +451,13 @@ The code for making these two springs goes like this:
     xpos <span style="color: #666666">=</span> W
     s1 <span style="color: #666666">=</span> Spring((W,<span style="color: #666666">0</span>), L, teeth<span style="color: #666666">=</span><span style="color: #008000">True</span>)
     s1_title <span style="color: #666666">=</span> Text(<span style="color: #BA2121">&#39;Default Spring&#39;</span>,
-                    s1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,old_div(L,<span style="color: #666666">10</span>)))
+                    s1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,L<span style="color: #666666">/10</span>))
     s1<span style="color: #666666">.</span>draw()
     s1_title<span style="color: #666666">.</span>draw()
     <span style="color: #408080; font-style: italic">#s1.draw_dimensions()</span>
     xpos <span style="color: #666666">+=</span> <span style="color: #666666">3*</span>W
-    s2 <span style="color: #666666">=</span> Spring(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), length<span style="color: #666666">=</span>L, width<span style="color: #666666">=</span>old_div(W,<span style="color: #666666">2.</span>),
-                bar_length<span style="color: #666666">=</span>old_div(L,<span style="color: #666666">6.</span>), teeth<span style="color: #666666">=</span><span style="color: #008000">False</span>)
+    s2 <span style="color: #666666">=</span> Spring(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), length<span style="color: #666666">=</span>L, width<span style="color: #666666">=</span>W<span style="color: #666666">/2.</span>,
+                bar_length<span style="color: #666666">=</span>L<span style="color: #666666">/6.</span>, teeth<span style="color: #666666">=</span><span style="color: #008000">False</span>)
     s2<span style="color: #666666">.</span>draw()
     s2<span style="color: #666666">.</span>draw_dimensions()
     drawing_tool<span style="color: #666666">.</span>display(<span style="color: #BA2121">&#39;Spring&#39;</span>)
@@ -484,7 +484,7 @@ This dashpot is produced by
     xpos <span style="color: #666666">=</span> <span style="color: #666666">0</span>
 
     drawing_tool<span style="color: #666666">.</span>set_coordinate_system(
-        xmin<span style="color: #666666">=</span>xpos, xmax<span style="color: #666666">=</span>xpos<span style="color: #666666">+5.5*</span>W, ymin<span style="color: #666666">=</span>old_div(<span style="color: #666666">-</span>L,<span style="color: #666666">2</span>), ymax<span style="color: #666666">=1.5*</span>L,
+        xmin<span style="color: #666666">=</span>xpos, xmax<span style="color: #666666">=</span>xpos<span style="color: #666666">+5.5*</span>W, ymin<span style="color: #666666">=-</span>L<span style="color: #666666">/2</span>, ymax<span style="color: #666666">=1.5*</span>L,
         axis<span style="color: #666666">=</span><span style="color: #008000">True</span>, instruction_file<span style="color: #666666">=</span><span style="color: #BA2121">&#39;tmp_Dashpot.py&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_linecolor(<span style="color: #BA2121">&#39;blue&#39;</span>)
     drawing_tool<span style="color: #666666">.</span>set_grid(<span style="color: #008000">True</span>)
@@ -493,15 +493,15 @@ This dashpot is produced by
     xpos <span style="color: #666666">=</span> <span style="color: #666666">1.5</span>
     d1 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=</span>L)
     d1_title <span style="color: #666666">=</span> Text(<span style="color: #BA2121">&#39;Dashpot (default)&#39;</span>,
-                    d1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,old_div(L,<span style="color: #666666">10</span>)))
+                    d1<span style="color: #666666">.</span>geometric_features()[<span style="color: #BA2121">&#39;end&#39;</span>] <span style="color: #666666">+</span> point(<span style="color: #666666">0</span>,L<span style="color: #666666">/10</span>))
     d1<span style="color: #666666">.</span>draw()
     d1_title<span style="color: #666666">.</span>draw()
 
     <span style="color: #408080; font-style: italic"># Dashpot for animation with fixed bar_length, dashpot_length and</span>
     <span style="color: #408080; font-style: italic"># prescribed piston_pos</span>
     xpos <span style="color: #666666">+=</span> <span style="color: #666666">2.5*</span>W
-    d2 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=1.2*</span>L, width<span style="color: #666666">=</span>old_div(W,<span style="color: #666666">2</span>),
-                 bar_length<span style="color: #666666">=</span>W, dashpot_length<span style="color: #666666">=</span>old_div(L,<span style="color: #666666">2</span>), piston_pos<span style="color: #666666">=2*</span>W)
+    d2 <span style="color: #666666">=</span> Dashpot(start<span style="color: #666666">=</span>(xpos,<span style="color: #666666">0</span>), total_length<span style="color: #666666">=1.2*</span>L, width<span style="color: #666666">=</span>W<span style="color: #666666">/2</span>,
+                 bar_length<span style="color: #666666">=</span>W, dashpot_length<span style="color: #666666">=</span>L<span style="color: #666666">/2</span>, piston_pos<span style="color: #666666">=2*</span>W)
     d2<span style="color: #666666">.</span>draw()
     d2<span style="color: #666666">.</span>draw_dimensions()
 

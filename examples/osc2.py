@@ -70,4 +70,4 @@ fig['F_force'] = F_force
 fig.draw()
 drawing_tool.savefig('tmp_oscillator2_force')
 
-raw_input()
+input()

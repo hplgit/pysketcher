@@ -57,4 +57,4 @@ symbols.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp1')
 
-raw_input()
+input()

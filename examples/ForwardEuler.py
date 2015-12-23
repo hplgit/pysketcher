@@ -85,4 +85,4 @@ comic = 'comic' if xkcd else 'non_comic'
 os.system('doconce combine_images pdf -2 tmp1 tmp2 FE_%s_strip' % comic)
 os.system('doconce combine_images png -2 tmp1 tmp2 FE_%s_strip' % comic)
 
-raw_input()
+input()
