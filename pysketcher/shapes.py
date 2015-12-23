@@ -1584,7 +1584,7 @@ class SimplySupportedBeam(Shape):
     def geometric_features(self):
         t = self.shapes['triangle']
         r = self.shapes['rectangle']
-        d = {'pos': point(t.x[2], t.y[2]),  # "p2"/pos
+        d = {'pos': t.geometric_features()['p2'],
              'mid_support': r.geometric_features()['lower_mid']}
         return d
 
@@ -1600,7 +1600,7 @@ class ConstantBeamLoad(Shape):
     ==================== =============================================
     Attribute            Description
     ==================== =============================================
-    mid_point            Middle point at the top of the row of
+    mid_top              Middle point at the top of the row of
                          arrows (often used for positioning a text).
     ==================== =============================================
     """

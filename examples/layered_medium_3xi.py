@@ -27,4 +27,4 @@ fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp2')
 
-raw_input()
+input()

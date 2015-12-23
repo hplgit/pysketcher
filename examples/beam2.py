@@ -25,7 +25,7 @@ clamped = Rectangle(A - point(h,0) - point(0,2*h), h,
 
 load = ConstantBeamLoad(A + point(0,H), L, H)
 load.set_linewidth(1).set_linecolor('black')
-load_text = Text('$w$', load.mid_top + point(0,h/2.))
+load_text = Text('$w$', load.geometric_features()['mid_top'] + point(0,h/2.))
 
 B = A + point(a, 0)
 C = B + point(b, 0)
@@ -35,7 +35,7 @@ support = SimplySupportedBeam(B, h)  # pt B is simply supported
 
 R1 = Force(A-point(0,2*H), A, '$R_1$', text_spacing=1./20)
 R1.set_linewidth(3).set_linecolor('black')
-R2 = Force(B-point(0,2*H), support.mid_support,
+R2 = Force(B-point(0,2*H), support.geometric_features()['mid_support'],
            '$R_2$', text_spacing=1./20)
 R2.set_linewidth(3).set_linecolor('black')
 M1 = Moment('$M_1$', center=A + point(-H, H/2), radius=H/2,
@@ -49,12 +49,13 @@ dims = Composition({'a': a_dim, 'b': b_dim})
 symbols = Composition({'R1': R1, 'R2': R2, 'M1': M1,
                        'w': load, 'w text': load_text,
                        'A': Text('$A$', A+point(0.7*h,-0.9*h)),
-                       'B': Text('$B$', support.mid_support-point(h,0)),
+                       'B': Text('$B$', support.geometric_features()['mid_support']-point(h,0)),
                        'C': Text('$C$', C+point(h/2,-h/2))})
 
 x_axis = Axis(A + point(L+h, H/2), 2*H, '$x$',).set_linecolor('black')
 y_axis = Axis(A + point(0,H/2), 3.5*H, '$y$',
-              below=False, rotation_angle=90).set_linecolor('black')
+              label_alignment='left',
+              rotation_angle=90).set_linecolor('black')
 axes = Composition({'x axis': x_axis, 'y axis': y_axis})
 
 annotations = Composition({'dims': dims, 'symbols': symbols,
@@ -97,4 +98,4 @@ drawing_tool.savefig('tmp_beam2_3.png')
 
 #test_Dashpot(xpos+2*W)
 
-raw_input()
+input()

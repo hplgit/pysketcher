@@ -36,7 +36,7 @@ fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp1')
 
-#raw_input()
+#input()
 
 # Draw piecewise curve for midpoint rule
 def piecewise_curve_for_midpoint_rule(N):
@@ -84,4 +84,4 @@ comic = 'comic' if xkcd else 'non_comic'
 os.system('doconce combine_images pdf -3 tmp1 tmp2 tmp3 integral_%s_strip' % comic)
 os.system('doconce combine_images png -3 tmp1 tmp2 tmp3 integral_%s_strip' % comic)
 
-raw_input()
+input()

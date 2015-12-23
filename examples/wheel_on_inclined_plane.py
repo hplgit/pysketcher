@@ -97,4 +97,4 @@ def inclined_plane():
     print(repr(fig))
 
 inclined_plane()
-raw_input()
+input()
