@@ -53,10 +53,21 @@ See the `examples` directory for some examples beyond the more basic
 ones in the tutorial.
 For example, a pendulum and its body diagram,
 
-<!-- <img src="examples/pendulum2.png" width=800> -->
-![](examples/pendulum2.png)
+<!-- <img src="fig/pendulum2.png" width=800> -->
+![](fig/pendulum2.png)
 
 can be created by the program [`examples/pendulum.py`](https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py).
+
+Here is an illustration of the idea of numerical integration:
+
+<!-- <img src="fig/integral_noncomic_strip.png" width=800> -->
+![](fig/integral_noncomic_strip.png)
+
+As shown in the figure-generating program [`examples/integral_comic_strip.py`](https://github.com/hplgit/pysketcher/tree/master/examples/integral_comic_strip.py),
+this illustration can easily be turned into an XCKD-style comic strip:
+
+<!-- <img src="fig/integral_noncomic_strip.png" width=800> -->
+![](fig/integral_noncomic_strip.png)
 
 ### Technology
 

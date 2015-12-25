@@ -80,7 +80,7 @@ def _is_sequence(seq, length=None,
             if length == len(seq):
                 return True
             elif error_message:
-                raise TypeError('%s is %s; must be %s of length %d' %
+                raise TypeError('sequence %s is not a sequence but %s; must be %s of length %d' %
                             (str(seq), type(seq),
                             ', '.join([str(t) for t in legal_types]),
                              len(seq)))
@@ -89,7 +89,7 @@ def _is_sequence(seq, length=None,
         else:
             return True
     elif error_message:
-        raise TypeError('%s is %s, %s; must be %s' %
+        raise TypeError('sequence %s is not a sequence but %s, %s; must be %s' %
                         (str(seq), seq.__class__.__name__, type(seq),
                         ','.join([str(t)[5:-1] for t in legal_types])))
     else:
@@ -101,6 +101,7 @@ def is_sequence(*sequences, **kwargs):
     error_message = kwargs.get('error_message', True)
     check_inside = kwargs.get('check_inside', False)
     for x in sequences:
+        print('XXX', x, str(x))
         _is_sequence(x, length=length, can_be_None=can_be_None,
                      error_message=error_message)
         if check_inside:
