@@ -66,8 +66,8 @@ Here is an illustration of the idea of numerical integration:
 As shown in the figure-generating program [`examples/integral_comic_strip.py`](https://github.com/hplgit/pysketcher/tree/master/examples/integral_comic_strip.py),
 this illustration can easily be turned into an XCKD-style comic strip:
 
-<!-- <img src="fig/integral_noncomic_strip.png" width=800> -->
-![](fig/integral_noncomic_strip.png)
+<!-- <img src="fig/integral_comic_strip.png" width=800> -->
+![](fig/integral_comic_strip.png)
 
 ### Technology
 
