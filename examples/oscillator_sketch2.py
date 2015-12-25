@@ -1,4 +1,4 @@
-"""As osc.py, but without wheels."""
+"""As oscillator_sketch1.py, but without wheels."""
 from pysketcher import *
 
 L = 12.
@@ -36,7 +36,7 @@ ground = Wall(x=[-L/2,L], y=[H,H], thickness=-H/10)
 fontsize = 18
 text_m = Text('$m$', (2*H, H+2*H), fontsize=fontsize)
 text_kx = Text('$s(u)$', (-L/2, H+4*H), fontsize=fontsize)
-text_bv = Text('$f(u)$', (-L/2, H), fontsize=fontsize)
+text_bv = Text('$f(u)$', (-1.25*L/2, H), fontsize=fontsize)
 x_axis = Axis((2*H, L), H, '$u(t)$', fontsize=fontsize,
               label_spacing=(0.04, -0.01))
 x_axis_start = Line((2*H, L-H/4), (2*H, L+H/4)).set_linewidth(4)
@@ -65,7 +65,7 @@ drawing_tool.savefig('tmp_oscillator2')
 drawing_tool.erase()
 
 F_force = Force((4*H, H+2*H), (4*H+H, H+2*H), '$F(t)$',
-                text_spacing=(0.035, -0.01), text_pos='end', fontsize=fontsize)
+                text_spacing=(0.057, -0.007), text_alignment='left', fontsize=fontsize)
 fig['F_force'] = F_force
 fig.draw()
 drawing_tool.savefig('tmp_oscillator2_force')

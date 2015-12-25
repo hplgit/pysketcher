@@ -101,7 +101,6 @@ def is_sequence(*sequences, **kwargs):
     error_message = kwargs.get('error_message', True)
     check_inside = kwargs.get('check_inside', False)
     for x in sequences:
-        print('XXX', x, str(x))
         _is_sequence(x, length=length, can_be_None=can_be_None,
                      error_message=error_message)
         if check_inside:
