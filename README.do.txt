@@ -58,7 +58,7 @@ Here is an illustration of the idea of numerical integration:
 FIGURE: [fig/integral_noncomic_strip, width=800 frac=1]
 
 As shown in the figure-generating program "`examples/integral_comic_strip.py`": "https://github.com/hplgit/pysketcher/tree/master/examples/integral_comic_strip.py",
-this illustration can easily be turned into an XCKD-style comic strip:
+this illustration can easily be turned into an XKCD-style comic strip:
 
 FIGURE: [fig/integral_comic_strip, width=800 frac=1]
 
