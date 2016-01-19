@@ -10,10 +10,10 @@ Pysketcher can typically be used to draw figures like
 ![](doc/src/tut/fig-tut/wheel_on_inclined_plane.png)
 
 Such figures can easily be *interactively* made using a lot of drawing
-programs.  A Pysketcher figure, however, is defined in terms of
+programs.  A Pysketcher figure, however, is defined trough
 computer code. This gives a great advantage: geometric features can be
-parameterized in term of variables. Geometric variations are then
-trivially generated, and complicated figures can be built as a
+parameterized in terms of variables. Geometric variations are then
+trivially generated. Also, complicated figures can be built as a
 hierarchy of simpler elements.  The figure can easily be made to move
 according to, e.g., a solution of a differential equation.
 
@@ -44,8 +44,8 @@ other objects in the vehicle. [View animation](http://hplgit.github.io/bumpy/doc
 
 ### Tutorial
 
-For an introduction to Pysketcher, see the tutorial in [HTML](http://hplgit.github.io/pysketcher/doc/pub/pysketcher.html), [Sphinx](http://hplgit.github.io/pysketcher/doc/pub/html/index.html), or [PDF](http://hplgit/github.io/pysketcher/doc/pub/pysketcher.pdf) format (or a simplified version of
-the tutorial in Chapter 9 in [A Primer on Scientific Programming with Python](http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen), by H. P. Langtangen, Springer, 2014).
+For an introduction to Pysketcher, see the tutorial in [HTML](http://hplgit.github.io/pysketcher/doc/pub/tutorial/pysketcher.html), [Sphinx](http://hplgit.github.io/pysketcher/doc/pub/tutorial/html/index.html), or [PDF](http://hplgit/github.io/pysketcher/doc/pub/tutorial/pysketcher.pdf) format (or a simplified version of
+the tutorial in Chapter 9 in [A Primer on Scientific Programming with Python](http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen), 4th edition, by H. P. Langtangen, Springer, 2014).
 
 ### Examples
 
@@ -53,22 +53,35 @@ See the `examples` directory for some examples beyond the more basic
 ones in the tutorial.
 For example, a pendulum and its body diagram,
 
-<!-- <img src="examples/pendulum2.png" width=800> -->
-![](examples/pendulum2.png)
+<!-- <img src="fig/pendulum2.png" width=800> -->
+![](fig/pendulum2.png)
 
 can be created by the program [`examples/pendulum.py`](https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py).
 
+Here is an illustration of the idea of numerical integration:
+
+<!-- <img src="fig/integral_noncomic_strip.png" width=800> -->
+![](fig/integral_noncomic_strip.png)
+
+As shown in the figure-generating program [`examples/integral_comic_strip.py`](https://github.com/hplgit/pysketcher/tree/master/examples/integral_comic_strip.py),
+this illustration can easily be turned into an [XKCD](http://xkcd.com) type of comic strip:
+
+<!-- <img src="fig/integral_comic_strip.png" width=800> -->
+![](fig/integral_comic_strip.png)
+
 ### Technology
 
-Pysketcher applies Matplotlib to make the drawings, but it is quite
-easy to replace the backend `MatplotlibDraw.py` by similar code
-utilizing TikZ or another plotting package. The Pysketcher software is
-a thin layer basically constructing a tree structure of elements in
-the sketch. A lot of classes are offered for different type of basic
-elements, such as Circle, Rectangle, Text, Text with arrow, Force,
-arbitrary curve, etc.  Complicated figures can be created by sticking
-one figure into another (i.e., hierarchical building of figures by
-sticking one tree structure into another).
+Pysketcher applies Matplotlib to make the drawings, but it should be quite
+straightforward to replace the backend `MatplotlibDraw.py` by similar code
+utilizing TikZ or another plotting package.
+
+The core of the Pysketcher software is a thin layer basically
+constructing a tree structure of elements in the sketch. A lot of
+classes are offered for different type of basic elements, such as
+Circle, Rectangle, Text, Text with arrow, Force, arbitrary curve, etc.
+Complicated figures can be created by sticking one figure into another
+(i.e., hierarchical building of figures by sticking one tree structure
+into another).
 
 ### Install
 

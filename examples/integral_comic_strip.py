@@ -1,7 +1,7 @@
 """Comic strip for illustrating numerical integration."""
 
 from pysketcher import *
-xdcd = True
+xkcd = True  # True: XKCD copic strip, False: ordinary Matplotlib figure
 
 def f(x):
     return 3*np.exp(-x**4)
