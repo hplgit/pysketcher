@@ -390,7 +390,7 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
 
 
     def text(self, text, position, alignment='center', fontsize=0,
-             arrow_tip=None):
+             arrow_tip=None, bgcolor=None, fgcolor=None, fontfamily=None):
         """
         Write `text` string at a position (centered, left, right - according
         to the `alignment` string). `position` is a point in the coordinate
@@ -409,10 +409,18 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
                     'No self.fontsize attribute to be used when text(...)\n'
                     'is called with fontsize=0. Call set_fontsize method.')
 
+        kwargs = {}
+        if fontfamily is not None:
+            kwargs['family'] = fontfamily
+        if bgcolor is not None:
+            kwargs['backgroundcolor'] = bgcolor
+        if fgcolor is not None:
+            kwargs['color'] = fgcolor
+
         x, y = position
         if arrow_tip is None:
             self.ax.text(x, y, text, horizontalalignment=alignment,
-                         fontsize=fontsize)
+                         fontsize=fontsize, **kwargs)
             if self.instruction_file:
                 self.instruction_file.write("""\
 ax.text(%g, %g, %s,

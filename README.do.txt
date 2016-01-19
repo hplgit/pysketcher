@@ -9,10 +9,10 @@ Pysketcher can typically be used to draw figures like
 FIGURE: [doc/src/tut/fig-tut/wheel_on_inclined_plane, width=600 frac=0.6]
 
 Such figures can easily be *interactively* made using a lot of drawing
-programs.  A Pysketcher figure, however, is defined in terms of
+programs.  A Pysketcher figure, however, is defined trough
 computer code. This gives a great advantage: geometric features can be
-parameterized in term of variables. Geometric variations are then
-trivially generated, and complicated figures can be built as a
+parameterized in terms of variables. Geometric variations are then
+trivially generated. Also, complicated figures can be built as a
 hierarchy of simpler elements.  The figure can easily be made to move
 according to, e.g., a solution of a differential equation.
 
@@ -40,7 +40,7 @@ FIGURE: [http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_
 
 ===== Tutorial =====
 
-For an introduction to Pysketcher, see the tutorial in "HTML": "http://hplgit.github.io/pysketcher/doc/pub/pysketcher.html", "Sphinx": "http://hplgit.github.io/pysketcher/doc/pub/html/index.html", or "PDF": "http://hplgit/github.io/pysketcher/doc/pub/pysketcher.pdf" format (or a simplified version of
+For an introduction to Pysketcher, see the tutorial in "HTML": "http://hplgit.github.io/pysketcher/doc/pub/tutorial/pysketcher.html", "Sphinx": "http://hplgit.github.io/pysketcher/doc/pub/tutorial/html/index.html", or "PDF": "http://hplgit/github.io/pysketcher/doc/pub/tutorial/pysketcher.pdf" format (or a simplified version of
 the tutorial in Chapter 9 in "A Primer on Scientific Programming with Python": "http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen", 4th edition, by H. P. Langtangen, Springer, 2014).
 
 ===== Examples =====

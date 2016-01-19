@@ -1303,19 +1303,29 @@ class Text(Point):
     'center'; if 'left', the text starts at `position`, and if
     'right', the right and of the text is located at `position`.
     """
-    def __init__(self, text, position, alignment='center', fontsize=0):
+    def __init__(self, text, position, alignment='center', fontsize=0,
+                 bgcolor=None, fgcolor=None, fontfamily=None):
+        """
+        fontfamily can be (e.g.) 'serif' or 'monospace' (for code!).
+        """
         is_sequence(position)
         is_sequence(position, length=2, can_be_None=True)
         self.text = text
         self.position = position
         self.alignment = alignment
         self.fontsize = fontsize
+        self.bgcolor = bgcolor
+        self.fgcolor = fgcolor
+        self.fontfamily = fontfamily
         Point.__init__(self, position[0], position[1])
         #no need for self.shapes here
 
     def draw(self):
-        drawing_tool.text(self.text, (self.x, self.y),
-                          self.alignment, self.fontsize)
+        drawing_tool.text(
+            self.text, (self.x, self.y),
+            self.alignment, self.fontsize,
+            arrow_tip=None, bgcolor=self.bgcolor, fgcolor=self.fgcolor,
+            fontfamily=self.fontfamily)
 
     def __str__(self):
         return 'text "%s" at (%g,%g)' % (self.text, self.x, self.y)
@@ -1337,9 +1347,13 @@ class Text_wArrow(Text):
         Text.__init__(self, text, position, alignment, fontsize)
 
     def draw(self):
-        drawing_tool.text(self.text, self.position,
-                          self.alignment, self.fontsize,
-                          self.arrow_tip)
+        drawing_tool.text(
+            self.text, self.position,
+            self.alignment, self.fontsize,
+            arrow_tip=self.arrow_tip,
+            bgcolor=self.bgcolor, fgcolor=self.fgcolor,
+            fontfamily=self.fontfamily)
+
     def __str__(self):
         return 'annotation "%s" at (%g,%g) with arrow to (%g,%g)' % \
                (self.text, self.x, self.y,
