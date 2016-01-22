@@ -1,3 +1,4 @@
+"""A more sophisticated beam than in beam1.py."""
 from pysketcher import *
 
 def beam():
@@ -93,19 +94,19 @@ def beam():
 
     beam.draw()
     drawing_tool.display()
-    drawing_tool.savefig('tmp_beam2_1.png')
+    drawing_tool.savefig('tmp_beam2_1')
 
     import time
     time.sleep(1.5)
 
     annotations.draw()
     drawing_tool.display()
-    drawing_tool.savefig('tmp_beam2_2.png')
+    drawing_tool.savefig('tmp_beam2_2')
     time.sleep(1.5)
 
     elastic_line.draw()
     drawing_tool.display()
-    drawing_tool.savefig('tmp_beam2_3.png')
+    drawing_tool.savefig('tmp_beam2_3')
     #beam.draw_dimensions()
     #test_Dashpot(xpos+2*W)
 

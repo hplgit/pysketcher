@@ -1,13 +1,17 @@
 
+Cromer
 Dashpot
 ImageMagick
 Informatics
 Langtangen
 MPEG
 Matplotlib
+ODEs
 OO
+Odespy
 Pygame
 Pysketcher
+Pysketcher's
 SciTools
 Simula
 WebM
@@ -27,6 +31,7 @@ fillcolor
 gif
 github
 graphviz
+greek
 hier
 hplgit
 html

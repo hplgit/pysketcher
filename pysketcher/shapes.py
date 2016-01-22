@@ -215,13 +215,14 @@ class Shape(object):
 
 
     def _for_all_shapes(self, func, *args, **kwargs):
+        verbose = kwargs.get('verbose', 0)
         if not hasattr(self, 'shapes'):
             # When self.shapes is lacking, we either come to
             # a special implementation of func or we come here
             # because Shape.func is just inherited. This is
             # an error if the class is not Curve or Point
             if isinstance(self, (Curve, Point)):
-                return  # ok: no shapes and no func
+                return  # ok: no shapes, but object is a curve or point end leaf
             else:
                 raise AttributeError('class %s has no shapes attribute!' %
                                      self.__class__.__name__)
@@ -264,10 +265,12 @@ class Shape(object):
 
             if isinstance(shape, Curve):
                 shape.name = shape_name
+            if verbose > 0:
+                print('calling %s.%s' % (shape_name, func))
             getattr(shape, func)(*args, **kwargs)
 
-    def draw(self):
-        self._for_all_shapes('draw')
+    def draw(self, verbose=0):
+        self._for_all_shapes('draw', verbose=verbose)
         return self
 
     def draw_dimensions(self):
@@ -514,7 +517,7 @@ class Curve(Shape):
                 print('y_max=%g > plot area y_max=%g' % (ymax, t.ymax))
         return inside
 
-    def draw(self):
+    def draw(self, verbose=0):
         """
         Send the curve to the plotting engine. That is, convert
         coordinate information in self.x and self.y, together
@@ -527,6 +530,8 @@ class Curve(Shape):
             self.linestyle, self.linewidth, self.linecolor,
             self.arrow, self.fillcolor, self.fillpattern,
             self.shadow, self.name)
+        if verbose:
+            print('drawing Curve object with %d points' % len(self.x))
 
     def rotate(self, angle, center):
         """
@@ -751,7 +756,7 @@ class Point(Shape):
 
     # class Point is an abstract class - only subclasses are useful
     # and must implement draw
-    def draw(self):
+    def draw(self, verbose=0):
         raise NotImplementedError(
             'class %s must implement the draw method' %
             self.__class__.__name__)
@@ -904,6 +909,14 @@ class Triangle(Shape):
 class Line(Shape):
     def __init__(self, start, end):
         is_sequence(start, end, length=2)
+        if isinstance(start, (list,tuple)):
+            start = array(start)
+        if isinstance(end, (list,tuple)):
+            end = array(end)
+        if (start == end).all():
+            # Introduce a very small perturbation since identical points
+            # give drawing error
+            end[0] = start[0] + 1E-10
         x = [start[0], end[0]]
         y = [start[1], end[1]]
         self.shapes = {'line': Curve(x, y)}
@@ -1320,12 +1333,14 @@ class Text(Point):
         Point.__init__(self, position[0], position[1])
         #no need for self.shapes here
 
-    def draw(self):
+    def draw(self, verbose=0):
         drawing_tool.text(
             self.text, (self.x, self.y),
             self.alignment, self.fontsize,
             arrow_tip=None, bgcolor=self.bgcolor, fgcolor=self.fgcolor,
             fontfamily=self.fontfamily)
+        if verbose > 0:
+            print('drawing Text "%s"' % self.text)
 
     def __str__(self):
         return 'text "%s" at (%g,%g)' % (self.text, self.x, self.y)
@@ -1346,13 +1361,15 @@ class Text_wArrow(Text):
         self.arrow_tip = arrow_tip
         Text.__init__(self, text, position, alignment, fontsize)
 
-    def draw(self):
+    def draw(self, verbose=0):
         drawing_tool.text(
             self.text, self.position,
             self.alignment, self.fontsize,
             arrow_tip=self.arrow_tip,
             bgcolor=self.bgcolor, fgcolor=self.fgcolor,
             fontfamily=self.fontfamily)
+        if verbose > 0:
+            print('drawing Text_wArrow "%s"' % self.text)
 
     def __str__(self):
         return 'annotation "%s" at (%g,%g) with arrow to (%g,%g)' % \
@@ -1431,7 +1448,7 @@ class Force(Arrow1):
         downward = (end-start)[1] < 0
         upward = not downward  # for easy code reading
 
-        if isinstance(text_pos, str):
+        if isinstance(text_pos, (str,bytes)):
             if text_pos == 'start':
                 spacing_dir = unit_vec(start - end)
                 if upward:

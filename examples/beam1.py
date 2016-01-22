@@ -1,3 +1,4 @@
+"""A very simple beam."""
 from pysketcher import *
 
 L = 8.0

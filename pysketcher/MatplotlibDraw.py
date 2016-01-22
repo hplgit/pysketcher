@@ -11,7 +11,12 @@ from builtins import object
 
 import os
 import matplotlib
+
 matplotlib.use('TkAgg')
+# Allow \boldsymbol{} etc in title, labels, etc
+matplotlib.rc('text', usetex=True)
+matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{amsmath}'
+
 import matplotlib.pyplot as mpl
 import matplotlib.transforms as transforms
 import numpy as np
@@ -113,6 +118,11 @@ class MatplotlibDraw(object):
         self.mpl.ion()  # important for interactive drawing and animation
         if self.instruction_file:
             self.instruction_file.write("""\
+import matplotlib
+matplotlib.use('TkAgg')
+# Allow \boldsymbol{} etc in title, labels, etc
+matplotlib.rc('text', usetex=True)
+matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{amsmath}'
 import matplotlib.pyplot as mpl
 import matplotlib.transforms as transforms
 
@@ -350,23 +360,24 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
         if self.instruction_file:
             self.instruction_file.write('mpl.draw()\n')
 
-    def savefig(self, filename, dpi=None):
+    def savefig(self, filename, dpi=None, crop=True):
         """Save figure in file. Set dpi=300 for really high resolution."""
         # If filename is without extension, generate all important formats
         ext = os.path.splitext(filename)[1]
         if not ext:
             # Create both PNG and PDF file
             self.mpl.savefig(filename + '.png', dpi=dpi)
-            # Crop the PNG file
-            failure = os.system('convert -trim %s.png %s.png' %
-                                (filename, filename))
-            if failure:
-                print('convert from ImageMagick is not installed - needed for cropping PNG files')
             self.mpl.savefig(filename + '.pdf')
-            failure = os.system('pdfcrop %s.pdf %s.pdf' %
-                                (filename, filename))
-            if failure:
-                print('pdfcrop is not installed - needed for cropping PDF files')
+            if crop:
+                # Crop the PNG file
+                failure = os.system('convert -trim %s.png %s.png' %
+                                    (filename, filename))
+                if failure:
+                    print('convert from ImageMagick is not installed - needed for cropping PNG files')
+                failure = os.system('pdfcrop %s.pdf %s.pdf' %
+                                    (filename, filename))
+                if failure:
+                    print('pdfcrop is not installed - needed for cropping PDF files')
             #self.mpl.savefig(filename + '.eps')
             if self.instruction_file:
                 self.instruction_file.write('mpl.savefig("%s.png", dpi=%s)\n'
@@ -376,13 +387,15 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
         else:
             self.mpl.savefig(filename, dpi=dpi)
             if ext == '.png':
-                failure = os.system('convert -trim %s %s' % (filename, filename))
-                if failure:
-                    print('convert from ImageMagick is not installed - needed for cropping PNG files')
+                if crop:
+                    failure = os.system('convert -trim %s %s' % (filename, filename))
+                    if failure:
+                        print('convert from ImageMagick is not installed - needed for cropping PNG files')
             elif ext == '.pdf':
-                failure = os.system('pdfcrop %s %s' % (filename, filename))
-                if failure:
-                    print('pdfcrop is not installed - needed for cropping PDF files')
+                if crop:
+                    failure = os.system('pdfcrop %s %s' % (filename, filename))
+                    if failure:
+                        print('pdfcrop is not installed - needed for cropping PDF files')
 
             if self.instruction_file:
                 self.instruction_file.write('mpl.savefig("%s", dpi=%s)\n'

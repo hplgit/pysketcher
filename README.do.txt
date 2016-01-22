@@ -47,11 +47,11 @@ the tutorial in Chapter 9 in "A Primer on Scientific Programming with Python": "
 
 See the `examples` directory for some examples beyond the more basic
 ones in the tutorial.
-For example, a pendulum and its body diagram,
+For example, an elastic beam can be sketched as
 
-FIGURE: [fig/pendulum2, width=800 frac=1]
+FIGURE: [fig/beam2_3, width=600 frac=0.8]
 
-can be created by the program "`examples/pendulum.py`": "https://github.com/hplgit/pysketcher/tree/master/examples/pendulum.py".
+The sketch was created by the program "`examples/beam2.py`": "https://github.com/hplgit/pysketcher/tree/master/examples/beam2.py".
 
 Here is an illustration of the idea of numerical integration:
 
