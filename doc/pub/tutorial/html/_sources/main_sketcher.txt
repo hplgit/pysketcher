@@ -1230,7 +1230,8 @@ the ratio of the drag force and the gravity force:
         \sim \frac{C_D\varrho \pi R^2 L}{2m}\theta_0^2 = \alpha \theta_0^2{\thinspace .}
 
 (We have that :math:`\theta(t)/d\theta_0` is in :math:`[-1,1]`, so we expect
-since :math:`\theta_0^{-1}d\bar\theta/d\bar t` to be around unity.)
+since :math:`\theta_0^{-1}d\bar\theta/d\bar t` to be around unity. Here,
+:math:`\theta_0=\theta(0)`.)
 
 The next step is to write a numerical solver for
 :eq:`sketcher:ex:pendulum:anim:eq:ith:s`-:eq:`sketcher:ex:pendulum:anim:eq:ir:s`. To
