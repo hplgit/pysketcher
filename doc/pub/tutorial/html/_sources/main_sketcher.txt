@@ -9,7 +9,7 @@ Pysketcher: Create Principal Sketches of Physics Problems
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :Authors: Hans Petter Langtangen
-:Date: Dec 23, 2015
+:Date: Jan 22, 2016
 
 
 .. The below box could be typeset as .. admonition: Attention
@@ -661,6 +661,328 @@ can also be copied and moved to other parts of the drawing
 area. However, the single most important feature is probably the
 ability to make animations governed by mathematical formulas or data
 coming from physics simulations of the problem, as shown in the example above.
+
+.. !split
+
+.. _sketcher:ex:pendulum:
+
+A simple pendulum
+=================
+
+.. _sketcher:ex:pendulum:basic:
+
+The basic physics sketch
+------------------------
+
+We now want to make a sketch of simple pendulum from physics, as shown
+in Figure :ref:`sketcher:ex:pendulum:fig1`. A suggested work flow is to
+first sketch the figure on a piece of paper and introduce a coordinate
+system. A simple coordinate system is indicated in Figure
+:ref:`sketcher:ex:pendulum:fig1wgrid`. In a code we introduce variables
+``W`` and ``H`` for the width and height of the figure (i.e., extent of
+the coordinate system) and open the program like this:
+
+.. code-block:: python
+
+        from pysketcher import *
+        
+        H = 7.
+        W = 6.
+        
+        drawing_tool.set_coordinate_system(xmin=0, xmax=W,
+                                           ymin=0, ymax=H,
+                                           axis=True)
+        drawing_tool.set_grid(True)
+        drawing_tool.set_linecolor('blue')
+
+Note that when the sketch is ready for "production", we will (normally)
+set ``axis=False`` to remove the coordinate system and also remove the
+grid, i.e., delete or
+comment out the line ``drawing_tool.set_grid(True)``.
+Also note that we in this example let all lines be blue by default.
+
+.. _sketcher:ex:pendulum:fig1:
+
+.. figure:: pendulum1.png
+   :width: 400
+
+   *Sketch of a simple pendulum*
+
+.. _sketcher:ex:pendulum:fig1wgrid:
+
+.. figure:: pendulum1_wgrid.png
+   :width: 400
+
+   *Sketch of a simple pendulum*
+
+The next step is to introduce variables for key quantities in the sketch.
+Let ``L`` be the length of the pendulum, ``P`` the rotation point, and let
+``a`` be the angle the pendulum makes with the vertical (measured in degrees).
+We may set
+
+.. code-block:: python
+
+        L = 5*H/7          # length
+        P = (W/6, 0.85*H)  # rotation point
+        a = 40             # angle
+
+Be careful with integer division if you use Python 2! Fortunately, we
+started out with ``float`` objects for ``W`` and ``H`` so the expressions above
+are safe.
+
+What kind of objects do we need in this sketch? Looking at
+Figure :ref:`sketcher:ex:pendulum:fig1` we see that we need
+
+1. a vertical, dashed line
+
+2. an arc with no text but dashed line to indicate the *path* of the
+   mass
+
+3. an arc with name :math:`\theta` to indicate the *angle*
+
+4. a line, here called *rod*, from the rotation point to the mass
+
+5. a blue, filled circle representing the *mass*
+
+6. a text :math:`m` associated with the mass
+
+7. an indicator of the pendulum's *length* :math:`L`, visualized as
+   a line with two arrows tips and the text :math:`L`
+
+8. a gravity vector with the text :math:`g`
+
+Pysketcher has objects for each of these elements in our sketch.
+We start with the simplest element: the vertical line, going from
+``P`` to ``P`` minus the length in :math:`y` direction:
+
+.. code-block:: python
+
+        vertical = Line(P, P-point(0,L))
+
+The path of the mass is an arc that can be made by
+Pysketcher's ``Arc`` object:
+
+.. code-block:: python
+
+        path = Arc(P, L, -90, a)
+
+The first argument ``P`` is the center point, the second is the
+radius (``L`` here), the next arguments is the start angle, here
+it starts at -90 degrees, while the next argument is the angle of
+the arc, here ``a``.
+For the path of the mass, we also need an arc object, but this
+time with an associated text. Pysketcher has a specialized object
+for this purpose, ``Arc_wText``, since placing the text manually can
+be somewhat cumbersome.
+
+.. code-block:: python
+
+        angle = Arc_wText(r'$\theta$', P, L/4, -90, a, text_spacing=1/30.)
+
+The arguments are as for ``Arc`` above, but the first one is the desired
+text. Remember to use a raw string since we want a LaTeX greek letter
+that contains a backslash.
+The ``text_spacing`` argument must often be tweaked. It is recommended
+to create only a few objects before rendering the sketch and then
+adjust spacings as one goes along.
+
+The rod is simply a line from ``P`` to the mass. We can easily
+compute the position of the mass from basic geometry considerations,
+but it is easier and safer to look up this point in other objects
+if it is already computed. The ``path`` object stores its start and
+end points, so ``path.geometric_features()['end']`` is the end point
+of the path, which is the position of the mass. We can therefore
+create the rod simply as a line from ``P`` to this end point:
+
+.. code-block:: python
+
+        mass_pt = path.geometric_features()['end']
+        rod = Line(P, mass_pt)
+
+The mass is a circle filled with color:
+
+.. code-block:: python
+
+        mass = Circle(center=mass_pt, radius=L/20.)
+        mass.set_filled_curves(color='blue')
+
+To place the :math:`m` correctly, we go a small distance in the direction of
+the rod, from the center of the circle. To this end, we need to
+compute the direction. This is easiest done by computing a vector
+from ``P`` to the center of the circle and calling ``unit_vec`` to make
+a unit vector in this direction:
+
+.. code-block:: python
+
+        rod_vec = rod.geometric_features()['end'] - \ 
+                  rod.geometric_features()['start']
+        unit_rod_vec = unit_vec(rod_vec)
+        mass_symbol = Text('$m$', mass_pt + L/10*unit_rod_vec)
+
+Again, the distance ``L/10`` is something one has to experiment with.
+
+The next object is the length measure with the text :math:`L`. Such length
+measures are represented by Pysketcher's ``Distance_wText`` object.
+An easy construction is to first place this length measure along the
+rod and then translate it a little distance (``L/15``) in the
+normal direction of the rod:
+
+.. code-block:: python
+
+        length = Distance_wText(P, mass_pt, '$L$')
+        length.translate(L/15*point(cos(radians(a)), sin(radians(a))))
+
+For this translation we need a unit vector in the normal direction
+of the rod, which is from geometric considerations given by
+:math:`(\cos a, \sin a)`, when :math:`a` is the angle of the pendulum.
+
+The final object is the gravity force vector, which is so common
+in physics sketches that Pysketcher has a ready-made object: ``Gravity``,
+
+.. code-block:: python
+
+        gravity = Gravity(start=P+point(0.8*L,0), length=L/3)
+
+Since blue is the default color for
+lines, we want the dashed lines (``vertical`` and ``path``) to be black
+and dashed with linewidth 1. These properties can be set one by one,
+but we can also make a little helper function:
+
+.. code-block:: python
+
+        def set_dashed_thin_blackline(*objects):
+            """Set linestyle of an object to dashed, black, width=1."""
+            for obj in objects:
+                obj.set_linestyle('dashed')
+                obj.set_linecolor('black')
+                obj.set_linewidth(1)
+        
+        set_dashed_thin_blackline(vertical, path)
+
+Now, all objects are in place, so it remains to compose the final
+figure and draw the composition:
+
+.. code-block:: python
+
+        fig = Composition(
+            {'body': mass, 'rod': rod,
+             'vertical': vertical, 'theta': angle, 'path': path,
+             'g': gravity, 'L': length, 'm': mass_symbol})
+        
+        fig.draw()
+        drawing_tool.display()
+        drawing_tool.savefig('pendulum1')
+
+The body diagram
+----------------
+
+Now we want to isolate the mass and draw all the forces that act on it.
+Figure :ref:`sketcher:ex:pendulum:fig2wgrid` shows the desired result, but
+embedded in the coordinate system.
+We consider three types of forces: the gravity force, the force from the
+rod, and air resistance. The body diagram is key for deriving the
+equation of motion, so it is illustrative to add useful mathematical
+quantities needed in the derivation, such as the unit vectors in polar
+coordinates.
+
+.. _sketcher:ex:pendulum:fig2wgrid:
+
+.. figure:: pendulum5_wgrid.png
+   :width: 400
+
+   *Body diagram of a simple pendulum*
+
+We start by listing the objects in the sketch:
+
+1. a text :math:`(x_0,y_0)` representing the rotation  point ``P``
+
+2. unit vector :math:`\boldsymbol{i}_r` with text
+
+3. unit vector :math:`\boldsymbol{i}_\theta` with text
+
+4. a dashed vertical line
+
+5. a dashed line along the rod
+
+6. an arc with text :math:`\theta`
+
+7. the gravity force with text :math:`mg`
+
+8. the force in the rod with text :math:`S`
+
+9. the air resistance force with text :math:`\sim |v|v`
+
+The first object, :math:`(x_0,y_0)`, is simply a plain text where we have
+to experiment with the position. The unit vectors in polar coordinates
+may be drawn using the Pysketcher's ``Force`` object since it has an
+arrow with a text. The first three object can then be made as follows:
+
+.. code-block:: python
+
+        x0y0 = Text('$(x_0,y_0)$', P + point(-0.4,-0.1))
+        ir = Force(P, P + L/10*unit_vec(rod_vec),
+                   r'$\boldsymbol{i}_r$', text_pos='end',
+                   text_spacing=(0.015,0))
+        ith = Force(P, P + L/10*unit_vec((-rod_vec[1], rod_vec[0])),
+                   r'$\boldsymbol{i}_{\theta}$', text_pos='end',
+                    text_spacing=(0.02,0.005))
+
+Note that tweaking of the position of ``x0y0`` use absolute coordinates, so
+if ``W`` or ``H`` is changed in the beginning of the figure, the tweaked position
+will most likely not look good. A better solution would be to express
+the tweaked displacement ``point(-0.4,-0.1)`` in terms of ``W`` and ``H``.
+The ``text_spacing`` values in the ``Force`` objects also use absolute
+coordinates. Very often, this is much more convenient when adjusting
+the objects, and global size parameters like ``W`` and ``H`` are in practice
+seldom changed.
+
+The vertical, dashed line, the dashed rod, and the arc for :math:`\theta`
+are made by
+
+.. code-block:: python
+
+        rod_start = rod.geometric_features()['start']  # Point P
+        vertical2 = Line(rod_start, rod_start + point(0,-L/3))
+        set_dashed_thin_blackline(vertical2)
+        set_dashed_thin_blackline(rod)
+        angle2 = Arc_wText(r'$\theta$', rod_start, L/6, -90, a,
+                           text_spacing=1/30.)
+
+Note how we reuse the earlier defined object ``rod``.
+
+The forces are constructed as shown below.
+
+.. code-block:: python
+
+        mg_force  = Force(mass_pt, mass_pt + L/5*point(0,-1),
+                          '$mg$', text_pos='end')
+        rod_force = Force(mass_pt, mass_pt - L/3*unit_vec(rod_vec),
+                          '$S$', text_pos='end',
+                          text_spacing=(0.03, 0.01))
+        air_force = Force(mass_pt, mass_pt -
+                          L/6*unit_vec((rod_vec[1], -rod_vec[0])),
+                          '$\sim|v|v$', text_pos='end',
+                          text_spacing=(0.04,0.005))
+
+All objects are in place, and we can compose a figure to be drawn:
+
+.. code-block:: python
+
+        body_diagram = Composition(
+            {'mg': mg_force, 'S': rod_force, 'rod': rod,
+             'vertical': vertical2, 'theta': angle2,
+             'body': mass, 'm': mass_symbol})
+        
+        body_diagram['air'] = air_force
+        body_diagram['ir'] = ir
+        body_diagram['ith'] = ith
+        body_diagram['origin'] = x0y0
+
+Here, we exemplify that we can start out with a composition as a
+dictionary, but (as in ordinary Python dictionaries) add new
+elements later when desired.
+
+.. FIGURE: [fig-tut/pendulum1.png, width=400 frac=0.5] Sketch of a simple pendulum.
 
 .. !split
 

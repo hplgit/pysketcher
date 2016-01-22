@@ -53,6 +53,9 @@ TOC: on
 # #include "basics.do.txt"
 
 !split
+# #include "examples.do.txt"
+
+!split
 # #include "classes.do.txt"
 
 !split

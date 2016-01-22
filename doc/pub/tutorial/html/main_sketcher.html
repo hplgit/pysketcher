@@ -82,7 +82,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Hans Petter Langtangen</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Dec 23, 2015</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Jan 22, 2016</td>
 </tr>
 </tbody>
 </table>
@@ -593,6 +593,255 @@ area. However, the single most important feature is probably the
 ability to make animations governed by mathematical formulas or data
 coming from physics simulations of the problem, as shown in the example above.</p>
 </div>
+</div>
+</div>
+<div class="section" id="a-simple-pendulum">
+<span id="sketcher-ex-pendulum"></span><h2>A simple pendulum<a class="headerlink" href="#a-simple-pendulum" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-basic-physics-sketch">
+<span id="sketcher-ex-pendulum-basic"></span><h3>The basic physics sketch<a class="headerlink" href="#the-basic-physics-sketch" title="Permalink to this headline">¶</a></h3>
+<p>We now want to make a sketch of simple pendulum from physics, as shown
+in Figure <a class="reference internal" href="#sketcher-ex-pendulum-fig1"><span class="std std-ref">Sketch of a simple pendulum</span></a>. A suggested work flow is to
+first sketch the figure on a piece of paper and introduce a coordinate
+system. A simple coordinate system is indicated in Figure
+<a class="reference internal" href="#sketcher-ex-pendulum-fig1wgrid"><span class="std std-ref">Sketch of a simple pendulum</span></a>. In a code we introduce variables
+<code class="docutils literal"><span class="pre">W</span></code> and <code class="docutils literal"><span class="pre">H</span></code> for the width and height of the figure (i.e., extent of
+the coordinate system) and open the program like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pysketcher</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">H</span> <span class="o">=</span> <span class="mf">7.</span>
+<span class="n">W</span> <span class="o">=</span> <span class="mf">6.</span>
+
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_coordinate_system</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">W</span><span class="p">,</span>
+                                   <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">H</span><span class="p">,</span>
+                                   <span class="n">axis</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that when the sketch is ready for &#8220;production&#8221;, we will (normally)
+set <code class="docutils literal"><span class="pre">axis=False</span></code> to remove the coordinate system and also remove the
+grid, i.e., delete or
+comment out the line <code class="docutils literal"><span class="pre">drawing_tool.set_grid(True)</span></code>.
+Also note that we in this example let all lines be blue by default.</p>
+<div class="figure" id="id9">
+<span id="sketcher-ex-pendulum-fig1"></span><a class="reference internal image-reference" href="_images/pendulum1.png"><img alt="_images/pendulum1.png" src="_images/pendulum1.png" style="width: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Sketch of a simple pendulum</em></span></p>
+</div>
+<div class="figure" id="id10">
+<span id="sketcher-ex-pendulum-fig1wgrid"></span><a class="reference internal image-reference" href="_images/pendulum1_wgrid.png"><img alt="_images/pendulum1_wgrid.png" src="_images/pendulum1_wgrid.png" style="width: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Sketch of a simple pendulum</em></span></p>
+</div>
+<p>The next step is to introduce variables for key quantities in the sketch.
+Let <code class="docutils literal"><span class="pre">L</span></code> be the length of the pendulum, <code class="docutils literal"><span class="pre">P</span></code> the rotation point, and let
+<code class="docutils literal"><span class="pre">a</span></code> be the angle the pendulum makes with the vertical (measured in degrees).
+We may set</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">L</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="n">H</span><span class="o">/</span><span class="mi">7</span>          <span class="c"># length</span>
+<span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">W</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.85</span><span class="o">*</span><span class="n">H</span><span class="p">)</span>  <span class="c"># rotation point</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">40</span>             <span class="c"># angle</span>
+</pre></div>
+</div>
+<p>Be careful with integer division if you use Python 2! Fortunately, we
+started out with <code class="docutils literal"><span class="pre">float</span></code> objects for <code class="docutils literal"><span class="pre">W</span></code> and <code class="docutils literal"><span class="pre">H</span></code> so the expressions above
+are safe.</p>
+<p>What kind of objects do we need in this sketch? Looking at
+Figure <a class="reference internal" href="#sketcher-ex-pendulum-fig1"><span class="std std-ref">Sketch of a simple pendulum</span></a> we see that we need</p>
+<ol class="arabic simple">
+<li>a vertical, dashed line</li>
+<li>an arc with no text but dashed line to indicate the <em>path</em> of the
+mass</li>
+<li>an arc with name <span class="math">\(\theta\)</span> to indicate the <em>angle</em></li>
+<li>a line, here called <em>rod</em>, from the rotation point to the mass</li>
+<li>a blue, filled circle representing the <em>mass</em></li>
+<li>a text <span class="math">\(m\)</span> associated with the mass</li>
+<li>an indicator of the pendulum&#8217;s <em>length</em> <span class="math">\(L\)</span>, visualized as
+a line with two arrows tips and the text <span class="math">\(L\)</span></li>
+<li>a gravity vector with the text <span class="math">\(g\)</span></li>
+</ol>
+<p>Pysketcher has objects for each of these elements in our sketch.
+We start with the simplest element: the vertical line, going from
+<code class="docutils literal"><span class="pre">P</span></code> to <code class="docutils literal"><span class="pre">P</span></code> minus the length in <span class="math">\(y\)</span> direction:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">vertical</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span><span class="o">-</span><span class="n">point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">L</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The path of the mass is an arc that can be made by
+Pysketcher&#8217;s <code class="docutils literal"><span class="pre">Arc</span></code> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">path</span> <span class="o">=</span> <span class="n">Arc</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first argument <code class="docutils literal"><span class="pre">P</span></code> is the center point, the second is the
+radius (<code class="docutils literal"><span class="pre">L</span></code> here), the next arguments is the start angle, here
+it starts at -90 degrees, while the next argument is the angle of
+the arc, here <code class="docutils literal"><span class="pre">a</span></code>.
+For the path of the mass, we also need an arc object, but this
+time with an associated text. Pysketcher has a specialized object
+for this purpose, <code class="docutils literal"><span class="pre">Arc_wText</span></code>, since placing the text manually can
+be somewhat cumbersome.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">angle</span> <span class="o">=</span> <span class="n">Arc_wText</span><span class="p">(</span><span class="s">r&#39;$\theta$&#39;</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">text_spacing</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">30.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The arguments are as for <code class="docutils literal"><span class="pre">Arc</span></code> above, but the first one is the desired
+text. Remember to use a raw string since we want a LaTeX greek letter
+that contains a backslash.
+The <code class="docutils literal"><span class="pre">text_spacing</span></code> argument must often be tweaked. It is recommended
+to create only a few objects before rendering the sketch and then
+adjust spacings as one goes along.</p>
+<p>The rod is simply a line from <code class="docutils literal"><span class="pre">P</span></code> to the mass. We can easily
+compute the position of the mass from basic geometry considerations,
+but it is easier and safer to look up this point in other objects
+if it is already computed. The <code class="docutils literal"><span class="pre">path</span></code> object stores its start and
+end points, so <code class="docutils literal"><span class="pre">path.geometric_features()['end']</span></code> is the end point
+of the path, which is the position of the mass. We can therefore
+create the rod simply as a line from <code class="docutils literal"><span class="pre">P</span></code> to this end point:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">mass_pt</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;end&#39;</span><span class="p">]</span>
+<span class="n">rod</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">mass_pt</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The mass is a circle filled with color:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">mass</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">L</span><span class="o">/</span><span class="mf">20.</span><span class="p">)</span>
+<span class="n">mass</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To place the <span class="math">\(m\)</span> correctly, we go a small distance in the direction of
+the rod, from the center of the circle. To this end, we need to
+compute the direction. This is easiest done by computing a vector
+from <code class="docutils literal"><span class="pre">P</span></code> to the center of the circle and calling <code class="docutils literal"><span class="pre">unit_vec</span></code> to make
+a unit vector in this direction:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rod_vec</span> <span class="o">=</span> <span class="n">rod</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">-</span> \
+          <span class="n">rod</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;start&#39;</span><span class="p">]</span>
+<span class="n">unit_rod_vec</span> <span class="o">=</span> <span class="n">unit_vec</span><span class="p">(</span><span class="n">rod_vec</span><span class="p">)</span>
+<span class="n">mass_symbol</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">&#39;$m$&#39;</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">unit_rod_vec</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, the distance <code class="docutils literal"><span class="pre">L/10</span></code> is something one has to experiment with.</p>
+<p>The next object is the length measure with the text <span class="math">\(L\)</span>. Such length
+measures are represented by Pysketcher&#8217;s <code class="docutils literal"><span class="pre">Distance_wText</span></code> object.
+An easy construction is to first place this length measure along the
+rod and then translate it a little distance (<code class="docutils literal"><span class="pre">L/15</span></code>) in the
+normal direction of the rod:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">length</span> <span class="o">=</span> <span class="n">Distance_wText</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">mass_pt</span><span class="p">,</span> <span class="s">&#39;$L$&#39;</span><span class="p">)</span>
+<span class="n">length</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">L</span><span class="o">/</span><span class="mi">15</span><span class="o">*</span><span class="n">point</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span> <span class="n">sin</span><span class="p">(</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>For this translation we need a unit vector in the normal direction
+of the rod, which is from geometric considerations given by
+<span class="math">\((\cos a, \sin a)\)</span>, when <span class="math">\(a\)</span> is the angle of the pendulum.</p>
+<p>The final object is the gravity force vector, which is so common
+in physics sketches that Pysketcher has a ready-made object: <code class="docutils literal"><span class="pre">Gravity</span></code>,</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">gravity</span> <span class="o">=</span> <span class="n">Gravity</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">P</span><span class="o">+</span><span class="n">point</span><span class="p">(</span><span class="mf">0.8</span><span class="o">*</span><span class="n">L</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="n">L</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since blue is the default color for
+lines, we want the dashed lines (<code class="docutils literal"><span class="pre">vertical</span></code> and <code class="docutils literal"><span class="pre">path</span></code>) to be black
+and dashed with linewidth 1. These properties can be set one by one,
+but we can also make a little helper function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">set_dashed_thin_blackline</span><span class="p">(</span><span class="o">*</span><span class="n">objects</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set linestyle of an object to dashed, black, width=1.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">set_linestyle</span><span class="p">(</span><span class="s">&#39;dashed&#39;</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">set_dashed_thin_blackline</span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, all objects are in place, so it remains to compose the final
+figure and draw the composition:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fig</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="n">mass</span><span class="p">,</span> <span class="s">&#39;rod&#39;</span><span class="p">:</span> <span class="n">rod</span><span class="p">,</span>
+     <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="n">vertical</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">:</span> <span class="n">angle</span><span class="p">,</span> <span class="s">&#39;path&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+     <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="n">gravity</span><span class="p">,</span> <span class="s">&#39;L&#39;</span><span class="p">:</span> <span class="n">length</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">:</span> <span class="n">mass_symbol</span><span class="p">})</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;pendulum1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-body-diagram">
+<h3>The body diagram<a class="headerlink" href="#the-body-diagram" title="Permalink to this headline">¶</a></h3>
+<p>Now we want to isolate the mass and draw all the forces that act on it.
+Figure <a class="reference internal" href="#sketcher-ex-pendulum-fig2wgrid"><span class="std std-ref">Body diagram of a simple pendulum</span></a> shows the desired result, but
+embedded in the coordinate system.
+We consider three types of forces: the gravity force, the force from the
+rod, and air resistance. The body diagram is key for deriving the
+equation of motion, so it is illustrative to add useful mathematical
+quantities needed in the derivation, such as the unit vectors in polar
+coordinates.</p>
+<div class="figure" id="id11">
+<span id="sketcher-ex-pendulum-fig2wgrid"></span><a class="reference internal image-reference" href="_images/pendulum5_wgrid.png"><img alt="_images/pendulum5_wgrid.png" src="_images/pendulum5_wgrid.png" style="width: 400px;" /></a>
+<p class="caption"><span class="caption-text"><em>Body diagram of a simple pendulum</em></span></p>
+</div>
+<p>We start by listing the objects in the sketch:</p>
+<ol class="arabic simple">
+<li>a text <span class="math">\((x_0,y_0)\)</span> representing the rotation  point <code class="docutils literal"><span class="pre">P</span></code></li>
+<li>unit vector <span class="math">\(\boldsymbol{i}_r\)</span> with text</li>
+<li>unit vector <span class="math">\(\boldsymbol{i}_\theta\)</span> with text</li>
+<li>a dashed vertical line</li>
+<li>a dashed line along the rod</li>
+<li>an arc with text <span class="math">\(\theta\)</span></li>
+<li>the gravity force with text <span class="math">\(mg\)</span></li>
+<li>the force in the rod with text <span class="math">\(S\)</span></li>
+<li>the air resistance force with text <span class="math">\(\sim |v|v\)</span></li>
+</ol>
+<p>The first object, <span class="math">\((x_0,y_0)\)</span>, is simply a plain text where we have
+to experiment with the position. The unit vectors in polar coordinates
+may be drawn using the Pysketcher&#8217;s <code class="docutils literal"><span class="pre">Force</span></code> object since it has an
+arrow with a text. The first three object can then be made as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x0y0</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">&#39;$(x_0,y_0)$&#39;</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">point</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">))</span>
+<span class="n">ir</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">(</span><span class="n">rod_vec</span><span class="p">),</span>
+           <span class="s">r&#39;$\boldsymbol{i}_r$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+           <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.015</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">ith</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">((</span><span class="o">-</span><span class="n">rod_vec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rod_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+           <span class="s">r&#39;$\boldsymbol{i}_{\theta}$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+            <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span><span class="mf">0.005</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Note that tweaking of the position of <code class="docutils literal"><span class="pre">x0y0</span></code> use absolute coordinates, so
+if <code class="docutils literal"><span class="pre">W</span></code> or <code class="docutils literal"><span class="pre">H</span></code> is changed in the beginning of the figure, the tweaked position
+will most likely not look good. A better solution would be to express
+the tweaked displacement <code class="docutils literal"><span class="pre">point(-0.4,-0.1)</span></code> in terms of <code class="docutils literal"><span class="pre">W</span></code> and <code class="docutils literal"><span class="pre">H</span></code>.
+The <code class="docutils literal"><span class="pre">text_spacing</span></code> values in the <code class="docutils literal"><span class="pre">Force</span></code> objects also use absolute
+coordinates. Very often, this is much more convenient when adjusting
+the objects, and global size parameters like <code class="docutils literal"><span class="pre">W</span></code> and <code class="docutils literal"><span class="pre">H</span></code> are in practice
+seldom changed.</p>
+<p>The vertical, dashed line, the dashed rod, and the arc for <span class="math">\(\theta\)</span>
+are made by</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rod_start</span> <span class="o">=</span> <span class="n">rod</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;start&#39;</span><span class="p">]</span>  <span class="c"># Point P</span>
+<span class="n">vertical2</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">rod_start</span><span class="p">,</span> <span class="n">rod_start</span> <span class="o">+</span> <span class="n">point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="n">L</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">set_dashed_thin_blackline</span><span class="p">(</span><span class="n">vertical2</span><span class="p">)</span>
+<span class="n">set_dashed_thin_blackline</span><span class="p">(</span><span class="n">rod</span><span class="p">)</span>
+<span class="n">angle2</span> <span class="o">=</span> <span class="n">Arc_wText</span><span class="p">(</span><span class="s">r&#39;$\theta$&#39;</span><span class="p">,</span> <span class="n">rod_start</span><span class="p">,</span> <span class="n">L</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span>
+                   <span class="n">text_spacing</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">30.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note how we reuse the earlier defined object <code class="docutils literal"><span class="pre">rod</span></code>.</p>
+<p>The forces are constructed as shown below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">mg_force</span>  <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">5</span><span class="o">*</span><span class="n">point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                  <span class="s">&#39;$mg$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">)</span>
+<span class="n">rod_force</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">-</span> <span class="n">L</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">(</span><span class="n">rod_vec</span><span class="p">),</span>
+                  <span class="s">&#39;$S$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+                  <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))</span>
+<span class="n">air_force</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">-</span>
+                  <span class="n">L</span><span class="o">/</span><span class="mi">6</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">((</span><span class="n">rod_vec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">rod_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+                  <span class="s">&#39;$\sim|v|v$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+                  <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.04</span><span class="p">,</span><span class="mf">0.005</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>All objects are in place, and we can compose a figure to be drawn:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">body_diagram</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">&#39;mg&#39;</span><span class="p">:</span> <span class="n">mg_force</span><span class="p">,</span> <span class="s">&#39;S&#39;</span><span class="p">:</span> <span class="n">rod_force</span><span class="p">,</span> <span class="s">&#39;rod&#39;</span><span class="p">:</span> <span class="n">rod</span><span class="p">,</span>
+     <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="n">vertical2</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">:</span> <span class="n">angle2</span><span class="p">,</span>
+     <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="n">mass</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">:</span> <span class="n">mass_symbol</span><span class="p">})</span>
+
+<span class="n">body_diagram</span><span class="p">[</span><span class="s">&#39;air&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">air_force</span>
+<span class="n">body_diagram</span><span class="p">[</span><span class="s">&#39;ir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ir</span>
+<span class="n">body_diagram</span><span class="p">[</span><span class="s">&#39;ith&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ith</span>
+<span class="n">body_diagram</span><span class="p">[</span><span class="s">&#39;origin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x0y0</span>
+</pre></div>
+</div>
+<p>Here, we exemplify that we can start out with a composition as a
+dictionary, but (as in ordinary Python dictionaries) add new
+elements later when desired.</p>
 </div>
 </div>
 <div class="section" id="basic-shapes">
@@ -1354,7 +1603,7 @@ are often used to describe the relations in object trees too: we say
 that <code class="docutils literal"><span class="pre">vehicle</span></code> is the parent of <code class="docutils literal"><span class="pre">body</span></code> and that <code class="docutils literal"><span class="pre">body</span></code> is a child of
 <code class="docutils literal"><span class="pre">vehicle</span></code>. The term <em>node</em> is also often used to describe an element
 in a tree. A node may have several other nodes as <em>descendants</em>.</p>
-<div class="figure" id="id9">
+<div class="figure" id="id12">
 <span id="id1"></span><a class="reference internal image-reference" href="_images/Vehicle0_hier2.png"><img alt="_images/Vehicle0_hier2.png" src="_images/Vehicle0_hier2.png" style="width: 600px;" /></a>
 <p class="caption"><span class="caption-text"><em>Hierarchy of figure elements in an instance of class `Vehicle0`</em></span></p>
 </div>
@@ -1546,6 +1795,11 @@ rolling wheel at the end of the section <a class="reference internal" href="#ske
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#a-simple-pendulum">A simple pendulum</a><ul>
+<li><a class="reference internal" href="#the-basic-physics-sketch">The basic physics sketch</a></li>
+<li><a class="reference internal" href="#the-body-diagram">The body diagram</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#basic-shapes">Basic shapes</a><ul>
 <li><a class="reference internal" href="#axis">Axis</a></li>
 <li><a class="reference internal" href="#distance-with-text">Distance with text</a></li>
@@ -1626,7 +1880,7 @@ rolling wheel at the end of the section <a class="reference internal" href="#ske
     <a href="http://cbc.simula.no"><img src="_static/cbc_banner.png" width="100%"><a>
     <br />
     <br />
-      &copy;2015, Hans Petter Langtangen.
+      &copy;2016, Hans Petter Langtangen.
   </div>
 </div>
 
