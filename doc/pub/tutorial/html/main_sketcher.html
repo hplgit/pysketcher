@@ -1136,6 +1136,12 @@ at each time level. The resulting sketches are saved to files
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>This time we did not use the <code class="docutils literal"><span class="pre">animate</span></code> function from Pysketcher, but
+stored each sketch in a file with <code class="docutils literal"><span class="pre">drawing_tool.savefig</span></code>. Note that
+the argument <code class="docutils literal"><span class="pre">crop=False</span></code> is key: otherwise each figure is cropped and
+it makes to sense to combine the images to a video. By default,
+Pysketcher crops (removes all exterior whitespace) from figures saved
+to file.</p>
 <div>
 <video  loop controls width='640' height='365' preload='none'>
     <source src='https://github.com/hplgit/pysketcher/raw/master/doc/pub/tutorial/mov-tut/pendulum/movie.mp4'  type='video/mp4;  codecs="avc1.42E01E, mp4a.40.2"'>
