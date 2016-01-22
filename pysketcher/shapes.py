@@ -136,7 +136,8 @@ def animate(fig, time_points, action, moviefiles=False,
         drawing_tool.display(title=title, show=show_screen_graphics)
 
         if moviefiles:
-            drawing_tool.savefig('%s%04d.png' % (framefilestem, n))
+            drawing_tool.savefig('%s%04d.png' % (framefilestem, n),
+                                 crop=False)
 
     if moviefiles:
         return '%s%%04d.png' % framefilestem

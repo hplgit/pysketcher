@@ -902,6 +902,14 @@ at each time level. The resulting sketches are saved to files
         os<span style="color: #666666">.</span>system(cmd)
 </pre></div>
 <p>
+This time we did not use the <code>animate</code> function from Pysketcher, but
+stored each sketch in a file with <code>drawing_tool.savefig</code>. Note that
+the argument <code>crop=False</code> is key: otherwise each figure is cropped and
+it makes to sense to combine the images to a video. By default,
+Pysketcher crops (removes all exterior whitespace) from figures saved
+to file.
+
+<p>
 
 <div>
 <video  loop controls width='640' height='365' preload='none'>
