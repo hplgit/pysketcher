@@ -600,10 +600,13 @@ coming from physics simulations of the problem, as shown in the example above.</
 <div class="section" id="the-basic-physics-sketch">
 <span id="sketcher-ex-pendulum-basic"></span><h3>The basic physics sketch<a class="headerlink" href="#the-basic-physics-sketch" title="Permalink to this headline">¶</a></h3>
 <p>We now want to make a sketch of simple pendulum from physics, as shown
-in Figure <a class="reference internal" href="#sketcher-ex-pendulum-fig1"><span class="std std-ref">Sketch of a simple pendulum</span></a>. A suggested work flow is to
+in Figure <a class="reference internal" href="#sketcher-ex-pendulum-fig1"><span class="std std-ref">Sketch of a simple pendulum</span></a>. A body with mass <span class="math">\(m\)</span> is attached
+to a massless, stiff rod, which can rotate about a point, causing the
+pendulum to oscillate.</p>
+<p>A suggested work flow is to
 first sketch the figure on a piece of paper and introduce a coordinate
 system. A simple coordinate system is indicated in Figure
-<a class="reference internal" href="#sketcher-ex-pendulum-fig1wgrid"><span class="std std-ref">Sketch of a simple pendulum</span></a>. In a code we introduce variables
+<a class="reference internal" href="#sketcher-ex-pendulum-fig1wgrid"><span class="std std-ref">Sketch with assisting coordinate system</span></a>. In a code we introduce variables
 <code class="docutils literal"><span class="pre">W</span></code> and <code class="docutils literal"><span class="pre">H</span></code> for the width and height of the figure (i.e., extent of
 the coordinate system) and open the program like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pysketcher</span> <span class="kn">import</span> <span class="o">*</span>
@@ -624,12 +627,12 @@ grid, i.e., delete or
 comment out the line <code class="docutils literal"><span class="pre">drawing_tool.set_grid(True)</span></code>.
 Also note that we in this example let all lines be blue by default.</p>
 <div class="figure" id="id9">
-<span id="sketcher-ex-pendulum-fig1"></span><a class="reference internal image-reference" href="_images/pendulum1.png"><img alt="_images/pendulum1.png" src="_images/pendulum1.png" style="width: 400px;" /></a>
+<span id="sketcher-ex-pendulum-fig1"></span><a class="reference internal image-reference" href="_images/pendulum1.png"><img alt="_images/pendulum1.png" src="_images/pendulum1.png" style="width: 300px;" /></a>
 <p class="caption"><span class="caption-text"><em>Sketch of a simple pendulum</em></span></p>
 </div>
 <div class="figure" id="id10">
 <span id="sketcher-ex-pendulum-fig1wgrid"></span><a class="reference internal image-reference" href="_images/pendulum1_wgrid.png"><img alt="_images/pendulum1_wgrid.png" src="_images/pendulum1_wgrid.png" style="width: 400px;" /></a>
-<p class="caption"><span class="caption-text"><em>Sketch of a simple pendulum</em></span></p>
+<p class="caption"><span class="caption-text"><em>Sketch with assisting coordinate system</em></span></p>
 </div>
 <p>The next step is to introduce variables for key quantities in the sketch.
 Let <code class="docutils literal"><span class="pre">L</span></code> be the length of the pendulum, <code class="docutils literal"><span class="pre">P</span></code> the rotation point, and let
@@ -659,17 +662,20 @@ a line with two arrows tips and the text <span class="math">\(L\)</span></li>
 </ol>
 <p>Pysketcher has objects for each of these elements in our sketch.
 We start with the simplest element: the vertical line, going from
-<code class="docutils literal"><span class="pre">P</span></code> to <code class="docutils literal"><span class="pre">P</span></code> minus the length in <span class="math">\(y\)</span> direction:</p>
+<code class="docutils literal"><span class="pre">P</span></code> to <code class="docutils literal"><span class="pre">P</span></code> minus the length <span class="math">\(L\)</span> in <span class="math">\(y\)</span> direction:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">vertical</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span><span class="o">-</span><span class="n">point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">L</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>The class <code class="docutils literal"><span class="pre">point</span></code> is very convenient: it turns its two coordinates into
+a vector with which we can compute, and is therefore one of the most
+widely used Pysketcher objects.</p>
 <p>The path of the mass is an arc that can be made by
 Pysketcher&#8217;s <code class="docutils literal"><span class="pre">Arc</span></code> object:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">path</span> <span class="o">=</span> <span class="n">Arc</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The first argument <code class="docutils literal"><span class="pre">P</span></code> is the center point, the second is the
-radius (<code class="docutils literal"><span class="pre">L</span></code> here), the next arguments is the start angle, here
+radius (<code class="docutils literal"><span class="pre">L</span></code> here), the next argument is the start angle, here
 it starts at -90 degrees, while the next argument is the angle of
 the arc, here <code class="docutils literal"><span class="pre">a</span></code>.
 For the path of the mass, we also need an arc object, but this
@@ -688,10 +694,11 @@ adjust spacings as one goes along.</p>
 <p>The rod is simply a line from <code class="docutils literal"><span class="pre">P</span></code> to the mass. We can easily
 compute the position of the mass from basic geometry considerations,
 but it is easier and safer to look up this point in other objects
-if it is already computed. The <code class="docutils literal"><span class="pre">path</span></code> object stores its start and
+if it is already computed. In the present case,
+the <code class="docutils literal"><span class="pre">path</span></code> object stored its start and
 end points, so <code class="docutils literal"><span class="pre">path.geometric_features()['end']</span></code> is the end point
 of the path, which is the position of the mass. We can therefore
-create the rod simply as a line from <code class="docutils literal"><span class="pre">P</span></code> to this end point:</p>
+create the rod simply as a line from <code class="docutils literal"><span class="pre">P</span></code> to this already computed end point:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">mass_pt</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;end&#39;</span><span class="p">]</span>
 <span class="n">rod</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">mass_pt</span><span class="p">)</span>
 </pre></div>
@@ -724,18 +731,20 @@ normal direction of the rod:</p>
 </div>
 <p>For this translation we need a unit vector in the normal direction
 of the rod, which is from geometric considerations given by
-<span class="math">\((\cos a, \sin a)\)</span>, when <span class="math">\(a\)</span> is the angle of the pendulum.</p>
+<span class="math">\((\cos a, \sin a)\)</span>, when <span class="math">\(a\)</span> is the angle of the pendulum.
+Alternatively, we could have found the normal vector as a vector that
+is normal to <code class="docutils literal"><span class="pre">unit_rod_vec</span></code>: <code class="docutils literal"><span class="pre">point(-unit_rod_vec[1],unit_rod_vec[0])</span></code>.</p>
 <p>The final object is the gravity force vector, which is so common
 in physics sketches that Pysketcher has a ready-made object: <code class="docutils literal"><span class="pre">Gravity</span></code>,</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">gravity</span> <span class="o">=</span> <span class="n">Gravity</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">P</span><span class="o">+</span><span class="n">point</span><span class="p">(</span><span class="mf">0.8</span><span class="o">*</span><span class="n">L</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="n">L</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Since blue is the default color for
-lines, we want the dashed lines (<code class="docutils literal"><span class="pre">vertical</span></code> and <code class="docutils literal"><span class="pre">path</span></code>) to be black
-and dashed with linewidth 1. These properties can be set one by one,
-but we can also make a little helper function:</p>
+lines, we want the dashed lines (for <code class="docutils literal"><span class="pre">vertical</span></code> and <code class="docutils literal"><span class="pre">path</span></code>) to be black
+and with linewidth 1. These properties can be set one by one for each
+object, but we can also make a little helper function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">set_dashed_thin_blackline</span><span class="p">(</span><span class="o">*</span><span class="n">objects</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set linestyle of an object to dashed, black, width=1.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Set linestyle of objects to dashed, black, width=1.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">set_linestyle</span><span class="p">(</span><span class="s">&#39;dashed&#39;</span><span class="p">)</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
@@ -768,7 +777,7 @@ equation of motion, so it is illustrative to add useful mathematical
 quantities needed in the derivation, such as the unit vectors in polar
 coordinates.</p>
 <div class="figure" id="id11">
-<span id="sketcher-ex-pendulum-fig2wgrid"></span><a class="reference internal image-reference" href="_images/pendulum5_wgrid.png"><img alt="_images/pendulum5_wgrid.png" src="_images/pendulum5_wgrid.png" style="width: 400px;" /></a>
+<span id="sketcher-ex-pendulum-fig2wgrid"></span><a class="reference internal image-reference" href="_images/pendulum5_wgrid.png"><img alt="_images/pendulum5_wgrid.png" src="_images/pendulum5_wgrid.png" style="width: 300px;" /></a>
 <p class="caption"><span class="caption-text"><em>Body diagram of a simple pendulum</em></span></p>
 </div>
 <p>We start by listing the objects in the sketch:</p>
@@ -784,9 +793,9 @@ coordinates.</p>
 <li>the air resistance force with text <span class="math">\(\sim |v|v\)</span></li>
 </ol>
 <p>The first object, <span class="math">\((x_0,y_0)\)</span>, is simply a plain text where we have
-to experiment with the position. The unit vectors in polar coordinates
+to experiment with its position. The unit vectors in polar coordinates
 may be drawn using the Pysketcher&#8217;s <code class="docutils literal"><span class="pre">Force</span></code> object since it has an
-arrow with a text. The first three object can then be made as follows:</p>
+arrow with a text. The first three objects can then be made as follows:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">x0y0</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">&#39;$(x_0,y_0)$&#39;</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">point</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">))</span>
 <span class="n">ir</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">(</span><span class="n">rod_vec</span><span class="p">),</span>
            <span class="s">r&#39;$\boldsymbol{i}_r$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
@@ -803,7 +812,7 @@ the tweaked displacement <code class="docutils literal"><span class="pre">point(
 The <code class="docutils literal"><span class="pre">text_spacing</span></code> values in the <code class="docutils literal"><span class="pre">Force</span></code> objects also use absolute
 coordinates. Very often, this is much more convenient when adjusting
 the objects, and global size parameters like <code class="docutils literal"><span class="pre">W</span></code> and <code class="docutils literal"><span class="pre">H</span></code> are in practice
-seldom changed.</p>
+seldom changed, so the solution above is quite typical.</p>
 <p>The vertical, dashed line, the dashed rod, and the arc for <span class="math">\(\theta\)</span>
 are made by</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">rod_start</span> <span class="o">=</span> <span class="n">rod</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;start&#39;</span><span class="p">]</span>  <span class="c"># Point P</span>
@@ -827,6 +836,9 @@ are made by</p>
                   <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.04</span><span class="p">,</span><span class="mf">0.005</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>Note that the drag force from the air is directed perpendicular to
+the rod, so we construct a unit vector in this direction directly from
+the <code class="docutils literal"><span class="pre">rod_vec</span></code> vector.</p>
 <p>All objects are in place, and we can compose a figure to be drawn:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">body_diagram</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span>
     <span class="p">{</span><span class="s">&#39;mg&#39;</span><span class="p">:</span> <span class="n">mg_force</span><span class="p">,</span> <span class="s">&#39;S&#39;</span><span class="p">:</span> <span class="n">rod_force</span><span class="p">,</span> <span class="s">&#39;rod&#39;</span><span class="p">:</span> <span class="n">rod</span><span class="p">,</span>
@@ -842,6 +854,302 @@ are made by</p>
 <p>Here, we exemplify that we can start out with a composition as a
 dictionary, but (as in ordinary Python dictionaries) add new
 elements later when desired.</p>
+</div>
+<div class="section" id="animated-body-diagram">
+<span id="sketcher-ex-pendulum-anim"></span><h3>Animated body diagram<a class="headerlink" href="#animated-body-diagram" title="Permalink to this headline">¶</a></h3>
+<p>We want to make an animated body diagram so that we can see how forces
+develop in time according to the motion. This means that we must
+couple the sketch at each time level to a numerical solution for
+the motion of the pendulum.</p>
+<div class="section" id="function-for-drawing-the-body-diagram">
+<h4>Function for drawing the body diagram<a class="headerlink" href="#function-for-drawing-the-body-diagram" title="Permalink to this headline">¶</a></h4>
+<p>The previous flat program for making sketches of the pendulum is not
+suitable when we want to make a sketch at a lot of different points
+in time, i.e., for a lot of different angles that the pendulum makes
+with the vertical. We therefore need to draw the body diagram in
+a function where the angle is a parameter. We also supply arrays
+containing the (numerically computed) values of the angle <span class="math">\(\theta\)</span> and
+the forces at various time levels, plus the desired time point and level
+for this particular sketch:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pysketcher</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">H</span> <span class="o">=</span> <span class="mf">15.</span>
+<span class="n">W</span> <span class="o">=</span> <span class="mf">17.</span>
+
+<span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_coordinate_system</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">W</span><span class="p">,</span>
+                                   <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">H</span><span class="p">,</span>
+                                   <span class="n">axis</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">pendulum</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">mg</span><span class="p">,</span> <span class="n">drag</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">time_level</span><span class="p">):</span>
+
+    <span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">math</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">time_level</span><span class="p">])</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="mf">0.4</span><span class="o">*</span><span class="n">H</span>         <span class="c"># length</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">W</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.8</span><span class="o">*</span><span class="n">H</span><span class="p">)</span>  <span class="c"># rotation point</span>
+
+    <span class="n">vertical</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span><span class="o">-</span><span class="n">point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">L</span><span class="p">))</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Arc</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">Arc_wText</span><span class="p">(</span><span class="s">r&#39;$\theta$&#39;</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">text_spacing</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">30.</span><span class="p">)</span>
+
+    <span class="n">mass_pt</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;end&#39;</span><span class="p">]</span>
+    <span class="n">rod</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">mass_pt</span><span class="p">)</span>
+
+    <span class="n">mass</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">L</span><span class="o">/</span><span class="mf">20.</span><span class="p">)</span>
+    <span class="n">mass</span><span class="o">.</span><span class="n">set_filled_curves</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">rod_vec</span> <span class="o">=</span> <span class="n">rod</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">-</span> \
+              <span class="n">rod</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;start&#39;</span><span class="p">]</span>
+    <span class="n">unit_rod_vec</span> <span class="o">=</span> <span class="n">unit_vec</span><span class="p">(</span><span class="n">rod_vec</span><span class="p">)</span>
+    <span class="n">mass_symbol</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">&#39;$m$&#39;</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">unit_rod_vec</span><span class="p">)</span>
+
+    <span class="n">length</span> <span class="o">=</span> <span class="n">Distance_wText</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">mass_pt</span><span class="p">,</span> <span class="s">&#39;$L$&#39;</span><span class="p">)</span>
+    <span class="c"># Displace length indication</span>
+    <span class="n">length</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">L</span><span class="o">/</span><span class="mi">15</span><span class="o">*</span><span class="n">point</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span> <span class="n">sin</span><span class="p">(</span><span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">))))</span>
+    <span class="n">gravity</span> <span class="o">=</span> <span class="n">Gravity</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">P</span><span class="o">+</span><span class="n">point</span><span class="p">(</span><span class="mf">0.8</span><span class="o">*</span><span class="n">L</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="n">L</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_dashed_thin_blackline</span><span class="p">(</span><span class="o">*</span><span class="n">objects</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set linestyle of objects to dashed, black, width=1.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">set_linestyle</span><span class="p">(</span><span class="s">&#39;dashed&#39;</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">set_dashed_thin_blackline</span><span class="p">(</span><span class="n">vertical</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span>
+        <span class="p">{</span><span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="n">mass</span><span class="p">,</span> <span class="s">&#39;rod&#39;</span><span class="p">:</span> <span class="n">rod</span><span class="p">,</span>
+         <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="n">vertical</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">:</span> <span class="n">angle</span><span class="p">,</span> <span class="s">&#39;path&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+         <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="n">gravity</span><span class="p">,</span> <span class="s">&#39;L&#39;</span><span class="p">:</span> <span class="n">length</span><span class="p">})</span>
+
+    <span class="c">#fig.draw()</span>
+    <span class="c">#drawing_tool.display()</span>
+    <span class="c">#drawing_tool.savefig(&#39;tmp_pendulum1&#39;)</span>
+
+    <span class="n">drawing_tool</span><span class="o">.</span><span class="n">set_linecolor</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+
+    <span class="n">rod_start</span> <span class="o">=</span> <span class="n">rod</span><span class="o">.</span><span class="n">geometric_features</span><span class="p">()[</span><span class="s">&#39;start&#39;</span><span class="p">]</span>  <span class="c"># Point P</span>
+    <span class="n">vertical2</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">rod_start</span><span class="p">,</span> <span class="n">rod_start</span> <span class="o">+</span> <span class="n">point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="n">L</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">set_dashed_thin_blackline</span><span class="p">(</span><span class="n">vertical2</span><span class="p">)</span>
+    <span class="n">set_dashed_thin_blackline</span><span class="p">(</span><span class="n">rod</span><span class="p">)</span>
+    <span class="n">angle2</span> <span class="o">=</span> <span class="n">Arc_wText</span><span class="p">(</span><span class="s">r&#39;$\theta$&#39;</span><span class="p">,</span> <span class="n">rod_start</span><span class="p">,</span> <span class="n">L</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span>
+                       <span class="n">text_spacing</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">30.</span><span class="p">)</span>
+
+    <span class="n">magnitude</span> <span class="o">=</span> <span class="mf">1.2</span><span class="o">*</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span>   <span class="c"># length of a unit force in figure</span>
+    <span class="n">force</span> <span class="o">=</span> <span class="n">mg</span><span class="p">[</span><span class="n">time_level</span><span class="p">]</span>  <span class="c"># constant (scaled eq: about 1)</span>
+    <span class="n">force</span> <span class="o">*=</span> <span class="n">magnitude</span>
+    <span class="n">mg_force</span>  <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">+</span> <span class="n">force</span><span class="o">*</span><span class="n">point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">)</span>
+    <span class="n">force</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">time_level</span><span class="p">]</span>
+    <span class="n">force</span> <span class="o">*=</span> <span class="n">magnitude</span>
+    <span class="n">rod_force</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">-</span> <span class="n">force</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">(</span><span class="n">rod_vec</span><span class="p">),</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+                      <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))</span>
+    <span class="n">force</span> <span class="o">=</span> <span class="n">drag</span><span class="p">[</span><span class="n">time_level</span><span class="p">]</span>
+    <span class="n">force</span> <span class="o">*=</span> <span class="n">magnitude</span>
+    <span class="c">#print(&#39;drag(%g)=%g&#39; % (t, drag[time_level]))</span>
+    <span class="n">air_force</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">mass_pt</span><span class="p">,</span> <span class="n">mass_pt</span> <span class="o">-</span>
+                      <span class="n">force</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">((</span><span class="n">rod_vec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">rod_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+                      <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.04</span><span class="p">,</span><span class="mf">0.005</span><span class="p">))</span>
+
+    <span class="n">body_diagram</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span>
+        <span class="p">{</span><span class="s">&#39;mg&#39;</span><span class="p">:</span> <span class="n">mg_force</span><span class="p">,</span> <span class="s">&#39;S&#39;</span><span class="p">:</span> <span class="n">rod_force</span><span class="p">,</span> <span class="s">&#39;air&#39;</span><span class="p">:</span> <span class="n">air_force</span><span class="p">,</span>
+         <span class="s">&#39;rod&#39;</span><span class="p">:</span> <span class="n">rod</span><span class="p">,</span>
+         <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="n">vertical2</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">:</span> <span class="n">angle2</span><span class="p">,</span>
+         <span class="s">&#39;body&#39;</span><span class="p">:</span> <span class="n">mass</span><span class="p">})</span>
+
+    <span class="n">x0y0</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="s">&#39;$(x_0,y_0)$&#39;</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">point</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">))</span>
+    <span class="n">ir</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">(</span><span class="n">rod_vec</span><span class="p">),</span>
+               <span class="s">r&#39;$\boldsymbol{i}_r$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+               <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.015</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">ith</span> <span class="o">=</span> <span class="n">Force</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P</span> <span class="o">+</span> <span class="n">L</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">unit_vec</span><span class="p">((</span><span class="o">-</span><span class="n">rod_vec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rod_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+               <span class="s">r&#39;$\boldsymbol{i}_{\theta}$&#39;</span><span class="p">,</span> <span class="n">text_pos</span><span class="o">=</span><span class="s">&#39;end&#39;</span><span class="p">,</span>
+                <span class="n">text_spacing</span><span class="o">=</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span><span class="mf">0.005</span><span class="p">))</span>
+
+    <span class="c">#body_diagram[&#39;ir&#39;] = ir</span>
+    <span class="c">#body_diagram[&#39;ith&#39;] = ith</span>
+    <span class="c">#body_diagram[&#39;origin&#39;] = x0y0</span>
+
+    <span class="n">drawing_tool</span><span class="o">.</span><span class="n">erase</span><span class="p">()</span>
+    <span class="n">body_diagram</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c">#drawing_tool.display(&#39;Body diagram&#39;)</span>
+    <span class="n">drawing_tool</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;tmp_</span><span class="si">%04d</span><span class="s">.png&#39;</span> <span class="o">%</span> <span class="n">time_level</span><span class="p">,</span> <span class="n">crop</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="c"># No cropping: otherwise movies will be very strange</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="equations-for-the-motion-and-forces">
+<h4>Equations for the motion and forces<a class="headerlink" href="#equations-for-the-motion-and-forces" title="Permalink to this headline">¶</a></h4>
+<p>The modeling of the motion of a pendulum is most conveniently done in
+polar coordinates since then the unknown force in the rod is separated
+from the equation determining the motion <span class="math">\(\theta(t)\)</span>.
+The position vector for the mass is</p>
+<div class="math">
+\[\boldsymbol{r} = x_0\boldsymbol{i} + y_0\boldsymbol{j} + L{\boldsymbol{i}_r}{\thinspace .}\]</div>
+<p>The corresponding acceleration becomes</p>
+<div class="math">
+\[\ddot{\boldsymbol{r}} = L\ddot{\theta}{\boldsymbol{i}_{\theta}} - L\dot{\theta^2}{{\boldsymbol{i}_r}}{\thinspace .}\]</div>
+<p>There are three forces on the mass: the gravity force
+<span class="math">\(mg\boldsymbol{j} = mg(-\cos\theta\,{\boldsymbol{i}_r} + \sin\theta\,\boldsymbol{i}_{\theta})\)</span>, the force in the rod
+<span class="math">\(-S{\boldsymbol{i}_r}\)</span>, and the drag force because of air resistance:</p>
+<div class="math">
+\[-\frac{1}{2} C_D \varrho \pi R^2 |v|v\,\boldsymbol{i}_{\theta},\]</div>
+<p>where <span class="math">\(C_D\approx 0.4\)</span> is the drag coefficient for a sphere, <span class="math">\(\varrho\)</span>
+is the density of air, <span class="math">\(R\)</span> is the radius of the mass, and <span class="math">\(v\)</span> is the
+velocity (<span class="math">\(v=L\dot\theta\)</span>). The drag force acts in <span class="math">\(-\boldsymbol{i}_{\theta}\)</span> direction
+when <span class="math">\(v&gt;0\)</span>.</p>
+<p>Newton&#8217;s second law of motion for the pendulum now becomes</p>
+<div class="math">
+\[mL\ddot\theta\boldsymbol{i}_{\theta} - mL\dot\theta^2{\boldsymbol{i}_r} = -mg(-\cos\theta\,{\boldsymbol{i}_r} +
+\sin\theta\,\boldsymbol{i}_{\theta})
+-S{\boldsymbol{i}_r} - \frac{1}{2} C_D \varrho \pi R^2 L^2|\dot\theta|\dot\theta\boldsymbol{i}_{\theta},\]</div>
+<p>which gives two component equations</p>
+<div class="math" id="equation-sketcher:ex:pendulum:anim:eq:ith">
+<span class="eqno">(1)</span>\[     mL\ddot\theta + \frac{1}{2} C_D \varrho \pi R^2 L^2|\dot\theta|\dot\theta +
+     mg\sin\theta = 0,\]</div>
+<div class="math" id="equation-sketcher:ex:pendulum:anim:eq:ir">
+<span class="eqno">(2)</span>\[     S = mL\dot\theta^2 + mg\cos\theta
+     {\thinspace .}\]</div>
+<p>It is almost always convenient to scale such equations. Introducing
+the dimensionless time</p>
+<div class="math">
+\[\bar t = \frac{t}{t_c},\quad t_c = \sqrt{\frac{L}{g}},\]</div>
+<p>leads to</p>
+<div class="math" id="equation-sketcher:ex:pendulum:anim:eq:ith:s">
+<span class="eqno">(3)</span>\[     \frac{d^2\theta}{d\bar t^2} +
+     \alpha\left\vert\frac{d\theta}{d\bar t}\right\vert\frac{d\theta}{d\bar t} +
+     \sin\theta = 0,\]</div>
+<div class="math" id="equation-sketcher:ex:pendulum:anim:eq:ir:s">
+<span class="eqno">(4)</span>\[     \bar S = \left(\frac{d\theta}{d\bar t}\right)^2
+     + \cos\theta,\]</div>
+<p>where <span class="math">\(\alpha\)</span> is a dimensionless drag coefficient</p>
+<div class="math">
+\[\alpha = \frac{C_D\varrho\pi R^2L}{2m},\]</div>
+<p>and <span class="math">\(\bar S\)</span> is the scaled force</p>
+<div class="math">
+\[\bar S = \frac{S}{mg}{\thinspace .}\]</div>
+<p>We see that <span class="math">\(\bar S = 1\)</span> for the equilibrium position <span class="math">\(\theta=0\)</span>, so this
+scaling of <span class="math">\(S\)</span> seems appropriate.</p>
+<p>The parameter <span class="math">\(\alpha\)</span> is about
+the ratio of the drag force and the gravity force:</p>
+<div class="math">
+\[\frac{|\frac{1}{2} C_D\varrho \pi R^2 |v|v|}{|mg|}\sim
+\frac{C_D\varrho \pi R^2 L^2 t_c^{-2}}{mg}
+\left|\frac{d\bar\theta}{d\bar t}\right|\frac{d\bar\theta}{d\bar t}
+\sim \frac{C_D\varrho \pi R^2 L}{2m}\theta_0^2 = \alpha \theta_0^2{\thinspace .}\]</div>
+<p>(We have that <span class="math">\(\theta(t)/d\theta_0\)</span> is in <span class="math">\([-1,1]\)</span>, so we expect
+since <span class="math">\(\theta_0^{-1}d\bar\theta/d\bar t\)</span> to be around unity.)</p>
+<p>The next step is to write a numerical solver for
+<a href="#equation-sketcher:ex:pendulum:anim:eq:ith:s">(3)</a>-<a href="#equation-sketcher:ex:pendulum:anim:eq:ir:s">(4)</a>. To
+this end, we use the <a class="reference external" href="https://github.com/hplgit/odespy">Odespy</a>
+package. The system of second-order ODEs must be expressed as a system
+of first-order ODEs. We realize that the unknown <span class="math">\(\bar S\)</span> is decoupled
+from <span class="math">\(\theta\)</span> in the sense that we can first use
+<a href="#equation-sketcher:ex:pendulum:anim:eq:ith:s">(3)</a> to solve for <span class="math">\(\theta\)</span> and
+then compute <span class="math">\(\bar S\)</span> from <a href="#equation-sketcher:ex:pendulum:anim:eq:ir:s">(4)</a>.
+The first-order ODEs become</p>
+<div class="math" id="equation-_auto1">
+<span class="eqno">(5)</span>\[     \frac{d\omega}{d\bar t} = -\alpha\left\vert\omega\right\vert\omega
+     - \sin\theta,\]</div>
+<div class="math" id="equation-_auto2">
+<span class="eqno">(6)</span>\[     \frac{d\theta}{d\bar t} = \omega{\thinspace .}\]</div>
+<p>Then we compute</p>
+<div class="math" id="equation-_auto3">
+<span class="eqno">(7)</span>\[     \bar S = \omega^2 + \cos\theta{\thinspace .}\]</div>
+<p>The dimensionless air resistance force can also be computed:</p>
+<div class="math" id="equation-_auto4">
+<span class="eqno">(8)</span>\[     -\alpha|\omega|\omega{\thinspace .}\]</div>
+<p>Since we scaled the force <span class="math">\(S\)</span> by <span class="math">\(mg\)</span>, <span class="math">\(mg\)</span> is the natural force scale,
+and the <span class="math">\(mg\)</span> force itself is then unity.</p>
+<p>By updating <span class="math">\(\omega\)</span> in the first equation, we can use an Euler-Cromer
+scheme on Odespy (all other schemes are independent of whether the
+<span class="math">\(\theta\)</span> or <span class="math">\(\omega\)</span> equation comes first).</p>
+</div>
+<div class="section" id="numerical-solution">
+<h4>Numerical solution<a class="headerlink" href="#numerical-solution" title="Permalink to this headline">¶</a></h4>
+<p>An appropriate solver is</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">simulate_pendulum</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">theta0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">odespy</span>
+
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="n">omega</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">u</span>
+        <span class="k">return</span> <span class="p">[</span><span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+                <span class="n">omega</span><span class="p">]</span>
+
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <span class="n">Nt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">T</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">dt</span><span class="p">)))</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Nt</span><span class="o">*</span><span class="n">dt</span><span class="p">,</span> <span class="n">Nt</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">odespy</span><span class="o">.</span><span class="n">RK4</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f_args</span><span class="o">=</span><span class="p">[</span><span class="n">alpha</span><span class="p">])</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">set_initial_condition</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">theta0</span><span class="p">])</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">t</span><span class="p">,</span>
+                        <span class="n">terminate</span><span class="o">=</span><span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1E-3</span><span class="p">)</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">u</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">u</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">drag</span> <span class="o">=</span> <span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span><span class="o">*</span><span class="n">omega</span>
+    <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">drag</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="animation">
+<h4>Animation<a class="headerlink" href="#animation" title="Permalink to this headline">¶</a></h4>
+<p>We can finally traverse the time array and draw a body diagram
+at each time level. The resulting sketches are saved to files
+<code class="docutils literal"><span class="pre">tmp_%04d.png</span></code>, and these files can be combined to videos:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">animate</span><span class="p">():</span>
+    <span class="c"># Clean up old plot files</span>
+    <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">glob</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;tmp_*.png&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s">&#39;movie.*&#39;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="c"># Solve problem</span>
+    <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">radians</span><span class="p">,</span> <span class="n">degrees</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span>
+    <span class="n">period</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">12</span><span class="o">*</span><span class="n">period</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">period</span><span class="o">/</span><span class="mi">40</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">70</span>
+    <span class="n">theta0</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">t</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">drag</span> <span class="o">=</span> <span class="n">simulate_pendulum</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">theta0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+    <span class="n">mg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="c"># Visualize drag force 5 times as large</span>
+    <span class="n">drag</span> <span class="o">*=</span> <span class="mi">5</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;NOTE: drag force magnified 5 times!!&#39;</span><span class="p">)</span>
+
+    <span class="c"># Draw animation</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+    <span class="k">for</span> <span class="n">time_level</span><span class="p">,</span> <span class="n">t_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="n">pendulum</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">mg</span><span class="p">,</span> <span class="n">drag</span><span class="p">,</span> <span class="n">t_</span><span class="p">,</span> <span class="n">time_level</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="c"># Make videos</span>
+    <span class="n">prog</span> <span class="o">=</span> <span class="s">&#39;ffmpeg&#39;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;tmp_</span><span class="si">%04d</span><span class="s">.png&#39;</span>
+    <span class="n">fps</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">codecs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;flv&#39;</span><span class="p">:</span> <span class="s">&#39;flv&#39;</span><span class="p">,</span> <span class="s">&#39;mp4&#39;</span><span class="p">:</span> <span class="s">&#39;libx264&#39;</span><span class="p">,</span>
+              <span class="s">&#39;webm&#39;</span><span class="p">:</span> <span class="s">&#39;libvpx&#39;</span><span class="p">,</span> <span class="s">&#39;ogg&#39;</span><span class="p">:</span> <span class="s">&#39;libtheora&#39;</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">codecs</span><span class="p">:</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">codecs</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%(prog)s</span><span class="s"> -i </span><span class="si">%(filename)s</span><span class="s"> -r </span><span class="si">%(fps)s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="nb">vars</span><span class="p">()</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="s">&#39;-vcodec </span><span class="si">%(lib)s</span><span class="s"> movie.</span><span class="si">%(ext)s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">vars</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</pre></div>
+</div>
+<div>
+<video  loop controls width='640' height='365' preload='none'>
+    <source src='https://github.com/hplgit/pysketcher/raw/master/doc/pub/tutorial/mov-tut/pendulum/movie.mp4'  type='video/mp4;  codecs="avc1.42E01E, mp4a.40.2"'>
+    <source src='https://github.com/hplgit/pysketcher/raw/master/doc/pub/tutorial/mov-tut/pendulum/movie.webm' type='video/webm; codecs="vp8, vorbis"'>
+    <source src='https://github.com/hplgit/pysketcher/raw/master/doc/pub/tutorial/mov-tut/pendulum/movie.ogg'  type='video/ogg;  codecs="theora, vorbis"'>
+</video>
+</div>
+<p><em>The drag force is magnified 5 times (compared to  \( mg \)  and  \( S \) !</em></p>
+
+<!-- Issue warning if in a Safari browser -->
+<script language="javascript">
+if (!!(window.safari)) {
+  document.write("<div style=\"width: 95%%; padding: 10px; border: 1px solid #100; border-radius: 4px;\"><p><font color=\"red\">The above movie will not play in Safari - use Chrome, Firefox, or Opera.</font></p></div>")}
+</script></div>
 </div>
 </div>
 <div class="section" id="basic-shapes">
@@ -1798,6 +2106,13 @@ rolling wheel at the end of the section <a class="reference internal" href="#ske
 <li><a class="reference internal" href="#a-simple-pendulum">A simple pendulum</a><ul>
 <li><a class="reference internal" href="#the-basic-physics-sketch">The basic physics sketch</a></li>
 <li><a class="reference internal" href="#the-body-diagram">The body diagram</a></li>
+<li><a class="reference internal" href="#animated-body-diagram">Animated body diagram</a><ul>
+<li><a class="reference internal" href="#function-for-drawing-the-body-diagram">Function for drawing the body diagram</a></li>
+<li><a class="reference internal" href="#equations-for-the-motion-and-forces">Equations for the motion and forces</a></li>
+<li><a class="reference internal" href="#numerical-solution">Numerical solution</a></li>
+<li><a class="reference internal" href="#animation">Animation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#basic-shapes">Basic shapes</a><ul>

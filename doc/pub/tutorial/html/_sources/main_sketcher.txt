@@ -675,7 +675,11 @@ The basic physics sketch
 ------------------------
 
 We now want to make a sketch of simple pendulum from physics, as shown
-in Figure :ref:`sketcher:ex:pendulum:fig1`. A suggested work flow is to
+in Figure :ref:`sketcher:ex:pendulum:fig1`. A body with mass :math:`m` is attached
+to a massless, stiff rod, which can rotate about a point, causing the
+pendulum to oscillate.
+
+A suggested work flow is to
 first sketch the figure on a piece of paper and introduce a coordinate
 system. A simple coordinate system is indicated in Figure
 :ref:`sketcher:ex:pendulum:fig1wgrid`. In a code we introduce variables
@@ -704,7 +708,7 @@ Also note that we in this example let all lines be blue by default.
 .. _sketcher:ex:pendulum:fig1:
 
 .. figure:: pendulum1.png
-   :width: 400
+   :width: 300
 
    *Sketch of a simple pendulum*
 
@@ -713,7 +717,7 @@ Also note that we in this example let all lines be blue by default.
 .. figure:: pendulum1_wgrid.png
    :width: 400
 
-   *Sketch of a simple pendulum*
+   *Sketch with assisting coordinate system*
 
 The next step is to introduce variables for key quantities in the sketch.
 Let ``L`` be the length of the pendulum, ``P`` the rotation point, and let
@@ -753,11 +757,15 @@ Figure :ref:`sketcher:ex:pendulum:fig1` we see that we need
 
 Pysketcher has objects for each of these elements in our sketch.
 We start with the simplest element: the vertical line, going from
-``P`` to ``P`` minus the length in :math:`y` direction:
+``P`` to ``P`` minus the length :math:`L` in :math:`y` direction:
 
 .. code-block:: python
 
         vertical = Line(P, P-point(0,L))
+
+The class ``point`` is very convenient: it turns its two coordinates into
+a vector with which we can compute, and is therefore one of the most
+widely used Pysketcher objects.
 
 The path of the mass is an arc that can be made by
 Pysketcher's ``Arc`` object:
@@ -767,7 +775,7 @@ Pysketcher's ``Arc`` object:
         path = Arc(P, L, -90, a)
 
 The first argument ``P`` is the center point, the second is the
-radius (``L`` here), the next arguments is the start angle, here
+radius (``L`` here), the next argument is the start angle, here
 it starts at -90 degrees, while the next argument is the angle of
 the arc, here ``a``.
 For the path of the mass, we also need an arc object, but this
@@ -789,10 +797,11 @@ adjust spacings as one goes along.
 The rod is simply a line from ``P`` to the mass. We can easily
 compute the position of the mass from basic geometry considerations,
 but it is easier and safer to look up this point in other objects
-if it is already computed. The ``path`` object stores its start and
+if it is already computed. In the present case,
+the ``path`` object stored its start and
 end points, so ``path.geometric_features()['end']`` is the end point
 of the path, which is the position of the mass. We can therefore
-create the rod simply as a line from ``P`` to this end point:
+create the rod simply as a line from ``P`` to this already computed end point:
 
 .. code-block:: python
 
@@ -835,6 +844,8 @@ normal direction of the rod:
 For this translation we need a unit vector in the normal direction
 of the rod, which is from geometric considerations given by
 :math:`(\cos a, \sin a)`, when :math:`a` is the angle of the pendulum.
+Alternatively, we could have found the normal vector as a vector that
+is normal to ``unit_rod_vec``: ``point(-unit_rod_vec[1],unit_rod_vec[0])``.
 
 The final object is the gravity force vector, which is so common
 in physics sketches that Pysketcher has a ready-made object: ``Gravity``,
@@ -844,14 +855,14 @@ in physics sketches that Pysketcher has a ready-made object: ``Gravity``,
         gravity = Gravity(start=P+point(0.8*L,0), length=L/3)
 
 Since blue is the default color for
-lines, we want the dashed lines (``vertical`` and ``path``) to be black
-and dashed with linewidth 1. These properties can be set one by one,
-but we can also make a little helper function:
+lines, we want the dashed lines (for ``vertical`` and ``path``) to be black
+and with linewidth 1. These properties can be set one by one for each
+object, but we can also make a little helper function:
 
 .. code-block:: python
 
         def set_dashed_thin_blackline(*objects):
-            """Set linestyle of an object to dashed, black, width=1."""
+            """Set linestyle of objects to dashed, black, width=1."""
             for obj in objects:
                 obj.set_linestyle('dashed')
                 obj.set_linecolor('black')
@@ -888,7 +899,7 @@ coordinates.
 .. _sketcher:ex:pendulum:fig2wgrid:
 
 .. figure:: pendulum5_wgrid.png
-   :width: 400
+   :width: 300
 
    *Body diagram of a simple pendulum*
 
@@ -913,9 +924,9 @@ We start by listing the objects in the sketch:
 9. the air resistance force with text :math:`\sim |v|v`
 
 The first object, :math:`(x_0,y_0)`, is simply a plain text where we have
-to experiment with the position. The unit vectors in polar coordinates
+to experiment with its position. The unit vectors in polar coordinates
 may be drawn using the Pysketcher's ``Force`` object since it has an
-arrow with a text. The first three object can then be made as follows:
+arrow with a text. The first three objects can then be made as follows:
 
 .. code-block:: python
 
@@ -934,7 +945,7 @@ the tweaked displacement ``point(-0.4,-0.1)`` in terms of ``W`` and ``H``.
 The ``text_spacing`` values in the ``Force`` objects also use absolute
 coordinates. Very often, this is much more convenient when adjusting
 the objects, and global size parameters like ``W`` and ``H`` are in practice
-seldom changed.
+seldom changed, so the solution above is quite typical.
 
 The vertical, dashed line, the dashed rod, and the arc for :math:`\theta`
 are made by
@@ -964,6 +975,10 @@ The forces are constructed as shown below.
                           '$\sim|v|v$', text_pos='end',
                           text_spacing=(0.04,0.005))
 
+Note that the drag force from the air is directed perpendicular to
+the rod, so we construct a unit vector in this direction directly from
+the ``rod_vec`` vector.
+
 All objects are in place, and we can compose a figure to be drawn:
 
 .. code-block:: python
@@ -982,7 +997,384 @@ Here, we exemplify that we can start out with a composition as a
 dictionary, but (as in ordinary Python dictionaries) add new
 elements later when desired.
 
-.. FIGURE: [fig-tut/pendulum1.png, width=400 frac=0.5] Sketch of a simple pendulum.
+.. FIGURE: [fig-tut/pendulum1.png, width=300 frac=0.5] Sketch of a simple pendulum.
+
+.. _sketcher:ex:pendulum:anim:
+
+Animated body diagram
+---------------------
+
+We want to make an animated body diagram so that we can see how forces
+develop in time according to the motion. This means that we must
+couple the sketch at each time level to a numerical solution for
+the motion of the pendulum.
+
+Function for drawing the body diagram
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The previous flat program for making sketches of the pendulum is not
+suitable when we want to make a sketch at a lot of different points
+in time, i.e., for a lot of different angles that the pendulum makes
+with the vertical. We therefore need to draw the body diagram in
+a function where the angle is a parameter. We also supply arrays
+containing the (numerically computed) values of the angle :math:`\theta` and
+the forces at various time levels, plus the desired time point and level
+for this particular sketch:
+
+.. code-block:: python
+
+        from pysketcher import *
+        
+        H = 15.
+        W = 17.
+        
+        drawing_tool.set_coordinate_system(xmin=0, xmax=W,
+                                           ymin=0, ymax=H,
+                                           axis=False)
+        
+        def pendulum(theta, S, mg, drag, t, time_level):
+        
+            drawing_tool.set_linecolor('blue')
+            import math
+            a = math.degrees(theta[time_level])
+            L = 0.4*H         # length
+            P = (W/2, 0.8*H)  # rotation point
+        
+            vertical = Line(P, P-point(0,L))
+            path = Arc(P, L, -90, a)
+            angle = Arc_wText(r'$\theta$', P, L/4, -90, a, text_spacing=1/30.)
+        
+            mass_pt = path.geometric_features()['end']
+            rod = Line(P, mass_pt)
+        
+            mass = Circle(center=mass_pt, radius=L/20.)
+            mass.set_filled_curves(color='blue')
+            rod_vec = rod.geometric_features()['end'] - \ 
+                      rod.geometric_features()['start']
+            unit_rod_vec = unit_vec(rod_vec)
+            mass_symbol = Text('$m$', mass_pt + L/10*unit_rod_vec)
+        
+            length = Distance_wText(P, mass_pt, '$L$')
+            # Displace length indication
+            length.translate(L/15*point(cos(radians(a)), sin(radians(a))))
+            gravity = Gravity(start=P+point(0.8*L,0), length=L/3)
+        
+            def set_dashed_thin_blackline(*objects):
+                """Set linestyle of objects to dashed, black, width=1."""
+                for obj in objects:
+                    obj.set_linestyle('dashed')
+                    obj.set_linecolor('black')
+                    obj.set_linewidth(1)
+        
+            set_dashed_thin_blackline(vertical, path)
+        
+            fig = Composition(
+                {'body': mass, 'rod': rod,
+                 'vertical': vertical, 'theta': angle, 'path': path,
+                 'g': gravity, 'L': length})
+        
+            #fig.draw()
+            #drawing_tool.display()
+            #drawing_tool.savefig('tmp_pendulum1')
+        
+            drawing_tool.set_linecolor('black')
+        
+            rod_start = rod.geometric_features()['start']  # Point P
+            vertical2 = Line(rod_start, rod_start + point(0,-L/3))
+            set_dashed_thin_blackline(vertical2)
+            set_dashed_thin_blackline(rod)
+            angle2 = Arc_wText(r'$\theta$', rod_start, L/6, -90, a,
+                               text_spacing=1/30.)
+        
+            magnitude = 1.2*L/2   # length of a unit force in figure
+            force = mg[time_level]  # constant (scaled eq: about 1)
+            force *= magnitude
+            mg_force  = Force(mass_pt, mass_pt + force*point(0,-1),
+                              '', text_pos='end')
+            force = S[time_level]
+            force *= magnitude
+            rod_force = Force(mass_pt, mass_pt - force*unit_vec(rod_vec),
+                              '', text_pos='end',
+                              text_spacing=(0.03, 0.01))
+            force = drag[time_level]
+            force *= magnitude
+            #print('drag(%g)=%g' % (t, drag[time_level]))
+            air_force = Force(mass_pt, mass_pt -
+                              force*unit_vec((rod_vec[1], -rod_vec[0])),
+                              '', text_pos='end',
+                              text_spacing=(0.04,0.005))
+        
+            body_diagram = Composition(
+                {'mg': mg_force, 'S': rod_force, 'air': air_force,
+                 'rod': rod,
+                 'vertical': vertical2, 'theta': angle2,
+                 'body': mass})
+        
+            x0y0 = Text('$(x_0,y_0)$', P + point(-0.4,-0.1))
+            ir = Force(P, P + L/10*unit_vec(rod_vec),
+                       r'$\boldsymbol{i}_r$', text_pos='end',
+                       text_spacing=(0.015,0))
+            ith = Force(P, P + L/10*unit_vec((-rod_vec[1], rod_vec[0])),
+                       r'$\boldsymbol{i}_{\theta}$', text_pos='end',
+                        text_spacing=(0.02,0.005))
+        
+            #body_diagram['ir'] = ir
+            #body_diagram['ith'] = ith
+            #body_diagram['origin'] = x0y0
+        
+            drawing_tool.erase()
+            body_diagram.draw(verbose=0)
+            #drawing_tool.display('Body diagram')
+            drawing_tool.savefig('tmp_%04d.png' % time_level, crop=False)
+            # No cropping: otherwise movies will be very strange
+
+Equations for the motion and forces
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The modeling of the motion of a pendulum is most conveniently done in
+polar coordinates since then the unknown force in the rod is separated
+from the equation determining the motion :math:`\theta(t)`.
+The position vector for the mass is
+
+.. math::
+         \boldsymbol{r} = x_0\boldsymbol{i} + y_0\boldsymbol{j} + L{\boldsymbol{i}_r}{\thinspace .}
+
+The corresponding acceleration becomes
+
+.. math::
+         \ddot{\boldsymbol{r}} = L\ddot{\theta}{\boldsymbol{i}_{\theta}} - L\dot{\theta^2}{{\boldsymbol{i}_r}}{\thinspace .}
+
+.. Note: the extra braces help to render the equation correctly in sphinx!
+
+There are three forces on the mass: the gravity force
+:math:`mg\boldsymbol{j} = mg(-\cos\theta\,{\boldsymbol{i}_r} + \sin\theta\,\boldsymbol{i}_{\theta})`, the force in the rod
+:math:`-S{\boldsymbol{i}_r}`, and the drag force because of air resistance:
+
+.. math::
+         -\frac{1}{2} C_D \varrho \pi R^2 |v|v\,\boldsymbol{i}_{\theta},
+
+where :math:`C_D\approx 0.4` is the drag coefficient for a sphere, :math:`\varrho`
+is the density of air, :math:`R` is the radius of the mass, and :math:`v` is the
+velocity (:math:`v=L\dot\theta`). The drag force acts in :math:`-\boldsymbol{i}_{\theta}` direction
+when :math:`v>0`.
+
+Newton's second law of motion for the pendulum now becomes
+
+.. math::
+         mL\ddot\theta\boldsymbol{i}_{\theta} - mL\dot\theta^2{\boldsymbol{i}_r} = -mg(-\cos\theta\,{\boldsymbol{i}_r} +
+        \sin\theta\,\boldsymbol{i}_{\theta})
+        -S{\boldsymbol{i}_r} - \frac{1}{2} C_D \varrho \pi R^2 L^2|\dot\theta|\dot\theta\boldsymbol{i}_{\theta},
+
+which gives two component equations
+
+.. math::
+   :label: sketcher:ex:pendulum:anim:eq:ith
+        
+        mL\ddot\theta + \frac{1}{2} C_D \varrho \pi R^2 L^2|\dot\theta|\dot\theta +
+        mg\sin\theta = 0,
+        
+        
+
+.. math::
+   :label: sketcher:ex:pendulum:anim:eq:ir
+          
+        S = mL\dot\theta^2 + mg\cos\theta
+        {\thinspace .}
+        
+
+It is almost always convenient to scale such equations. Introducing
+the dimensionless time
+
+.. math::
+         \bar t = \frac{t}{t_c},\quad t_c = \sqrt{\frac{L}{g}},
+
+leads to
+
+.. math::
+   :label: sketcher:ex:pendulum:anim:eq:ith:s
+        
+        \frac{d^2\theta}{d\bar t^2} +
+        \alpha\left\vert\frac{d\theta}{d\bar t}\right\vert\frac{d\theta}{d\bar t} +
+        \sin\theta = 0,
+        
+        
+
+.. math::
+   :label: sketcher:ex:pendulum:anim:eq:ir:s
+          
+        \bar S = \left(\frac{d\theta}{d\bar t}\right)^2
+        + \cos\theta,
+        
+        
+
+where :math:`\alpha` is a dimensionless drag coefficient
+
+.. math::
+         \alpha = \frac{C_D\varrho\pi R^2L}{2m},
+
+and :math:`\bar S` is the scaled force
+
+.. math::
+         \bar S = \frac{S}{mg}{\thinspace .}
+
+We see that :math:`\bar S = 1` for the equilibrium position :math:`\theta=0`, so this
+scaling of :math:`S` seems appropriate.
+
+The parameter :math:`\alpha` is about
+the ratio of the drag force and the gravity force:
+
+.. math::
+         \frac{|\frac{1}{2} C_D\varrho \pi R^2 |v|v|}{|mg|}\sim
+        \frac{C_D\varrho \pi R^2 L^2 t_c^{-2}}{mg}
+        \left|\frac{d\bar\theta}{d\bar t}\right|\frac{d\bar\theta}{d\bar t}
+        \sim \frac{C_D\varrho \pi R^2 L}{2m}\theta_0^2 = \alpha \theta_0^2{\thinspace .}
+
+(We have that :math:`\theta(t)/d\theta_0` is in :math:`[-1,1]`, so we expect
+since :math:`\theta_0^{-1}d\bar\theta/d\bar t` to be around unity.)
+
+The next step is to write a numerical solver for
+:eq:`sketcher:ex:pendulum:anim:eq:ith:s`-:eq:`sketcher:ex:pendulum:anim:eq:ir:s`. To
+this end, we use the `Odespy <https://github.com/hplgit/odespy>`__
+package. The system of second-order ODEs must be expressed as a system
+of first-order ODEs. We realize that the unknown :math:`\bar S` is decoupled
+from :math:`\theta` in the sense that we can first use
+:eq:`sketcher:ex:pendulum:anim:eq:ith:s` to solve for :math:`\theta` and
+then compute :math:`\bar S` from :eq:`sketcher:ex:pendulum:anim:eq:ir:s`.
+The first-order ODEs become
+
+.. math::
+   :label: _auto1
+        
+        \frac{d\omega}{d\bar t} = -\alpha\left\vert\omega\right\vert\omega
+        - \sin\theta,
+        
+        
+
+.. math::
+   :label: _auto2
+          
+        \frac{d\theta}{d\bar t} = \omega{\thinspace .}
+        
+        
+
+Then we compute
+
+.. math::
+   :label: _auto3
+        
+        \bar S = \omega^2 + \cos\theta{\thinspace .}
+        
+        
+
+The dimensionless air resistance force can also be computed:
+
+.. math::
+   :label: _auto4
+        
+        -\alpha|\omega|\omega{\thinspace .}
+        
+        
+
+Since we scaled the force :math:`S` by :math:`mg`, :math:`mg` is the natural force scale,
+and the :math:`mg` force itself is then unity.
+
+By updating :math:`\omega` in the first equation, we can use an Euler-Cromer
+scheme on Odespy (all other schemes are independent of whether the
+:math:`\theta` or :math:`\omega` equation comes first).
+
+Numerical solution
+~~~~~~~~~~~~~~~~~~
+
+An appropriate solver is
+
+.. code-block:: python
+
+        def simulate_pendulum(alpha, theta0, dt, T):
+            import odespy
+        
+            def f(u, t, alpha):
+                omega, theta = u
+                return [-alpha*omega*abs(omega) - sin(theta),
+                        omega]
+        
+            import numpy as np
+            Nt = int(round(T/float(dt)))
+            t = np.linspace(0, Nt*dt, Nt+1)
+            solver = odespy.RK4(f, f_args=[alpha])
+            solver.set_initial_condition([0, theta0])
+            u, t = solver.solve(t,
+                                terminate=lambda u, t, n: abs(u[n,1]) < 1E-3)
+            omega = u[:,0]
+            theta = u[:,1]
+            S = omega**2 + np.cos(theta)
+            drag = -alpha*np.abs(omega)*omega
+            return t, theta, omega, S, drag
+
+Animation
+~~~~~~~~~
+
+We can finally traverse the time array and draw a body diagram
+at each time level. The resulting sketches are saved to files
+``tmp_%04d.png``, and these files can be combined to videos:
+
+.. code-block:: python
+
+        def animate():
+            # Clean up old plot files
+            import os, glob
+            for filename in glob.glob('tmp_*.png') + glob.glob('movie.*'):
+                os.remove(filename)
+            # Solve problem
+            from math import pi, radians, degrees
+            import numpy as np
+            alpha = 0.4
+            period = 2*pi
+            T = 12*period
+            dt = period/40
+            a = 70
+            theta0 = radians(a)
+            t, theta, omega, S, drag = simulate_pendulum(alpha, theta0, dt, T)
+            mg = np.ones(S.size)
+            # Visualize drag force 5 times as large
+            drag *= 5
+            print('NOTE: drag force magnified 5 times!!')
+        
+            # Draw animation
+            import time
+            for time_level, t_ in enumerate(t):
+                pendulum(theta, S, mg, drag, t_, time_level)
+                time.sleep(0.2)
+        
+            # Make videos
+            prog = 'ffmpeg'
+            filename = 'tmp_%04d.png'
+            fps = 6
+            codecs = {'flv': 'flv', 'mp4': 'libx264',
+                      'webm': 'libvpx', 'ogg': 'libtheora'}
+            for ext in codecs:
+                lib = codecs[ext]
+                cmd = '%(prog)s -i %(filename)s -r %(fps)s ' % vars()
+                cmd += '-vcodec %(lib)s movie.%(ext)s' % vars()
+                print(cmd)
+                os.system(cmd)
+
+.. raw:: html
+        
+        <div>
+        <video  loop controls width='640' height='365' preload='none'>
+            <source src='https://github.com/hplgit/pysketcher/raw/master/doc/pub/tutorial/mov-tut/pendulum/movie.mp4'  type='video/mp4;  codecs="avc1.42E01E, mp4a.40.2"'>
+            <source src='https://github.com/hplgit/pysketcher/raw/master/doc/pub/tutorial/mov-tut/pendulum/movie.webm' type='video/webm; codecs="vp8, vorbis"'>
+            <source src='https://github.com/hplgit/pysketcher/raw/master/doc/pub/tutorial/mov-tut/pendulum/movie.ogg'  type='video/ogg;  codecs="theora, vorbis"'>
+        </video>
+        </div>
+        <p><em>The drag force is magnified 5 times (compared to :math:`mg` and :math:`S`!</em></p>
+        
+        <!-- Issue warning if in a Safari browser -->
+        <script language="javascript">
+        if (!!(window.safari)) {
+          document.write("<div style=\"width: 95%%; padding: 10px; border: 1px solid #100; border-radius: 4px;\"><p><font color=\"red\">The above movie will not play in Safari - use Chrome, Firefox, or Opera.</font></p></div>")}
+        </script>
+        
 
 .. !split
 
