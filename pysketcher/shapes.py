@@ -2539,6 +2539,106 @@ See also hplgit.github.io/pysketcher/doc/src/tut/fig-tut/StochasticWavyCurve.png
 # Maybe extra dict: self.name['mass'] = Rectangle object - YES!
 
 
+class ArbitraryVolume(Shape):
+    """
+    An arbitrary closed volume with an optional normal vector and a
+    vector field to be used in derivation of continuum mechanical
+    equations.
+    """
+    def __init__(self, position, width=1,
+                 volume_symbol='V',
+                 volume_symbol_fontsize='18',
+                 normal_vector_symbol='n',
+                 vector_field_symbol=None):
+        """
+        ============================ ====================================
+        Name                         Description
+        ============================ ====================================
+        position                     center point of volume
+        width                        width of volume (about 3 is best)
+        normal_vector_symbol         symbol of None (no boundary normal)
+        volume_symbol                None (no center symbol) or character
+        volume_symbol_fontsize       fontsize of volume symbol
+        vector_field_symbol          None (no vector) or symbol
+        ============================ ====================================
+        """
+        self.position, self.width = position, width
+        self.vector_symbol = vector_field_symbol
+        self.normal_symbol = normal_vector_symbol
+        ellipse, normal, vector = self._perturbed_unit_ellipse()
+        self.shapes = {'closed_curve': ellipse}
+        if normal_vector_symbol:
+            self.shapes['normal'] = normal
+        if vector_field_symbol is not None:
+            self.shapes['vector'] = vector
+
+        # Scale and translate
+        self.rotate(20, (0,0))
+        self.scale(width/2.0)
+        self.translate(position)
+        # Must be placed at position after translation:
+        if volume_symbol:
+            self.shapes['name'] = Text('$%s$' % volume_symbol, position,
+                                       fontsize=volume_symbol_fontsize)
+
+    def _perturbed_unit_ellipse(self):
+        """Draw the volume as a perturbed ellipse of about unit size."""
+        a0 = 1.0
+        b0 = 0.75
+        eps_a = 0.2
+        eps_b = 0.1
+
+        a = lambda t: a0 + eps_a*sin(1*t)
+        b = lambda t: b0 + eps_b*cos(1*t)
+
+        x = lambda t: a(t)*cos(t)
+        y = lambda t: b(t)*sin(t)
+
+        t = linspace(0, 2*pi, 101)   # parameter
+        ellipse = Curve(x(t), y(t))
+
+        # Make normal vector
+        tx = lambda t: eps_a*cos(t)*cos(t) - a(t)*sin(t)
+        ty = lambda t: -eps_b*sin(t)*sin(t) + b(t)*cos(t)
+        t0 = pi/5
+        nx = ty(t0)
+        ny = -tx(t0)
+        nx = nx/sqrt(nx**2 + ny**2)
+        ny = ny/sqrt(nx**2 + ny**2)
+        Px = x(t0)
+        Py = y(t0)
+        start = point(x(t0), y(t0))
+        end = start + point(0.75*b0*nx, 0.75*b0*ny)
+        normal = Force(start, end, '$\\boldsymbol{%s}$' % self.normal_symbol,
+                       text_spacing=1./60,
+                       text_pos='end',
+                       text_alignment='center')
+        end = start + point(0.75*b0/3*nx, 0.75*b0*4*ny)
+        vector = Force(start, end, '$\\boldsymbol{%s}$' % self.vector_symbol,
+                       text_spacing=1./60,
+                       text_pos='end',
+                       text_alignment='center')
+
+        return ellipse, normal, vector
+
+    def geometric_features(self):
+        """
+        Recorded geometric features:
+
+        ==================== =============================================
+        Attribute            Description
+        ==================== =============================================
+        position             center point of volume
+        normal_vector_start  start of normal vector
+        normal_vector_end    end of normal vector
+        ==================== =============================================
+        """
+        d = {'position': self.position}
+        if 'normal' in self.shapes:
+            d['normal_vector_start'] = self.shapes['normal'].geometric_features()['start']
+            d['normal_vector_end'] = self.shapes['normal'].geometric_features()['end']
+        return d
+
 def _test1():
     set_coordinate_system(xmin=0, xmax=10, ymin=0, ymax=10)
     l1 = Line((0,0), (1,1))
