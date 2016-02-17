@@ -1,6 +1,6 @@
 """
 Modified version of pendulum1.py:
-A function draws the body diagram, given the angle.
+A function draws the free body diagram, given the angle.
 This function can be coupled to a numerical solver
 for the motion. Videos of the motion are made.
 """
@@ -105,7 +105,7 @@ def pendulum(theta, S, mg, drag, t, time_level):
 
     drawing_tool.erase()
     body_diagram.draw(verbose=0)
-    #drawing_tool.display('Body diagram')
+    #drawing_tool.display('Free body diagram')
     drawing_tool.savefig('tmp_%04d.png' % time_level, crop=False)
     # No cropping: otherwise movies will be very strange
 

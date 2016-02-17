@@ -52,10 +52,10 @@ fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp_pendulum1')
 
-# Draw body diagram in several different versions
+# Draw free body diagram in several different versions
 # (note that we build body_diagram, erase and draw,
 # add elements to body_diagram, erase and draw, and so on)
-input('Press Return to make body diagram: ')
+input('Press Return to make free body diagram: ')
 
 drawing_tool.erase()
 
@@ -84,17 +84,17 @@ body_diagram = Composition(
      'body': mass, 'm': mass_symbol})
 
 body_diagram.draw()
-#drawing_tool.display('Body diagram')
+#drawing_tool.display('Free body diagram')
 drawing_tool.savefig('tmp_pendulum2')
 
 drawing_tool.adjust_coordinate_system(body_diagram.minmax_coordinates(), 90)
-#drawing_tool.display('Body diagram')
+#drawing_tool.display('Free body diagram')
 drawing_tool.savefig('tmp_pendulum3')
 
 drawing_tool.erase()
 body_diagram['air'] = air_force
 body_diagram.draw()
-#drawing_tool.display('Body diagram')
+#drawing_tool.display('Free body diagram')
 drawing_tool.savefig('tmp_pendulum4')
 
 drawing_tool.erase()
@@ -111,7 +111,7 @@ body_diagram['ith'] = ith
 body_diagram['origin'] = x0y0
 
 body_diagram.draw()
-#drawing_tool.display('Body diagram')
+#drawing_tool.display('Free body diagram')
 drawing_tool.savefig('tmp_pendulum5')
 
 input()
