@@ -13,8 +13,6 @@ import os
 import matplotlib
 
 matplotlib.use('TkAgg')
-# Allow \boldsymbol{} etc in title, labels, etc
-matplotlib.rc('text', usetex=True)
 matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{amsmath}'
 
 import matplotlib.pyplot as mpl
@@ -95,6 +93,9 @@ class MatplotlibDraw(object):
         self.mpl = mpl
         if xkcd:
             self.mpl.xkcd()
+        else:
+            # Allow \boldsymbol{} etc in title, labels, etc
+            matplotlib.rc('text', usetex=True)
 
         self.xmin, self.xmax, self.ymin, self.ymax = \
              float(xmin), float(xmax), float(ymin), float(ymax)
