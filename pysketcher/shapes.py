@@ -667,9 +667,10 @@ class SketchyFunc1(Spline):
     """
     domain = [1, 6]
     def __init__(self, name=None, name_pos='start',
-                 xmin=1, xmax=6, ymin=2.4, ymax=5):
-        x = array([1, 2,   3,   4, 5,   6])
-        y = array([5, 3.5, 3.8, 3, 2.5, 2.4])
+                 xmin=0, xmax=6, ymin=0, ymax=2):
+        x = array([0, 2,   3,   4, 5,   6])
+        y = array([1, 1.8, 1.2, 0.7, 0.8, 0.85])
+        #y = array([5, 3.5, 3.8, 3, 2.5, 2.4])
         # Scale x and y
         x = xmin - x.min() + x*(xmax - xmin)/(x.max()-x.min())
         y = ymin - y.min() + y*(ymax - ymin)/(y.max()-y.min())
@@ -687,7 +688,6 @@ class SketchyFunc3(Spline):
     def __init__(self, name=None, name_pos='start',
                  xmin=0, xmax=6, ymin=0.5, ymax=3.8):
         x = array([0, 2,   3,   4, 5,   6])
-        #y = array([2, 3.5, 3.8, 2, 2.5, 2.6])
         y = array([0.5, 3.5, 3.8, 2, 2.5, 3.5])
         # Scale x and y
         x = xmin - x.min() + x*(xmax - xmin)/(x.max()-x.min())
