@@ -17,13 +17,7 @@ notify a coordinate system. Here is an example where we
 draw $x$ and $y$ axis of three coordinate systems of different
 rotation:
 
-<linebreak>
-<linebreak>
-
 FIGURE: [fig-tut/Axis, width=500 frac=0.7]
-
-<linebreak>
-<linebreak>
 
 The corresponding code looks like this:
 
@@ -37,14 +31,7 @@ a distance in a sketch, with an additional text in the middle of the arrow.
 The figure
 
 
-<linebreak>
-<linebreak>
-
 FIGURE: [fig-tut/Distance_wText, width=500 frac=0.7]
-
-<linebreak>
-<linebreak>
-
 
 was produced by this code:
 
@@ -58,9 +45,6 @@ the appearance of the text that goes with the distance arrow.
 
 FIGURE: [fig-tut/Rectangle, width=500 frac=0.7]
 
-<linebreak>
-<linebreak>
-
 The above figure can be produced by the following code.
 
 @@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Rectangle@drawing_tool.savefig\('tmp_Rectangle
@@ -72,9 +56,6 @@ to the geometry of the current shape.
 ===== Triangle =====
 
 FIGURE: [fig-tut/Triangle, width=500 frac=0.7]
-
-<linebreak>
-<linebreak>
 
 The code below produces the figure.
 
@@ -88,9 +69,6 @@ to the location of the p1, p2, and even p3 texts.
 
 FIGURE: [fig-tut/Arc, width=400 frac=0.5]
 
-<linebreak>
-<linebreak>
-
 An arc like the one above is produced by
 
 @@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Arc@drawing_tool.savefig\('tmp_Arc
@@ -99,9 +77,6 @@ An arc like the one above is produced by
 
 FIGURE: [fig-tut/Spring, width=800 frac=1]
 
-<linebreak>
-<linebreak>
-
 The code for making these two springs goes like this:
 
 @@@CODE ../../../pysketcher/tests/test_pysketcher.py fromto: def test_Spring@drawing_tool.savefig\('tmp_Spring
@@ -109,9 +84,6 @@ The code for making these two springs goes like this:
 ===== Dashpot =====
 
 FIGURE: [fig-tut/Dashpot, width=600 frac=0.8]
-
-<linebreak>
-<linebreak>
 
 This dashpot is produced by
 
@@ -126,13 +98,7 @@ Looks strange. Fix x axis.
 The `StochasticWavyCurve` object offers three precomputed
 graphics that have a random variation:
 
-<linebreak>
-<linebreak>
-
 FIGURE: [fig-tut/StochasticWavyCurve.png, width=600 frac=1]
-
-<linebreak>
-<linebreak>
 
 The usage is simple. The construction
 
