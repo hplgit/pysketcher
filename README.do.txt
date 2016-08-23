@@ -41,7 +41,7 @@ FIGURE: [http://hplgit.github.io/bumpy/doc/src/mov-bumpy/m2_k1_5_b0_2/tmp_frame_
 ===== Tutorial =====
 
 For an introduction to Pysketcher, see the tutorial in "HTML": "http://hplgit.github.io/pysketcher/doc/pub/tutorial/pysketcher.html", "Sphinx": "http://hplgit.github.io/pysketcher/doc/pub/tutorial/html/index.html", or "PDF": "http://hplgit/github.io/pysketcher/doc/pub/tutorial/pysketcher.pdf" format (or a simplified version of
-the tutorial in Chapter 9 in "A Primer on Scientific Programming with Python": "http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen", 4th edition, by H. P. Langtangen, Springer, 2014).
+the tutorial in Chapter 9 in "A Primer on Scientific Programming with Python": "http://www.amazon.com/Scientific-Programming-Computational-Science-Engineering/dp/3642549586/ref=sr_1_2?s=books&ie=UTF8&qid=1407225588&sr=1-2&keywords=langtangen", 4th-5th edition, by H. P. Langtangen, Springer, 2014-2016).
 
 ===== Examples =====
 
@@ -102,12 +102,12 @@ that has the original documentation of the tool.
 BibTeX format:
 
 !bc
-@book{Langtangen_2014,
+@book{Langtangen_Primer_2016,
   title = {A Primer on Scientific Programming With {P}ython},
   author = {H. P. Langtangen},
-  year = {2014},
+  year = {2016},
   publisher = {Springer},
-  edition = {Fourth},
+  edition = {Fifth},
 }
 
 @misc{Pysketcher,
@@ -116,6 +116,7 @@ BibTeX format:
   url = {https://github.com/hplgit/pysketcher},
   key = {Pysketcher},
   note = {\url{https://github.com/hplgit/pysketcher}},
+  year = 2016,
 }
 !ec
 
@@ -124,12 +125,12 @@ Publish format:
 !bc
 * books
 ** A Primer on Scientific Programming With {P}ython
-   key:       Langtangen_2014
+   key:       Langtangen_Primer_2016
    author:    H. P. Langtangen
-   year:      2014
+   year:      2016
    publisher: Springer
    status:    published
-   edition:   Fourth
+   edition:   Fifth
    entrytype: book
 * misc
 ** {P}ysketcher: {D}rawing tool for making sketches
@@ -139,6 +140,7 @@ Publish format:
    status:    published
    sortkey:   Pysketcher
    note:      \url{https://github.com/hplgit/pysketcher}
+   year:      2016
 !ec
 
 ===== History =====
