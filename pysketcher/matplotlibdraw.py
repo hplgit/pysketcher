@@ -1,23 +1,13 @@
-from __future__ import division
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
-from builtins import input
-from builtins import str
-from builtins import *
-from builtins import object
-
 import os
-import matplotlib
-
-matplotlib.use('TkAgg')
-matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{amsmath}'
+import logging
+from typing import List
 
 import matplotlib.pyplot as mpl
 import matplotlib.transforms as transforms
 import numpy as np
+
+from .point import Point
+
 
 class MatplotlibDraw(object):
     """
@@ -35,19 +25,16 @@ class MatplotlibDraw(object):
     arrow_head_width           Size of arrow head.
     ========================== ============================================
     """
-
     line_colors = {'red': 'r', 'green': 'g', 'blue': 'b', 'cyan': 'c',
                    'magenta': 'm', 'purple': 'p',
                    'yellow': 'y', 'black': 'k', 'white': 'w',
                    'brown': 'brown', '': ''}
-    def __init__(self):
+
+    def __init__(self, xmin, xmax, ymin, ymax, axis=False, new_figure=True):
         self.instruction_file = None
         self.allow_screen_graphics = True  # does not work yet
-
-    def __del__(self):
-        if self.instruction_file:
-            self.instruction_file.write('\nmpl.draw()\nraw_input()\n')
-            self.instruction_file.close()
+        self._mpl = mpl
+        self.set_coordinate_system(xmin, xmax, ymin, ymax, axis, new_figure)
 
     def ok(self):
         """
@@ -63,16 +50,14 @@ class MatplotlibDraw(object):
         """
         x_range = minmax['xmax'] - minmax['xmin']
         y_range = minmax['ymax'] - minmax['ymin']
-        new_x_range = x_range*100./occupation_percent
+        new_x_range = x_range * 100. / occupation_percent
         x_space = new_x_range - x_range
-        new_y_range = y_range*100./occupation_percent
+        new_y_range = y_range * 100. / occupation_percent
         y_space = new_y_range - y_range
-        self.ax.set_xlim(minmax['xmin']-x_space/2., minmax['xmax']+x_space/2.)
-        self.ax.set_ylim(minmax['ymin']-y_space/2., minmax['ymax']+y_space/2.)
+        self.ax.set_xlim(minmax['xmin'] - x_space / 2., minmax['xmax'] + x_space / 2.)
+        self.ax.set_ylim(minmax['ymin'] - y_space / 2., minmax['ymax'] + y_space / 2.)
 
-    def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False,
-                              instruction_file=None, new_figure=True,
-                              xkcd=False):
+    def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False, new_figure=True):
         """
         Define the drawing area [xmin,xmax]x[ymin,ymax].
         axis: None or False means that axes with tickmarks
@@ -82,115 +67,44 @@ class MatplotlibDraw(object):
         a figure or tailoring plots).
         """
 
-        # Close file for previous figure and start new one
-        # if not the figure file is the same
-        if self.instruction_file is not None:
-            if instruction_file == self.instruction_file.name:
-                pass  # continue with same file
-            else:
-                self.instruction_file.close()  # make new py file for commands
-
-        self.mpl = mpl
-        if xkcd:
-            self.mpl.xkcd()
-        else:
-            # Allow \boldsymbol{} etc in title, labels, etc
-            matplotlib.rc('text', usetex=True)
-
-        self.xmin, self.xmax, self.ymin, self.ymax = \
-             float(xmin), float(xmax), float(ymin), float(ymax)
-        self.xrange = self.xmax - self.xmin
-        self.yrange = self.ymax - self.ymin
+        self.x_min, self.x_max, self.y_min, self.y_max = \
+            float(xmin), float(xmax), float(ymin), float(ymax)
+        self.x_range = self.x_max - self.x_min
+        self.y_range = self.y_max - self.y_min
         self.axis = axis
 
         # Compute the right X11 geometry on the screen based on the
         # x-y ratio of axis ranges
-        ratio = (self.ymax-self.ymin)/(self.xmax-self.xmin)
-        self.xsize = 800  # pixel size
-        self.ysize = self.xsize*ratio
-        geometry = '%dx%d' % (self.xsize, self.ysize)
-        # See http://stackoverflow.com/questions/7449585/how-do-you-set-the-absolute-position-of-figure-windows-with-matplotlib
+        ratio = (self.y_max - self.y_min) / (self.x_max - self.x_min)
+        self.x_size = 800  # pixel size
+        self.y_size = self.x_size * ratio
 
-        if isinstance(instruction_file, str):
-            self.instruction_file = open(instruction_file, 'w')
-        else:
-            self.instruction_file = None
+        self._mpl.ion()  # important for interactive drawing and animation
 
-        self.mpl.ion()  # important for interactive drawing and animation
-        if self.instruction_file:
-            self.instruction_file.write("""\
-import matplotlib
-matplotlib.use('TkAgg')
-# Allow \boldsymbol{} etc in title, labels, etc
-matplotlib.rc('text', usetex=True)
-matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{amsmath}'
-import matplotlib.pyplot as mpl
-import matplotlib.transforms as transforms
-
-mpl.ion()  # for interactive drawing
-""")
         # Default properties
         self.set_linecolor('red')
         self.set_linewidth(2)
         self.set_linestyle('solid')
         self.set_filled_curves()  # no filling
         self.set_fontsize(14)
-        self.arrow_head_width = 0.2*self.xrange/16
-
+        self.arrow_head_width = 0.2 * self.x_range / 16
         self._make_axes(new_figure=new_figure)
-
-        manager = self.mpl.get_current_fig_manager()
-        manager.window.wm_geometry(geometry)
 
     def _make_axes(self, new_figure=False):
         if new_figure:
-            self.fig = self.mpl.figure()
+            self.fig = self._mpl.figure()
         self.ax = self.fig.gca()
-        self.ax.set_xlim(self.xmin, self.xmax)
-        self.ax.set_ylim(self.ymin, self.ymax)
+        self.ax.set_xlim(self.x_min, self.x_max)
+        self.ax.set_ylim(self.y_min, self.y_max)
         self.ax.set_aspect('equal')  # extent of 1 unit is the same on the axes
 
         if not self.axis:
-            self.mpl.axis('off')
-            axis_cmd = "mpl.axis('off')  # do not show axes with tickmarks\n"
-        else:
-            axis_cmd = ''
+            self._mpl.axis('off')
 
-        if self.instruction_file:
-            fig = 'fig = mpl.figure()\n' if new_figure else ''
-            self.instruction_file.write("""\
-%s
-ax = fig.gca()
-xmin, xmax, ymin, ymax = %s, %s, %s, %s
-ax.set_xlim(xmin, xmax)
-ax.set_ylim(ymin, ymax)
-ax.set_aspect('equal')
-%s
-
-""" % (fig, self.xmin, self.xmax, self.ymin, self.ymax, axis_cmd))
-
-    def inside(self, pt, exception=False):
-        """Is point pt inside the defined plotting area?"""
-        area = '[%s,%s]x[%s,%s]' % \
-               (self.xmin, self.xmax, self.ymin, self.ymax)
+    def inside(self, point: Point):
         tol = 1E-14
-        pt_inside = True
-        if self.xmin - tol <= pt[0] <= self.xmax + tol:
-            pass
-        else:
-            pt_inside = False
-        if self.ymin - tol <= pt[1] <= self.ymax + tol:
-            pass
-        else:
-            pt_inside = False
-        if pt_inside:
-            return pt_inside, 'point=%s is inside plotting area %s' % \
-                   (pt, area)
-        else:
-            msg = 'point=%s is outside plotting area %s' % (pt, area)
-            if exception:
-                raise ValueError(msg)
-            return pt_inside, msg
+        return False if self.x_min - tol <= point._x <= self.x_max + tol or \
+                        self.y_min - tol <= point._y <= self.y_max + tol else True
 
     def set_linecolor(self, color):
         """
@@ -221,7 +135,7 @@ ax.set_aspect('equal')
             self.fillpattern = ''
         else:
             self.fillcolor = color if len(color) == 1 else \
-                         MatplotlibDraw.line_colors[color]
+                MatplotlibDraw.line_colors[color]
             self.fillpattern = pattern
 
     def set_fontsize(self, fontsize=18):
@@ -232,31 +146,25 @@ ax.set_aspect('equal')
         self.fontsize = fontsize
 
     def set_grid(self, on=False):
-        self.mpl.grid(on)
-        if self.instruction_file:
-            self.instruction_file.write("\nmpl.grid(%s)\n" % str(on))
+        self._mpl.grid(on)
 
     def erase(self):
         """Erase the current figure."""
-        self.mpl.delaxes()
-        if self.instruction_file:
-            self.instruction_file.write("\nmpl.delaxes()  # erase\n")
-
+        self._mpl.delaxes()
         self._make_axes(new_figure=False)
 
-    def plot_curve(self, x, y,
+    def plot_curve(self, points: List[Point],
                    linestyle=None, linewidth=None,
                    linecolor=None, arrow=None,
                    fillcolor=None, fillpattern=None,
-                   shadow=0, name=None):
-        """Define a curve with coordinates x and y (arrays)."""
-        #if not self.allow_screen_graphics:
-        #    mpl.ioff()
-        #else:
-        #    mpl.ion()
+                   shadow=0):
+        """Draw a curve with coordinates x and y (arrays)."""
 
-        self.xdata = np.asarray(x, dtype=np.float)
-        self.ydata = np.asarray(y, dtype=np.float)
+        x = [point.x for point in points]
+        y = [point.y for point in points]
+
+        print(x)
+        print(y)
 
         if linestyle is None:
             # use "global" linestyle
@@ -270,40 +178,27 @@ ax.set_aspect('equal')
         if fillpattern is None:
             fillpattern = self.fillpattern
         if shadow == 1:
-            shadow = 3   # smallest displacement that is visible
+            shadow = 3  # smallest displacement that is visible
 
         # We can plot fillcolor/fillpattern, arrow or line
-
-        if self.instruction_file:
-            import pprint
-            if name is not None:
-                self.instruction_file.write('\n# %s\n' % name)
-            if not arrow:
-                self.instruction_file.write(
-                    'x = %s\n' % pprint.pformat(self.xdata.tolist()))
-                self.instruction_file.write(
-                    'y = %s\n' % pprint.pformat(self.ydata.tolist()))
-
 
         if fillcolor or fillpattern:
             if fillpattern != '':
                 fillcolor = 'white'
-            #print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (x.size, fillcolor, linecolor, fillpattern))
+            print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (
+            len(x), fillcolor, linecolor, fillpattern))
             [line] = self.ax.fill(x, y, fillcolor, edgecolor=linecolor,
                                   linewidth=linewidth, hatch=fillpattern)
-            if self.instruction_file:
-                self.instruction_file.write("[line] = ax.fill(x, y, '%s', edgecolor='%s', linewidth=%d, hatch='%s')\n" % (fillcolor, linecolor, linewidth, fillpattern))
-
         else:
             # Plain line
+            print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (
+            len(x), fillcolor, linecolor, fillpattern))
             [line] = self.ax.plot(x, y, linecolor, linewidth=linewidth,
                                   linestyle=linestyle)
-            if self.instruction_file:
-                self.instruction_file.write("[line] = ax.plot(x, y, '%s', linewidth=%d, linestyle='%s')\n" % (linecolor, linewidth, linestyle))
 
         if arrow:
             # Note that a Matplotlib arrow is a line with the arrow tip
-            if not arrow in ('->', '<-', '<->'):
+            if arrow not in ('->', '<-', '<->'):
                 raise ValueError("arrow argument must be '->', '<-', or '<->', not %s" % repr(arrow))
 
             # Add arrow to first and/or last segment
@@ -311,18 +206,18 @@ ax.set_aspect('equal')
             end = arrow == '->' or arrow == '<->'
             if start:
                 x_s, y_s = x[1], y[1]
-                dx_s, dy_s = x[0]-x[1], y[0]-y[1]
+                dx_s, dy_s = x[0] - x[1], y[0] - y[1]
                 self._plot_arrow(x_s, y_s, dx_s, dy_s, '->',
                                  linestyle, linewidth, linecolor)
             if end:
                 x_e, y_e = x[-2], y[-2]
-                dx_e, dy_e = x[-1]-x[-2], y[-1]-y[-2]
+                dx_e, dy_e = x[-1] - x[-2], y[-1] - y[-2]
                 self._plot_arrow(x_e, y_e, dx_e, dy_e, '->',
                                  linestyle, linewidth, linecolor)
         if shadow:
             # http://matplotlib.sourceforge.net/users/transforms_tutorial.html#using-offset-transforms-to-create-a-shadow-effect
             # shift the object over 2 points, and down 2 points
-            dx, dy = shadow/72., -shadow/72.
+            dx, dy = shadow / 72., -shadow / 72.
             offset = transforms.ScaledTranslation(
                 dx, dy, self.fig.dpi_scale_trans)
             shadow_transform = self.ax.transData + offset
@@ -332,34 +227,17 @@ ax.set_aspect('equal')
                 linewidth = 3
             self.ax.plot(x, y, linewidth=linewidth, color='gray',
                          transform=shadow_transform,
-                         zorder=0.5*line.get_zorder())
-
-
-            if self.instruction_file:
-                self.instruction_file.write("""
-# Shadow effect for last ax.plot
-dx, dy = 3/72., -3/72.
-offset = matplotlib.transforms.ScaledTranslation(dx, dy, fig.dpi_scale_trans)
-shadow_transform = ax.transData + offset
-self.ax.plot(x, y, linewidth=%d, color='gray',
-             transform=shadow_transform,
-             zorder=0.5*line.get_zorder())
-""" % linewidth)
-
-
+                         zorder=0.5 * line.get_zorder())
 
     def display(self, title=None, show=True):
         """Display the figure."""
         if title is not None:
-            self.mpl.title(title)
+            self._mpl.title(title)
             if self.instruction_file:
                 self.instruction_file.write('mpl.title("%s")\n' % title)
 
         if show:
-            self.mpl.draw()
-
-        if self.instruction_file:
-            self.instruction_file.write('mpl.draw()\n')
+            self._mpl.draw()
 
     def savefig(self, filename, dpi=None, crop=True):
         """Save figure in file. Set dpi=300 for really high resolution."""
@@ -367,8 +245,8 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
         ext = os.path.splitext(filename)[1]
         if not ext:
             # Create both PNG and PDF file
-            self.mpl.savefig(filename + '.png', dpi=dpi)
-            self.mpl.savefig(filename + '.pdf')
+            self._mpl.savefig(filename + '.png', dpi=dpi)
+            self._mpl.savefig(filename + '.pdf')
             if crop:
                 # Crop the PNG file
                 failure = os.system('convert -trim %s.png %s.png' %
@@ -379,14 +257,8 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
                                     (filename, filename))
                 if failure:
                     print('pdfcrop is not installed - needed for cropping PDF files')
-            #self.mpl.savefig(filename + '.eps')
-            if self.instruction_file:
-                self.instruction_file.write('mpl.savefig("%s.png", dpi=%s)\n'
-                                            % (filename, dpi))
-                self.instruction_file.write('mpl.savefig("%s.pdf")\n'
-                                            % filename)
         else:
-            self.mpl.savefig(filename, dpi=dpi)
+            self._mpl.savefig(filename, dpi=dpi)
             if ext == '.png':
                 if crop:
                     failure = os.system('convert -trim %s %s' % (filename, filename))
@@ -398,13 +270,8 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
                     if failure:
                         print('pdfcrop is not installed - needed for cropping PDF files')
 
-            if self.instruction_file:
-                self.instruction_file.write('mpl.savefig("%s", dpi=%s)\n'
-                                            % (filename, dpi))
-
-
-    def text(self, text, position, alignment='center', fontsize=0,
-             arrow_tip=None, bgcolor=None, fgcolor=None, fontfamily=None):
+    def text(self, text: str, position: Point, alignment='center', fontsize=0,
+             arrow_tip: Point = None, bgcolor=None, fgcolor=None, fontfamily=None):
         """
         Write `text` string at a position (centered, left, right - according
         to the `alignment` string). `position` is a point in the coordinate
@@ -431,50 +298,30 @@ self.ax.plot(x, y, linewidth=%d, color='gray',
         if fgcolor is not None:
             kwargs['color'] = fgcolor
 
-        x, y = position
+        x = position.x
+        y = position.y
+
         if arrow_tip is None:
             self.ax.text(x, y, text, horizontalalignment=alignment,
                          fontsize=fontsize, **kwargs)
-            if self.instruction_file:
-                self.instruction_file.write("""\
-ax.text(%g, %g, %s,
-        horizontalalignment=%s, fontsize=%d)
-""" % (x, y, repr(text), repr(alignment), fontsize))
         else:
-            if not len(arrow_tip) == 2:
-                raise ValueError('arrow_tip=%s must be (x,y) pt.' % arrow)
-            pt = arrow_tip
-            self.ax.annotate(text, xy=pt, xycoords='data',
-                             textcoords='data', xytext=position,
+            self.ax.annotate(text, xy=(arrow_tip.x, arrow_tip.y), xycoords='data',
+                             textcoords='data', xytext=(position.x, position.y),
                              horizontalalignment=alignment,
                              verticalalignment='top',
                              fontsize=fontsize,
                              arrowprops=dict(arrowstyle='->',
                                              facecolor='black',
-                                             #linewidth=2,
+                                             # linewidth=2,
                                              linewidth=1,
                                              shrinkA=5,
                                              shrinkB=5))
-            if self.instruction_file:
-                self.instruction_file.write("""\
-ax.annotate('%s', xy=%s, xycoords='data',
-            textcoords='data', xytext=%s,
-            horizontalalignment='%s',
-            verticalalignment='top',
-            fontsize=%d,
-            arrowprops=dict(arrowstyle='->',
-                            facecolor='black',
-                            linewidth=2,
-                            shrinkA=5,
-                            shrinkB=5))
-""" % (text, pt.tolist() if isinstance(pt, np.ndarray) else pt,
-       position, alignment, fontsize))
 
-# Drawing annotations with arrows:
-#http://matplotlib.sourceforge.net/users/annotations_intro.html
-#http://matplotlib.sourceforge.net/mpl_examples/pylab_examples/annotation_demo2.py
-#http://matplotlib.sourceforge.net/users/annotations_intro.html
-#http://matplotlib.sourceforge.net/users/annotations_guide.html#plotting-guide-annotation
+    # Drawing annotations with arrows:
+    # http://matplotlib.sourceforge.net/users/annotations_intro.html
+    # http://matplotlib.sourceforge.net/mpl_examples/pylab_examples/annotation_demo2.py
+    # http://matplotlib.sourceforge.net/users/annotations_intro.html
+    # http://matplotlib.sourceforge.net/users/annotations_guide.html#plotting-guide-annotation
 
     def _plot_arrow(self, x, y, dx, dy, style='->',
                     linestyle=None, linewidth=None, linecolor=None):
@@ -488,61 +335,34 @@ ax.annotate('%s', xy=%s, xycoords='data',
             linewidth = self.linewidth
 
         if style == '->' or style == '<->':
-            self.mpl.arrow(x, y, dx, dy, hold=True,
-                           facecolor=linecolor,
-                           edgecolor=linecolor,
-                           linestyle=linestyle,
-                           linewidth=linewidth,
-                           head_width=self.arrow_head_width,
-                           #head_width=0.1,
-                           #width=1,  # width of arrow body in coordinate scale
-                           length_includes_head=True,
-                           shape='full')
-            if self.instruction_file:
-                self.instruction_file.write("""\
-mpl.arrow(x=%g, y=%g, dx=%g, dy=%g,
-          facecolor='%s', edgecolor='%s',
-          linestyle='%s',
-          linewidth=%g, head_width=0.1,
-          length_includes_head=True,
-          shape='full')
-""" % (x, y, dx, dy, linecolor, linecolor, linestyle, linewidth))
+            self._mpl.arrow(x, y, dx, dy,
+                            facecolor=linecolor,
+                            edgecolor=linecolor,
+                            linestyle=linestyle,
+                            linewidth=linewidth,
+                            head_width=self.arrow_head_width,
+                            # head_width=0.1,
+                            # width=1,  # width of arrow body in coordinate scale
+                            length_includes_head=True,
+                            shape='full')
         if style == '<-' or style == '<->':
-            self.mpl.arrow(x+dx, y+dy, -dx, -dy, hold=True,
-                           facecolor=linecolor,
-                           edgecolor=linecolor,
-                           linewidth=linewidth,
-                           head_width=0.1,
-                           #width=1,
-                           length_includes_head=True,
-                           shape='full')
-            if self.instruction_file:
-                self.instruction_file.write("""\
-mpl.arrow(x=%g, y=%g, dx=%g, dy=%g,
-          facecolor='%s', edgecolor='%s',
-          linewidth=%g, head_width=0.1,
-          length_includes_head=True,
-          shape='full')
-""" % (x+dx, y+dy, -dx, -dy, linecolor, linecolor, linewidth))
+            self._mpl.arrow(x + dx, y + dy, -dx, -dy,
+                            facecolor=linecolor,
+                            edgecolor=linecolor,
+                            linewidth=linewidth,
+                            head_width=0.1,
+                            # width=1,
+                            length_includes_head=True,
+                            shape='full')
 
     def arrow2(self, x, y, dx, dy, style='->'):
         """Draw arrow (dx,dy) at (x,y). `style` is '->', '<-' or '<->'."""
-        self.ax.annotate('', xy=(x+dx,y+dy), xytext=(x,y),
+        self.ax.annotate('', xy=(x + dx, y + dy), xytext=(x, y),
                          arrowprops=dict(arrowstyle=style,
                                          facecolor='black',
                                          linewidth=1,
                                          shrinkA=0,
                                          shrinkB=0))
-        if self.instruction_file:
-            self.instruction_file.write("""
-ax.annotate('', xy=(%s,%s), xytext=(%s,%s),
-                         arrowprops=dict(arrowstyle=%s,
-                                         facecolor='black',
-                                         linewidth=1,
-                                         shrinkA=0,
-                                         shrinkB=0))
-""" % (x+dx, y+dy, x, y, style))
-
 
 
 def _test():
@@ -550,14 +370,15 @@ def _test():
     d.set_linecolor('magenta')
     d.set_linewidth(6)
     # triangle
-    x = np.array([1, 4, 1, 1]);  y = np.array([1, 1, 4, 1])
+    x = np.array([1, 4, 1, 1]);
+    y = np.array([1, 1, 4, 1])
     d.set_filled_curves('magenta')
     d.plot_curve(x, y)
     d.set_filled_curves(False)
-    d.plot_curve(x+4, y)
-    d.text('some text1', position=(8,4), arrow_tip=(6, 1), alignment='left',
+    d.plot_curve(x + 4, y)
+    d.text('some text1', position=(8, 4), arrow_tip=(6, 1), alignment='left',
            fontsize=18)
-    pos = np.array((7,4.5))  # numpy points work fine
+    pos = np.array((7, 4.5))  # numpy points work fine
     d.text('some text2', position=pos, arrow_tip=(6, 1), alignment='center',
            fontsize=12)
     d.set_linewidth(2)
@@ -565,10 +386,11 @@ def _test():
     d.arrow(0.25, 0.25, 0.25, 4, style='<->')
     d.arrow2(4.5, 0, 0, 3, style='<->')
     x = np.linspace(0, 9, 201)
-    y = 4.5 + 0.45*np.cos(0.5*np.pi*x)
+    y = 4.5 + 0.45 * np.cos(0.5 * np.pi * x)
     d.plot_curve(x, y, arrow='end')
     d.display()
     input()
+
 
 if __name__ == '__main__':
     _test()

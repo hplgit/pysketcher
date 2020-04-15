@@ -1,7 +1,7 @@
 """Minimialistic pysketcher example."""
-from pysketcher import *
+import pysketcher
 
-drawing_tool.set_coordinate_system(
+drawing_tool = pysketcher.MatplotlibDraw(
     xmin=0, xmax=5, ymin=0, ymax=3, axis=False)
 drawing_tool.set_linecolor('black')
 
