@@ -2,6 +2,16 @@
 
 Tool for creating sketches of physics problems in terms of Python code.
 
+This library is very heavily based on the thinking of Hans Petter Langtangen however
+very little if any of his code remains. Significant deviations from his library are:
+
+1) Code is organised into multiple files and published on pypi.
+2) Shapes are immutable. This means functions such as `rotate` return modified
+copies of the original shape, rather than altering the shape on which they are called.
+3) Angles are in radians not degrees.
+4) The Composition object is used more consistently. Previously objects such as Beam 
+where direct children of Shape which led to code repetition.
+
 ### Purpose
 
 Pysketcher can typically be used to draw figures like

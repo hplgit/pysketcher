@@ -6,52 +6,6 @@ from math import radians
 from .matplotlibdraw import MatplotlibDraw
 
 
-def is_sequence(*sequences, **kwargs):
-    length = kwargs.get('length', 2)
-    can_be_None = kwargs.get('can_be_None', False)
-    error_message = kwargs.get('error_message', True)
-    check_inside = kwargs.get('check_inside', False)
-    for x in sequences:
-        _is_sequence(x, length=length, can_be_None=can_be_None,
-                     error_message=error_message)
-        if check_inside:
-            ok, msg = drawing_tool.inside(x, exception=True)
-            if not ok:
-                print(msg)
-
-
-def animate(fig, time_points, action, moviefiles=False,
-            pause_per_frame=0.5, show_screen_graphics=True,
-            title=None,
-            **action_kwargs):
-    if moviefiles:
-        # Clean up old frame files
-        framefilestem = 'tmp_frame_'
-        framefiles = glob.glob('%s*.png' % framefilestem)
-        for framefile in framefiles:
-            os.remove(framefile)
-
-    for n, t in enumerate(time_points):
-        drawing_tool.erase()
-
-        action(t, fig, **action_kwargs)
-        # could demand returning fig, but in-place modifications
-        # are done anyway
-        # fig = action(t, fig)
-        # if fig is None:
-        #    raise TypeError(
-        #        'animate: action returns None, not fig\n'
-        #        '(a Shape object with the whole figure)')
-
-        fig.draw()
-        drawing_tool.display(title=title, show=show_screen_graphics)
-
-        if moviefiles:
-            drawing_tool.savefig('%s%04d.png' % (framefilestem, n),
-                                 crop=False)
-
-    if moviefiles:
-        return '%s%%04d.png' % framefilestem
 
 
 def _is_sequence(seq, length=None,
@@ -80,27 +34,6 @@ def _is_sequence(seq, length=None,
                          ','.join([str(t)[5:-1] for t in legal_types])))
     else:
         return False
-
-
-class SketchyFunc1(Spline):
-    """
-    A typical function curve used to illustrate an "arbitrary" function.
-    """
-    domain = [1, 6]
-
-    def __init__(self, name=None, name_pos='start',
-                 xmin=0, xmax=6, ymin=0, ymax=2):
-        x = array([0, 2, 3, 4, 5, 6])
-        y = array([1, 1.8, 1.2, 0.7, 0.8, 0.85])
-        # y = array([5, 3.5, 3.8, 3, 2.5, 2.4])
-        # Scale x and y
-        x = xmin - x.min() + x * (xmax - xmin) / (x.max() - x.min())
-        y = ymin - y.min() + y * (ymax - ymin) / (y.max() - y.min())
-
-        Spline.__init__(self, x, y)
-        self.shapes['smooth'].set_linecolor('black')
-        if name is not None:
-            self.shapes['name'] = Text(name, self.geometric_features()[name_pos] + point(0, 0.1))
 
 
 class SketchyFunc2(Shape):
@@ -181,201 +114,13 @@ class SketchyFunc4(Spline):
 
 
 
-# Alternative for small arcs: Parabola
-
-class Parabola(Shape):
-    def __init__(self, start, mid, stop, resolution=21):
-        self.p1, self.p2, self.p3 = start, mid, stop
-
-        # y as function of x? (no point on line x=const?)
-        tol = 1E-14
-        if abs(self.p1[0] - self.p2[0]) > 1E-14 and \
-                abs(self.p2[0] - self.p3[0]) > 1E-14 and \
-                abs(self.p3[0] - self.p1[0]) > 1E-14:
-            self.y_of_x = True
-        else:
-            self.y_of_x = False
-        # x as function of y? (no point on line y=const?)
-        tol = 1E-14
-        if abs(self.p1[1] - self.p2[1]) > 1E-14 and \
-                abs(self.p2[1] - self.p3[1]) > 1E-14 and \
-                abs(self.p3[1] - self.p1[1]) > 1E-14:
-            self.x_of_y = True
-        else:
-            self.x_of_y = False
-
-        if self.y_of_x:
-            x = linspace(start[0], end[0], resolution)
-            y = self(x=x)
-        elif self.x_of_y:
-            y = linspace(start[1], end[1], resolution)
-            x = self(y=y)
-        else:
-            raise ValueError(
-                'Parabola: two or more points lie on x=const '
-                'or y=const - not allowed')
-        self.shapes = {'parabola': Curve(x, y)}
-
-    def __call__(self, x=None, y=None):
-        if x is not None and self.y_of_x:
-            return self._L2x(self.p1, self.p2) * self.p3[1] + \
-                   self._L2x(self.p2, self.p3) * self.p1[1] + \
-                   self._L2x(self.p3, self.p1) * self.p2[1]
-        elif y is not None and self.x_of_y:
-            return self._L2y(self.p1, self.p2) * self.p3[0] + \
-                   self._L2y(self.p2, self.p3) * self.p1[0] + \
-                   self._L2y(self.p3, self.p1) * self.p2[0]
-        else:
-            raise ValueError(
-                'Parabola.__call__(x=%s, y=%s) not meaningful' % \
-                (x, y))
-
-    def _L2x(self, x, pi, pj, pk):
-        return (x - pi[0]) * (x - pj[0]) / ((pk[0] - pi[0]) * (pk[0] - pj[0]))
-
-    def _L2y(self, y, pi, pj, pk):
-        return (y - pi[1]) * (y - pj[1]) / ((pk[1] - pi[1]) * (pk[1] - pj[1]))
 
 
 
-class Wall(Shape):
-    def __init__(self, x, y, thickness, pattern='/', transparent=False):
-        is_sequence(x, y, length=len(x))
-        if isinstance(x[0], (tuple, list, ndarray)):
-            # x is list of curves
-            x1 = concatenate(x)
-        else:
-            x1 = asarray(x, float)
-        if isinstance(y[0], (tuple, list, ndarray)):
-            # x is list of curves
-            y1 = concatenate(y)
-        else:
-            y1 = asarray(y, float)
-        self.x1 = x1;
-        self.y1 = y1
-
-        # Displaced curve (according to thickness)
-        x2 = x1
-        y2 = y1 + thickness
-        # Combine x1,y1 with x2,y2 reversed
-        from numpy import concatenate
-        x = concatenate((x1, x2[-1::-1]))
-        y = concatenate((y1, y2[-1::-1]))
-        wall = Curve(x, y)
-        wall.set_filled_curves(color='white', pattern=pattern)
-        x = [x1[-1]] + x2[-1::-1].tolist() + [x1[0]]
-        y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
-        self.shapes = {'wall': wall}
-
-        from collections import OrderedDict
-        self.shapes = OrderedDict()
-        self.shapes['wall'] = wall
-        if transparent:
-            white_eraser = Curve(x, y)
-            white_eraser.set_linecolor('white')
-            self.shapes['eraser'] = white_eraser
-
-    def geometric_features(self):
-        d = {'start': point(self.x1[0], self.y1[0]),
-             'end': point(self.x1[-1], self.y1[-1])}
-        return d
 
 
-class Wall2(Shape):
-    def __init__(self, x, y, thickness, pattern='/'):
-        is_sequence(x, y, length=len(x))
-        if isinstance(x[0], (tuple, list, ndarray)):
-            # x is list of curves
-            x1 = concatenate(x)
-        else:
-            x1 = asarray(x, float)
-        if isinstance(y[0], (tuple, list, ndarray)):
-            # x is list of curves
-            y1 = concatenate(y)
-        else:
-            y1 = asarray(y, float)
-
-        self.x1 = x1;
-        self.y1 = y1
-
-        # Displaced curve (according to thickness)
-        x2 = x1.copy()
-        y2 = y1.copy()
-
-        def displace(idx, idx_m, idx_p):
-            # Find tangent and normal
-            tangent = point(x1[idx_m], y1[idx_m]) - point(x1[idx_p], y1[idx_p])
-            tangent = unit_vec(tangent)
-            normal = point(tangent[1], -tangent[0])
-            # Displace length "thickness" in "positive" normal direction
-            displaced_pt = point(x1[idx], y1[idx]) + thickness * normal
-            x2[idx], y2[idx] = displaced_pt
-
-        for i in range(1, len(x1) - 1):
-            displace(i - 1, i + 1, i)  # centered difference for normal comp.
-        # One-sided differences at the end points
-        i = 0
-        displace(i, i + 1, i)
-        i = len(x1) - 1
-        displace(i - 1, i, i)
-
-        # Combine x1,y1 with x2,y2 reversed
-        from numpy import concatenate
-        x = concatenate((x1, x2[-1::-1]))
-        y = concatenate((y1, y2[-1::-1]))
-        wall = Curve(x, y)
-        wall.set_filled_curves(color='white', pattern=pattern)
-        x = [x1[-1]] + x2[-1::-1].tolist() + [x1[0]]
-        y = [y1[-1]] + y2[-1::-1].tolist() + [y1[0]]
-        self.shapes['wall'] = wall
-
-    def geometric_features(self):
-        d = {'start': point(self.x1[0], self.y1[0]),
-             'end': point(self.x1[-1], self.y1[-1])}
-        return d
 
 
-class VelocityProfile(Shape):
-    def __init__(self, start, height, profile, num_arrows, scaling=1):
-        # vx, vy = profile(y)
-
-        shapes = {}
-        # Draw left line
-        shapes['start line'] = Line(start, (start[0], start[1] + height))
-
-        # Draw velocity arrows
-        dy = float(height) / (num_arrows - 1)
-        x = start[0]
-        y = start[1]
-        r = profile(y)  # Test on return type
-        if not isinstance(r, (list, tuple, ndarray)) and len(r) != 2:
-            raise TypeError(
-                'VelocityProfile constructor: profile(y) function must return velocity vector (vx,vy), not %s' % type(
-                    r))
-
-        for i in range(num_arrows):
-            y = start[1] + i * dy
-            vx, vy = profile(y)
-            if abs(vx) < 1E-8:
-                continue
-            vx *= scaling
-            vy *= scaling
-            arr = Arrow1((x, y), (x + vx, y + vy), '->')
-            shapes['arrow%d' % i] = arr
-        # Draw smooth profile
-        xs = []
-        ys = []
-        n = 100
-        dy = float(height) / n
-        for i in range(n + 2):
-            y = start[1] + i * dy
-            vx, vy = profile(y)
-            vx *= scaling
-            vy *= scaling
-            xs.append(x + vx)
-            ys.append(y + vy)
-        shapes['smooth curve'] = Curve(xs, ys)
-        self.shapes = shapes
 
 
 class Arrow3(Shape):
@@ -413,100 +158,9 @@ class Arrow3(Shape):
         return self.shapes['line'].geometric_features()
 
 
-class Axis(Shape):
-    def __init__(self, start, length, label,
-                 rotation_angle=0, fontsize=0,
-                 label_spacing=1. / 45, label_alignment='left'):
-        """
-        Draw axis from start with `length` to the right
-        (x axis). Place label at the end of the arrow tip.
-        Then return `rotation_angle` (in degrees).
-        The `label_spacing` denotes the space between the label
-        and the arrow tip as a fraction of the length of the plot
-        in x direction. A tuple can be given to adjust the position
-        in both the x and y directions (with one parameter, the
-        x position is adjusted).
-        With `label_alignment` one can place
-        the axis label text such that the arrow tip is to the 'left',
-        'right', or 'center' with respect to the text field.
-        The `label_spacing` and `label_alignment`parameters can
-        be used to fine-tune the location of the label.
-        """
-        # Arrow is vertical arrow, make it horizontal
-        arrow = Arrow3(start, length, rotation_angle=-90)
-        arrow.rotate(rotation_angle, start)
-        if isinstance(label_spacing, (list, tuple)) and len(label_spacing) == 2:
-            x_spacing = drawing_tool.xrange * label_spacing[0]
-            y_spacing = drawing_tool.yrange * label_spacing[1]
-        elif isinstance(label_spacing, (int, float)):
-            # just x spacing
-            x_spacing = drawing_tool.xrange * label_spacing
-            y_spacing = 0
-        # should increase spacing for downward pointing axis
-        label_pos = [start[0] + length + x_spacing, start[1] + y_spacing]
-        label = Text(label, position=label_pos, fontsize=fontsize)
-        label.rotate(rotation_angle, start)
-        self.shapes = {'arrow': arrow, 'label': label}
-
-    def geometric_features(self):
-        return self.shapes['arrow'].geometric_features()
 
 
 # Maybe Axis3 with label below/above?
-
-class Force(Arrow1):
-    """
-    Indication of a force by an arrow and a text (symbol).  Draw an
-    arrow, starting at `start` and with the tip at `end`.  The symbol
-    is placed at `text_pos`, which can be 'start', 'end' or the
-    coordinates of a point. If 'end' or 'start', the text is placed at
-    a distance `text_spacing` times the width of the total plotting
-    area away from the specified point.
-    """
-
-    def __init__(self, start, end, text, text_spacing=1. / 60,
-                 fontsize=0, text_pos='start', text_alignment='center'):
-        Arrow1.__init__(self, start, end, style='->')
-        if isinstance(text_spacing, (tuple, list)):
-            if len(text_spacing) == 2:
-                spacing = point(drawing_tool.xrange * text_spacing[0],
-                                drawing_tool.xrange * text_spacing[1])
-            else:
-                spacing = drawing_tool.xrange * text_spacing[0]
-        else:
-            # just a number, this is x spacing
-            spacing = drawing_tool.xrange * text_spacing
-        start, end = arr2D(start), arr2D(end)
-
-        # Two cases: label at bottom of line or top, need more
-        # spacing if bottom
-        downward = (end - start)[1] < 0
-        upward = not downward  # for easy code reading
-
-        if isinstance(text_pos, (str, bytes)):
-            if text_pos == 'start':
-                spacing_dir = unit_vec(start - end)
-                if upward:
-                    spacing *= 1.7
-                if isinstance(spacing, (int, float)):
-                    text_pos = start + spacing * spacing_dir
-                else:
-                    text_pos = start + spacing
-            elif text_pos == 'end':
-                spacing_dir = unit_vec(end - start)
-                if downward:
-                    spacing *= 1.7
-                if isinstance(spacing, (int, float)):
-                    text_pos = end + spacing * spacing_dir
-                else:
-                    text_pos = end + spacing
-        self.shapes['text'] = Text(text, text_pos, fontsize=fontsize,
-                                   alignment=text_alignment)
-
-    def geometric_features(self):
-        d = Arrow1.geometric_features(self)
-        d['symbol_location'] = self.shapes['text'].position
-        return d
 
 
 class Axis2(Force):
@@ -536,27 +190,8 @@ class Gravity(Axis):
         self.shapes['arrow'].set_linecolor('black')
 
 
-class Gravity(Force):
-    """Downward-pointing gravity arrow with the symbol g."""
-
-    def __init__(self, start, length, text='$g$', fontsize=0):
-        Force.__init__(self, start, (start[0], start[1] - length),
-                       text, text_spacing=1. / 60,
-                       fontsize=0, text_pos='end')
-        self.shapes['arrow'].set_linecolor('black')
 
 
-class Arc_wText(Shape):
-    def __init__(self, text, center, radius,
-                 start_angle, arc_angle, fontsize=0,
-                 resolution=180, text_spacing=1 / 60.):
-        arc = Arc(center, radius, start_angle, arc_angle,
-                  resolution)
-        mid = arr2D(arc(arc_angle / 2.))
-        normal = unit_vec(mid - arr2D(center))
-        text_pos = mid + normal * drawing_tool.xrange * text_spacing
-        self.shapes = {'arc': arc,
-                       'text': Text(text, text_pos, fontsize=fontsize)}
 
 
 # can make help methods: Line.midpoint, Line.normal(pt, dir='left') -> (x,y)
@@ -569,101 +204,11 @@ class Arc_wText(Shape):
 # Could include demo fig in each constructor
 
 
-class SimplySupportedBeam(Shape):
-    def __init__(self, pos, size):
-        pos = arr2D(pos)
-        P0 = (pos[0] - size / 2., pos[1] - size)
-        P1 = (pos[0] + size / 2., pos[1] - size)
-        triangle = Triangle(P0, P1, pos)
-        gap = size / 5.
-        h = size / 4.  # height of rectangle
-        P2 = (P0[0], P0[1] - gap - h)
-        rectangle = Rectangle(P2, size, h).set_filled_curves(pattern='/')
-        self.shapes = {'triangle': triangle, 'rectangle': rectangle}
-
-        self.dimensions = {'pos': Text('pos', pos),
-                           'size': Distance_wText((P2[0], P2[1] - size),
-                                                  (P2[0] + size, P2[1] - size),
-                                                  'size')}
-
-    def geometric_features(self):
-        t = self.shapes['triangle']
-        r = self.shapes['rectangle']
-        d = {'pos': t.geometric_features()['p2'],
-             'mid_support': r.geometric_features()['lower_mid']}
-        return d
 
 
-class ConstantBeamLoad(Shape):
-    """
-    Downward-pointing arrows indicating a vertical load.
-    The arrows are of equal length and filling a rectangle
-    specified as in the :class:`Rectangle` class.
-
-    Recorded geometric features:
-
-    ==================== =============================================
-    Attribute            Description
-    ==================== =============================================
-    mid_top              Middle point at the top of the row of
-                         arrows (often used for positioning a text).
-    ==================== =============================================
-    """
-
-    def __init__(self, lower_left_corner, width, height, num_arrows=10):
-        box = Rectangle(lower_left_corner, width, height)
-        self.shapes = {'box': box}
-        dx = float(width) / (num_arrows - 1)
-        y_top = lower_left_corner[1] + height
-        y_tip = lower_left_corner[1]
-        for i in range(num_arrows):
-            x = lower_left_corner[0] + i * dx
-            self.shapes['arrow%d' % i] = Arrow1((x, y_top), (x, y_tip))
-
-    def geometric_features(self):
-        return {'mid_top': self.shapes['box'].geometric_features()['upper_mid']}
 
 
-class Moment(Arc_wText):
-    def __init__(self, text, center, radius,
-                 left=True, counter_clockwise=True,
-                 fontsize=0, text_spacing=1 / 60.):
-        style = '->' if counter_clockwise else '<-'
-        start_angle = 90 if left else -90
-        Arc_wText.__init__(self, text, center, radius,
-                           start_angle=start_angle,
-                           arc_angle=180, fontsize=fontsize,
-                           text_spacing=text_spacing,
-                           resolution=180)
-        self.shapes['arc']['arc'].set_arrow(style)  # Curve object
 
-
-class Wheel(Shape):
-    def __init__(self, center, radius, inner_radius=None, nlines=10):
-        if inner_radius is None:
-            inner_radius = radius / 5.0
-
-        outer = Circle(center, radius)
-        inner = Circle(center, inner_radius)
-        lines = []
-        # Draw nlines+1 since the first and last coincide
-        # (then nlines lines will be visible)
-        t = linspace(0, 2 * pi, self.nlines + 1)
-
-        Ri = inner_radius;
-        Ro = radius
-        x0 = center[0];
-        y0 = center[1]
-        xinner = x0 + Ri * cos(t)
-        yinner = y0 + Ri * sin(t)
-        xouter = x0 + Ro * cos(t)
-        youter = y0 + Ro * sin(t)
-        lines = [Line((xi, yi), (xo, yo)) for xi, yi, xo, yo in \
-                 zip(xinner, yinner, xouter, youter)]
-        self.shapes = {'inner': inner, 'outer': outer,
-                       'spokes': Composition(
-                           {'spoke%d' % i: lines[i]
-                            for i in range(len(lines))})}
 
 
 class SineWave(Shape):

@@ -103,8 +103,15 @@ class MatplotlibDraw(object):
 
     def inside(self, point: Point):
         tol = 1E-14
-        return False if self.x_min - tol <= point._x <= self.x_max + tol or \
-                        self.y_min - tol <= point._y <= self.y_max + tol else True
+        return False if self.x_min - tol <= point.x <= self.x_max + tol or \
+                        self.y_min - tol <= point.y <= self.y_max + tol else True
+
+    def inside_plot_area(self, points: List[Point], verbose=True):
+        """Check that all coordinates are within drawing_tool's area."""
+        for point in points:
+            if not self.inside(point):
+                return False
+        return True
 
     def set_linecolor(self, color):
         """
@@ -112,17 +119,17 @@ class MatplotlibDraw(object):
         'black', 'white', 'red', 'blue', 'green', 'yellow',
         'magenta', 'cyan'.
         """
-        self.linecolor = MatplotlibDraw.line_colors[color]
+        self.line_color = MatplotlibDraw.line_colors[color]
 
     def set_linestyle(self, style):
         """Change line style: 'solid', 'dashed', 'dashdot', 'dotted'."""
         if not style in ('solid', 'dashed', 'dashdot', 'dotted'):
             raise ValueError('Illegal line style: %s' % style)
-        self.linestyle = style
+        self.line_style = style
 
     def set_linewidth(self, width):
         """Change the line width (int, starts at 1)."""
-        self.linewidth = width
+        self.line_width = width
 
     def set_filled_curves(self, color='', pattern=''):
         """
@@ -131,12 +138,12 @@ class MatplotlibDraw(object):
         include '-', '+', 'x', '\\', '*', 'o', 'O', '.'.
         """
         if color is False:
-            self.fillcolor = ''
-            self.fillpattern = ''
+            self.fill_color = ''
+            self.fill_pattern = ''
         else:
-            self.fillcolor = color if len(color) == 1 else \
+            self.fill_color = color if len(color) == 1 else \
                 MatplotlibDraw.line_colors[color]
-            self.fillpattern = pattern
+            self.fill_pattern = pattern
 
     def set_fontsize(self, fontsize=18):
         """
@@ -154,11 +161,15 @@ class MatplotlibDraw(object):
         self._make_axes(new_figure=False)
 
     def plot_curve(self, points: List[Point],
-                   linestyle=None, linewidth=None,
-                   linecolor=None, arrow=None,
-                   fillcolor=None, fillpattern=None,
+                   line_style=None, line_width=None,
+                   line_color=None, arrow=None,
+                   fill_color=None, fill_pattern=None,
                    shadow=0):
         """Draw a curve with coordinates x and y (arrays)."""
+
+        logging.info("Given %i points, line_style: %s, line_width: %s "
+                     "line_color: %s, arrow: %s, fill_color: %s, fill_pattern: %s, shadow: %s",
+                     len(points), line_style, line_width, line_color, arrow, fill_color, fill_pattern, shadow)
 
         x = [point.x for point in points]
         y = [point.y for point in points]
@@ -166,35 +177,33 @@ class MatplotlibDraw(object):
         print(x)
         print(y)
 
-        if linestyle is None:
+        if line_style is None:
             # use "global" linestyle
-            linestyle = self.linestyle
-        if linecolor is None:
-            linecolor = self.linecolor
-        if linewidth is None:
-            linewidth = self.linewidth
-        if fillcolor is None:
-            fillcolor = self.fillcolor
-        if fillpattern is None:
-            fillpattern = self.fillpattern
-        if shadow == 1:
-            shadow = 3  # smallest displacement that is visible
+            line_style = self.line_style
+        if line_color is None:
+            line_color = self.line_color
+        if line_width is None:
+            line_width = self.line_width
+        if fill_color is None:
+            fill_color = self.fill_color
+        if fill_pattern is None:
+            fill_pattern = self.fill_pattern
 
         # We can plot fillcolor/fillpattern, arrow or line
 
-        if fillcolor or fillpattern:
-            if fillpattern != '':
-                fillcolor = 'white'
+        if fill_color or fill_pattern:
+            if fill_pattern != '':
+                fill_color = 'white'
             print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (
-            len(x), fillcolor, linecolor, fillpattern))
-            [line] = self.ax.fill(x, y, fillcolor, edgecolor=linecolor,
-                                  linewidth=linewidth, hatch=fillpattern)
+                len(x), fill_color, line_color, fill_pattern))
+            [line] = self.ax.fill(x, y, fill_color, edgecolor=line_color,
+                                  linewidth=line_width, hatch=fill_pattern)
         else:
             # Plain line
             print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (
-            len(x), fillcolor, linecolor, fillpattern))
-            [line] = self.ax.plot(x, y, linecolor, linewidth=linewidth,
-                                  linestyle=linestyle)
+                len(x), fill_color, line_color, fill_pattern))
+            [line] = self.ax.plot(x, y, line_color, linewidth=line_width,
+                                  linestyle=line_style)
 
         if arrow:
             # Note that a Matplotlib arrow is a line with the arrow tip
@@ -208,12 +217,12 @@ class MatplotlibDraw(object):
                 x_s, y_s = x[1], y[1]
                 dx_s, dy_s = x[0] - x[1], y[0] - y[1]
                 self._plot_arrow(x_s, y_s, dx_s, dy_s, '->',
-                                 linestyle, linewidth, linecolor)
+                                 line_style, line_width, line_color)
             if end:
                 x_e, y_e = x[-2], y[-2]
                 dx_e, dy_e = x[-1] - x[-2], y[-1] - y[-2]
                 self._plot_arrow(x_e, y_e, dx_e, dy_e, '->',
-                                 linestyle, linewidth, linecolor)
+                                 line_style, line_width, line_color)
         if shadow:
             # http://matplotlib.sourceforge.net/users/transforms_tutorial.html#using-offset-transforms-to-create-a-shadow-effect
             # shift the object over 2 points, and down 2 points
@@ -223,9 +232,9 @@ class MatplotlibDraw(object):
             shadow_transform = self.ax.transData + offset
             # now plot the same data with our offset transform;
             # use the zorder to make sure we are below the line
-            if linewidth is None:
-                linewidth = 3
-            self.ax.plot(x, y, linewidth=linewidth, color='gray',
+            if line_width is None:
+                line_width = 3
+            self.ax.plot(x, y, linewidth=line_width, color='gray',
                          transform=shadow_transform,
                          zorder=0.5 * line.get_zorder())
 
@@ -270,8 +279,16 @@ class MatplotlibDraw(object):
                     if failure:
                         print('pdfcrop is not installed - needed for cropping PDF files')
 
-    def text(self, text: str, position: Point, alignment='center', fontsize=0,
-             arrow_tip: Point = None, bgcolor=None, fgcolor=None, fontfamily=None):
+    def text(self,
+             text: str,
+             position: Point,
+             alignment='center',
+             fontsize=0,
+             arrow_tip: Point = None,
+             bgcolor=None,
+             fgcolor=None,
+             fontfamily=None,
+             direction: Point = Point(1, 0)):
         """
         Write `text` string at a position (centered, left, right - according
         to the `alignment` string). `position` is a point in the coordinate
@@ -301,6 +318,8 @@ class MatplotlibDraw(object):
         x = position.x
         y = position.y
 
+        rotation_angle = direction.angle()
+
         if arrow_tip is None:
             self.ax.text(x, y, text, horizontalalignment=alignment,
                          fontsize=fontsize, **kwargs)
@@ -328,11 +347,11 @@ class MatplotlibDraw(object):
         """Draw arrow (dx,dy) at (x,y). `style` is '->', '<-' or '<->'."""
         if linestyle is None:
             # use "global" linestyle
-            linestyle = self.linestyle
+            linestyle = self.line_style
         if linecolor is None:
-            linecolor = self.linecolor
+            linecolor = self.line_color
         if linewidth is None:
-            linewidth = self.linewidth
+            linewidth = self.line_width
 
         if style == '->' or style == '<->':
             self._mpl.arrow(x, y, dx, dy,
@@ -366,7 +385,7 @@ class MatplotlibDraw(object):
 
 
 def _test():
-    d = MatplotlibDraw(0, 10, 0, 5, instruction_file='tmp3.py', axis=True)
+    d = MatplotlibDraw(0, 10, 0, 5, axis=True)
     d.set_linecolor('magenta')
     d.set_linewidth(6)
     # triangle

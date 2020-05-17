@@ -1,5 +1,6 @@
 import copy
 from abc import ABC, abstractmethod
+from typing import List
 
 from .matplotlibdraw import MatplotlibDraw
 from .point import Point
@@ -14,33 +15,20 @@ class Shape(ABC):
 
     _name: str
     _shapes: dict
-    _drawing_tool: MatplotlibDraw
 
     @abstractmethod
-    def __init__(self, drawing_tool: MatplotlibDraw):
-        if MatplotlibDraw is None:
-            raise ValueError("drawing_tool cannot be None")
-        self._drawing_tool = drawing_tool
-        self._shapes = dict()
-
-    @property
-    def name(self) -> str:
-        if hasattr(self, '_name'):
-            return self._name
-        else:
-            return 'no_name'
-
-    @name.setter
-    def name(self, name: str):
-        self._name = name
+    def __init__(self, shapes: dict = None):
+        self._shapes = dict() if shapes is None else shapes
+        self._line_style = None
+        self._line_width = None
+        self._line_color = None
+        self._fill_color = None
+        self._fill_pattern = None
+        self._arrow = None
+        self._shadow = False
 
     def __iter__(self):
-        # We iterate over self.shapes many places, and will
-        # get here if self.shapes is just a Shape object and
-        # not the assumed dict/list.
-        print('Warning: class %s does not define self.shapes\n' \
-              'as a dict of Shape objects')
-        return [self]  # Make the iteration work
+        return [self]
 
     def copy(self):
         return copy.deepcopy(self)
@@ -72,80 +60,64 @@ class Shape(ABC):
         all the way down to ``Curve`` or ``Point`` (``Text``)
         objects.
         """
-        if hasattr(self, 'shapes'):
+        if hasattr(self, '_shapes'):
             self._shapes[name] = value
         else:
             raise Exception('Cannot assign')
 
-    def _for_all_shapes(self, func, *args, **kwargs):
+    def _for_all_shapes(self, func: str, *args, **kwargs):
         verbose = kwargs.get('verbose', 0)
-
-        is_dict = True if isinstance(self._shapes, dict) else False
         for k, shape in enumerate(self._shapes):
-            if is_dict:
-                shape_name = shape
-                shape = self._shapes[shape]
-            else:
-                shape_name = k  # use index as name if list (not dict)
-
-            if not isinstance(shape, Shape):
-                if isinstance(shape, dict):
-                    raise TypeError(
-                        'class %s has a self.shapes member "%s" that is just\n'
-                        'a plain dictionary,\n%s\n'
-                        'Did you mean to embed this dict in a Composition\n'
-                        'object?' % (self.__class__.__name__, shape_name,
-                                     str(shape)))
-                elif isinstance(shape, (list, tuple)):
-                    raise TypeError(
-                        'class %s has self.shapes member "%s" containing\n'
-                        'a %s object %s,\n'
-                        'Did you mean to embed this list in a Composition\n'
-                        'object?' % (self.__class__.__name__, shape_name,
-                                     type(shape), str(shape)))
-                elif shape is None:
-                    raise TypeError(
-                        'class %s has a self.shapes member "%s" that is None.\n'
-                        'Some variable name is wrong, or some function\n'
-                        'did not return the right object...' \
-                        % (self.__class__.__name__, shape_name))
-                else:
-                    raise TypeError(
-                        'class %s has a self.shapes member "%s" of %s which '
-                        'is not a Shape object\n%s' %
-                        (self.__class__.__name__, shape_name, type(shape),
-                         pprint.pformat(self._shapes)))
+            shape_name = shape
+            shape = self._shapes[shape]
 
             if verbose > 0:
                 print('calling %s.%s' % (shape_name, func))
-            getattr(shape, func)(*args, **kwargs)
+            attribute = getattr(shape, func)
+            attribute(*args, **kwargs)
 
-    def draw(self, verbose=0):
-        self._for_all_shapes('draw', verbose=verbose)
-        return self
+    def draw(self, drawing_tool: MatplotlibDraw, verbose=0) -> None:
+        self._for_all_shapes('draw', drawing_tool=drawing_tool, verbose=verbose)
 
-    def draw_dimensions(self):
+    def draw_dimensions(self, drawing_tool: MatplotlibDraw):
         if hasattr(self, 'dimensions'):
             for shape in self.dimensions:
-                self.dimensions[shape].draw()
+                self.dimensions[shape].draw(drawing_tool)
             return self
         else:
-            # raise AttributeError('no self.dimensions dict for defining dimensions of class %s' % self.__classname__.__name__)
+            # raise AttributeError('no self.dimensions dict for defining dimensions of class %s' %
+            # self.__classname__.__name__)
             return self
 
-    def rotate(self, angle, center):
-        is_sequence(center, length=2)
-        self._for_all_shapes('rotate', angle, center)
-        return self
+    def animate(self, drawing_tool: MatplotlibDraw, time_points: List[float], action,
+                pause_per_frame=0.5, show_screen_graphics=True,
+                title=None,
+                **action_kwargs):
+
+        for n, t in enumerate(time_points):
+            drawing_tool.erase()
+
+            action(t, self, **action_kwargs)
+            # could demand returning fig, but in-place modifications
+            # are done anyway
+            # fig = action(t, fig)
+            # if fig is None:
+            #    raise TypeError(
+            #        'animate: action returns None, not fig\n'
+            #        '(a Shape object with the whole figure)')
+
+            self.draw(drawing_tool)
+            drawing_tool.display(title=title, show=show_screen_graphics)
+
+    @abstractmethod
+    def rotate(self, angle: float, center: Point):
+        pass
 
     def translate(self, vec):
-        is_sequence(vec, length=2)
-        self._for_all_shapes('translate', vec)
-        return self
+        return self._for_all_shapes('translate', vec)
 
     def scale(self, factor):
-        self._for_all_shapes('scale', factor)
-        return self
+        return self._for_all_shapes('scale', factor)
 
     def deform(self, displacement_function):
         self._for_all_shapes('deform', displacement_function)
@@ -159,9 +131,6 @@ class Shape(ABC):
         return minmax
 
     def recurse(self, name, indent=0):
-        if not isinstance(self._shapes, dict):
-            raise TypeError('recurse works only with dict self.shape, not %s' %
-                            type(self._shapes))
         space = ' ' * indent
         print(space, '%s: %s.shapes has entries' % \
               (self.__class__.__name__, name), \
@@ -169,7 +138,7 @@ class Shape(ABC):
 
         for shape in self._shapes:
             print(space, end=' ')
-            print('call %s.shapes["%s"].recurse("%s", %d)' % \
+            print('call %s.shapes["%s"].recurse("%s", %d)' %
                   (name, shape, shape, indent + 2))
             self._shapes[shape].recurse(shape, indent + 2)
 
@@ -225,58 +194,110 @@ class Shape(ABC):
                                                   classname)
         return couplings
 
-    def set_linestyle(self, style):
-        styles = ('solid', 'dashed', 'dashdot', 'dotted')
-        if style not in styles:
-            raise ValueError('%s: style=%s must be in %s' %
-                             (self.__class__.__name__ + '.set_linestyle:',
-                              style, str(styles)))
-        self._for_all_shapes('set_linestyle', style)
-        return self
-
-    def set_linewidth(self, width):
-        if not isinstance(width, int) and width >= 0:
-            raise ValueError('%s: width=%s must be positive integer' %
-                             (self.__class__.__name__ + '.set_linewidth:',
-                              width))
-        self._for_all_shapes('set_linewidth', width)
-        return self
-
-    def set_linecolor(self, color):
-        if color in self._drawing_tool.line_colors:
-            color = self._drawing_tool.line_colors[color]
-        elif color in list(drawing_tool.line_colors.values()):
-            pass  # color is ok
+    @property
+    def name(self) -> str:
+        if hasattr(self, '_name'):
+            return self._name
         else:
-            raise ValueError('%s: invalid color "%s", must be in %s' %
-                             (self.__class__.__name__ + '.set_linecolor:',
-                              color, list(self._drawing_tool.line_colors.keys())))
-        self._for_all_shapes('set_linecolor', color)
+            return 'no_name'
+
+    @name.setter
+    def name(self, name: str):
+        self._name = name
+
+    def set_name(self, name: str):
+        self.name = name
         return self
 
-    def set_arrow(self, style):
-        styles = ('->', '<-', '<->')
-        if not style in styles:
-            raise ValueError('%s: style=%s must be in %s' %
-                             (self.__class__.__name__ + '.set_arrow:',
-                              style, styles))
-        self._for_all_shapes('set_arrow', style)
+    @property
+    def line_color(self):
+        return self._line_color
+
+    @line_color.setter
+    def line_color(self, color):
+        self._line_color = color
+        self._for_all_shapes('set_line_color', color)
+
+    def set_line_color(self, color):
+        self.line_color = color
         return self
 
-    def set_filled_curves(self, color='', pattern=''):
-        if color in drawing_tool.line_colors:
-            color = drawing_tool.line_colors[color]
-        elif color in list(drawing_tool.line_colors.values()):
-            pass  # color is ok
-        else:
-            raise ValueError('%s: invalid color "%s", must be in %s' %
-                             (self.__class__.__name__ + '.set_filled_curves:',
-                              color, list(drawing_tool.line_colors.keys())))
-        self._for_all_shapes('set_filled_curves', color, pattern)
+    @property
+    def line_width(self):
+        return self._line_width
+
+    @line_width.setter
+    def line_width(self, width):
+        self._line_width = width
+        self._for_all_shapes('set_line_width', width)
+
+    def set_line_width(self, width):
+        self.line_width = width
         return self
 
-    def set_shadow(self, pixel_displacement=3):
-        self._for_all_shapes('set_shadow', pixel_displacement)
+    @property
+    def line_style(self):
+        return self._line_style
+
+    @line_style.setter
+    def line_style(self, style):
+        self._line_style = style
+        self._for_all_shapes('set_line_style', style)
+
+    def set_line_style(self, style):
+        self.line_style = style
+        return self
+
+    @property
+    def arrow(self):
+        return self._arrow
+
+    @arrow.setter
+    def arrow(self, arrow):
+        self._arrow = arrow
+        self._for_all_shapes('set_arrow', arrow)
+
+    def set_arrow(self, arrow):
+        self.arrow = arrow
+        return self
+
+    @property
+    def fill_pattern(self):
+        return self._fill_pattern
+
+    @fill_pattern.setter
+    def fill_pattern(self, pattern=''):
+        self._fill_pattern = pattern
+        self._for_all_shapes('set_fill_pattern', pattern)
+
+    def set_fill_pattern(self, fill_pattern):
+        self.fill_pattern = fill_pattern
+        return self
+
+    @property
+    def fill_color(self):
+        return self._fill_color
+
+    @fill_color.setter
+    def fill_color(self, color=''):
+        self._fill_color = color
+        self._for_all_shapes('set_fill_color', color)
+
+    def set_fill_color(self, fill_color):
+        self.fill_color = fill_color
+        return self
+
+    @property
+    def shadow(self):
+        return self._shadow
+
+    @shadow.setter
+    def shadow(self, shadow=3):
+        self._shadow = shadow
+        self._for_all_shapes('set_shadow', shadow)
+
+    def set_shadow(self, shadow):
+        self.shadow = shadow
         return self
 
     def show_hierarchy(self, indent=0, format='std'):
@@ -317,3 +338,5 @@ class Shape(ABC):
         """Display hierarchy as a dictionary."""
         return self.show_hierarchy(format='dict')
         # return pprint.pformat(self.shapes)
+
+

@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 import numpy as np
 
 
@@ -29,7 +31,7 @@ class Point:
         return Point(self._x * scalar, self._y * scalar)
 
     def __abs__(self) -> float:
-        return np.ma.sqrt(self._x ** 2 + self._y ** 2)
+        return np.ma.sqrt(self.x ** 2 + self.y ** 2)
 
     def __eq__(self, other):
         return self._x == other.x and self._y == other.y
@@ -43,15 +45,26 @@ class Point:
         return self._y
 
     def unit_vector(self) -> 'Point':
+        if abs(self) == 0:
+            raise ZeroDivisionError("Length of Vector cannot be Zero")
         return self * (1 / (abs(self)))
 
-    def rotate(self, angle, center) -> 'Point':
+    def angle(self) -> float:
+        return np.arctan2(self.y, self.x)
+
+    def radius(self) -> float:
+        return np.sqrt(self.x ^ 2 + self.y ^ 2)
+
+    def normal(self) -> 'Point':
+        uv = self.unit_vector()
+        return Point(-uv.y, uv.x)
+
+    def rotate(self, angle: float, center: 'Point') -> 'Point':
         """Rotate point an `angle` (in radians) around (`x`,`y`)."""
-        x, y = center
-        c = cos(angle);
-        s = sin(angle)
-        return Point(x + (self._x - x) * c - (self._y - y) * s,
-              y + (self._x - x) * s + (self._y - y) * c)
+        c = np.cos(angle);
+        s = np.sin(angle)
+        return Point(center.x + (self.x - center.x) * c - (self.y - center.y) * s,
+                     center.y + (self.x - center.x) * s + (self.y - center.y) * c)
 
     def scale(self, factor: float) -> 'Point':
         """Scale point coordinates by `factor`: ``x = factor*x``, etc."""
@@ -69,3 +82,16 @@ class Point:
             return ''
         else:
             return s
+
+    @staticmethod
+    def from_coordinate_lists(xs: List[float], ys: List[float]) -> List['Point']:
+        if len(xs) != len(ys):
+            raise ValueError("xs and ys must be the same length")
+        return [Point(xs[i], ys[i]) for i in range(len(xs) - 1)]
+
+    @staticmethod
+    def to_coordinate_lists(ps: List['Point']) -> Tuple[List[float], List[float]]:
+        xs = [p.x for p in ps]
+        ys = [p.y for p in ps]
+        return xs, ys
+

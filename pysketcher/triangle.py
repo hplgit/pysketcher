@@ -19,19 +19,26 @@ class Triangle(Shape):
 
     """
 
-    def __init__(self, p1: Point, p2: Point, p3: Point, drawing_tool: MatplotlibDraw):
-        super().__init__(drawing_tool)
+    def __init__(self, p1: Point, p2: Point, p3: Point):
         self._p1 = p1
         self._p2 = p2
         self._p3 = p3
-        self._shapes = {'triangle': Curve([p1, p2, p3, p1], self._drawing_tool)}
+        shapes = {'triangle': Curve([p1, p2, p3, p1])}
 
         # Dimensions
-        self.dimensions = {'p1': Text('p1', p1, self._drawing_tool),
-                           'p2': Text('p2', p2, self._drawing_tool),
-                           'p3': Text('p3', p3, self._drawing_tool)}
+        self.dimensions = {'p1': Text('p1', p1),
+                           'p2': Text('p2', p2),
+                           'p3': Text('p3', p3)}
+        super().__init__(shapes)
 
     def geometric_features(self):
         return {'p1': self._p1,
                 'p2': self._p2,
                 'p3': self._p3}
+
+    def rotate(self, angle: float, center: Point):
+        return Triangle(
+            self._p1.rotate(angle, center),
+            self._p2.rotate(angle, center),
+            self._p3.rotate(angle, center)
+        )

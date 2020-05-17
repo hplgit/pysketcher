@@ -15,7 +15,7 @@ drawing_tool.set_linecolor('blue')
 import numpy as np
 x = np.linspace(xmin, 3, 201)
 y = f(x)
-curve = Curve(x, y)
+curve = Curve(x)
 
 x2 = np.linspace(xmin, 0.2, 201)
 y2 = f(x2)
@@ -27,7 +27,7 @@ x2.append(xmin)
 y2.append(0)
 #x2 = np.array(x2)
 #y2 = np.array(y2)
-filled = Curve(x2, y2).set_filled_curves(pattern='/')
+filled = Curve(x2).set_filled_curves(pattern='/')
 
 text1 = Text_wArrow('The integral $\int_{-\infty}^{0.2} 3e^{-x^4}dx$\nis impossible to calculate\nby hand but so easy with\na program!', (1.5, 3.5), (-0.2, 1), alignment='left')
 
@@ -60,7 +60,7 @@ def piecewise_curve_for_midpoint_rule(N):
     # Back to start
     x3_double.append(xmin)
     y3_double.append(0)
-    midpoint_curve = Curve(x3_double, y3_double).set_filled_curves(pattern='/').set_linecolor('red')
+    midpoint_curve = Curve(x3_double).set_filled_curves(pattern='/').set_linecolor('red')
     return midpoint_curve
 
 text2 = Text_wArrow('We just draw some rectangles\nto approximate the area\nunder the curve and sum up\nthe rectangular areas!', (1.2, 3.5), (-0.2, 1), alignment='left')

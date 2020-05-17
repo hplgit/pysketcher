@@ -12,12 +12,12 @@ class Text(Shape):
         'right', the right and of the text is located at `position`.
         """
 
-    def __init__(self, text: str, position: Point, drawing_tool: MatplotlibDraw, alignment='center', fontsize=0,
-                 bgcolor=None, fgcolor=None, fontfamily=None):
+    def __init__(self, text: str, position: Point, alignment='center', fontsize=0,
+                 bgcolor=None, fgcolor=None, fontfamily=None, direction: Point = Point(1, 0)):
         """
                 fontfamily can be (e.g.) 'serif' or 'monospace' (for code!).
                 """
-        super().__init__(drawing_tool)
+        super().__init__()
         self._text = text
         self._position = position
         self._alignment = alignment
@@ -25,15 +25,23 @@ class Text(Shape):
         self._bgcolor = bgcolor
         self._fgcolor = fgcolor
         self._fontfamily = fontfamily
+        self._direction = direction
 
-    def draw(self, verbose=0):
-        self._drawing_tool.text(
+    def draw(self, drawing_tool: MatplotlibDraw, verbose=0):
+        drawing_tool.text(
             self._text, self._position,
             self._alignment, self._fontsize,
             arrow_tip=None, bgcolor=self._bgcolor, fgcolor=self._fgcolor,
+            direction=self._direction,
             fontfamily=self._fontfamily)
         if verbose > 0:
             print('drawing Text "%s"' % self._text)
+
+    def rotate(self, angle: float, center: Point):
+        direction = self._direction.rotate(angle, center)
+        position = self._position.rotate(angle, center)
+        return Text(self._text, position, self._alignment, self._fontsize,
+                    self._bgcolor, self._fgcolor, self._fontfamily, direction)
 
     def __str__(self):
         return 'text "%s" at (%g,%g)' % (self._text, self._position.x, self._position.y)

@@ -1,16 +1,14 @@
 import numpy as np
 
-from .matplotlibdraw import MatplotlibDraw
-from .shape import Shape
+from .composition import Composition
 from .point import Point
 from .curve import Curve
+from .text import Text
 
 
-class Arc(Shape):
-    def __init__(self, center: Point, radius: float, start_angle: float, arc_angle: float, drawing_tool: MatplotlibDraw,
-                 resolution: int = 180):
+class Arc(Curve):
+    def __init__(self, center: Point, radius: float, start_angle: float, arc_angle: float, resolution: int = 180):
         # Must record some parameters for __call__
-        super().__init__(drawing_tool)
         self._center = center
         self._radius = radius
         self._resolution = resolution
@@ -21,9 +19,9 @@ class Arc(Shape):
                          self._start_angle + self._arc_angle,
                          resolution + 1)
 
-        self._points = \
+        points = \
             [Point(center.x + radius * np.cos(t), center.y + radius * np.sin(t)) for t in ts]
-        self._shapes = {'circle': Curve(self._points, self._drawing_tool)}
+        super().__init__(points)
 
         # Cannot set dimensions (Arc_wText recurses into this
         # constructor forever). Set in test_Arc instead.
@@ -44,3 +42,16 @@ class Arc(Shape):
 
         return Point(self._center.x + self._radius * np.cos(self._start_angle + theta),
                      self._center.x + self._radius * np.sin(self._start_angle + theta))
+
+
+class ArcWithText(Composition):
+    def __init__(self, text: str, center: Point, radius: float, start_angle: float, arc_angle: float,
+                 fontsize: float = 0, resolution: int = 180, text_spacing: float = 1 / 6.):
+        arc = Arc(center, radius, start_angle, arc_angle,
+                  resolution)
+        mid = arc(arc_angle / 2.)
+        normal = (mid - center).unit_vector()
+        text_pos = mid + normal * text_spacing
+        shapes = {'arc': arc,
+                  'text': Text(text, text_pos, fontsize=fontsize)}
+        super().__init__(shapes)

@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 from typing import List
 
 from .shape import Shape
@@ -9,73 +10,67 @@ from .matplotlibdraw import MatplotlibDraw
 class Curve(Shape):
     """General curve as a sequence of (x,y) coordintes."""
 
-    _points: List[Point]
-    _drawing_tool: MatplotlibDraw
-
-    def __init__(self, points: List[Point], drawing_tool: MatplotlibDraw):
+    def __init__(self, points: List[Point]):
         """
         `x`, `y`: arrays holding the coordinates of the curve.
         """
-        super().__init__(drawing_tool)
+        super().__init__()
         self._points = points
         # self.shapes must not be defined in this class
         # as self.shapes holds children objects:
         # Curve has no children (end leaf of self.shapes tree)
 
-        self._drawing_tool = drawing_tool
-        self.linestyle = None
-        self.linewidth = None
-        self.linecolor = None
-        self.fillcolor = None
-        self.fillpattern = None
-        self.arrow = None
-        self.shadow = False
+    @property
+    def points(self):
+        return self._points
 
-    def inside_plot_area(self, verbose=True):
-        """Check that all coordinates are within drawing_tool's area."""
-        for point in self._points:
-            if not self._drawing_tool.inside(point):
-                return False
-        return True
+    @property
+    def xs(self):
+        return np.array([p.x for p in self.points])
 
-    def draw(self, verbose=0):
+    @property
+    def ys(self):
+        return np.array([p.y for p in self.points])
+
+    def draw(self, drawing_tool: MatplotlibDraw, verbose=0):
         """
         Send the curve to the plotting engine. That is, convert
         coordinate information in self.x and self.y, together
         with optional settings of linestyles, etc., to
         plotting commands for the chosen engine.
         """
-        self.inside_plot_area()
-        self._drawing_tool.plot_curve(
+        if drawing_tool.inside_plot_area(self._points):
+            raise ValueError("Curve falls outside of plot area.")
+        logging.info("Given %i points, line_style: %s, line_width: %s "
+                     "line_color: %s, arrow: %s, fill_color: %s, fill_pattern: %s, shadow: %s",
+                     len(self._points), self.line_style, self.line_width, self.line_color, self.arrow, self.fill_color,
+                     self.fill_pattern, self.shadow)
+        drawing_tool.plot_curve(
             self._points,
-            self.linestyle, self.linewidth, self.linecolor,
-            self.arrow, self.fillcolor, self.fillpattern,
+            self.line_style, self.line_width, self.line_color,
+            self.arrow, self.fill_color, self.fill_pattern,
             self.shadow)
         if verbose:
-            print('drawing Curve object with %d points' % len(self.x))
+            print('drawing Curve object with %d points' % len(self._points))
 
-    def rotate(self, angle, center):
+    def rotate(self, angle: float, center: Point) -> 'Curve':
         """
-        Rotate all coordinates: `angle` is measured in degrees and
-        (`x`,`y`) is the "origin" of the rotation.
+        Rotate all coordinates: `angle` is measured in radians
+        center is the "origin" of the rotation.
         """
+        print("rotating about %s" % center)
         angle = np.radians(angle)
-        x, y = center
-        c = np.cos(angle);
+        x, y = center.x, center.y
+        c = np.cos(angle)
         s = np.sin(angle)
-        xnew = x + (self.x - x) * c - (self.y - y) * s
-        ynew = y + (self.x - x) * s + (self.y - y) * c
-        self.x = xnew
-        self.y = ynew
-        return self
+        return Curve(Point.from_coordinate_lists(x + (self.xs - x) * c - (self.ys - y) * s,
+                     y + (self.xs - x) * s + (self.ys - y) * c))
 
-    def scale(self, factor):
+    def scale(self, factor: float) -> 'Curve':
         """Scale all coordinates by `factor`: ``x = factor*x``, etc."""
-        self.x = factor * self.x
-        self.y = factor * self.y
-        return self
+        return Curve(Point.from_coordinate_lists(factor * self.xs, factor * self.ys))
 
-    def translate(self, vec):
+    def translate(self, vec) -> 'Curve':
         """Translate all coordinates by a vector `vec`."""
         self.x += vec[0]
         self.y += vec[1]
@@ -104,31 +99,6 @@ class Curve(Shape):
     def _object_couplings(self, parent, couplings=[], classname=True):
         return
 
-    def set_linecolor(self, color):
-        self.linecolor = color
-        return self
-
-    def set_linewidth(self, width):
-        self.linewidth = width
-        return self
-
-    def set_linestyle(self, style):
-        self.linestyle = style
-        return self
-
-    def set_arrow(self, style=None):
-        self.arrow = style
-        return self
-
-    def set_filled_curves(self, color='', pattern=''):
-        self.fillcolor = color
-        self.fillpattern = pattern
-        return self
-
-    def set_shadow(self, pixel_displacement=3):
-        self.shadow = pixel_displacement
-        return self
-
     def show_hierarchy(self, indent=0, format='std'):
         if format == 'dict':
             return '"%s"' % str(self)
@@ -137,20 +107,11 @@ class Curve(Shape):
         else:
             return str(self)
 
-    @property
-    def points(self):
-        return _points
-
     def __str__(self):
         """Compact pretty print of a Curve object."""
         s = '%d (x,y) coords' % self.x.size
-        inside = self.inside_plot_area(verbose=False)
-        if inside is None:
-            pass  # no info about the plotting area
-        elif not inside:
-            s += ', some coordinates are outside plotting area!\n'
-        props = ('linecolor', 'linewidth', 'linestyle', 'arrow',
-                 'fillcolor', 'fillpattern')
+        props = ('line_color', 'line_width', 'line_style', 'arrow', 'shadow',
+                 'fill_color', 'fill_pattern')
         for prop in props:
             value = getattr(self, prop)
             if value is not None:

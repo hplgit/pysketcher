@@ -9,13 +9,13 @@ class Text_wArrow(Text):
     to some point `arrow_tip`.
     """
 
-    def __init__(self, text: str, position: Point, arrow_tip: Point, drawing_tool: MatplotlibDraw, alignment='center',
+    def __init__(self, text: str, position: Point, arrow_tip: Point, alignment='center',
                  fontsize=0):
-        super().__init__(text, position, drawing_tool, alignment, fontsize)
+        super().__init__(text, position, alignment, fontsize)
         self.arrow_tip = arrow_tip
 
-    def draw(self, verbose=0):
-        self._drawing_tool.text(
+    def draw(self, drawing_tool: MatplotlibDraw, verbose=0):
+        drawing_tool.text(
             self._text, self._position,
             self._alignment, self._fontsize,
             arrow_tip=self.arrow_tip,

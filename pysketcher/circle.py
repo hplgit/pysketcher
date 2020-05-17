@@ -6,6 +6,5 @@ from .point import Point
 
 
 class Circle(Arc):
-    def __init__(self, center: Point, radius: float, drawing_tool: MatplotlibDraw,
-                 resolution=180):
-        super().__init__(center, radius, 0, 2 * np.pi, drawing_tool, resolution)
+    def __init__(self, center: Point, radius: float, resolution=180):
+        super().__init__(center, radius, 0, 2 * np.pi, resolution)

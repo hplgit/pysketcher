@@ -5,7 +5,7 @@ drawing_tool = MatplotlibDraw(
 drawing_tool.set_linecolor('black')
 
 code = Circle(Point(2.5, 2.5), 1.5, drawing_tool)
-fig = Composition(dict(text=code), drawing_tool)
+fig = Composition(dict(text=code))
 
-fig.draw()
+fig.draw(drawing_tool)
 drawing_tool.display()

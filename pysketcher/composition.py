@@ -1,14 +1,24 @@
-from .matplotlibdraw import MatplotlibDraw
+from .point import Point
 from .shape import Shape
 
 
 class Composition(Shape):
-    def __init__(self, shapes, drawing_tool: MatplotlibDraw):
+    def __init__(self, shapes: dict):
         """shapes: list or dict of Shape objects."""
-        super().__init__(drawing_tool)
-        if isinstance(shapes, (tuple, list)):
-            # Convert to dict using the type of the list element as key
-            # (add a counter to make the keys unique)
-            shapes = {s.__class__.__name__ + '_' + str(i): s
-                      for i, s in enumerate(shapes)}
+        super().__init__()
         self._shapes = shapes
+
+    def add(self, key: str, shape: Shape) -> 'Composition':
+        shapes = self._shapes.copy()
+        shapes[key] = shape
+        return Composition(shapes)
+
+    def __setitem__(self, key: str, value: Shape) -> 'Composition':
+        return self.add(key, value)
+
+    def rotate(self, angle: float, center: Point):
+        shapes = dict()
+        for key, shape in self._shapes:
+            shapes[key] = shape.rotate(angle, center)
+        return Composition(shapes)
+

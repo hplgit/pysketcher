@@ -45,8 +45,8 @@ def make_fig(dt=0.5, heading=''):
     circles = Composition(circles)
 
     curves = Composition(dict(
-        exact=Curve(t_fine, u_e).set_linestyle('dashed'),
-        numerical=Curve(t, u),
+        exact=Curve(t_fine).set_linestyle('dashed'),
+        numerical=Curve(t),
         extrapolation=line.set_linecolor('red').set_linewidth(3)))
 
     text_exact = Text_wArrow("exact solution", (2.5, 1), (2.5, I*np.exp(-a*2.5)),

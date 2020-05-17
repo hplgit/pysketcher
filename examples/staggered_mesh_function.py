@@ -72,7 +72,7 @@ u_exact.draw()
 t_mesh_staggered_fine = linspace(t_mesh_staggered[0],
                                  t_mesh_staggered[-1],
                                  501)
-v_exact = Curve(t_mesh_staggered_fine, v(t_mesh_staggered_fine)).\
+v_exact = Curve(t_mesh_staggered_fine).\
           set_linestyle('dashed').set_linewidth(1)
 v_exact.draw()
 drawing_tool.display()

@@ -1,12 +1,11 @@
-from .matplotlibdraw import MatplotlibDraw
 from .point import Point
-from .shape import Shape
 from .text_warrow import Text
+from .composition import Composition
 from .arrow import DoubleArrow
 from .text_warrow import Text_wArrow
 
 
-class Distance_wText(Shape):
+class Distance_wText(Composition):
     """
     Arrow <-> with text (usually a symbol) at the midpoint, used for
     identifying a some distance in a figure.  The text is placed
@@ -17,9 +16,8 @@ class Distance_wText(Shape):
     above, but aligned 'center' by default (when `alignment` is None).
     """
 
-    def __init__(self, start: Point, end: Point, text: str, drawing_tool: MatplotlibDraw, fontsize=0,
-                 text_spacing=1 / 60., alignment=None, text_pos='mid'):
-        super().__init__(drawing_tool)
+    def __init__(self, start: Point, end: Point, text: str, fontsize=0,
+                 text_spacing=1 / 6., alignment=None, text_pos='mid'):
         self._start = start
         self._end = end
 
@@ -42,19 +40,23 @@ class Distance_wText(Shape):
         tangent = end - start
         # Tangent goes always to the left and upward
         normal = Point(tangent.y, -tangent.x).unit_vector()
-        mid = (start + end) * 0.5  # midpoint of start-end line
 
         if text_pos == 'mid':
-            text_pos = mid + normal * self._drawing_tool.x_range * text_spacing
-            text = Text(text, text_pos, self._drawing_tool, fontsize=fontsize,
-                        alignment=alignment)
+            mid = (start + end) * 0.5  # midpoint of start-end line
+            text_point = mid + normal * text_spacing
+        elif text_pos == 'start':
+            text_point = start + normal * text_spacing
+        elif text_pos == 'end':
+            text_point = end + normal * text_spacing
         else:
-            text = Text_wArrow(text, text_pos, mid, alignment='left',
-                               fontsize=fontsize)
-        arrow = DoubleArrow(start, end, self._drawing_tool)
-        arrow.set_linecolor('black')
-        arrow.set_linewidth(1)
-        self._shapes = {'arrow': arrow, 'text': text}
+            raise ValueError("text_pos should be 'mid', 'start', or 'end'")
+
+        text = Text(text, text_point, fontsize=fontsize, alignment=alignment)
+
+        arrow = DoubleArrow(start, end)
+        arrow.line_color = 'black'
+        arrow.line_width = 1
+        super().__init__({'arrow': arrow, 'text': text})
 
     def geometric_features(self):
         d = self._shapes['arrow'].geometric_features()
