@@ -5,9 +5,9 @@ import numpy as np
 xkcd = True
 
 xmin = 0
-drawing_tool.set_coordinate_system(xmin=xmin, xmax=4,
-                                   ymin=0, ymax=2.5,
-                                   axis=True, xkcd=xkcd)
+drawing_tool._set_coordinate_system(xmin=xmin, xmax=4,
+                                    ymin=0, ymax=2.5,
+                                    axis=True, xkcd=xkcd)
 drawing_tool.set_linecolor('blue')
 
 def ForwardEuler(I, a, T, dt):
@@ -49,15 +49,15 @@ def make_fig(dt=0.5, heading=''):
         numerical=Curve(t),
         extrapolation=line.set_linecolor('red').set_linewidth(3)))
 
-    text_exact = Text_wArrow("exact solution", (2.5, 1), (2.5, I*np.exp(-a*2.5)),
-                             alignment='left')
-
-    text_predict = Text_wArrow("Here we know the slope:\n$u'=f(u,t)$!\nLet the solution continue\nalong that slope.",
-                               (1.7, 1.7), (t[-1], u[-1]),
+    text_exact = ArrowWithText("exact solution", (2.5, 1), (2.5, I * np.exp(-a * 2.5)),
                                alignment='left')
-    text_next = Text_wArrow("This is the next\npredicted point",
-                            (1, 0.25), (t_next, u_next),
-                            alignment='left')
+
+    text_predict = ArrowWithText("Here we know the slope:\n$u'=f(u,t)$!\nLet the solution continue\nalong that slope.",
+                                 (1.7, 1.7), (t[-1], u[-1]),
+                                 alignment='left')
+    text_next = ArrowWithText("This is the next\npredicted point",
+                              (1, 0.25), (t_next, u_next),
+                              alignment='left')
 
     text_comment = Text(heading, (0.3, 2.05), alignment='left')
 

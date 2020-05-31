@@ -1,8 +1,10 @@
 """A more sophisticated beam than in beam1.py."""
-from typing import List
 
 from pysketcher import *
 import numpy as np
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 def beam():
@@ -16,18 +18,18 @@ def beam():
         xmin=-3, xmax=A.x + 1.5 * L,
         ymin=0, ymax=A.y + 5 * H,
         axis=False)
-    drawing_tool.set_linecolor('blue')
-    drawing_tool.set_fontsize(16)
 
-    beam = Rectangle(A, L, H)
+    beam = Rectangle(A, L, H)\
+        .set_fill_pattern(Style.FillPattern.UP_RIGHT_TO_LEFT)\
+        .set_line_color(Style.Color.BLUE)
 
     h = L / 16  # size of support, clamped wall etc
 
     clamped = Rectangle(A - Point(h, 0) - Point(0, 2 * h), h,
-                        6 * h).set_fill_pattern('/')
+                        6 * h).set_fill_pattern(Style.FillPattern.UP_LEFT_TO_RIGHT)
 
     load = UniformLoad(A + Point(0, H), L, H)
-    load.set_line_width(1).set_line_color('black')
+    load.set_line_width(1).set_line_color(Style.Color.BLACK)
     load_text = Text('$w$',
                      load.geometric_features()['mid_top'] +
                      Point(0, h / 2.))
@@ -35,21 +37,20 @@ def beam():
     B = A + Point(a, 0)
     C = B + Point(b, 0)
 
-    support = SimplySupportedBeam(B, h)  # pt B is simply supported
+    support = SimpleSupport(B, h)  # pt B is simply supported
 
-    R1 = Force(A - Point(0, 2 * H), A, '$R_1$', text_spacing=1. / 2)
-    R1.set_line_width(3).set_line_color('black')
-    R2 = Force(B - Point(0, 2 * H),
-               support.geometric_features()['mid_support'],
-               '$R_2$', text_spacing=1. / 2)
-    R2.set_line_width(3).set_line_color('black')
+    R1 = Force('$R_1$', A - Point(0, 2 * H), A, start_spacing=0.3)
+    R1.set_line_width(3).set_line_color(Style.Color.BLACK)
+    R2 = Force('$R2$', B - Point(0, 2 * H),
+               support.geometric_features()['mid_support'], start_spacing=0.3)
+    R2.set_line_width(3).set_line_color(Style.Color.BLACK)
     M1 = Moment('$M_1$', center=A + Point(-H, H / 2), radius=H / 2,
                 left=True, text_spacing=1 / 3.)
     M1.line_color = 'black'
 
     ab_level = Point(0, 3 * h)
-    a_dim = Distance_wText(A - ab_level, B - ab_level, '$a$')
-    b_dim = Distance_wText(B - ab_level, C - ab_level, '$b$')
+    a_dim = DistanceWithText('$a$', A - ab_level, B - ab_level)
+    b_dim = DistanceWithText('$b$', B - ab_level, C - ab_level)
     dims = Composition({'a': a_dim, 'b': b_dim})
     symbols = Composition(
         {'R1': R1, 'R2': R2, 'M1': M1,
@@ -61,9 +62,9 @@ def beam():
          'C': Text('$C$', C + Point(h / 2, -h / 2))})
 
     x_axis = Axis(A + Point(L + h, H / 2), 2 * H, '$x$', ). \
-        set_line_color('black')
+        set_line_color(Style.Color.BLACK)
     y_axis = Axis(A + Point(0, H / 2), 3.5 * H, '$y$',
-                  rotation_angle=np.pi / 2).set_line_color('black')
+                  rotation_angle=np.pi / 2).set_line_color(Style.Color.BLACK)
     axes = Composition({'x axis': x_axis, 'y axis': y_axis})
 
     annotations = Composition({'dims': dims, 'symbols': symbols,
@@ -86,8 +87,8 @@ def beam():
     points = Point.from_coordinate_lists(xs, ys)
 
     elastic_line = Curve(points). \
-        set_line_color('red'). \
-        set_line_style('dashed'). \
+        set_line_color(Style.Color.RED). \
+        set_line_style(Style.LineStyle.DASHED). \
         set_line_width(3)
 
     beam.draw(drawing_tool)

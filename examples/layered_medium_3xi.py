@@ -5,9 +5,9 @@ W = 10.
 H = 5.
 a = [0, 3.5, 5]
 
-drawing_tool.set_coordinate_system(xmin=-1, xmax=W+1,
-                                   ymin=-1, ymax=H+1,
-                                   axis=False)
+drawing_tool._set_coordinate_system(xmin=-1, xmax=W + 1,
+                                    ymin=-1, ymax=H+1,
+                                    axis=False)
 drawing_tool.set_linecolor('black')
 drawing_tool.set_fontsize(24)
 

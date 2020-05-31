@@ -7,9 +7,9 @@ def f(x):
     return 3*np.exp(-x**4)
 
 xmin = -2
-drawing_tool.set_coordinate_system(xmin=xmin, xmax=4,
-                                   ymin=0, ymax=4,
-                                   axis=True, xkcd=xkcd)
+drawing_tool._set_coordinate_system(xmin=xmin, xmax=4,
+                                    ymin=0, ymax=4,
+                                    axis=True, xkcd=xkcd)
 drawing_tool.set_linecolor('blue')
 
 import numpy as np
@@ -29,7 +29,7 @@ y2.append(0)
 #y2 = np.array(y2)
 filled = Curve(x2).set_filled_curves(pattern='/')
 
-text1 = Text_wArrow('The integral $\int_{-\infty}^{0.2} 3e^{-x^4}dx$\nis impossible to calculate\nby hand but so easy with\na program!', (1.5, 3.5), (-0.2, 1), alignment='left')
+text1 = ArrowWithText('The integral $\int_{-\infty}^{0.2} 3e^{-x^4}dx$\nis impossible to calculate\nby hand but so easy with\na program!', (1.5, 3.5), (-0.2, 1), alignment='left')
 
 fig = Composition(dict(curve=curve, integral=filled, comment=text1))
 fig.draw()
@@ -63,7 +63,7 @@ def piecewise_curve_for_midpoint_rule(N):
     midpoint_curve = Curve(x3_double).set_filled_curves(pattern='/').set_linecolor('red')
     return midpoint_curve
 
-text2 = Text_wArrow('We just draw some rectangles\nto approximate the area\nunder the curve and sum up\nthe rectangular areas!', (1.2, 3.5), (-0.2, 1), alignment='left')
+text2 = ArrowWithText('We just draw some rectangles\nto approximate the area\nunder the curve and sum up\nthe rectangular areas!', (1.2, 3.5), (-0.2, 1), alignment='left')
 
 drawing_tool.erase()
 fig = Composition(dict(curve=curve, integral=piecewise_curve_for_midpoint_rule(N=4), comment=text2))
@@ -71,7 +71,7 @@ fig.draw()
 drawing_tool.display()
 drawing_tool.savefig('tmp2')
 
-text3 = Text_wArrow('Just add more rectangles\ngo get the integral\nmore accurate!', (1.5, 3.5), (-0.2, 1), alignment='left')
+text3 = ArrowWithText('Just add more rectangles\ngo get the integral\nmore accurate!', (1.5, 3.5), (-0.2, 1), alignment='left')
 
 drawing_tool.erase()
 fig = Composition(dict(curve=curve, integral=piecewise_curve_for_midpoint_rule(N=10), comment=text3))

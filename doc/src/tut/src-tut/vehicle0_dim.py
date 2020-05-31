@@ -7,9 +7,9 @@ H = 2    # height of vehicle body
 w_1 = 5  # position of front wheel
 
 xmax = w_1 + 2*L + 3*R
-drawing_tool.set_coordinate_system(xmin=0, xmax=xmax,
-                                   ymin=-1, ymax=2*R + 3*H,
-                                   axis=True)
+drawing_tool._set_coordinate_system(xmin=0, xmax=xmax,
+                                    ymin=-1, ymax=2*R + 3*H,
+                                    axis=True)
 
 drawing_tool.set_grid(True)
 
@@ -30,14 +30,14 @@ ground = Wall(x=[R, xmax], y=[0, 0], thickness=-0.3*R)
 
 x_dim = w_1 + L + 2*R + R  # line for vertical dimensions
 y_dim = 2*R + H + 1.25*H + R/2.
-w_1_dim = Text_wArrow('$w_1$', (w_1+2*R, 1.5*R), (w_1, R))
-wheel_dim = Distance_wText((x_dim, 0), (x_dim, R), '$R$')
-under_dim = Distance_wText((x_dim, 2*R), (x_dim, 2*R+H), '$H$')
-over_dim  = Distance_wText((x_dim, 2*R+H), (x_dim, 2*R+H+1.25*H),
+w_1_dim = ArrowWithText('$w_1$', (w_1 + 2 * R, 1.5 * R), (w_1, R))
+wheel_dim = DistanceWithText((x_dim, 0), (x_dim, R), '$R$')
+under_dim = DistanceWithText((x_dim, 2 * R), (x_dim, 2 * R + H), '$H$')
+over_dim  = DistanceWithText((x_dim, 2 * R + H), (x_dim, 2 * R + H + 1.25 * H),
                            r'$\frac{5}{4}{H}$')
-front_dim = Distance_wText((w_1-2*R, y_dim), (w_1, y_dim), '$2R$')
-L_dim     = Distance_wText((w_1, y_dim), (w_1+L, y_dim), '$L$')
-back_dim  = Distance_wText((w_1+L, y_dim), (w_1+L+2*R, y_dim), '$2R$')
+front_dim = DistanceWithText((w_1 - 2 * R, y_dim), (w_1, y_dim), '$2R$')
+L_dim     = DistanceWithText((w_1, y_dim), (w_1 + L, y_dim), '$L$')
+back_dim  = DistanceWithText((w_1 + L, y_dim), (w_1 + L + 2 * R, y_dim), '$2R$')
 
 dims = Composition(dict(w_1_dim=w_1_dim,
                         wheel_dim=wheel_dim,

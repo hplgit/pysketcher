@@ -1,5 +1,7 @@
 ## Pysketcher
 
+*This is alpha software - the interface is likely to change with every release prior to 0.1.0.*
+
 Tool for creating sketches of physics problems in terms of Python code.
 
 This library is very heavily based on the thinking of Hans Petter Langtangen however

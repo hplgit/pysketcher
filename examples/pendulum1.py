@@ -3,9 +3,9 @@ from pysketcher import *
 H = 7.
 W = 6.
 
-drawing_tool.set_coordinate_system(xmin=0, xmax=W,
-                                   ymin=0, ymax=H,
-                                   axis=False)
+drawing_tool._set_coordinate_system(xmin=0, xmax=W,
+                                    ymin=0, ymax=H,
+                                    axis=False)
 #drawing_tool.set_grid(True)
 drawing_tool.set_linecolor('blue')
 
@@ -29,7 +29,7 @@ rod_vec = rod.geometric_features()['end'] - \
 unit_rod_vec = unit_vec(rod_vec)
 mass_symbol = Text('$m$', mass_pt + L/10*unit_rod_vec)
 
-length = Distance_wText(P, mass_pt, '$L$')
+length = DistanceWithText(P, mass_pt, '$L$')
 # Displace length indication
 length.translate(L/15*point(cos(radians(a)), sin(radians(a))))
 gravity = Gravity(start=P+point(0.8*L,0), length=L/3)

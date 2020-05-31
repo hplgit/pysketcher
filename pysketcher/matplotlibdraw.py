@@ -1,15 +1,17 @@
 import os
 import logging
-from typing import List
+from typing import List, Callable
 
 import matplotlib.pyplot as mpl
 import matplotlib.transforms as transforms
 import numpy as np
 
+from .style import Style, TextStyle
+from .drawing_tool import DrawingTool
 from .point import Point
 
 
-class MatplotlibDraw(object):
+class MatplotlibDraw(DrawingTool):
     """
     Simple interface for plotting. This interface makes use of
     Matplotlib for plotting.
@@ -25,16 +27,12 @@ class MatplotlibDraw(object):
     arrow_head_width           Size of arrow head.
     ========================== ============================================
     """
-    line_colors = {'red': 'r', 'green': 'g', 'blue': 'b', 'cyan': 'c',
-                   'magenta': 'm', 'purple': 'p',
-                   'yellow': 'y', 'black': 'k', 'white': 'w',
-                   'brown': 'brown', '': ''}
 
     def __init__(self, xmin, xmax, ymin, ymax, axis=False, new_figure=True):
         self.instruction_file = None
         self.allow_screen_graphics = True  # does not work yet
         self._mpl = mpl
-        self.set_coordinate_system(xmin, xmax, ymin, ymax, axis, new_figure)
+        self._set_coordinate_system(xmin, xmax, ymin, ymax, axis, new_figure)
 
     def ok(self):
         """
@@ -42,22 +40,7 @@ class MatplotlibDraw(object):
         objects can be drawn.
         """
 
-    def adjust_coordinate_system(self, minmax, occupation_percent=80):
-        """
-        Given a dict of xmin, xmax, ymin, ymax values, and a desired
-        filling of the plotting area of `occupation_percent` percent,
-        set new axis limits.
-        """
-        x_range = minmax['xmax'] - minmax['xmin']
-        y_range = minmax['ymax'] - minmax['ymin']
-        new_x_range = x_range * 100. / occupation_percent
-        x_space = new_x_range - x_range
-        new_y_range = y_range * 100. / occupation_percent
-        y_space = new_y_range - y_range
-        self.ax.set_xlim(minmax['xmin'] - x_space / 2., minmax['xmax'] + x_space / 2.)
-        self.ax.set_ylim(minmax['ymin'] - y_space / 2., minmax['ymax'] + y_space / 2.)
-
-    def set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False, new_figure=True):
+    def _set_coordinate_system(self, xmin, xmax, ymin, ymax, axis=False, new_figure=True):
         """
         Define the drawing area [xmin,xmax]x[ymin,ymax].
         axis: None or False means that axes with tickmarks
@@ -82,11 +65,6 @@ class MatplotlibDraw(object):
         self._mpl.ion()  # important for interactive drawing and animation
 
         # Default properties
-        self.set_linecolor('red')
-        self.set_linewidth(2)
-        self.set_linestyle('solid')
-        self.set_filled_curves()  # no filling
-        self.set_fontsize(14)
         self.arrow_head_width = 0.2 * self.x_range / 16
         self._make_axes(new_figure=new_figure)
 
@@ -113,45 +91,6 @@ class MatplotlibDraw(object):
                 return False
         return True
 
-    def set_linecolor(self, color):
-        """
-        Change the color of lines. Available colors are
-        'black', 'white', 'red', 'blue', 'green', 'yellow',
-        'magenta', 'cyan'.
-        """
-        self.line_color = MatplotlibDraw.line_colors[color]
-
-    def set_linestyle(self, style):
-        """Change line style: 'solid', 'dashed', 'dashdot', 'dotted'."""
-        if not style in ('solid', 'dashed', 'dashdot', 'dotted'):
-            raise ValueError('Illegal line style: %s' % style)
-        self.line_style = style
-
-    def set_linewidth(self, width):
-        """Change the line width (int, starts at 1)."""
-        self.line_width = width
-
-    def set_filled_curves(self, color='', pattern=''):
-        """
-        Fill area inside curves with specified color and/or pattern.
-        A common pattern is '/' (45 degree lines). Other patterns
-        include '-', '+', 'x', '\\', '*', 'o', 'O', '.'.
-        """
-        if color is False:
-            self.fill_color = ''
-            self.fill_pattern = ''
-        else:
-            self.fill_color = color if len(color) == 1 else \
-                MatplotlibDraw.line_colors[color]
-            self.fill_pattern = pattern
-
-    def set_fontsize(self, fontsize=18):
-        """
-        Method for setting a common fontsize for text, unless
-        individually specified when calling ``text``.
-        """
-        self.fontsize = fontsize
-
     def set_grid(self, on=False):
         self._mpl.grid(on)
 
@@ -160,81 +99,42 @@ class MatplotlibDraw(object):
         self._mpl.delaxes()
         self._make_axes(new_figure=False)
 
-    def plot_curve(self, points: List[Point],
-                   line_style=None, line_width=None,
-                   line_color=None, arrow=None,
-                   fill_color=None, fill_pattern=None,
-                   shadow=0):
+    def plot_curve(self, points: List[Point], style: Style):
         """Draw a curve with coordinates x and y (arrays)."""
-
-        logging.info("Given %i points, line_style: %s, line_width: %s "
-                     "line_color: %s, arrow: %s, fill_color: %s, fill_pattern: %s, shadow: %s",
-                     len(points), line_style, line_width, line_color, arrow, fill_color, fill_pattern, shadow)
+        mpl_style = MatplotlibStyle(style)
+        logging.info("Given %i points, style: %s" % (len(points), mpl_style))
 
         x = [point.x for point in points]
         y = [point.y for point in points]
 
-        print(x)
-        print(y)
+        logging.info('plot: %d coords, %s' % (len(x), mpl_style))
+        [line] = self.ax.plot(x, y, mpl_style.line_color, linewidth=mpl_style.line_width,
+                              linestyle=mpl_style.line_style)
+        if mpl_style.fill_color or mpl_style.fill_pattern:
+            logging.info('fill: %d coords, %s' % (len(x), mpl_style))
+            [line] = self.ax.fill(x, y, mpl_style.fill_color, edgecolor=mpl_style.line_color,
+                                  linewidth=mpl_style.line_width, hatch=mpl_style.fill_pattern)
 
-        if line_style is None:
-            # use "global" linestyle
-            line_style = self.line_style
-        if line_color is None:
-            line_color = self.line_color
-        if line_width is None:
-            line_width = self.line_width
-        if fill_color is None:
-            fill_color = self.fill_color
-        if fill_pattern is None:
-            fill_pattern = self.fill_pattern
-
-        # We can plot fillcolor/fillpattern, arrow or line
-
-        if fill_color or fill_pattern:
-            if fill_pattern != '':
-                fill_color = 'white'
-            print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (
-                len(x), fill_color, line_color, fill_pattern))
-            [line] = self.ax.fill(x, y, fill_color, edgecolor=line_color,
-                                  linewidth=line_width, hatch=fill_pattern)
-        else:
-            # Plain line
-            print('%d coords, fillcolor="%s" linecolor="%s" fillpattern="%s"' % (
-                len(x), fill_color, line_color, fill_pattern))
-            [line] = self.ax.plot(x, y, line_color, linewidth=line_width,
-                                  linestyle=line_style)
-
-        if arrow:
-            # Note that a Matplotlib arrow is a line with the arrow tip
-            if arrow not in ('->', '<-', '<->'):
-                raise ValueError("arrow argument must be '->', '<-', or '<->', not %s" % repr(arrow))
-
-            # Add arrow to first and/or last segment
-            start = arrow == '<-' or arrow == '<->'
-            end = arrow == '->' or arrow == '<->'
-            if start:
+        if style.arrow is not None:
+            if style.arrow.value.start:
                 x_s, y_s = x[1], y[1]
                 dx_s, dy_s = x[0] - x[1], y[0] - y[1]
-                self._plot_arrow(x_s, y_s, dx_s, dy_s, '->',
-                                 line_style, line_width, line_color)
-            if end:
+                self._plot_arrow(x_s, y_s, dx_s, dy_s, style)
+            if style.arrow.value.end:
                 x_e, y_e = x[-2], y[-2]
                 dx_e, dy_e = x[-1] - x[-2], y[-1] - y[-2]
-                self._plot_arrow(x_e, y_e, dx_e, dy_e, '->',
-                                 line_style, line_width, line_color)
-        if shadow:
+                self._plot_arrow(x_e, y_e, dx_e, dy_e, style)
+
+        if mpl_style.shadow:
             # http://matplotlib.sourceforge.net/users/transforms_tutorial.html#using-offset-transforms-to-create-a-shadow-effect
             # shift the object over 2 points, and down 2 points
-            dx, dy = shadow / 72., -shadow / 72.
+            dx, dy = mpl_style.shadow / 72., -mpl_style.shadow / 72.
             offset = transforms.ScaledTranslation(
                 dx, dy, self.fig.dpi_scale_trans)
             shadow_transform = self.ax.transData + offset
             # now plot the same data with our offset transform;
             # use the zorder to make sure we are below the line
-            if line_width is None:
-                line_width = 3
-            self.ax.plot(x, y, linewidth=line_width, color='gray',
+            self.ax.plot(x, y, linewidth=mpl_style.line_width, color='gray',
                          transform=shadow_transform,
                          zorder=0.5 * line.get_zorder())
 
@@ -242,8 +142,6 @@ class MatplotlibDraw(object):
         """Display the figure."""
         if title is not None:
             self._mpl.title(title)
-            if self.instruction_file:
-                self.instruction_file.write('mpl.title("%s")\n' % title)
 
         if show:
             self._mpl.draw()
@@ -282,13 +180,8 @@ class MatplotlibDraw(object):
     def text(self,
              text: str,
              position: Point,
-             alignment='center',
-             fontsize=0,
-             arrow_tip: Point = None,
-             bgcolor=None,
-             fgcolor=None,
-             fontfamily=None,
-             direction: Point = Point(1, 0)):
+             direction: Point = Point(1, 0),
+             style: TextStyle = TextStyle()):
         """
         Write `text` string at a position (centered, left, right - according
         to the `alignment` string). `position` is a point in the coordinate
@@ -299,76 +192,42 @@ class MatplotlibDraw(object):
         fontsize=0 indicates use of the default font as set by
         ``set_fontsize``.
         """
-        if fontsize == 0:
-            if hasattr(self, 'fontsize'):
-                fontsize = self.fontsize
-            else:
-                raise AttributeError(
-                    'No self.fontsize attribute to be used when text(...)\n'
-                    'is called with fontsize=0. Call set_fontsize method.')
-
+        mpl_style = MatplotlibTextStyle(style)
         kwargs = {}
-        if fontfamily is not None:
-            kwargs['family'] = fontfamily
-        if bgcolor is not None:
-            kwargs['backgroundcolor'] = bgcolor
-        if fgcolor is not None:
-            kwargs['color'] = fgcolor
-
-        x = position.x
-        y = position.y
+        if mpl_style.font_family is not None:
+            kwargs['family'] = mpl_style.font_family
+        if mpl_style.fill_color is not None:
+            kwargs['backgroundcolor'] = mpl_style.fill_color
+        if mpl_style.line_color is not None:
+            kwargs['color'] = mpl_style.line_color
 
         rotation_angle = direction.angle()
+        if rotation_angle != 0.0:
+            kwargs['rotation'] = rotation_angle
+        logging.info("kwargs: %s", kwargs)
 
-        if arrow_tip is None:
-            self.ax.text(x, y, text, horizontalalignment=alignment,
-                         fontsize=fontsize, **kwargs)
-        else:
-            self.ax.annotate(text, xy=(arrow_tip.x, arrow_tip.y), xycoords='data',
-                             textcoords='data', xytext=(position.x, position.y),
-                             horizontalalignment=alignment,
-                             verticalalignment='top',
-                             fontsize=fontsize,
-                             arrowprops=dict(arrowstyle='->',
-                                             facecolor='black',
-                                             # linewidth=2,
-                                             linewidth=1,
-                                             shrinkA=5,
-                                             shrinkB=5))
+        self.ax.text(position.x, position.y, text, horizontalalignment=mpl_style.alignment,
+                     fontsize=mpl_style.font_size, **kwargs)
 
-    # Drawing annotations with arrows:
-    # http://matplotlib.sourceforge.net/users/annotations_intro.html
-    # http://matplotlib.sourceforge.net/mpl_examples/pylab_examples/annotation_demo2.py
-    # http://matplotlib.sourceforge.net/users/annotations_intro.html
-    # http://matplotlib.sourceforge.net/users/annotations_guide.html#plotting-guide-annotation
-
-    def _plot_arrow(self, x, y, dx, dy, style='->',
-                    linestyle=None, linewidth=None, linecolor=None):
+    def _plot_arrow(self, x, y, dx, dy, style: Style):
         """Draw arrow (dx,dy) at (x,y). `style` is '->', '<-' or '<->'."""
-        if linestyle is None:
-            # use "global" linestyle
-            linestyle = self.line_style
-        if linecolor is None:
-            linecolor = self.line_color
-        if linewidth is None:
-            linewidth = self.line_width
-
-        if style == '->' or style == '<->':
+        mpl_style = MatplotlibStyle(style)
+        if style.arrow.value.end:
             self._mpl.arrow(x, y, dx, dy,
-                            facecolor=linecolor,
-                            edgecolor=linecolor,
-                            linestyle=linestyle,
-                            linewidth=linewidth,
+                            facecolor=mpl_style.line_color,
+                            edgecolor=mpl_style.line_color,
+                            linestyle=mpl_style.line_style,
+                            linewidth=mpl_style.line_width,
                             head_width=self.arrow_head_width,
                             # head_width=0.1,
                             # width=1,  # width of arrow body in coordinate scale
                             length_includes_head=True,
                             shape='full')
-        if style == '<-' or style == '<->':
+        if style.arrow.value.start:
             self._mpl.arrow(x + dx, y + dy, -dx, -dy,
-                            facecolor=linecolor,
-                            edgecolor=linecolor,
-                            linewidth=linewidth,
+                            facecolor=mpl_style.line_color,
+                            edgecolor=mpl_style.line_color,
+                            linewidth=mpl_style.line_width,
                             head_width=0.1,
                             # width=1,
                             length_includes_head=True,
@@ -382,6 +241,119 @@ class MatplotlibDraw(object):
                                          linewidth=1,
                                          shrinkA=0,
                                          shrinkB=0))
+
+
+class MatplotlibStyle:
+    _style: Style
+    LINE_STYLE_MAP = {
+        Style.LineStyle.SOLID: '-',
+        Style.LineStyle.DOTTED: ':',
+        Style.LineStyle.DASHED: '--',
+        Style.LineStyle.DASH_DOT: '-.'
+    }
+    FILL_PATTERN_MAP = {
+        Style.FillPattern.CIRCLE: 'O',
+        Style.FillPattern.CROSS: 'x',
+        Style.FillPattern.DOT: '.',
+        Style.FillPattern.HORIZONTAL: '-',
+        Style.FillPattern.SQUARE: '+',
+        Style.FillPattern.STAR: '*',
+        Style.FillPattern.SMALL_CIRCLE: 'o',
+        Style.FillPattern.VERTICAL: '|',
+        Style.FillPattern.UP_LEFT_TO_RIGHT: '//',
+        Style.FillPattern.UP_RIGHT_TO_LEFT: '\\\\'
+    }
+    COLOR_MAP = {
+        Style.Color.BLACK: 'black',
+        Style.Color.BLUE: 'blue',
+        Style.Color.BROWN: 'brown',
+        Style.Color.CYAN: 'cyan',
+        Style.Color.GREEN: 'green',
+        Style.Color.MAGENTA: 'magenta',
+        Style.Color.ORANGE: 'orange',
+        Style.Color.PURPLE: 'purple',
+        Style.Color.RED: 'red',
+        Style.Color.YELLOW: 'yellow',
+        Style.Color.WHITE: 'white'
+    }
+    ARROW_MAP = {
+        Style.ArrowStyle.DOUBLE: '<->',
+        Style.ArrowStyle.START: '<-',
+        Style.ArrowStyle.END: '->'
+    }
+
+    def __init__(self, style: Style):
+        self._style = style
+
+    @property
+    def line_width(self) -> float:
+        return self._style.line_width
+
+    @property
+    def line_style(self) -> str:
+        return self.LINE_STYLE_MAP.get(self._style.line_style)
+
+    @property
+    def line_color(self):
+        return self.COLOR_MAP.get(self._style.line_color)
+
+    @property
+    def fill_color(self):
+        return self.COLOR_MAP.get(self._style.fill_color)
+
+    @property
+    def fill_pattern(self):
+        return self.FILL_PATTERN_MAP.get(self._style.fill_pattern)
+
+    @property
+    def arrow(self):
+        return self.ARROW_MAP.get(self._style.arrow)
+
+    @property
+    def shadow(self):
+        return self._style.shadow
+
+    def __str__(self):
+        return "line_style: %s, line_width: %s, line_color: %s," \
+               " fill_pattern: %s, fill_color: %s, arrow: %s shadow: %s" % (
+                   self.line_style, self.line_width, self.line_color,
+                   self.fill_pattern, self.fill_color, self.arrow, self.shadow
+               )
+
+
+class MatplotlibTextStyle(MatplotlibStyle):
+    FONT_SIZE_MAP = {
+        TextStyle.FontSize.MEDIUM: 'medium'
+    }
+
+    FONT_FAMILY_MAP = {
+        TextStyle.FontFamily.SERIF: 'serif',
+        TextStyle.FontFamily.SANS: 'sans-serif',
+        TextStyle.FontFamily.MONO: 'monospace'
+    }
+
+    ALIGNMENT_MAP = {
+        TextStyle.Alignment.LEFT: 'left',
+        TextStyle.Alignment.RIGHT: 'right',
+        TextStyle.Alignment.CENTER: 'center'
+    }
+
+    _style: TextStyle
+
+    def __init__(self, text_style: TextStyle):
+        super().__init__(text_style)
+
+    @property
+    def font_size(self) -> str:
+        return self.FONT_SIZE_MAP.get(self._style.font_size)
+
+    @property
+    def font_family(self) -> str:
+        return self.FONT_FAMILY_MAP.get(self._style.font_family)
+
+    @property
+    def alignment(self) -> str:
+        return self.ALIGNMENT_MAP.get(self._style.alignment)
 
 
 def _test():

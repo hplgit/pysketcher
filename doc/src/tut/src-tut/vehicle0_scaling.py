@@ -8,9 +8,9 @@ def draw_vehicle(
     ):
 
     xmax = w_1 + 2*L + 3*R
-    drawing_tool.set_coordinate_system(xmin=0, xmax=xmax,
-                                       ymin=-1, ymax=2*R + 3*H,
-                                       axis=False)
+    drawing_tool._set_coordinate_system(xmin=0, xmax=xmax,
+                                        ymin=-1, ymax=2*R + 3*H,
+                                        axis=False)
 
     wheel1 = Circle(center=(w_1, R), radius=R)
     wheel2 = wheel1.copy()

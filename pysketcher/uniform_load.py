@@ -32,4 +32,4 @@ class UniformLoad(Composition):
         super().__init__(shapes)
 
     def geometric_features(self):
-        return {'mid_top': self._shapes['box'].geometric_features()['upper_mid']}
+        return {'mid_top': self['box'].geometric_features()['upper_mid']}

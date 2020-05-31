@@ -40,7 +40,7 @@ python_functions = "test_*"
 legacy_tox_ini = '''
 [tox]
 isolated_build = true
-envlist = py37
+envlist = py38
 
 [testenv]
 whitelist_externals = poetry

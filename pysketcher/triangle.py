@@ -5,7 +5,7 @@ from .curve import Curve
 from .text import Text
 
 
-class Triangle(Shape):
+class Triangle(Curve):
     """
     Triangle defined by its three vertices p1, p2, and p3.
 
@@ -23,13 +23,12 @@ class Triangle(Shape):
         self._p1 = p1
         self._p2 = p2
         self._p3 = p3
-        shapes = {'triangle': Curve([p1, p2, p3, p1])}
 
         # Dimensions
         self.dimensions = {'p1': Text('p1', p1),
                            'p2': Text('p2', p2),
                            'p3': Text('p3', p3)}
-        super().__init__(shapes)
+        super().__init__([p1, p2, p3, p1])
 
     def geometric_features(self):
         return {'p1': self._p1,

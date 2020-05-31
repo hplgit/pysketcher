@@ -7,10 +7,10 @@ H = L/6
 W = L/6
 
 xmax = L
-drawing_tool.set_coordinate_system(xmin=-L, xmax=xmax,
-                                   ymin=-1, ymax=L+H,
-                                   axis=False,
-                                   instruction_file='tmp_mpl.py')
+drawing_tool._set_coordinate_system(xmin=-L, xmax=xmax,
+                                    ymin=-1, ymax=L+H,
+                                    axis=False,
+                                    instruction_file='tmp_mpl.py')
 x = 0
 drawing_tool.set_linecolor('black')
 

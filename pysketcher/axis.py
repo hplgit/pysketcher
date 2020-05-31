@@ -1,11 +1,11 @@
-from .composition import Composition
+from .composition import ShapeWithText
 from .arrow import Arrow
 from .point import Point
 from .text import Text
 
 
-class Axis(Composition):
-    def __init__(self, start: Point, length: float, label: str, rotation_angle=0, fontsize=0, label_spacing=1. / 4.5):
+class Axis(ShapeWithText):
+    def __init__(self, start: Point, length: float, label: str, rotation_angle=0, label_spacing=1. / 4.5):
         """
         Draw axis from start with `length` to the right
         (x axis). Place label at the end of the arrow tip.
@@ -24,9 +24,9 @@ class Axis(Composition):
         arrow = Arrow(start, start + Point(length, 0)).rotate(rotation_angle, start)
         # should increase spacing for downward pointing axis
         label_pos = Point(start.x + length + label_spacing, start.y)
-        label = Text(label, position=label_pos, fontsize=fontsize).rotate(rotation_angle, start)
-        shapes = {'arrow': arrow, 'label': label}
-        super().__init__(shapes)
+        label = Text(label, position=label_pos).rotate(rotation_angle, start)
+
+        super().__init__(arrow, label)
 
     def geometric_features(self):
         return self._shapes['arrow'].geometric_features()

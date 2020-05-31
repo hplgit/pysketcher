@@ -17,7 +17,7 @@ t_max = t_mesh[-1] + 0.3*t_axis_extent
 u_max = 1.3*max([u(t) for t in t_mesh])
 u_min = -0.2*u_max
 
-drawing_tool.set_coordinate_system(t_min, t_max, u_min, u_max, axis=False)
+drawing_tool._set_coordinate_system(t_min, t_max, u_min, u_max, axis=False)
 drawing_tool.set_linecolor('black')
 
 r = 0.005*(t_max-t_min)     # radius of circles placed at mesh points

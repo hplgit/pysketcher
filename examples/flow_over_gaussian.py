@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from pysketcher import MatplotlibDraw, Wall, Point, VelocityProfile, Line, Composition, Distance_wText, Text
+from pysketcher import MatplotlibDraw, Wall, Point, VelocityProfile, Line, Composition, DistanceWithText, Text, Style
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,7 +21,7 @@ def gaussian(x: float) -> float:
 
 
 wall = Wall([Point(x, gaussian(x)) for x in np.linspace(0, W + L, 51)], 0.3)
-wall.line_color = 'brown'
+wall.style.line_color = Style.Color.BROWN
 
 
 def velocity_profile(y: float) -> Point:
@@ -29,13 +29,13 @@ def velocity_profile(y: float) -> Point:
 
 
 inlet_profile = VelocityProfile(Point(0, 0), H, velocity_profile, 5)
-inlet_profile.line_color = 'blue'
+inlet_profile.style.line_color = Style.Color.BLUE
 
 symmetry_line = Line(Point(0, H), Point(W + L, H))
-symmetry_line.line_style = 'dashed'
+symmetry_line.style.line_style = Style.LineStyle.DASHED
 
 outlet = Line(Point(W + L, 0), Point(W + L, H))
-outlet.line_style = 'dashed'
+outlet.style.line_style = Style.LineStyle.DASHED
 
 fig = Composition({
     'bottom': wall,
@@ -47,18 +47,18 @@ fig = Composition({
 fig.draw(drawing_tool)  # send all figures to plotting backend
 
 velocity = velocity_profile(H / 2.)
+line = Line(Point(W - 2.5 * sigma, 0), Point(W + 2.5 * sigma, 0))
+line.style.line_style = Style.LineStyle.DASHED
 symbols = {
-    'alpha': Distance_wText(Point(W, 0), Point(W, alpha), r'$\alpha$'),
+    'alpha': DistanceWithText(Point(W, 0), Point(W, alpha), r'$\alpha$'),
 
-    'W': Distance_wText(Point(0, -0.5), Point(W, -0.5), r'$W$',
-                        text_spacing=-1. / 30),
+    'W': DistanceWithText(Point(0, -0.5), Point(W, -0.5), r'$W$',
+                          spacing=-1. / 3),
 
-    'L': Distance_wText(Point(W, -0.5), Point(W + L, -0.5), r'$L$',
-                        text_spacing=-1. / 30),
+    'L': DistanceWithText(Point(W, -0.5), Point(W + L, -0.5), r'$L$',
+                          spacing=-1. / 3),
     'v(y)': Text('$v(y)$  ', Point(H / 2., velocity.x)),
-    'dashed line': Line(Point(W - 2.5 * sigma, 0), Point(W + 2.5 * sigma, 0)).
-                             set_line_style('dotted').
-                             set_line_color('black'),
+    'dashed line': line
 }
 symbols = Composition(symbols)
 symbols.draw(drawing_tool)

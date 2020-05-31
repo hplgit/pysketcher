@@ -1,19 +1,16 @@
 from typing import List
 
 from .point import Point
-from .shape import Shape
+from .style import Style
 from .curve import Curve
 
 
-class Wall(Shape):
+class Wall(Curve):
     _start: Point
     _end: Point
     _thickness: float
-    _points: List[Point]
 
-    def __init__(self, points: List[Point], thickness: float, pattern='/'):
-        super().__init__()
-        self._points = points
+    def __init__(self, points: List[Point], thickness: float):
         self._start = points[0]
         self._end = points[-1]
         self._thickness = thickness
@@ -25,18 +22,19 @@ class Wall(Shape):
             return point + ((point_after - point_before).normal() * self._thickness)
 
         # at the start, there isn't a point_before, so use the start point
-        new_points: List[Point] = [_displace(self._points[0], self._points[0], self._points[1])]
+        new_points: List[Point] = [_displace(points[0], points[0], points[1])]
 
-        for i in range(1, len(self._points) - 1):
-            new_points += [_displace(self._points[i], self._points[i - 1], self._points[i + 1])]
+        for i in range(1, len(points) - 1):
+            new_points += [_displace(points[i], points[i - 1], points[i + 1])]
 
         # and at the end there isn't a point_after, so use the end point
-        new_points += [_displace(self._points[-1], self._points[-2], self._points[-1])]
+        new_points += [_displace(points[-1], points[-2], points[-1])]
 
-        self._points = self._points + new_points[-1::-1]
-        self._points += [self._start]
+        points = points + new_points[-1::-1]
+        points += [self._start]
 
-        self._shapes['wall'] = Curve(self._points).set_fill_pattern(pattern)
+        super().__init__(points)
+        self.style.fill_pattern = Style.FillPattern.CROSS
 
     def geometric_features(self):
         d = {'start': self._start,

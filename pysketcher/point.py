@@ -36,6 +36,12 @@ class Point:
     def __eq__(self, other):
         return self._x == other.x and self._y == other.y
 
+    def __str__(self):
+        return "(%f, %f)" % (self.x, self.y)
+
+    def __repr__(self):
+        return "(%f, %f)" % (self.x, self.y)
+
     @property
     def x(self):
         return self._x
@@ -53,7 +59,7 @@ class Point:
         return np.arctan2(self.y, self.x)
 
     def radius(self) -> float:
-        return np.sqrt(self.x ^ 2 + self.y ^ 2)
+        return abs(self)
 
     def normal(self) -> 'Point':
         uv = self.unit_vector()
@@ -61,7 +67,7 @@ class Point:
 
     def rotate(self, angle: float, center: 'Point') -> 'Point':
         """Rotate point an `angle` (in radians) around (`x`,`y`)."""
-        c = np.cos(angle);
+        c = np.cos(angle)
         s = np.sin(angle)
         return Point(center.x + (self.x - center.x) * c - (self.y - center.y) * s,
                      center.y + (self.x - center.x) * s + (self.y - center.y) * c)
@@ -74,20 +80,11 @@ class Point:
         """Translate point by a vector `vec`."""
         return self + vec
 
-    def show_hierarchy(self, indent=0, format='std'):
-        s = '%s at (%g,%g)' % (self.__class__.__name__, self._x, self._y)
-        if format == 'dict':
-            return '"%s"' % s
-        elif format == 'plain':
-            return ''
-        else:
-            return s
-
     @staticmethod
     def from_coordinate_lists(xs: List[float], ys: List[float]) -> List['Point']:
         if len(xs) != len(ys):
             raise ValueError("xs and ys must be the same length")
-        return [Point(xs[i], ys[i]) for i in range(len(xs) - 1)]
+        return [Point(xs[i], ys[i]) for i in range(len(xs))]
 
     @staticmethod
     def to_coordinate_lists(ps: List['Point']) -> Tuple[List[float], List[float]]:

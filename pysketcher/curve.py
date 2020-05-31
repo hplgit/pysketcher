@@ -3,6 +3,7 @@ import logging
 from typing import List
 
 from .shape import Shape
+from .style import Style
 from .point import Point
 from .matplotlibdraw import MatplotlibDraw
 
@@ -32,7 +33,7 @@ class Curve(Shape):
     def ys(self):
         return np.array([p.y for p in self.points])
 
-    def draw(self, drawing_tool: MatplotlibDraw, verbose=0):
+    def draw(self, drawing_tool: MatplotlibDraw):
         """
         Send the curve to the plotting engine. That is, convert
         coordinate information in self.x and self.y, together
@@ -41,17 +42,11 @@ class Curve(Shape):
         """
         if drawing_tool.inside_plot_area(self._points):
             raise ValueError("Curve falls outside of plot area.")
-        logging.info("Given %i points, line_style: %s, line_width: %s "
-                     "line_color: %s, arrow: %s, fill_color: %s, fill_pattern: %s, shadow: %s",
-                     len(self._points), self.line_style, self.line_width, self.line_color, self.arrow, self.fill_color,
-                     self.fill_pattern, self.shadow)
+        logging.info("%s made up of %i points, style: %s,",
+                     type(self), len(self._points), self.style)
         drawing_tool.plot_curve(
             self._points,
-            self.line_style, self.line_width, self.line_color,
-            self.arrow, self.fill_color, self.fill_pattern,
-            self.shadow)
-        if verbose:
-            print('drawing Curve object with %d points' % len(self._points))
+            self.style)
 
     def rotate(self, angle: float, center: Point) -> 'Curve':
         """
@@ -96,9 +91,6 @@ class Curve(Shape):
         print(space, 'reached "bottom" object %s' % \
               self.__class__.__name__)
 
-    def _object_couplings(self, parent, couplings=[], classname=True):
-        return
-
     def show_hierarchy(self, indent=0, format='std'):
         if format == 'dict':
             return '"%s"' % str(self)
@@ -120,9 +112,3 @@ class Curve(Shape):
 
     def __repr__(self):
         return str(self)
-
-    def __getitem__(self, item):
-        raise NotImplementedError("Curves cannot contain sub-shapes")
-
-    def __setitem__(self, name, value):
-        raise NotImplementedError("Curves cannot contain sub-shapes")

@@ -36,7 +36,7 @@ class Vehicle0(Shape):
 def _test():
     R = 1;  L = 4;  H = 2;  w_1 = 5
     xmax = w_1 + 2*L + 3*R
-    drawing_tool.set_coordinate_system(
+    drawing_tool._set_coordinate_system(
         xmin=0, xmax=xmax, ymin=-1, ymax=2*R + 3*H, axis=False)
 
     vehicle = Vehicle0(w_1, R, L, H)

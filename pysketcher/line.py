@@ -1,24 +1,20 @@
 import numpy as np
 from typing import Tuple
+from copy import copy
 
-from .matplotlibdraw import MatplotlibDraw
-from .shape import Shape
 from .point import Point
 from .curve import Curve
 
 
-class Line(Shape):
+class Line(Curve):
     _start: Point
     _end: Point
 
-    def __init__(self, start: Point, end: Point, arrow=None):
-        super().__init__()
+    def __init__(self, start: Point, end: Point):
         self._start = start
         self._end = end
-        self._arrow = arrow
-        self._shapes = {'line': Curve([self._start, self._end])}
-        self['line'].arrow = self._arrow
         self._a = self._b = self._c = self._d = None
+        super().__init__([self._start, self._end])
         self._compute_formulas()
 
     def geometric_features(self):
@@ -74,5 +70,7 @@ class Line(Shape):
         print("rotating about %s" % center)
         start = self._start.rotate(angle, center)
         end = self._end.rotate(angle, center)
-        return Line(start, end, arrow = self._arrow)
+        line = Line(start, end)
+        line.style = copy(self.style)
+        return Line(start, end)
 

@@ -1,57 +1,51 @@
 from typing import List
 
-from .matplotlibdraw import MatplotlibDraw
 from .shape import Shape
 from .curve import Curve
 from .point import Point
+from .style import TextStyle
 
-from .distance_wtext import Distance_wText
-from .text_warrow import Text_wArrow
+from .distance_with_text import DistanceWithText
+from .arrow_with_text import ArrowWithText
 
 
-class Rectangle(Shape):
+class Rectangle(Curve):
     """
     Rectangle specified by the point `lower_left_corner`, `width`,
     and `height`.
     """
 
-
-    _points: List[Point]
     _lower_left_corner: Point
     _width: float
     _height: float
 
     def __init__(self, lower_left_corner: Point, width: float, height: float):
-        super().__init__()
 
         self._width = width
         self._height = height
         self._lower_left_corner = lower_left_corner
 
-        self._points = None  # Populated by the next method call
-        self._generate_points()
-        self._shapes = {'rectangle': Curve(self._points)}
+        super().__init__(self._generate_points())
 
         # Dimensions
         dims = {
-            'width': Distance_wText(self._lower_left_corner + Point(0, -height / 5.),
-                                    self._lower_left_corner + Point(width, -height / 5.),
-                                    'width'),
-            'height': Distance_wText(self._lower_left_corner + Point(width + width / 5., 0),
-                                     self._lower_left_corner + Point(width + width / 5., height),
-                                     'height'),
-            'lower_left_corner': Text_wArrow('lower_left_corner',
-                                             self._lower_left_corner - Point(width / 5., height / 5.),
-                                             self._lower_left_corner)
+            'width': DistanceWithText('width', self._lower_left_corner + Point(0, -height / 5.),
+                                      self._lower_left_corner + Point(width, -height / 5.), ),
+            'height': DistanceWithText('height', self._lower_left_corner + Point(width + width / 5., 0),
+                                       self._lower_left_corner + Point(width + width / 5., height),),
+            'lower_left_corner': ArrowWithText('lower_left_corner',
+                                               self._lower_left_corner - Point(width / 5., height / 5.),
+                                               self._lower_left_corner)
         }
+        dims['height']['text'].style.alignment = TextStyle.Alignment.LEFT
         self.dimensions = dims
 
-    def _generate_points(self):
-        self._points = [self._lower_left_corner,
-                        self._lower_left_corner + Point(self._width, 0),
-                        self._lower_left_corner + Point(self._width, self._height),
-                        self._lower_left_corner + Point(0, self._height),
-                        self._lower_left_corner]
+    def _generate_points(self) -> List[Point]:
+        return [self._lower_left_corner,
+                self._lower_left_corner + Point(self._width, 0),
+                self._lower_left_corner + Point(self._width, self._height),
+                self._lower_left_corner + Point(0, self._height),
+                self._lower_left_corner]
 
     def geometric_features(self):
         """
@@ -69,7 +63,6 @@ class Rectangle(Shape):
         center               Center point
         ==================== =============================================
         """
-        r = self._shapes['rectangle']
         d = {'lower_left': self._points[0],
              'lower_right': self._points[1],
              'upper_right': self._points[2],

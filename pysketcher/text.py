@@ -1,5 +1,6 @@
-from .matplotlibdraw import MatplotlibDraw
 from .shape import Shape
+from .drawing_tool import DrawingTool
+from .style import Style, TextStyle
 from .point import Point
 
 
@@ -12,39 +13,43 @@ class Text(Shape):
         'right', the right and of the text is located at `position`.
         """
 
-    def __init__(self, text: str, position: Point, alignment='center', fontsize=0,
-                 bgcolor=None, fgcolor=None, fontfamily=None, direction: Point = Point(1, 0)):
-        """
-                fontfamily can be (e.g.) 'serif' or 'monospace' (for code!).
-                """
+    _style: TextStyle
+
+    def __init__(self, text: str, position: Point, direction: Point = Point(1, 0)):
         super().__init__()
         self._text = text
         self._position = position
-        self._alignment = alignment
-        self._fontsize = fontsize
-        self._bgcolor = bgcolor
-        self._fgcolor = fgcolor
-        self._fontfamily = fontfamily
         self._direction = direction
+        self._style = TextStyle()
 
-    def draw(self, drawing_tool: MatplotlibDraw, verbose=0):
+    def draw(self, drawing_tool: DrawingTool, verbose=0):
         drawing_tool.text(
             self._text, self._position,
-            self._alignment, self._fontsize,
-            arrow_tip=None, bgcolor=self._bgcolor, fgcolor=self._fgcolor,
             direction=self._direction,
-            fontfamily=self._fontfamily)
-        if verbose > 0:
-            print('drawing Text "%s"' % self._text)
+            style=self.style
+        )
 
     def rotate(self, angle: float, center: Point):
         direction = self._direction.rotate(angle, center)
         position = self._position.rotate(angle, center)
-        return Text(self._text, position, self._alignment, self._fontsize,
-                    self._bgcolor, self._fgcolor, self._fontfamily, direction)
+        return Text(self._text, position, direction)
 
     def __str__(self):
         return 'text "%s" at (%g,%g)' % (self._text, self._position.x, self._position.y)
 
     def __repr__(self):
         return repr(str(self))
+
+    @property
+    def style(self) -> TextStyle:
+        return self._style
+
+    @style.setter
+    def style(self, text_style: TextStyle):
+        self._style = text_style
+
+    def set_alignment(self, alignment: TextStyle.Alignment) -> 'Text':
+        self.style.alignment = alignment
+        return self
+
+

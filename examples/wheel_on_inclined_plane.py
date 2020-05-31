@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from pysketcher import Point, Wheel, MatplotlibDraw, Wall, ArcWithText, Line, Circle, Composition, Axis, Force, Gravity
+from pysketcher import Shape, Point, Wheel, MatplotlibDraw, Wall, ArcWithText, Line, Circle, Composition, Axis, Force, Gravity
 
 
 def inclined_plane():
@@ -78,11 +78,11 @@ def inclined_plane():
         """Position of center point of wheel."""
         return c + tangent_vec * 7 * t ** 2
 
-    def move(t, fig, dt=None):
+    def move(fig: Shape, t: float, dt: float = None) -> fig:
         x = position(t)
         x0 = position(t - dt)
         displacement = x - x0
-        fig['body'].translate(displacement)
+        return fig['body'].translate(displacement)
 
     animate(fig, time_points, move, pause_per_frame=0,
             dt=time_points[1] - time_points[0])
