@@ -16,8 +16,12 @@ class SketchyFunc1(Spline):
 
         x = np.array([0, 2, 3, 4, 5, 6])
         y = np.array([1, 1.8, 1.2, 0.7, 0.8, 0.85])
-        x = x_min - x.min() + x * (x_max - x_min) / (x.max() - x.min())
-        y = y_min - y.min() + y * (y_max - y_min) / (y.max() - y.min())
+
+        def scale_array(min: float, max: float, ps: np.array):
+            return min - ps.min() + ps * (max - min) / (ps.max() - ps.min())
+
+        x = scale_array(x_min, x_max, x)
+        y = scale_array(y_min, y_max, y)
 
         points = []
         for i in range(len(x) - 1):
