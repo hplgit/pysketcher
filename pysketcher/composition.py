@@ -1,3 +1,4 @@
+from pysketcher.drawing_tool import DrawingTool
 from .point import Point
 from .shape import Shape
 from .style import Style, TextStyle
@@ -5,6 +6,9 @@ from .text import Text
 
 
 class Composition(Shape):
+
+    _shapes: dict
+
     def __init__(self, shapes: dict):
         """shapes: list or dict of Shape objects."""
         super().__init__()
@@ -21,11 +25,24 @@ class Composition(Shape):
     def __getitem__(self, name):
         return self._shapes[name]
 
-    def rotate(self, angle: float, center: Point):
+    def draw(self, drawing_tool: DrawingTool) -> None:
+        for shape in self._shapes.values():
+            shape.draw(drawing_tool)
+
+    def _for_all_shapes(self, func: str, *args, **kwargs) -> 'Composition':
         shapes = dict()
         for key, shape in self._shapes:
-            shapes[key] = shape.rotate(angle, center)
-        return Composition(shapes)
+            shapes[key] = getattr(shape, func)(*args, **kwargs)
+        return Composition[shapes]
+
+    def rotate(self, angle: float, center: Point) -> 'Composition':
+        return self._for_all_shapes('rotate', angle, center)
+
+    def translate(self, vec) -> 'Shape':
+        return self._for_all_shapes('translate', vec)
+
+    def scale(self, factor) -> 'Shape':
+        return self._for_all_shapes('scale', factor)
 
 
 class ShapeWithText(Composition):

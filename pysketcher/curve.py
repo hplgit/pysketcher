@@ -3,9 +3,8 @@ import logging
 from typing import List
 
 from .shape import Shape
-from .style import Style
 from .point import Point
-from .matplotlibdraw import MatplotlibDraw
+from .drawing_tool import DrawingTool
 
 
 class Curve(Shape):
@@ -33,15 +32,13 @@ class Curve(Shape):
     def ys(self):
         return np.array([p.y for p in self.points])
 
-    def draw(self, drawing_tool: MatplotlibDraw):
+    def draw(self, drawing_tool: DrawingTool):
         """
         Send the curve to the plotting engine. That is, convert
         coordinate information in self.x and self.y, together
         with optional settings of linestyles, etc., to
         plotting commands for the chosen engine.
         """
-        if drawing_tool.inside_plot_area(self._points):
-            raise ValueError("Curve falls outside of plot area.")
         logging.info("%s made up of %i points, style: %s,",
                      type(self), len(self._points), self.style)
         drawing_tool.plot_curve(
@@ -86,28 +83,10 @@ class Curve(Shape):
         minmax['ymax'] = max(self.y.max(), minmax['ymax'])
         return minmax
 
-    def recurse(self, name, indent=0):
-        space = ' ' * indent
-        print(space, 'reached "bottom" object %s' % \
-              self.__class__.__name__)
-
-    def show_hierarchy(self, indent=0, format='std'):
-        if format == 'dict':
-            return '"%s"' % str(self)
-        elif format == 'plain':
-            return ''
-        else:
-            return str(self)
-
     def __str__(self):
         """Compact pretty print of a Curve object."""
-        s = '%d (x,y) coords' % self.x.size
-        props = ('line_color', 'line_width', 'line_style', 'arrow', 'shadow',
-                 'fill_color', 'fill_pattern')
-        for prop in props:
-            value = getattr(self, prop)
-            if value is not None:
-                s += ' %s=%s' % (prop, repr(value))
+        s = '%d (x,y) coords' % len(self._points)
+        s += ' %s' % self.style
         return s
 
     def __repr__(self):

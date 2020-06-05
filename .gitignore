@@ -17,3 +17,5 @@ temp*
 .mypy_cache
 *.egg-info/
 
+.hypothesis/
+

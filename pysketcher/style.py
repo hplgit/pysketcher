@@ -70,10 +70,6 @@ class Style:
     def line_style(self, line_style: LineStyle):
         self._line_style = line_style
 
-    def set_line_style(self, line_style: LineStyle):
-        self.line_style = line_style
-        return self
-
     @property
     def line_width(self) -> float:
         return self._line_width
@@ -81,10 +77,6 @@ class Style:
     @line_width.setter
     def line_width(self, line_width: float):
         self._line_width = line_width
-
-    def set_line_width(self, line_width: float) -> 'Style':
-        self.line_width = line_width
-        return self
 
     @property
     def line_color(self) -> Color:
@@ -94,10 +86,6 @@ class Style:
     def line_color(self, color: Color):
         self._line_color = color
 
-    def set_line_color(self, color: Color) -> 'Style':
-        self.line_color = color
-        return self
-
     @property
     def fill_color(self) -> Color:
         return self._fill_color
@@ -105,10 +93,6 @@ class Style:
     @fill_color.setter
     def fill_color(self, color: Color):
         self._fill_color = color
-
-    def set_fill_color(self, color: Color) -> 'Style':
-        self.fill_color = color
-        return self
 
     @property
     def fill_pattern(self) -> FillPattern:
@@ -120,10 +104,6 @@ class Style:
         if not self.fill_color:
             self.fill_color = self.Color.WHITE
 
-    def set_fill_pattern(self, fill_pattern: FillPattern) -> 'Style':
-        self.fill_pattern = fill_pattern
-        return self
-
     @property
     def arrow(self) -> ArrowStyle:
         return self._arrow
@@ -131,10 +111,6 @@ class Style:
     @arrow.setter
     def arrow(self, arrow: ArrowStyle):
         self._arrow = arrow
-
-    def set_arrow(self, arrow: ArrowStyle) -> 'Style':
-        self.arrow = arrow
-        return self
 
     @property
     def shadow(self) -> int:

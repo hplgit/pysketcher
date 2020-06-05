@@ -17,6 +17,14 @@ class Line(Curve):
         super().__init__([self._start, self._end])
         self._compute_formulas()
 
+    @property
+    def start(self):
+        return self._start
+
+    @property
+    def end(self):
+        return self._end
+
     def geometric_features(self):
         return {'start': self._start,
                 'end': self._end}

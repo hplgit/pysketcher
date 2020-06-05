@@ -1,7 +1,5 @@
 from typing import List
 
-from pytest import approx
-
 from pysketcher import Point
 import numpy as np
 import numpy.testing as npt
@@ -119,7 +117,7 @@ def test_unit_vector_failure():
 
 normal_vector_data = [
     (Point(1, 0), Point(0, 1)),
-    (Point(1, 1), Point(-1/np.sqrt(2), 1/np.sqrt(2)))
+    (Point(1, 1), Point(-1 / np.sqrt(2), 1 / np.sqrt(2)))
 ]
 
 
@@ -136,12 +134,11 @@ rotation_data = [
 
 @pytest.mark.parametrize("a, angle, center, expected", rotation_data)
 def test_rotation(a, angle, center, expected):
-    assert a.rotate(angle, center).x == approx(expected.x)
-    assert a.rotate(angle, center).y == approx(expected.y)
+    assert abs(a.rotate(angle, center) - expected) < 1E-14
 
 
 from_coordinate_lists_data = [
-    ([1,2,3,4],[1,2,3,4],[Point(1,1), Point(2,2), Point(3,3), Point(4,4)])
+    ([1, 2, 3, 4], [1, 2, 3, 4], [Point(1, 1), Point(2, 2), Point(3, 3), Point(4, 4)])
 ]
 
 
