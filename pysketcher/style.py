@@ -14,6 +14,7 @@ class Style:
 
     @unique
     class Color(Enum):
+        GREY = auto()
         BLACK = auto()
         BROWN = auto()
         RED = auto()

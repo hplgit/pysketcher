@@ -264,6 +264,7 @@ class MatplotlibStyle:
         Style.FillPattern.UP_RIGHT_TO_LEFT: '\\\\'
     }
     COLOR_MAP = {
+        Style.Color.GREY: 'grey',
         Style.Color.BLACK: 'black',
         Style.Color.BLUE: 'blue',
         Style.Color.BROWN: 'brown',
