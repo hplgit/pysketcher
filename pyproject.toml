@@ -32,6 +32,9 @@ pydocstyle = "^4.0.1"
 'zest.releaser' = { version = "^6.19.1", extras = ['recommended'] }
 wheel = "^0.33.6"
 
+[tool.poetry.scripts]
+beam1 = "examples.beam1:main"
+
 [tool.pytest]
 testpaths = "tests"
 python_files = "test_*.py"
