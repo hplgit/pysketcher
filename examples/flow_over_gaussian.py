@@ -50,12 +50,12 @@ velocity = velocity_profile(H / 2.)
 line = Line(Point(W - 2.5 * sigma, 0), Point(W + 2.5 * sigma, 0))
 line.style.line_style = Style.LineStyle.DASHED
 symbols = {
-    'alpha': DistanceWithText(Point(W, 0), Point(W, alpha), r'$\alpha$'),
+    'alpha': DistanceWithText(r'$\alpha$', Point(W, 0), Point(W, alpha) ),
 
-    'W': DistanceWithText(Point(0, -0.5), Point(W, -0.5), r'$W$',
+    'W': DistanceWithText(r'$W$', Point(0, -0.5), Point(W, -0.5),
                           spacing=-1. / 3),
 
-    'L': DistanceWithText(Point(W, -0.5), Point(W + L, -0.5), r'$L$',
+    'L': DistanceWithText(r'$L$', Point(W, -0.5), Point(W + L, -0.5),
                           spacing=-1. / 3),
     'v(y)': Text('$v(y)$  ', Point(H / 2., velocity.x)),
     'dashed line': line
