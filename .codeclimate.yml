@@ -1,3 +1,14 @@
 exclude_patterns:
   - "doc/"
   - "examples/"
+
+plugins:
+  bandit:
+    enabled: true
+  Pep8:
+    enabled: true
+  Radon:
+    enabled: true
+  SonarPython:
+    enabled: true
+  
