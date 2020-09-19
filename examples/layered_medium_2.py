@@ -1,6 +1,5 @@
-from numpy import exp, linspace
-
 from pysketcher import *
+from numpy import exp, linspace
 
 W = 10.0
 H = 10.0

@@ -1,6 +1,5 @@
+from pysketcher import MatplotlibDraw, Rectangle, Style, Composition, Point
 import logging
-
-from pysketcher import Composition, MatplotlibDraw, Point, Rectangle, Style
 
 drawing_tool = MatplotlibDraw(xmin=0, xmax=20, ymin=0, ymax=12, axis=False)
 

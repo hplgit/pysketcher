@@ -1,7 +1,7 @@
-import logging
-
 import pysketcher
-from pysketcher import Composition, Curve, Point, Style
+from pysketcher import Point, Curve, Composition, Style
+
+import logging
 
 logging.basicConfig(level=logging.INFO)
 
