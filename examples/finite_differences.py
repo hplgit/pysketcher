@@ -108,12 +108,9 @@ centered = Composition(
                    Point(0.1, 0)).set_alignment(TextStyle.Alignment.LEFT)))
 
 exact = Composition(dict(graph=f, tangent=exact_tangent))
-forward = Composition(dict(difference=forward, exact=exact)). \
-    set_name('forward')
-backward = Composition(dict(difference=backward, exact=exact)). \
-    set_name('backward')
-centered = Composition(dict(difference=centered, exact=exact)). \
-    set_name('centered')
+forward = Composition(dict(difference=forward, exact=exact))
+backward = Composition(dict(difference=backward, exact=exact))
+centered = Composition(dict(difference=centered, exact=exact))
 
 for fig in forward, backward, centered:
     drawing_tool.erase()
