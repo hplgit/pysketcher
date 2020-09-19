@@ -41,7 +41,6 @@ def inclined_plane():
     contact = Point(x, y)
     normal_vec = Point(np.sin(radians(theta)), np.cos(radians(theta)))
     c = contact + normal_vec * r
-    outer_wheel = Circle(c, r).set_line_color('blue').set_fill_color('white')
     hole = Circle(c, r / 2.).set_line_color('blue').set_fill_color('white')
     wheel = Composition({'outer': outer_wheel, 'inner': hole})
     wheel.shadow = 4
