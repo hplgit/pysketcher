@@ -11,4 +11,3 @@ plugins:
     enabled: true
   SonarPython:
     enabled: true
-  

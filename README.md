@@ -2,6 +2,7 @@
 
 <a href="https://codeclimate.com/github/rvodden/pysketcher/maintainability"><img src="https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability" /></a>
 <a href="https://codeclimate.com/github/rvodden/pysketcher/test_coverage"><img src="https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/test_coverage" /></a>
+[![pysketcher](https://circleci.com/gh/rvodden/pysketcher.svg?style=shield)](https://app.circleci.com/pipelines/github/rvodden/pysketcher)
 
 *This is alpha software - the interface is likely to change with every release prior to 0.1.0.*
 
