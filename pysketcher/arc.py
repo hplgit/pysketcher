@@ -37,7 +37,7 @@ class Arc(Curve):
         Return (x,y) point at start_angle + theta.
         Not valid after translation, rotation, or scaling.
         """
-        if self._start_angle + theta > self._arc_angle:
+        if theta > self._arc_angle:
             raise ValueError("Theta is outside the bounds of the arc")
 
         return Point(self._center.x + self._radius * np.cos(self._start_angle + theta),

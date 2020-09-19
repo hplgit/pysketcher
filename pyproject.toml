@@ -12,24 +12,25 @@ authors = [
     "Hans Petter Langtangen"
 ]
 readme = "README.md"
+packages = [{ include = "pysketcher" }]
 repository = "https://github.com/rvodden/pysketcher"
 homepage = "https://github.com/rvodden/pysketcher"
 keywords = ['sketch','graphics','scientific','engineering','geometry']
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 numpy = "^1.18.2"
 matplotlib = "^3.2.1"
 scipy = "^1.4.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2.2"
-tox = "^3.14.0"
 hypothesis = "^5.16.0"
+pytest = "^5.4.1"
+tox = "^3.14.6"
 flake8 = "^3.7.9"
-mypy = "^0.740"
-pydocstyle = "^4.0.1"
-'zest.releaser' = { version = "^6.19.1", extras = ['recommended'] }
+mypy = "^0.770"
+pydocstyle = "^5.0.2"
+'zest.releaser' = { version = "^6.20.1", extras = ['recommended'] }
 wheel = "^0.33.6"
 
 [tool.poetry.scripts]

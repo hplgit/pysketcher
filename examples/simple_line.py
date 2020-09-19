@@ -1,5 +1,5 @@
 import numpy as np
-from pysketcher import MatplotlibDraw, Point, Line, Composition, Style
+from pysketcher import Point, Line, Composition, MatplotlibDraw, Style
 
 drawing_tool = MatplotlibDraw(
     xmin=0, xmax=5, ymin=0, ymax=5, axis=False)

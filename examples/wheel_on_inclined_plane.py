@@ -1,31 +1,24 @@
 import numpy as np
 import time
-from pysketcher import Shape, Point, Wheel, MatplotlibDraw, Wall, ArcWithText, Line, Circle, Composition, Axis, Force, Gravity
+from pysketcher import Shape, Point, Wheel, MatplotlibDraw, Wall, ArcWithText, Line, Circle, Composition, Axis, Force, Gravity, Style
 
 
 def inclined_plane():
-    theta = 30.
+    theta = np.pi / 6
     L = 10.
     a = 1.
     xmin = 0
     ymin = -3
 
     drawing_tool = MatplotlibDraw(xmin=xmin, xmax=xmin + 1.5 * L,
-                                  ymin=ymin, ymax=ymin + L,
-                                  # axis=True,
-                                  )
-    # drawing_tool.set_grid(True)
-    fontsize = 18
-    from math import tan, radians
-
+                                  ymin=ymin, ymax=ymin + L)
     B = Point(a + L, 0)
-    A = Point(a, tan(radians(theta)) * L)
+    A = Point(a, np.tan(theta * L))
 
-    wall = Wall([A, B], thickness=-0.25)
+    wall = Wall([A, B], thickness=0.25)
 
     angle = ArcWithText(r'$\theta$', center=B, radius=3,
-                        start_angle=180 - theta, arc_angle=theta,
-                        fontsize=fontsize)
+                        start_angle=np.pi - theta, arc_angle=theta)
     angle.line_color = 'black'
     angle.line_width = 1
 
@@ -36,22 +29,22 @@ def inclined_plane():
 
     r = 1  # radius of wheel
     help_line = Line(A, B)
-    x = a + 3 * L / 10.;
+    x = a + 3 * L / 10.
     y = help_line(x=x)
     contact = Point(x, y)
-    normal_vec = Point(np.sin(radians(theta)), np.cos(radians(theta)))
+    normal_vec = Point(np.sin(theta), np.cos(theta))
     c = contact + normal_vec * r
-    hole = Circle(c, r / 2.).set_line_color('blue').set_fill_color('white')
+    outer_wheel = Circle(c, r).set_line_color(Style.Color.BLUE).set_fill_color(Style.Color.WHITE)
+    hole = Circle(c, r / 2.).set_line_color(Style.Color.BLUE).set_fill_color(Style.Color.WHITE)
     wheel = Composition({'outer': outer_wheel, 'inner': hole})
     wheel.shadow = 4
 
-    drawing_tool.set_linecolor('black')
-    N = Force(contact - normal_vec * 2 * r, contact, r'$N$', text_pos='start')
+    N = Force('$N$', contact - normal_vec * 2 * r, contact).set_line_color(Style.Color.BLACK)
     # text_alignment='left')
     mg = Gravity(c, 3 * r, text='$Mg$')
 
     x_const = Line(contact, contact + Point(0, 4))
-    x_const.set_line_style('dotted')
+    x_const.set_line_style(Style.LineStyle.DOTTED)
     x_const.rotate(-theta, contact)
     # or x_const = Line(contact-2*r*normal_vec, contact+4*r*normal_vec).set_linestyle('dotted')
     x_axis = Axis(start=contact + normal_vec * 3 * r, length=4 * r,
@@ -64,7 +57,7 @@ def inclined_plane():
 
     fig = Composition({'body': body, 'fixed elements': fixed})
 
-    fig.draw()
+    fig.draw(drawing_tool)
     drawing_tool.savefig('tmp.png')
     drawing_tool.savefig('tmp.pdf')
     drawing_tool.display()
@@ -83,8 +76,8 @@ def inclined_plane():
         displacement = x - x0
         return fig['body'].translate(displacement)
 
-    animate(fig, time_points, move, pause_per_frame=0,
-            dt=time_points[1] - time_points[0])
+    #animate(fig, time_points, move, pause_per_frame=0,
+    #        dt=time_points[1] - time_points[0])
 
     print(str(fig))
     print(repr(fig))
