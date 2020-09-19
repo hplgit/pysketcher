@@ -2,8 +2,7 @@ from pysketcher import MatplotlibDraw, Rectangle, Style, Composition, Point
 import logging
 
 logging.basicConfig(level=logging.INFO)
-drawing_tool = MatplotlibDraw(
-    xmin=0, xmax=12, ymin=0, ymax=12, axis=False)
+drawing_tool = MatplotlibDraw(xmin=0, xmax=12, ymin=0, ymax=12, axis=False)
 
 i = 1
 shapes = Composition(dict())

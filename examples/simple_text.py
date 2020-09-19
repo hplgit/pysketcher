@@ -3,8 +3,7 @@ from pysketcher import Point, Text, Composition, TextStyle, MatplotlibDraw
 
 logging.basicConfig(level=logging.INFO)
 
-drawing_tool = MatplotlibDraw(
-    xmin=0, xmax=6, ymin=0, ymax=6, axis=False)
+drawing_tool = MatplotlibDraw(xmin=0, xmax=6, ymin=0, ymax=6, axis=False)
 
 code = Text("This is some left text!", Point(3, 1))
 code.style.alignment = TextStyle.Alignment.LEFT
