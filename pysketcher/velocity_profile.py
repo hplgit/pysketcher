@@ -14,7 +14,14 @@ class VelocityProfile(Composition):
     _num_arrows: int
     _scaling: float
 
-    def __init__(self, start: Point, height: float, profile: Callable[[float], Point], num_arrows: int, scaling: float = 1):
+    def __init__(
+        self,
+        start: Point,
+        height: float,
+        profile: Callable[[float], Point],
+        num_arrows: int,
+        scaling: float = 1,
+    ):
 
         self._start = start
         self._height = height
@@ -25,7 +32,7 @@ class VelocityProfile(Composition):
         shapes = dict()
 
         # Draw left line
-        shapes['start line'] = Line(self._start, (self._start + Point(0, self._height)))
+        shapes["start line"] = Line(self._start, (self._start + Point(0, self._height)))
 
         # Draw velocity arrows
         dy = float(self._height) / (self._num_arrows - 1)
@@ -36,7 +43,7 @@ class VelocityProfile(Composition):
             start_position = Point(start.x, start.y + i * dy)
             end_position = start_position + profile(start_position.y) * self._scaling
             end_points += [end_position]
-            shapes['arrow%d' % i] = Arrow(start_position, end_position)
+            shapes["arrow%d" % i] = Arrow(start_position, end_position)
 
-        shapes['smooth curve'] = Spline(end_points)
+        shapes["smooth curve"] = Spline(end_points)
         super().__init__(shapes)

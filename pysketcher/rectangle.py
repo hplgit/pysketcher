@@ -29,23 +29,33 @@ class Rectangle(Curve):
 
         # Dimensions
         dims = {
-            'width': DistanceWithText('width', self._lower_left_corner + Point(0, -height / 5.),
-                                      self._lower_left_corner + Point(width, -height / 5.), ),
-            'height': DistanceWithText('height', self._lower_left_corner + Point(width + width / 5., 0),
-                                       self._lower_left_corner + Point(width + width / 5., height),),
-            'lower_left_corner': ArrowWithText('lower_left_corner',
-                                               self._lower_left_corner - Point(width / 5., height / 5.),
-                                               self._lower_left_corner)
+            "width": DistanceWithText(
+                "width",
+                self._lower_left_corner + Point(0, -height / 5.0),
+                self._lower_left_corner + Point(width, -height / 5.0),
+            ),
+            "height": DistanceWithText(
+                "height",
+                self._lower_left_corner + Point(width + width / 5.0, 0),
+                self._lower_left_corner + Point(width + width / 5.0, height),
+            ),
+            "lower_left_corner": ArrowWithText(
+                "lower_left_corner",
+                self._lower_left_corner - Point(width / 5.0, height / 5.0),
+                self._lower_left_corner,
+            ),
         }
-        dims['height']['text'].style.alignment = TextStyle.Alignment.LEFT
+        dims["height"]["text"].style.alignment = TextStyle.Alignment.LEFT
         self.dimensions = dims
 
     def _generate_points(self) -> List[Point]:
-        return [self._lower_left_corner,
-                self._lower_left_corner + Point(self._width, 0),
-                self._lower_left_corner + Point(self._width, self._height),
-                self._lower_left_corner + Point(0, self._height),
-                self._lower_left_corner]
+        return [
+            self._lower_left_corner,
+            self._lower_left_corner + Point(self._width, 0),
+            self._lower_left_corner + Point(self._width, self._height),
+            self._lower_left_corner + Point(0, self._height),
+            self._lower_left_corner,
+        ]
 
     def geometric_features(self):
         """
@@ -63,15 +73,17 @@ class Rectangle(Curve):
         center               Center point
         ==================== =============================================
         """
-        d = {'lower_left': self._points[0],
-             'lower_right': self._points[1],
-             'upper_right': self._points[2],
-             'upper_left': self._points[3], }
-        d['lower_mid'] = (d['lower_left'] + d['lower_right']) * 0.5
-        d['upper_mid'] = (d['upper_left'] + d['upper_right']) * 0.5
-        d['left_mid'] = (d['lower_left'] + d['upper_left']) * 0.5
-        d['right_mid'] = (d['lower_right'] + d['upper_right']) * 0.5
-        d['center'] = Point(d['lower_mid'].x, d['left_mid'].y)
+        d = {
+            "lower_left": self._points[0],
+            "lower_right": self._points[1],
+            "upper_right": self._points[2],
+            "upper_left": self._points[3],
+        }
+        d["lower_mid"] = (d["lower_left"] + d["lower_right"]) * 0.5
+        d["upper_mid"] = (d["upper_left"] + d["upper_right"]) * 0.5
+        d["left_mid"] = (d["lower_left"] + d["upper_left"]) * 0.5
+        d["right_mid"] = (d["lower_right"] + d["upper_right"]) * 0.5
+        d["center"] = Point(d["lower_mid"].x, d["left_mid"].y)
         return d
 
     def rotate(self, angle: float, center: Point) -> Curve:

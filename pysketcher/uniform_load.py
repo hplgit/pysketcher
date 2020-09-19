@@ -20,16 +20,18 @@ class UniformLoad(Composition):
     ==================== =============================================
     """
 
-    def __init__(self, lower_left_corner: Point, width: float, height: float, num_arrows=10):
+    def __init__(
+        self, lower_left_corner: Point, width: float, height: float, num_arrows=10
+    ):
         box = Rectangle(lower_left_corner, width, height)
-        shapes = {'box': box}
+        shapes = {"box": box}
         dx = float(width) / (num_arrows - 1)
         for i in range(num_arrows):
             x = lower_left_corner.x + i * dx
             start = Point(x, lower_left_corner.y + height)
             end = Point(x, lower_left_corner.y)
-            shapes['arrow%d' % i] = Arrow(start, end)
+            shapes["arrow%d" % i] = Arrow(start, end)
         super().__init__(shapes)
 
     def geometric_features(self):
-        return {'mid_top': self['box'].geometric_features()['upper_mid']}
+        return {"mid_top": self["box"].geometric_features()["upper_mid"]}

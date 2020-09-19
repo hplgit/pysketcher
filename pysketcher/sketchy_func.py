@@ -9,10 +9,10 @@ class SketchyFunc1(Spline):
     """
     A typical function curve used to illustrate an "arbitrary" function.
     """
+
     domain = [1, 6]
 
-    def __init__(self, name=None, name_pos='start',
-                 x_min=0, x_max=6, y_min=0, y_max=2):
+    def __init__(self, name=None, name_pos="start", x_min=0, x_max=6, y_min=0, y_max=2):
 
         x = np.array([0, 2, 3, 4, 5, 6])
         y = np.array([1, 1.8, 1.2, 0.7, 0.8, 0.85])
@@ -29,4 +29,6 @@ class SketchyFunc1(Spline):
 
         super().__init__(points)
         if name is not None:
-            self._shapes['name'] = Text(name, self.geometric_features()[name_pos] + Point(0, 0.1))
+            self._shapes["name"] = Text(
+                name, self.geometric_features()[name_pos] + Point(0, 0.1)
+            )

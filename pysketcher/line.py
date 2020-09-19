@@ -26,17 +26,20 @@ class Line(Curve):
         return self._end
 
     def geometric_features(self):
-        return {'start': self._start,
-                'end': self._end}
+        return {"start": self._start, "end": self._end}
 
-    def interval(self, x_range: Tuple[float, float] = None, y_range: Tuple[float, float] = None):
+    def interval(
+        self, x_range: Tuple[float, float] = None, y_range: Tuple[float, float] = None
+    ):
         """Return part of the line defined either by the x_range or the y_range"""
         if x_range is not None:
-            return Line(Point(x_range[0], self(x_range[0])),
-                        Point(x_range[1], self(x_range[1])))
+            return Line(
+                Point(x_range[0], self(x_range[0])), Point(x_range[1], self(x_range[1]))
+            )
         elif y_range is not None:
-            return Line(Point(self(y_range[0]), y_range[0]),
-                        Point(self(y_range[1]), y_range[1]))
+            return Line(
+                Point(self(y_range[0]), y_range[0]), Point(self(y_range[1]), y_range[1])
+            )
 
     def _compute_formulas(self):
         # Define equations for line:
@@ -68,9 +71,9 @@ class Line(Curve):
         elif y is not None and self._c is not None:
             return self._c * y + self._d
         else:
-            raise ValueError('Line.__call__(x=%s, y=%s) not meaningful' % (x, y))
+            raise ValueError("Line.__call__(x=%s, y=%s) not meaningful" % (x, y))
 
-    def rotate(self, angle: float, center: Point) -> 'Line':
+    def rotate(self, angle: float, center: Point) -> "Line":
         """
         Rotate all coordinates: `angle` is measured in radians
         center is the "origin" of the rotation.
@@ -81,4 +84,3 @@ class Line(Curve):
         line = Line(start, end)
         line.style = copy(self.style)
         return Line(start, end)
-

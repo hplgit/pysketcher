@@ -37,6 +37,5 @@ class Wall(Curve):
         self.style.fill_pattern = Style.FillPattern.CROSS
 
     def geometric_features(self):
-        d = {'start': self._start,
-             'end': self._end}
+        d = {"start": self._start, "end": self._end}
         return d

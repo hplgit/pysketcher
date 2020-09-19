@@ -23,5 +23,3 @@ from .uniform_load import UniformLoad
 from .wall import Wall, Wall
 from .velocity_profile import VelocityProfile
 from .wheel import Wheel
-
-

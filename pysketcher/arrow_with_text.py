@@ -12,8 +12,15 @@ class ArrowWithText(ShapeWithText):
 
     _DEFAULT_SPACING: float = 0.1
 
-    def __init__(self, text: str, position: Point, arrow_tip: Point, spacing: float = None,
-                 start_spacing: float = None, end_spacing: float = None):
+    def __init__(
+        self,
+        text: str,
+        position: Point,
+        arrow_tip: Point,
+        spacing: float = None,
+        start_spacing: float = None,
+        end_spacing: float = None,
+    ):
         text = Text(text, position)
 
         if spacing is not None:
@@ -33,4 +40,3 @@ class ArrowWithText(ShapeWithText):
         arrow = Arrow(arrow_start, arrow_end)
         super().__init__(arrow, text)
         self._arrow_tip = arrow_tip
-

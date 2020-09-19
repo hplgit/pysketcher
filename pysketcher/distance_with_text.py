@@ -22,16 +22,22 @@ class DistanceWithText(ShapeWithText):
         MIDDLE = auto()
         END = auto()
 
-        def swap(self) -> 'TextPosition':
+        def swap(self) -> "TextPosition":
             swap_dict = {
                 self.START: self.END,
                 self.END: self.START,
-                self.MIDDLE: self.MIDDLE
+                self.MIDDLE: self.MIDDLE,
             }
             return swap_dict[self]
 
-    def __init__(self, text: str, start: Point, end: Point,
-                 spacing: float = 1 / 3., text_position: TextPosition = TextPosition.MIDDLE):
+    def __init__(
+        self,
+        text: str,
+        start: Point,
+        end: Point,
+        spacing: float = 1 / 3.0,
+        text_position: TextPosition = TextPosition.MIDDLE,
+    ):
         self._start = start
         self._end = end
 
@@ -65,16 +71,18 @@ class DistanceWithText(ShapeWithText):
             # at a point spacing away normal to the end
             text_point = end - normal * spacing
         else:
-            raise ValueError("The value of `text_position`: %s is not valid", text_position)
+            raise ValueError(
+                "The value of `text_position`: %s is not valid", text_position
+            )
 
         text = Text(text, text_point)
 
         arrow = DoubleArrow(start, end)
-        arrow.line_color = 'black'
+        arrow.line_color = "black"
         arrow.line_width = 1
         super().__init__(arrow, text)
 
     def geometric_features(self):
-        d = self._shapes['arrow'].geometric_features()
-        d['text_position'] = self._shapes['text'].position
+        d = self._shapes["arrow"].geometric_features()
+        d["text_position"] = self._shapes["text"].position
         return d

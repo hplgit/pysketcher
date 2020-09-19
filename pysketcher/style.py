@@ -1,7 +1,7 @@
 from collections import namedtuple
 from enum import Enum, unique, auto
 
-Arrow = namedtuple('Arrow', 'start end')
+Arrow = namedtuple("Arrow", "start end")
 
 
 class Style:
@@ -121,16 +121,24 @@ class Style:
     def shadow(self, shadow: int):
         self._shadow = shadow
 
-    def set_shadow(self, shadow: int) -> 'Style':
+    def set_shadow(self, shadow: int) -> "Style":
         self.shadow = shadow
         return self
 
     def __str__(self):
-        return "line_style: %s, line_width: %s, line_color: %s," \
-               " fill_pattern: %s, fill_color: %s, arrow: %s shadow: %s" % (
-                   self.line_style, self.line_width, self.line_color,
-                   self.fill_pattern, self.fill_color, self.arrow, self.shadow
-               )
+        return (
+            "line_style: %s, line_width: %s, line_color: %s,"
+            " fill_pattern: %s, fill_color: %s, arrow: %s shadow: %s"
+            % (
+                self.line_style,
+                self.line_width,
+                self.line_color,
+                self.fill_pattern,
+                self.fill_color,
+                self.arrow,
+                self.shadow,
+            )
+        )
 
 
 class TextStyle(Style):
@@ -151,7 +159,9 @@ class TextStyle(Style):
     _font_family: FontFamily
     _alignment: Alignment
 
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         super().__init__()
         self._font_size = self.FontSize.MEDIUM
         self._font_family = self.FontFamily.SANS

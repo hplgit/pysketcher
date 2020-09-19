@@ -25,19 +25,19 @@ class Triangle(Curve):
         self._p3 = p3
 
         # Dimensions
-        self.dimensions = {'p1': Text('p1', p1),
-                           'p2': Text('p2', p2),
-                           'p3': Text('p3', p3)}
+        self.dimensions = {
+            "p1": Text("p1", p1),
+            "p2": Text("p2", p2),
+            "p3": Text("p3", p3),
+        }
         super().__init__([p1, p2, p3, p1])
 
     def geometric_features(self):
-        return {'p1': self._p1,
-                'p2': self._p2,
-                'p3': self._p3}
+        return {"p1": self._p1, "p2": self._p2, "p3": self._p3}
 
     def rotate(self, angle: float, center: Point):
         return Triangle(
             self._p1.rotate(angle, center),
             self._p2.rotate(angle, center),
-            self._p3.rotate(angle, center)
+            self._p3.rotate(angle, center),
         )

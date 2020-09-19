@@ -5,7 +5,14 @@ from .text import Text
 
 
 class Axis(ShapeWithText):
-    def __init__(self, start: Point, length: float, label: str, rotation_angle=0, label_spacing=1. / 4.5):
+    def __init__(
+        self,
+        start: Point,
+        length: float,
+        label: str,
+        rotation_angle=0,
+        label_spacing=1.0 / 4.5,
+    ):
         """
         Draw axis from start with `length` to the right
         (x axis). Place label at the end of the arrow tip.
@@ -29,4 +36,4 @@ class Axis(ShapeWithText):
         super().__init__(arrow, label)
 
     def geometric_features(self):
-        return self._shapes['arrow'].geometric_features()
+        return self._shapes["arrow"].geometric_features()

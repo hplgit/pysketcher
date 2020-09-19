@@ -6,12 +6,12 @@ from .point import Point
 
 class Text(Shape):
     """
-        Place `text` at the (x,y) point `position`, with the given
-        fontsize (0 indicates that the default fontsize set in drawing_tool
-        is to be used). The text is centered around `position` if `alignment` is
-        'center'; if 'left', the text starts at `position`, and if
-        'right', the right and of the text is located at `position`.
-        """
+    Place `text` at the (x,y) point `position`, with the given
+    fontsize (0 indicates that the default fontsize set in drawing_tool
+    is to be used). The text is centered around `position` if `alignment` is
+    'center'; if 'left', the text starts at `position`, and if
+    'right', the right and of the text is located at `position`.
+    """
 
     _style: TextStyle
 
@@ -24,9 +24,7 @@ class Text(Shape):
 
     def draw(self, drawing_tool: DrawingTool, verbose=0):
         drawing_tool.text(
-            self._text, self._position,
-            direction=self._direction,
-            style=self.style
+            self._text, self._position, direction=self._direction, style=self.style
         )
 
     def rotate(self, angle: float, center: Point):
@@ -48,8 +46,6 @@ class Text(Shape):
     def style(self, text_style: TextStyle):
         self._style = text_style
 
-    def set_alignment(self, alignment: TextStyle.Alignment) -> 'Text':
+    def set_alignment(self, alignment: TextStyle.Alignment) -> "Text":
         self.style.alignment = alignment
         return self
-
-

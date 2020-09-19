@@ -39,13 +39,15 @@ class Curve(Shape):
         with optional settings of linestyles, etc., to
         plotting commands for the chosen engine.
         """
-        logging.info("%s made up of %i points, style: %s,",
-                     type(self), len(self._points), self.style)
-        drawing_tool.plot_curve(
-            self._points,
-            self.style)
+        logging.info(
+            "%s made up of %i points, style: %s,",
+            type(self),
+            len(self._points),
+            self.style,
+        )
+        drawing_tool.plot_curve(self._points, self.style)
 
-    def rotate(self, angle: float, center: Point) -> 'Curve':
+    def rotate(self, angle: float, center: Point) -> "Curve":
         """
         Rotate all coordinates: `angle` is measured in radians
         center is the "origin" of the rotation.
@@ -55,14 +57,18 @@ class Curve(Shape):
         x, y = center.x, center.y
         c = np.cos(angle)
         s = np.sin(angle)
-        return Curve(Point.from_coordinate_lists(x + (self.xs - x) * c - (self.ys - y) * s,
-                     y + (self.xs - x) * s + (self.ys - y) * c))
+        return Curve(
+            Point.from_coordinate_lists(
+                x + (self.xs - x) * c - (self.ys - y) * s,
+                y + (self.xs - x) * s + (self.ys - y) * c,
+            )
+        )
 
-    def scale(self, factor: float) -> 'Curve':
+    def scale(self, factor: float) -> "Curve":
         """Scale all coordinates by `factor`: ``x = factor*x``, etc."""
         return Curve(Point.from_coordinate_lists(factor * self.xs, factor * self.ys))
 
-    def translate(self, vec) -> 'Curve':
+    def translate(self, vec) -> "Curve":
         """Translate all coordinates by a vector `vec`."""
         self.x += vec[0]
         self.y += vec[1]
@@ -76,17 +82,17 @@ class Curve(Shape):
 
     def minmax_coordinates(self, minmax=None):
         if minmax is None:
-            minmax = {'xmin': [], 'xmax': [], 'ymin': [], 'ymax': []}
-        minmax['xmin'] = min(self.x.min(), minmax['xmin'])
-        minmax['xmax'] = max(self.x.max(), minmax['xmax'])
-        minmax['ymin'] = min(self.y.min(), minmax['ymin'])
-        minmax['ymax'] = max(self.y.max(), minmax['ymax'])
+            minmax = {"xmin": [], "xmax": [], "ymin": [], "ymax": []}
+        minmax["xmin"] = min(self.x.min(), minmax["xmin"])
+        minmax["xmax"] = max(self.x.max(), minmax["xmax"])
+        minmax["ymin"] = min(self.y.min(), minmax["ymin"])
+        minmax["ymax"] = max(self.y.max(), minmax["ymax"])
         return minmax
 
     def __str__(self):
         """Compact pretty print of a Curve object."""
-        s = '%d (x,y) coords' % len(self._points)
-        s += ' %s' % self.style
+        s = "%d (x,y) coords" % len(self._points)
+        s += " %s" % self.style
         return s
 
     def __repr__(self):

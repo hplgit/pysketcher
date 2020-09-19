@@ -6,13 +6,14 @@ from .style import Style, TextStyle
 
 
 class DrawingTool(ABC):
-
     @abstractmethod
-    def text(self,
-             text: str,
-             position: Point,
-             direction: Point = Point(1, 0),
-             style: TextStyle = TextStyle()):
+    def text(
+        self,
+        text: str,
+        position: Point,
+        direction: Point = Point(1, 0),
+        style: TextStyle = TextStyle(),
+    ):
         pass
 
     @abstractmethod

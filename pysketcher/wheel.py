@@ -6,13 +6,15 @@ from .composition import Composition
 from .line import Line
 
 
-class Wheel():
+class Wheel:
     _center: Point
     _radius: float
     _inner_radius: float
     _nlines: int
 
-    def __init__(self, center: Point, radius: float, inner_radius: float = None, nlines: int = 10):
+    def __init__(
+        self, center: Point, radius: float, inner_radius: float = None, nlines: int = 10
+    ):
         self._center = center
         self._radius = radius
         self._inner_radius = inner_radius
@@ -32,8 +34,12 @@ class Wheel():
         yinner = self._center.y + self._inner_radius * np.sin(t)
         xouter = self._center.x + self._radius * np.cos(t)
         youter = self._center.y + self._radius * np.sin(t)
-        lines = [Line(Point(xi, yi), Point(xo, yo)) for xi, yi, xo, yo in zip(xinner, yinner, xouter, youter)]
-        self.shapes = {'inner': inner, 'outer': outer,
-                       'spokes': Composition(
-                           {'spoke%d' % i: lines[i]
-                            for i in range(len(lines))})}
+        lines = [
+            Line(Point(xi, yi), Point(xo, yo))
+            for xi, yi, xo, yo in zip(xinner, yinner, xouter, youter)
+        ]
+        self.shapes = {
+            "inner": inner,
+            "outer": outer,
+            "spokes": Composition({"spoke%d" % i: lines[i] for i in range(len(lines))}),
+        }
