@@ -17,6 +17,9 @@ repository = "https://github.com/rvodden/pysketcher"
 homepage = "https://github.com/rvodden/pysketcher"
 keywords = ['sketch','graphics','scientific','engineering','geometry']
 
+[tool.poetry.extras]
+docs = ["sphinx"]
+
 [tool.poetry.dependencies]
 python = "^3.8"
 numpy = "^1.18.2"
@@ -35,6 +38,8 @@ pydocstyle = "^5.0.2"
 black = "^20.8b1"
 'zest.releaser' = { version = "^6.22.1", extras = ['recommended'] }
 wheel = "^0.35.1"
+sphinx = "^3.2.1"
+sphinx_rtd_theme = "^0.5.0"
 
 [tool.poetry.scripts]
 beam1 = "examples.beam1:main"

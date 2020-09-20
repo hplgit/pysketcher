@@ -1,7 +1,7 @@
-## Pysketcher
+## PySketcher
 
-<a href="https://codeclimate.com/github/rvodden/pysketcher/maintainability"><img src="https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability" /></a>
-<a href="https://codeclimate.com/github/rvodden/pysketcher/test_coverage"><img src="https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/test_coverage" /></a>
+[![pysketcher](https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability)](https://codeclimate.com/github/rvodden/pysketcher/maintainability)
+[![pysketcher](https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/test_coverage)](https://codeclimate.com/github/rvodden/pysketcher/test_coverage)
 [![pysketcher](https://circleci.com/gh/rvodden/pysketcher.svg?style=shield)](https://app.circleci.com/pipelines/github/rvodden/pysketcher)
 
 *This is alpha software - the interface is likely to change with every release prior to 0.1.0.*
@@ -20,10 +20,10 @@ where direct children of Shape which led to code repetition.
 
 ### Purpose
 
-Pysketcher can typically be used to draw figures like
+PySketcher can typically be used to draw figures like
 
 <!-- <img src="doc/src/tut/fig-tut/wheel_on_inclined_plane.png" width=600> -->
-![](doc/src/tut/fig-tut/wheel_on_inclined_plane.png)
+![](docs/src/tut/fig-tut/wheel_on_inclined_plane.png)
 
 Such figures can easily be *interactively* made using a lot of drawing
 programs.  A Pysketcher figure, however, is defined trough
@@ -37,14 +37,14 @@ Here is a very simple figure that illustrates how geometric features are
 parameterized by variables (H, R, L, etc.):
 
 <!-- <img src="doc/src/tut/fig-tut/vehicle0_dim.png" width=600> -->
-![](doc/src/tut/fig-tut/vehicle0_dim.png)
+![](docs/src/tut/fig-tut/vehicle0_dim.png)
 
 One can then quickly change parameters, below to
 `R=0.5; L=5; H=2` and `R=2; L=7; H=1`, and get new figures that would be
 tedious to draw manually in an interactive tool.
 
 <!-- <img src="doc/src/tut/fig-tut/vehicle_v23.png" width=800> -->
-![](doc/src/tut/fig-tut/vehicle_v23.png)
+![](docs/src/tut/fig-tut/vehicle_v23.png)
 
 Another major feature of Pysketcher is the ability to let the
 sketch be dynamic and make an animation of the time evolution.

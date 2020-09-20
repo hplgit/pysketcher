@@ -9,7 +9,6 @@ xmin = 0
 drawing_tool._set_coordinate_system(
     xmin=xmin, xmax=4, ymin=0, ymax=2.5, axis=True, xkcd=xkcd
 )
-drawing_tool.set_linecolor("blue")
 
 
 def ForwardEuler(I, a, T, dt):
