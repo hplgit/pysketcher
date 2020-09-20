@@ -1,10 +1,9 @@
 from enum import Enum, auto, unique
 
-from pysketcher.compositions.composition import ShapeWithText
-
-from .arrow import Arrow
-from .point import Point
 from .text import Text
+from .arrow import Arrow
+from .composition import ShapeWithText
+from .point import Point
 
 
 class ArrowWithText(ShapeWithText):
