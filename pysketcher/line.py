@@ -83,4 +83,4 @@ class Line(Curve):
         end = self._end.rotate(angle, center)
         line = Line(start, end)
         line.style = copy(self.style)
-        return Line(start, end)
+        return line

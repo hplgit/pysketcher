@@ -1,3 +1,5 @@
+from enum import Enum, auto, unique
+
 from .text import Text
 from .arrow import Arrow
 from .composition import ShapeWithText
@@ -10,33 +12,48 @@ class ArrowWithText(ShapeWithText):
     to some point `arrow_tip`.
     """
 
-    _DEFAULT_SPACING: float = 0.1
+    _DEFAULT_SPACING: float = 0.15
+
+    @unique
+    class TextPosition(Enum):
+        START = auto()
+        END = auto()
 
     def __init__(
         self,
         text: str,
-        position: Point,
-        arrow_tip: Point,
+        start: Point,
+        end: Point,
+        text_position: TextPosition = TextPosition.START,
         spacing: float = None,
         start_spacing: float = None,
         end_spacing: float = None,
     ):
-        text = Text(text, position)
 
         if spacing is not None:
             if start_spacing:
                 raise ValueError("Cannot set spacing and start_spacing")
             if end_spacing:
                 raise ValueError("Cannot set spacing and end_spacing")
-            start_spacing = end_spacing = spacing
 
+        if text_position == self.TextPosition.START:
+            text = Text(text, start)
+        if text_position == self.TextPosition.END:
+            text = Text(text, end)
+
+        spacing = spacing if spacing else self._DEFAULT_SPACING
         if end_spacing is None:
-            end_spacing = self._DEFAULT_SPACING
+            if text_position == self.TextPosition.END:
+                end_spacing = spacing
+            else:
+                end_spacing = 0
         if start_spacing is None:
-            start_spacing = self._DEFAULT_SPACING
+            if text_position == self.TextPosition.START:
+                start_spacing = spacing
+            else:
+                start_spacing = 0
 
-        arrow_start = position + (arrow_tip - position) * start_spacing
-        arrow_end = arrow_tip - (arrow_tip - position) * end_spacing
+        arrow_start = start + (end - start) * start_spacing
+        arrow_end = end - (end - start) * end_spacing
         arrow = Arrow(arrow_start, arrow_end)
         super().__init__(arrow, text)
-        self._arrow_tip = arrow_tip
