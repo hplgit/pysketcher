@@ -27,13 +27,13 @@ matplotlib = "^3.2.1"
 scipy = "^1.4.1"
 
 [tool.poetry.dev-dependencies]
-hypothesis = "^5.38.1"
-pytest = "^6.1.1"
+hypothesis = "^5.16.0"
+pytest = "^5.4.1"
 pylint = "^2.6.0"
-tox = "^3.20.1"
+tox = "^3.14.6"
 flake8 = "^3.7.9"
 coverage = "^5.3"
-mypy = "^0.790"
+mypy = "^0.770"
 pydocstyle = "^5.0.2"
 black = "^20.8b1"
 'zest.releaser' = { version = "^6.22.1", extras = ['recommended'] }
@@ -41,7 +41,6 @@ wheel = "^0.35.1"
 sphinx = "^3.2.1"
 sphinx_rtd_theme = "^0.5.0"
 recommonmark = "^0.6.0"
-pre-commit = "^2.7.1"
 
 [tool.poetry.scripts]
 beam1 = "examples.beam1:main"
@@ -60,13 +59,6 @@ junit_family = "xunit1"
 
 [tool.coverage.run]
 source = ["pysketcher/"]
-
-[tool.isort]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 88
 
 [tool.tox]
 legacy_tox_ini = '''
@@ -114,3 +106,4 @@ strict_optional = true
 # stop treating arguments with a None default value as having
 # an implicit Optional[T] type
 no_implicit_optional = true
+
