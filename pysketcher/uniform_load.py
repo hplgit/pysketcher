@@ -1,4 +1,4 @@
-from .composition import Composition
+from pysketcher.compositions.composition import Composition
 from .rectangle import Rectangle
 from .arrow import Arrow
 from .point import Point

@@ -4,7 +4,7 @@ from .point import Point
 from .line import Line
 from .arrow import Arrow
 from .spline import Spline
-from .composition import Composition
+from pysketcher.compositions.composition import Composition
 
 
 class VelocityProfile(Composition):

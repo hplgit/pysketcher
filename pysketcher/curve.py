@@ -68,7 +68,7 @@ class Curve(Shape):
         """Scale all coordinates by `factor`: ``x = factor*x``, etc."""
         return Curve(Point.from_coordinate_lists(factor * self.xs, factor * self.ys))
 
-    def translate(self, vec) -> "Curve":
+    def translate(self, vec: Point) -> "Curve":
         """Translate all coordinates by a vector `vec`."""
         self.x += vec[0]
         self.y += vec[1]

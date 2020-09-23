@@ -47,16 +47,6 @@ class Shape(ABC):
             fig: Shape = action(self, t, dt)
             fig.draw(drawing_tool)
 
-    def draw_dimensions(self, drawing_tool: DrawingTool):
-        if hasattr(self, "dimensions"):
-            for shape in self.dimensions:
-                self.dimensions[shape].draw(drawing_tool)
-            return self
-        else:
-            # raise AttributeError('no self.dimensions dict for defining dimensions of class %s' %
-            # self.__classname__.__name__)
-            return self
-
     @abstractmethod
     def rotate(self, angle: float, center: Point) -> "Shape":
         pass

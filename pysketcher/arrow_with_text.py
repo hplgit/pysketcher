@@ -2,7 +2,7 @@ from enum import Enum, auto, unique
 
 from .text import Text
 from .arrow import Arrow
-from .composition import ShapeWithText
+from pysketcher.compositions.composition import ShapeWithText
 from .point import Point
 
 

@@ -3,7 +3,7 @@ from .arrow import Arrow, DoubleArrow
 from .axis import Axis
 from .beam import SimpleSupport
 from .circle import Circle
-from .composition import Composition, ShapeWithText
+from pysketcher.compositions.composition import Composition, ShapeWithText
 from .curve import Curve
 from .distance_with_text import DistanceWithText
 from .force import Force, Gravity

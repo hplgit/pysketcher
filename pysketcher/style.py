@@ -114,16 +114,12 @@ class Style:
         self._arrow = arrow
 
     @property
-    def shadow(self) -> int:
+    def shadow(self) -> float:
         return self._shadow
 
     @shadow.setter
-    def shadow(self, shadow: int):
+    def shadow(self, shadow: float):
         self._shadow = shadow
-
-    def set_shadow(self, shadow: int) -> "Style":
-        self.shadow = shadow
-        return self
 
     def __str__(self):
         return (

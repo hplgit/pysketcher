@@ -2,7 +2,7 @@ import numpy as np
 
 from .point import Point
 from .circle import Circle
-from .composition import Composition
+from pysketcher.compositions.composition import Composition
 from .line import Line
 
 
