@@ -18,6 +18,9 @@ class Line(Curve):
         super().__init__([self._start, self._end])
         self._compute_formulas()
 
+    def set_line_width(self, line_width: float) -> "Line":
+        return self
+
     @property
     def start(self):
         return self._start

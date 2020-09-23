@@ -14,3 +14,8 @@ repos:
     rev: 5.5.3
     hooks:
         - id: isort
+
+-   repo: https://github.com/asottile/blacken-docs
+    rev: v1.8.0
+    hooks:
+        - id: blacken-docs

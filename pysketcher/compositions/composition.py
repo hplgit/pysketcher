@@ -1,13 +1,13 @@
 from pysketcher.drawing_tool import DrawingTool
 from pysketcher.point import Point
-from pysketcher.shape import Shape
+from pysketcher.shape import Shape, Stylable
 from pysketcher.style import Style, TextStyle
 from pysketcher.text import Text
 
 
-class Composition(Shape):
+class Composition(Stylable):
     class CompositionStyle(Style):
-        """Presents the Style contract for a Composition, setting the style of each object in the composition transparently"""
+        """Presents the Stylable contract for a Composition, setting the style of each object in the composition transparently"""
 
         _composition: "Composition"
 

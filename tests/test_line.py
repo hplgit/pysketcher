@@ -1,51 +1,20 @@
 import numpy as np
 import pytest
+from hypothesis import given
+from hypothesis.strategies import from_type
 
 from pysketcher import Line, Point, Shape
+from tests.test_point import nfloats
 
-from .test_shape import ShapeContract
 
+class TestLine:
+    @given(nfloats(), nfloats(), nfloats(), nfloats())
+    def test_start(self, x1, y1, x2, y2):
+        line = Line(Point(x1, y1), Point(x2, y2))
+        assert line.start == Point(x1, y1)
+        assert line.end == Point(x2, y2)
 
-class TestLine(ShapeContract):
-    @pytest.fixture
-    def shape(self, request) -> Shape:
-        return Line(Point(0, 1), Point(1, 1))
-
-    def test_start(self, shape: Shape):
-        assert shape.start == Point(0, 1)
-
-    def test_end(self, shape: Shape):
-        assert shape.end == Point(1, 1)
-
-    rotate_data = [
-        (
-            Line(Point(0, 0), Point(1, 0)),
-            np.pi / 2,
-            Point(0, 0),
-            Line(Point(0, 0), Point(0, 1)),
-        ),
-        (
-            Line(Point(0, 0), Point(1, 0)),
-            np.pi,
-            Point(0, 0),
-            Line(Point(0, 0), Point(-1, 0)),
-        ),
-        (
-            Line(Point(0, 0), Point(1, 0)),
-            3 * np.pi / 2,
-            Point(0, 0),
-            Line(Point(0, 0), Point(0, -1)),
-        ),
-        (
-            Line(Point(0, 0), Point(1, 0)),
-            2 * np.pi,
-            Point(0, 0),
-            Line(Point(0, 0), Point(1, 0)),
-        ),
-    ]
-
-    @pytest.mark.parametrize("line, theta, center, expected", rotate_data)
-    def test_rotate(self, line: Line, center: Point, theta: float, expected: Line):
-        result = line.rotate(theta, center)
-        assert abs(result.start - expected.start) < 1e-14
-        assert abs(result.end - expected.end) < 1e-14
+    # def test_rotate(self, line: Line, center: Point, theta: float, expected: Line):
+    #     result = line.rotate(theta, center)
+    #     assert abs(result.start - expected.start) < 1e-14
+    #     assert abs(result.end - expected.end) < 1e-14

@@ -1,93 +1,95 @@
+from math import inf, isclose, sqrt
 from typing import List
 
 import numpy as np
-import numpy.testing as npt
 import pytest
+from hypothesis import assume, given
+from hypothesis.extra.numpy import from_dtype
 
 from pysketcher import Point
 
-x_data = [(Point(1, 2), 1), (Point(2, 3), 2), (Point(-1, 0), -1)]
+
+def nfloats():
+    return (
+        from_dtype(np.dtype("float64"))
+        .filter(lambda x: not np.isnan(x))
+        .filter(lambda x: not np.isinf(x))
+    )
 
 
-@pytest.mark.parametrize("a, expected", x_data)
-def test_x(a: Point, expected: float):
-    assert a.x == expected
+@given(nfloats(), nfloats())
+def test_coordinates(x, y):
+    p = Point(x, y)
+    assert p.x == x
+    assert p.y == y
 
 
-y_data = [(Point(1, 2), 2), (Point(2, 3), 3), (Point(-1, 0), 0)]
+@given(nfloats(), nfloats())
+def test_equality(x, y):
+    assert Point(x, y) == Point(x, y)
 
 
-@pytest.mark.parametrize("a, expected", y_data)
-def test_y(a: Point, expected: float):
-    assert a.y == expected
+@given(nfloats(), nfloats(), nfloats(), nfloats())
+def test_adding(x1, x2, y1, y2):
+    a = Point(x1, y1)
+    b = Point(x2, y2)
+    assert a + b == Point(x1 + x2, y1 + y2)
 
 
-def test_equality():
-    assert Point(1, 2) == Point(1, 2)
-    assert not (Point(1, 2) == Point(1, 3))
-    assert not (Point(1, 2) == Point(2, 2))
+@given(nfloats(), nfloats(), nfloats(), nfloats())
+def test_translation(x1, x2, y1, y2):
+    a = Point(x1, y1)
+    b = Point(x2, y2)
+    assert a + b == Point(x1 + x2, y1 + y2)
 
 
-addition_data = [(Point(0, 0), Point(1, 1), Point(1, 1))]
+@given(nfloats(), nfloats(), nfloats(), nfloats())
+def test_subtraction(x1, x2, y1, y2):
+    a = Point(x1, y1)
+    b = Point(x2, y2)
+    assert a - b == Point(x1 - x2, y1 - y2)
 
 
-@pytest.mark.parametrize("a,b,expected", addition_data)
-def test_adding(a: Point, b: Point, expected: Point):
-    assert a + b == expected
+@given(nfloats(), nfloats(), nfloats())
+def test_multiplication(x: float, y: float, s: float):
+    a = Point(x, y)
+    assert a * s == Point(x * s, y * s)
 
 
-@pytest.mark.parametrize("a,b,expected", addition_data)
-def test_translation(a: Point, b: Point, expected: Point):
-    assert a.translate(b) == expected
+@given(nfloats(), nfloats(), nfloats())
+def test_multiplication(x: float, y: float, s: float):
+    a = Point(x, y)
+    assert a.scale(s) == Point(x * s, y * s)
 
 
-subtraction_data = [(Point(0, 0), Point(1, 1), Point(-1, -1))]
+@given(nfloats(), nfloats())
+def test_abs(x: float, y: float):
+    assume(x * x != inf)
+    assume(y * y != inf)
+    a = Point(x, y)
+    assert abs(a) == sqrt(x * x + y * y)
 
 
-@pytest.mark.parametrize("a,b,expected", subtraction_data)
-def test_subtraction(a: Point, b: Point, expected: Point):
-    assert (a - b) == expected
+@given(nfloats(), nfloats())
+def test_angle(x: float, y: float):
+    assume(not isclose(x, 0.0))
+    a = Point(x, y)
+    b = Point(abs(a), 0.0).rotate(a.angle(), Point(0.0, 0.0))
+    assume(b.x != np.nan)
+    assume(b.y != np.nan)
+    assume(a.angle() != np.nan)
+    assert np.isclose(a.x, b.x)
+    assert np.isclose(a.y, b.y)
+    assert a == b
 
 
-multiplication_data = [(Point(1, 2), 2, Point(2, 4)), (Point(1, 2), 4, Point(4, 8))]
-
-
-@pytest.mark.parametrize("a,b,expected", multiplication_data)
-def test_multiplication(a: Point, b: float, expected: Point):
-    assert a * b == expected
-
-
-@pytest.mark.parametrize("a,b,expected", multiplication_data)
-def test_scale(a: Point, b: float, expected: Point):
-    assert a.scale(b) == expected
-
-
-abs_data = [(Point(3, 4), 5), (Point(1, 1), np.sqrt(2))]
-
-
-@pytest.mark.parametrize("a, expected", abs_data)
-def test_abs(a: Point, expected: float):
-    assert abs(a) == expected
-
-
-angle_data = [(Point(np.sqrt(3), 1), np.pi / 6), (Point(1, 1), np.pi / 4)]
-
-
-@pytest.mark.parametrize("a, expected", angle_data)
-def test_angle(a: Point, expected: float):
-    npt.assert_allclose(a.angle(), expected, rtol=1e-14)
-
-
-unit_vector_data = [
-    (Point(1, 0), Point(1, 0)),
-    (Point(0, 1), Point(0, 1)),
-    (Point(2, 2), Point(1.0 / np.sqrt(2), 1.0 / np.sqrt(2))),
-]
-
-
-@pytest.mark.parametrize("a, expected", unit_vector_data)
-def test_unit_vector(a: Point, expected: Point):
-    assert a.unit_vector() == expected
+@given(nfloats(), nfloats())
+def test_unit_vector(x: float, y: float):
+    a = Point(x, y)
+    assume(abs(a) != 0)
+    b = a.unit_vector()
+    assert isclose(a.angle(), b.angle())
+    assert isclose(abs(b), 1)
 
 
 def test_unit_vector_failure():
