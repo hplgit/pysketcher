@@ -40,6 +40,8 @@ black = "^20.8b1"
 wheel = "^0.35.1"
 sphinx = "^3.2.1"
 sphinx_rtd_theme = "^0.5.0"
+recommonmark = "^0.6.0"
+pre-commit = "^2.7.1"
 
 [tool.poetry.scripts]
 beam1 = "examples.beam1:main"
@@ -105,4 +107,3 @@ strict_optional = true
 # stop treating arguments with a None default value as having
 # an implicit Optional[T] type
 no_implicit_optional = true
-

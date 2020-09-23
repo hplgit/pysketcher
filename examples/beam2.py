@@ -76,11 +76,9 @@ def beam():
         }
     )
 
-    x_axis = Axis(
-        A + Point(L + h, H / 2),
-        2 * H,
-        "$x$",
-    ).set_line_color(Style.Color.BLACK)
+    x_axis = Axis(A + Point(L + h, H / 2), 2 * H, "$x$").set_line_color(
+        Style.Color.BLACK
+    )
     y_axis = Axis(
         A + Point(0, H / 2), 3.5 * H, "$y$", rotation_angle=np.pi / 2
     ).set_line_color(Style.Color.BLACK)

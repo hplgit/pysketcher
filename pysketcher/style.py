@@ -155,9 +155,7 @@ class TextStyle(Style):
     _font_family: FontFamily
     _alignment: Alignment
 
-    def __init__(
-        self,
-    ):
+    def __init__(self,):
         super().__init__()
         self._font_size = self.FontSize.MEDIUM
         self._font_family = self.FontFamily.SANS
