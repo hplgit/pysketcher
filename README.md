@@ -16,6 +16,8 @@
 [![pysketcher](https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability)](https://codeclimate.com/github/rvodden/pysketcher/maintainability)
 [![pysketcher](https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/test_coverage)](https://codeclimate.com/github/rvodden/pysketcher/test_coverage)
 [![pysketcher](https://circleci.com/gh/rvodden/pysketcher.svg?style=shield)](https://app.circleci.com/pipelines/github/rvodden/pysketcher)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![readthedocs](https://readthedocs.org/projects/pysketcher/badge/?version=latest&style=flat)](https://pysketcher.readthedocs.io/en/latest/)
 
 *This is alpha software - the interface is likely to change with every release prior to 0.1.0.*
 
