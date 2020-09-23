@@ -13,10 +13,9 @@ def test_cannot_instantiate():
 
 
 class ShapeContract(object):
-
     @abstractmethod
     def shape(self, request) -> Shape:
-        raise NotImplementedError('ShapeContract should not be run directly')
+        raise NotImplementedError("ShapeContract should not be run directly")
 
     def test_style(self, shape: Shape):
         style = Style()

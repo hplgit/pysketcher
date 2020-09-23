@@ -6,12 +6,12 @@ from pysketcher.text import Text
 
 
 class Composition(Shape):
-
     class CompositionStyle(Style):
         """Presents the Style contract for a Composition, setting the style of each object in the composition transparently"""
-        _composition: 'Composition'
 
-        def __init__(self, composition: 'Composition'):
+        _composition: "Composition"
+
+        def __init__(self, composition: "Composition"):
             self._composition = composition
 
         @property

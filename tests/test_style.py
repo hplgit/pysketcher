@@ -6,7 +6,6 @@ from hypothesis.strategies import floats, integers, sampled_from
 
 
 class TestStyle(object):
-
     @pytest.fixture(scope="module")
     def style(self):
         return Style()
@@ -49,7 +48,6 @@ class TestStyle(object):
 
 
 class TestTextStyle(TestStyle):
-
     @pytest.fixture
     def style(self):
         return TextStyle()

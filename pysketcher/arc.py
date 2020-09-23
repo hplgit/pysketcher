@@ -51,7 +51,7 @@ class Arc(Curve):
             self._radius,
             self._start_angle,
             self._arc_angle,
-            self._resolution
+            self._resolution,
         )
         circle.style = self.style
         return circle
