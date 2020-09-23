@@ -1,5 +1,5 @@
 import pysketcher
-from pysketcher import Point, Wall, Composition
+from pysketcher import Composition, Point, Wall
 
 drawing_tool = pysketcher.MatplotlibDraw(xmin=0, xmax=6, ymin=0, ymax=3, axis=False)
 

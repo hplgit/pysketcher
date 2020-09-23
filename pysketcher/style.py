@@ -1,5 +1,5 @@
 from collections import namedtuple
-from enum import Enum, unique, auto
+from enum import Enum, auto, unique
 
 Arrow = namedtuple("Arrow", "start end")
 

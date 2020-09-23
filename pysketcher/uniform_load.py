@@ -1,7 +1,8 @@
 from pysketcher.compositions.composition import Composition
-from .rectangle import Rectangle
+
 from .arrow import Arrow
 from .point import Point
+from .rectangle import Rectangle
 
 
 class UniformLoad(Composition):

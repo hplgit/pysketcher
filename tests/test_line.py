@@ -1,7 +1,8 @@
-import pytest
 import numpy as np
+import pytest
 
-from pysketcher import Shape, Line, Point
+from pysketcher import Line, Point, Shape
+
 from .test_shape import ShapeContract
 
 

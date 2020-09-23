@@ -1,9 +1,10 @@
-import numpy as np
-from typing import Tuple
 from copy import copy
+from typing import Tuple
 
-from .point import Point
+import numpy as np
+
 from .curve import Curve
+from .point import Point
 
 
 class Line(Curve):

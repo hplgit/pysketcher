@@ -1,5 +1,6 @@
-from pysketcher import Point, Arrow, Composition, MatplotlibDraw, Axis
 import logging
+
+from pysketcher import Arrow, Axis, Composition, MatplotlibDraw, Point
 
 logging.basicConfig(level=logging.INFO)
 

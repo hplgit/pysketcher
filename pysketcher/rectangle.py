@@ -1,12 +1,11 @@
 from typing import List
 
-from .shape import Shape
-from .curve import Curve
-from .point import Point
-from .style import TextStyle
-
-from .distance_with_text import DistanceWithText
 from .arrow_with_text import ArrowWithText
+from .curve import Curve
+from .distance_with_text import DistanceWithText
+from .point import Point
+from .shape import Shape
+from .style import TextStyle
 
 
 class Rectangle(Curve):

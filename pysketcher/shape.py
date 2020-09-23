@@ -1,6 +1,6 @@
 import copy
 from abc import ABC, abstractmethod
-from typing import List, Callable
+from typing import Callable, List
 
 from .drawing_tool import DrawingTool
 from .point import Point

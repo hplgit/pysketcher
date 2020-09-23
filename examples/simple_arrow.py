@@ -1,5 +1,5 @@
 import pysketcher
-from pysketcher import Point, Arrow, Composition
+from pysketcher import Arrow, Composition, Point
 
 drawing_tool = pysketcher.MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=5, axis=False)
 

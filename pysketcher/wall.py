@@ -1,8 +1,8 @@
 from typing import List
 
+from .curve import Curve
 from .point import Point
 from .style import Style
-from .curve import Curve
 
 
 class Wall(Curve):

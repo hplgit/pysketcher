@@ -1,8 +1,9 @@
 import numpy as np
 
 from pysketcher.compositions.composition import ShapeWithText
-from .point import Point
+
 from .curve import Curve
+from .point import Point
 from .text import Text
 
 

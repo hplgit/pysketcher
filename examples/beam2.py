@@ -1,8 +1,10 @@
 """A more sophisticated beam than in beam1.py."""
 
-from pysketcher import *
-import numpy as np
 import logging
+
+import numpy as np
+
+from pysketcher import *
 
 logging.basicConfig(level=logging.INFO)
 

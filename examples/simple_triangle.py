@@ -1,4 +1,4 @@
-from pysketcher import MatplotlibDraw, Point, Triangle, Composition
+from pysketcher import Composition, MatplotlibDraw, Point, Triangle
 
 drawing_tool = MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=5, axis=False)
 drawing_tool.set_linecolor("black")

@@ -1,7 +1,7 @@
 import numpy as np
 
-from .spline import Spline
 from .point import Point
+from .spline import Spline
 from .text import Text
 
 

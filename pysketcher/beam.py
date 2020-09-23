@@ -1,9 +1,10 @@
 from pysketcher.compositions.composition import Composition
+
 from .distance_with_text import DistanceWithText
 from .point import Point
+from .rectangle import Rectangle
 from .text import Text
 from .triangle import Triangle
-from .rectangle import Rectangle
 
 
 class SimpleSupport(Composition):

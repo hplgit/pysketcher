@@ -1,13 +1,12 @@
 from pysketcher import (
-    MatplotlibDraw,
     Circle,
-    Rectangle,
-    Point,
-    Wall,
     Composition,
+    MatplotlibDraw,
+    Point,
+    Rectangle,
     Style,
+    Wall,
 )
-
 
 R = 1  # radius of wheel
 L = 4  # distance between wheels

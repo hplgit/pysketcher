@@ -1,9 +1,10 @@
 from typing import List
 
-from pysketcher import Point
 import numpy as np
 import numpy.testing as npt
 import pytest
+
+from pysketcher import Point
 
 x_data = [(Point(1, 2), 1), (Point(2, 3), 2), (Point(-1, 0), -1)]
 

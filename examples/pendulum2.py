@@ -158,12 +158,14 @@ def simulate_pendulum(alpha, theta0, dt, T):
 
 def animate():
     # Clean up old plot files
-    import os, glob
+    import glob
+    import os
 
     for filename in glob.glob("tmp_*.png") + glob.glob("movie.*"):
         os.remove(filename)
     # Solve problem
-    from math import pi, radians, degrees
+    from math import degrees, pi, radians
+
     import numpy as np
 
     alpha = 0.4

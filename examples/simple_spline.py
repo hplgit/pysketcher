@@ -1,5 +1,5 @@
 import pysketcher
-from pysketcher import Point, Spline, Composition
+from pysketcher import Composition, Point, Spline
 
 drawing_tool = pysketcher.MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=16, axis=False)
 

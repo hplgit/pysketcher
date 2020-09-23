@@ -1,5 +1,5 @@
 """Minimialistic pysketcher example."""
-from pysketcher import MatplotlibDraw, Composition, Text, Point, TextStyle
+from pysketcher import Composition, MatplotlibDraw, Point, Text, TextStyle
 
 drawing_tool = MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=3, axis=False)
 

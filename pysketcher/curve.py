@@ -1,10 +1,11 @@
-import numpy as np
 import logging
 from typing import List
 
-from .shape import Shape
-from .point import Point
+import numpy as np
+
 from .drawing_tool import DrawingTool
+from .point import Point
+from .shape import Shape
 
 
 class Curve(Shape):

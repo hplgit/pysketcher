@@ -1,10 +1,11 @@
 import contextlib
-import pytest
-
 from abc import abstractmethod
+
+import pytest
 from hypothesis import given
-from hypothesis.strategies import sampled_from, floats
-from pysketcher import Shape, Style, Line, Point, Arrow, Force, Axis
+from hypothesis.strategies import floats, sampled_from
+
+from pysketcher import Arrow, Axis, Force, Line, Point, Shape, Style
 
 
 def test_cannot_instantiate():

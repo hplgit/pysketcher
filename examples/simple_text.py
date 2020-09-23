@@ -1,5 +1,6 @@
 import logging
-from pysketcher import Point, Text, Composition, TextStyle, MatplotlibDraw
+
+from pysketcher import Composition, MatplotlibDraw, Point, Text, TextStyle
 
 logging.basicConfig(level=logging.INFO)
 

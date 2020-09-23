@@ -1,7 +1,8 @@
 """Comic strip for illustrating Euler's method for ODEs."""
 
-from pysketcher import *
 import numpy as np
+
+from pysketcher import *
 
 xkcd = True
 

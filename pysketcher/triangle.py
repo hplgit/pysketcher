@@ -1,7 +1,7 @@
-from .matplotlibdraw import MatplotlibDraw
-from .shape import Shape
-from .point import Point
 from .curve import Curve
+from .matplotlibdraw import MatplotlibDraw
+from .point import Point
+from .shape import Shape
 from .text import Text
 
 

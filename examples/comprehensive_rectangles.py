@@ -1,4 +1,4 @@
-from pysketcher import MatplotlibDraw, Point, Rectangle, Composition
+from pysketcher import Composition, MatplotlibDraw, Point, Rectangle
 
 drawing_tool = MatplotlibDraw(xmin=0, xmax=20, ymin=0, ymax=20, axis=False)
 

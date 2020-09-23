@@ -1,8 +1,8 @@
 import pytest
-
-from pysketcher import Style, TextStyle
 from hypothesis import given
 from hypothesis.strategies import floats, integers, sampled_from
+
+from pysketcher import Style, TextStyle
 
 
 class TestStyle(object):

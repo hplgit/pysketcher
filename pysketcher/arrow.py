@@ -1,6 +1,6 @@
+from .line import Line
 from .matplotlibdraw import MatplotlibDraw
 from .point import Point
-from .line import Line
 from .style import Style
 
 

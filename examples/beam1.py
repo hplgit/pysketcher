@@ -1,6 +1,7 @@
 """A very simple beam."""
-from pysketcher import *
 import logging
+
+from pysketcher import *
 
 
 def main():
