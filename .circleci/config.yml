@@ -1,9 +1,31 @@
 version: 2.1
 jobs:
-  build:
+  checkout:
     executor: python/default
     steps:
       - checkout
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  updatePoetryLock:
+    executor: python/default
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Upate Poetry lock file with new dependencies
+          command: |
+            poetry update
+      - persist_to_workspace:
+            root: .
+            paths:
+                - .
+  build:
+    executor: python/default
+    steps:
+      - attach_workspace:
+          at: .
       - python/install-packages:
           pkg-manager: poetry
       - run:
@@ -28,6 +50,25 @@ jobs:
 orbs:
   python: circleci/python@1.0.0
 workflows:
+  version: 2
+  updateDeps:
+    jobs:
+      - checkout:
+          filters:
+            branches:
+              only: /^dependabot.*/
+      - updatePoetryLock:
+          requires:
+            - checkout
+      - build:
+          requires:
+            - updatePoetryLock
   main:
     jobs:
-      - build
+      - checkout:
+          filters:
+            branches:
+              ignore: /^dependabot.*/
+      - build:
+          requires:
+            - checkout
