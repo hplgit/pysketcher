@@ -47,6 +47,27 @@ jobs:
           command: |
             poetry run coverage xml
             ./cc-test-reporter after-build
+      - persist_to_workspace:
+            root: .
+            paths:
+                - .
+  commitChanges:
+    executor: python/default
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Push changes back to branch
+          command: |
+              if ! git diff --exit-code; then
+                 mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+                 git config user.email "automation@circleci.com"
+                 git config user.name "CirleCI Automation"
+                 git add poetry.lock
+                 git commit -m "Updated poetry.lock to reflect new dependency versions"
+                 git push origin ${CIRCLE_BRANCH}
+              fi
+
 orbs:
   python: circleci/python@1.0.0
 workflows:
@@ -63,6 +84,9 @@ workflows:
       - build:
           requires:
             - updatePoetryLock
+      - commitChanges:
+          requires:
+            - build
   main:
     jobs:
       - checkout:
