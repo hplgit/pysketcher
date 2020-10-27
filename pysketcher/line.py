@@ -1,3 +1,4 @@
+import warnings
 from copy import copy
 from typing import Tuple
 
@@ -10,8 +11,16 @@ from .point import Point
 class Line(Curve):
     _start: Point
     _end: Point
+    _a: np.float64
+    _b: np.float64
+    _c: np.float64
+    _d: np.float64
+    _vertical: bool
+    _horizontal: bool
 
     def __init__(self, start: Point, end: Point):
+        if start == end:
+            raise ValueError("Cannot specify a line with two equal points.")
         self._start = start
         self._end = end
         self._a = self._b = self._c = self._d = None
@@ -48,24 +57,26 @@ class Line(Curve):
     def _compute_formulas(self):
         # Define equations for line:
         # y = a*x + b,  x = c*y + d
-        try:
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore", "divide by zero encountered in double_scalars"
+            )
+            warnings.filterwarnings(
+                "ignore", "invalid value encountered in double_scalars"
+            )
+            warnings.filterwarnings("ignore", "overflow encountered in double_scalars")
             self._a = (self._end.y - self._start.y) / (self._end.x - self._start.x)
             self._b = self._start.y - self._a * self._start.x
-        except ZeroDivisionError:
-            # Vertical line, y is not a function of x
-            self._a = None
-            self._b = None
-        try:
-            if self._a is None:
-                self._c = 0
-            else:
-                self._c = 1 / float(self._a)
-            if self._b is None:
+            if np.isnan(self._a) or np.isinf(self._a):
+                # Vertical line, y is not a function of x
+                self._vertical = True
+                self._c = 0.0
                 self._d = self._end.x
-        except ZeroDivisionError:
-            # Horizontal line, x is not a function of y
-            self._c = None
-            self._d = None
+            else:
+                self._c = 1.0 / self._a
+                self._d = self._b / self._a
+                if np.isnan(self._c) or np.isinf(self._c):
+                    self._horizontal = True
 
     def __call__(self, x=None, y=None):
         """Given x, return y on the line, or given y, return x."""

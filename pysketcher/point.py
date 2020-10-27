@@ -1,7 +1,8 @@
-from math import isclose
+import logging
 from typing import List, Tuple
 
 import numpy as np
+from hypothesis import note
 
 
 class Point:
@@ -30,36 +31,44 @@ class Point:
     def __sub__(self, other: "Point") -> "Point":
         return Point(self.x - other._x, self.y - other.y)
 
-    def __mul__(self, scalar: float) -> "Point":
+    def __mul__(self, scalar: np.float64) -> "Point":
         return Point(self.x * scalar, self.y * scalar)
 
     def __abs__(self) -> np.float64:
-        return np.ma.sqrt(self.x * self.x + self.y * self.y)
+        return np.sqrt(self.x * self.x + self.y * self.y)
 
-    def __eq__(self, other):
-        return np.isclose(self.x, other.x) and isclose(self.y, other.y)
+    def __eq__(self, other: "Point") -> bool:
+        return self._isclose(self.x, other.x) and self._isclose(self.y, other.y)
 
     def __str__(self):
-        return "(%f, %f)" % (self.x, self.y)
+        return self.__repr__()
 
     def __repr__(self):
-        return "(%f, %f)" % (self.x, self.y)
+        return "P(%s, %s)" % (
+            np.format_float_scientific(self.x),
+            np.format_float_scientific(self.y),
+        )
+
+    @staticmethod
+    def _isclose(x: np.float64, y: np.float64) -> bool:
+        return np.isclose(x, y, atol=1e-4)
 
     @property
-    def x(self):
+    def x(self) -> np.float64:
         return self._x
 
     @property
-    def y(self):
+    def y(self) -> np.float64:
         return self._y
 
     def unit_vector(self) -> "Point":
-        if abs(self) == 0:
+        if self._isclose(abs(self), 0.0):
             raise ZeroDivisionError("Length of Vector cannot be Zero")
         return self * (1 / (abs(self)))
 
     def angle(self) -> np.float64:
-        return np.arctan2(self.y, self.x)
+        angle = np.arctan2(self.y, self.x)
+        return angle
 
     def radius(self) -> np.float64:
         return abs(self)

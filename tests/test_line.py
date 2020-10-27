@@ -1,18 +1,19 @@
 import numpy as np
-import pytest
-from hypothesis import given
-from hypothesis.strategies import from_type
+from hypothesis import assume, given, infer
+from hypothesis.strategies import builds
 
-from pysketcher import Line, Point, Shape
-from tests.test_point import nfloats
+from pysketcher import Line, Point
+from tests.conftest import make_float
+from tests.utils import given_inferred
 
 
 class TestLine:
-    @given(nfloats(), nfloats(), nfloats(), nfloats())
-    def test_start(self, x1, y1, x2, y2):
-        line = Line(Point(x1, y1), Point(x2, y2))
-        assert line.start == Point(x1, y1)
-        assert line.end == Point(x2, y2)
+    @given_inferred
+    def test_start(self, a: Point, b: Point) -> None:
+        assume(a != b)
+        line = Line(a, b)
+        assert line.start == a
+        assert line.end == b
 
     # def test_rotate(self, line: Line, center: Point, theta: float, expected: Line):
     #     result = line.rotate(theta, center)
