@@ -113,10 +113,10 @@ class Composition(Stylable):
     def rotate(self, angle: float, center: Point) -> "Composition":
         return self._for_all_shapes("rotate", angle, center)
 
-    def translate(self, vec) -> "Shape":
+    def translate(self, vec) -> "Composition":
         return self._for_all_shapes("translate", vec)
 
-    def scale(self, factor) -> "Shape":
+    def scale(self, factor) -> "Composition":
         return self._for_all_shapes("scale", factor)
 
 
