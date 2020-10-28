@@ -87,14 +87,11 @@ class Line(Curve):
             the line is vertical and x is provided.
         """
         self._compute_formulas()
-        if y:
-            if self._horizontal:
-                raise ValueError("Value of x is not dependent on the value of y.")
-            return self._c * y + self._d
-        elif self._vertical:
-            if x:
-                raise ValueError("Value of y is not dependent on the value of x.")
-            return self._a * x + self._b
+        if self._horizontal and y:
+            raise ValueError("Value of x is not dependent on the value of y.")
+        if self._vertical and x:
+            raise ValueError("Value of y is not dependent on the value of x.")
+        return self._a * x + self._b if x else self._c * y + self._d
 
     def interval(
         self,
