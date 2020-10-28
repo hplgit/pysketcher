@@ -1,0 +1,21 @@
+pysketcher.compositions package
+===============================
+
+Submodules
+----------
+
+pysketcher.compositions.composition module
+------------------------------------------
+
+.. automodule:: pysketcher.compositions.composition
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pysketcher.compositions
+   :members:
+   :undoc-members:
+   :show-inheritance:

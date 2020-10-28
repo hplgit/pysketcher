@@ -1,6 +1,14 @@
 pysketcher package
 ==================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pysketcher.compositions
+
 Submodules
 ----------
 
@@ -56,14 +64,6 @@ pysketcher.color module
 -----------------------
 
 .. automodule:: pysketcher.color
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pysketcher.composition module
------------------------------
-
-.. automodule:: pysketcher.composition
    :members:
    :undoc-members:
    :show-inheritance:

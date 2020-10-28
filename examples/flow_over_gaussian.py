@@ -1,15 +1,17 @@
-import numpy as np
 import logging
+
+import numpy as np
+
 from pysketcher import (
-    MatplotlibDraw,
-    Wall,
-    Point,
-    VelocityProfile,
-    Line,
     Composition,
     DistanceWithText,
-    Text,
+    Line,
+    MatplotlibDraw,
+    Point,
     Style,
+    Text,
+    VelocityProfile,
+    Wall,
 )
 
 logging.basicConfig(level=logging.INFO)

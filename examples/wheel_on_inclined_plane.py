@@ -1,18 +1,20 @@
-import numpy as np
 import time
+
+import numpy as np
+
 from pysketcher import (
-    Shape,
-    Point,
-    MatplotlibDraw,
-    Wall,
     ArcWithText,
-    Line,
+    Axis,
     Circle,
     Composition,
-    Axis,
     Force,
     Gravity,
+    Line,
+    MatplotlibDraw,
+    Point,
+    Shape,
     Style,
+    Wall,
 )
 
 

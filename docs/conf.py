@@ -15,16 +15,13 @@ import sys
 
 from recommonmark.transform import AutoStructify
 
-sys.path.insert(0, os.path.abspath(".."))
-
+sys.path.insert(0, os.path.abspath("."))
 
 # -- Project information -----------------------------------------------------
 
-project = "PySketcher"
-copyright = "2020, Richard Vodden"
-author = "Richard Vodden"
-master_doc = "README"
-
+project = u"PySketcher"
+copyright = u"2020, Richard Vodden"
+author = u"Richard Vodden"
 
 # -- General configuration ---------------------------------------------------
 
@@ -42,10 +39,20 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
+master_doc = "index"
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+pygments_style = "sphinx"
+
+highlight_language = "python"
+
+# AutoDoc Settings
+
+autodoc_member_order = "bysource"
 
 # Napolean Settings
 
@@ -78,4 +85,3 @@ def setup(app):
 
 
 autosectionlabel_prefix_document = True
-html_static_path = ['_static']

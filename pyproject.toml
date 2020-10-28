@@ -74,6 +74,11 @@ commands =
     poetry run pytest
 '''
 
+[tool.isort]
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+known_third_party = "celery,django,environ,pyquery,pytz,redis,requests,rest_framework"
 
 [mypy]
 # follow and type check all modules, including third-party ones
