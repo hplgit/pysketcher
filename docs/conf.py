@@ -41,6 +41,8 @@ templates_path = ["_templates"]
 
 master_doc = "index"
 
+source_suffix = ".txt"
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
@@ -53,6 +55,8 @@ highlight_language = "python"
 # AutoDoc Settings
 
 autodoc_member_order = "bysource"
+autodoc_typehints = "description"
+autoclass_content = "both"
 
 # Napolean Settings
 

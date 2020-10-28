@@ -11,7 +11,7 @@ authors = [
     "Richard Vodden <richard@vodden.com>",
     "Hans Petter Langtangen"
 ]
-readme = "README.md"
+readme = "README.rst"
 packages = [{ include = "pysketcher" }]
 repository = "https://github.com/rvodden/pysketcher"
 homepage = "https://github.com/rvodden/pysketcher"

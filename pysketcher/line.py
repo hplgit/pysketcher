@@ -9,6 +9,7 @@ from .point import Point
 
 
 class Line(Curve):
+
     _start: Point
     _end: Point
     _a: np.float64
@@ -19,6 +20,16 @@ class Line(Curve):
     _horizontal: bool
 
     def __init__(self, start: Point, end: Point):
+        """ A representation of a line primitive.
+
+        Args:
+            start: The starting point of the line.
+            end: The end point of the line.
+
+        Example:
+            >>> a = Line(Point(1,2), Point(4,3))
+            >>> b = Line.rotate(np.pi / 2, Point(1,2))
+        """
         if start == end:
             raise ValueError("Cannot specify a line with two equal points.")
         self._start = start
@@ -26,33 +37,6 @@ class Line(Curve):
         self._a = self._b = self._c = self._d = None
         super().__init__([self._start, self._end])
         self._compute_formulas()
-
-    def set_line_width(self, line_width: float) -> "Line":
-        return self
-
-    @property
-    def start(self):
-        return self._start
-
-    @property
-    def end(self):
-        return self._end
-
-    def geometric_features(self):
-        return {"start": self._start, "end": self._end}
-
-    def interval(
-        self, x_range: Tuple[float, float] = None, y_range: Tuple[float, float] = None
-    ):
-        """Return part of the line defined either by the x_range or the y_range"""
-        if x_range is not None:
-            return Line(
-                Point(x_range[0], self(x_range[0])), Point(x_range[1], self(x_range[1]))
-            )
-        elif y_range is not None:
-            return Line(
-                Point(self(y_range[0]), y_range[0]), Point(self(y_range[1]), y_range[1])
-            )
 
     def _compute_formulas(self):
         # Define equations for line:
@@ -78,20 +62,68 @@ class Line(Curve):
                 if np.isnan(self._c) or np.isinf(self._c):
                     self._horizontal = True
 
-    def __call__(self, x=None, y=None):
-        """Given x, return y on the line, or given y, return x."""
-        self._compute_formulas()
-        if x is not None and self._a is not None:
-            return self._a * x + self._b
-        elif y is not None and self._c is not None:
-            return self._c * y + self._d
-        else:
-            raise ValueError("Line.__call__(x=%s, y=%s) not meaningful" % (x, y))
+    @property
+    def start(self):
+        """The starting point of the line."""
+        return self._start
 
-    def rotate(self, angle: float, center: Point) -> "Line":
+    @property
+    def end(self):
+        """The end point of the line."""
+        return self._end
+
+    def __call__(self, x: np.float64 = None, y: np.float64 = None):
+        """Given x, return y on the line, or given y, return x.
+
+        Args:
+            x: the value of x for which a value of y should be calculated
+            y: the value of y for which a value of x should be calculated
+
+        Returns:
+            the appropriate value of either y or x.
+
+        Raises:
+            ValueError: If the line is horizontal and y is provided, or if
+            the line is vertical and x is provided.
         """
-        Rotate all coordinates: `angle` is measured in radians
-        center is the "origin" of the rotation.
+        self._compute_formulas()
+        if y:
+            if self._horizontal:
+                raise ValueError("Value of x is not dependent on the value of y.")
+            return self._c * y + self._d
+        elif self._vertical:
+            if x:
+                raise ValueError("Value of y is not dependent on the value of x.")
+            return self._a * x + self._b
+
+    def interval(
+        self,
+        x_range: Tuple[np.float64, np.float64] = None,
+        y_range: Tuple[np.float64, np.float64] = None,
+    ):
+        """Returns a smaller portion of a line.
+
+        Args:
+            x_range: The range of x-coordinates which should be used to obtain the segment
+            y_range: The range of y-coordinates which should be used to obtain the segment
+
+        """
+        if x_range and y_range:
+            raise ValueError("Cannot specify both x_range and y_range.")
+        if x_range is not None:
+            return Line(
+                Point(x_range[0], self(x_range[0])), Point(x_range[1], self(x_range[1]))
+            )
+        elif y_range is not None:
+            return Line(
+                Point(self(y_range[0]), y_range[0]), Point(self(y_range[1]), y_range[1])
+            )
+
+    def rotate(self, angle: np.float64, center: Point) -> "Line":
+        """Returns a copy of a line rotated through an angle about a point.
+
+        Args:
+            angle
         """
         print("rotating about %s" % center)
         start = self._start.rotate(angle, center)
