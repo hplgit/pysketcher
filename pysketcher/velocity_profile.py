@@ -1,6 +1,6 @@
 from typing import Callable
 
-from pysketcher.compositions.composition import Composition
+from pysketcher.composition.composition import Composition
 
 from .arrow import Arrow
 from .line import Line

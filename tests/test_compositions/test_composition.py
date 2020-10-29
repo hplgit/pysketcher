@@ -3,7 +3,7 @@ from hypothesis import given
 from hypothesis.strategies import floats, sampled_from
 
 from pysketcher import Line, Point, Style
-from pysketcher.compositions import Composition
+from pysketcher.composition import Composition
 
 
 class TestCompositionStyle:

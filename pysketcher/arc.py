@@ -1,6 +1,6 @@
 import numpy as np
 
-from pysketcher.compositions.composition import ShapeWithText
+from pysketcher.composition.composition import ShapeWithText
 
 from .curve import Curve
 from .point import Point

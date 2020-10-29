@@ -1,6 +1,6 @@
 import numpy as np
 
-from pysketcher.compositions.composition import Composition
+from pysketcher.composition.composition import Composition
 
 from .circle import Circle
 from .line import Line

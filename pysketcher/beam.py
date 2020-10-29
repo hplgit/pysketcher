@@ -1,4 +1,4 @@
-from pysketcher.compositions.composition import Composition
+from pysketcher.composition.composition import Composition
 
 from .distance_with_text import DistanceWithText
 from .point import Point

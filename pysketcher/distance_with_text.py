@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from pysketcher.compositions.composition import ShapeWithText
+from pysketcher.composition.composition import ShapeWithText
 
 from .arrow import DoubleArrow
 from .arrow_with_text import Text

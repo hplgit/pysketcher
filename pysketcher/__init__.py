@@ -1,4 +1,4 @@
-from pysketcher.compositions.composition import Composition, ShapeWithText
+from pysketcher.composition.composition import Composition, ShapeWithText
 
 from .arc import Arc, ArcWithText
 from .arrow import Arrow, DoubleArrow

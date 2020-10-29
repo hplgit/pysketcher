@@ -1,4 +1,4 @@
-from pysketcher.compositions.composition import ShapeWithText
+from pysketcher.composition.composition import ShapeWithText
 
 from .arrow import Arrow
 from .point import Point
