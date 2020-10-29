@@ -1,7 +1,0 @@
-digraph {
- "Shape" -> "Line" [dir=none];
- "Shape" -> "Arc" [dir=none];
- "Shape" -> "Rectangle" [dir=none];
- "Shape" -> "Curve" [dir=none];
- "Arc" -> "Circle" [dir=none];
-}

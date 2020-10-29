@@ -1,10 +1,11 @@
 from typing import Callable
 
-from .point import Point
-from .line import Line
+from pysketcher.composition.composition import Composition
+
 from .arrow import Arrow
+from .line import Line
+from .point import Point
 from .spline import Spline
-from .composition import Composition
 
 
 class VelocityProfile(Composition):

@@ -1,10 +1,11 @@
-import numpy as np
 import logging
 from typing import List
 
-from .shape import Shape
-from .point import Point
+import numpy as np
+
 from .drawing_tool import DrawingTool
+from .point import Point
+from .shape import Shape
 
 
 class Curve(Shape):
@@ -68,7 +69,7 @@ class Curve(Shape):
         """Scale all coordinates by `factor`: ``x = factor*x``, etc."""
         return Curve(Point.from_coordinate_lists(factor * self.xs, factor * self.ys))
 
-    def translate(self, vec) -> "Curve":
+    def translate(self, vec: Point) -> "Curve":
         """Translate all coordinates by a vector `vec`."""
         self.x += vec[0]
         self.y += vec[1]

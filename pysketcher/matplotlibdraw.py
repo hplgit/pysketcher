@@ -1,14 +1,14 @@
-import os
 import logging
-from typing import List, Callable
+import os
+from typing import Callable, List
 
 import matplotlib.pyplot as mpl
 import matplotlib.transforms as transforms
 import numpy as np
 
-from .style import Style, TextStyle
 from .drawing_tool import DrawingTool
 from .point import Point
+from .style import Style, TextStyle
 
 
 class MatplotlibDraw(DrawingTool):

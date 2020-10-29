@@ -1,0 +1,7 @@
+Tutorial
+========
+
+.. toctree::
+
+    Introduction <introduction>
+    A Simple Pendulum <pendulum>

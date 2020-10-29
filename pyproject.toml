@@ -11,11 +11,14 @@ authors = [
     "Richard Vodden <richard@vodden.com>",
     "Hans Petter Langtangen"
 ]
-readme = "README.md"
+readme = "README.rst"
 packages = [{ include = "pysketcher" }]
 repository = "https://github.com/rvodden/pysketcher"
 homepage = "https://github.com/rvodden/pysketcher"
 keywords = ['sketch','graphics','scientific','engineering','geometry']
+
+[tool.poetry.extras]
+docs = ["sphinx"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -34,7 +37,11 @@ mypy = "^0.790"
 pydocstyle = "^5.0.2"
 black = "^20.8b1"
 'zest.releaser' = { version = "^6.22.1", extras = ['recommended'] }
-wheel = "^0.35.1"
+wheel = "^0.33.6"
+sphinx = "^3.2.1"
+sphinx_rtd_theme = "^0.5.0"
+recommonmark = "^0.6.0"
+pre-commit = "^2.7.1"
 
 [tool.poetry.scripts]
 beam1 = "examples.beam1:main"
@@ -67,6 +74,11 @@ commands =
     poetry run pytest
 '''
 
+[tool.isort]
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+known_third_party = "celery,django,environ,pyquery,pytz,redis,requests,rest_framework"
 
 [mypy]
 # follow and type check all modules, including third-party ones
@@ -100,4 +112,3 @@ strict_optional = true
 # stop treating arguments with a None default value as having
 # an implicit Optional[T] type
 no_implicit_optional = true
-

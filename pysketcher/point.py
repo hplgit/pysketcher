@@ -1,6 +1,8 @@
+import logging
 from typing import List, Tuple
 
 import numpy as np
+from hypothesis import note
 
 
 class Point:
@@ -8,10 +10,10 @@ class Point:
     Simple Point class which implements basic point arithmetic.
     """
 
-    _x: float
-    _y: float
+    _x: np.float64
+    _y: np.float64
 
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: np.float64, y: np.float64):
         """
         Parameters
         ---------
@@ -20,54 +22,62 @@ class Point:
         y: float
             The y co-ordinate
         """
-        self._x = x
-        self._y = y
+        self._x = np.float64(x)
+        self._y = np.float64(y)
 
     def __add__(self, other: "Point") -> "Point":
-        return Point(self._x + other._x, self._y + other._y)
+        return Point(self.x + other._x, self.y + other.y)
 
     def __sub__(self, other: "Point") -> "Point":
-        return Point(self._x - other._x, self._y - other._y)
+        return Point(self.x - other._x, self.y - other.y)
 
-    def __mul__(self, scalar: float) -> "Point":
-        return Point(self._x * scalar, self._y * scalar)
+    def __mul__(self, scalar: np.float64) -> "Point":
+        return Point(self.x * scalar, self.y * scalar)
 
-    def __abs__(self) -> float:
-        return np.ma.sqrt(self.x ** 2 + self.y ** 2)
+    def __abs__(self) -> np.float64:
+        return np.sqrt(self.x * self.x + self.y * self.y)
 
-    def __eq__(self, other):
-        return self._x == other.x and self._y == other.y
+    def __eq__(self, other: "Point") -> bool:
+        return self._isclose(self.x, other.x) and self._isclose(self.y, other.y)
 
     def __str__(self):
-        return "(%f, %f)" % (self.x, self.y)
+        return self.__repr__()
 
     def __repr__(self):
-        return "(%f, %f)" % (self.x, self.y)
+        return "P(%s, %s)" % (
+            np.format_float_scientific(self.x),
+            np.format_float_scientific(self.y),
+        )
+
+    @staticmethod
+    def _isclose(x: np.float64, y: np.float64) -> bool:
+        return np.isclose(x, y, atol=1e-4)
 
     @property
-    def x(self):
+    def x(self) -> np.float64:
         return self._x
 
     @property
-    def y(self):
+    def y(self) -> np.float64:
         return self._y
 
     def unit_vector(self) -> "Point":
-        if abs(self) == 0:
+        if self._isclose(abs(self), 0.0):
             raise ZeroDivisionError("Length of Vector cannot be Zero")
         return self * (1 / (abs(self)))
 
-    def angle(self) -> float:
-        return np.arctan2(self.y, self.x)
+    def angle(self) -> np.float64:
+        angle = np.arctan2(self.y, self.x)
+        return angle
 
-    def radius(self) -> float:
+    def radius(self) -> np.float64:
         return abs(self)
 
     def normal(self) -> "Point":
         uv = self.unit_vector()
         return Point(-uv.y, uv.x)
 
-    def rotate(self, angle: float, center: "Point") -> "Point":
+    def rotate(self, angle: np.float64, center: "Point") -> "Point":
         """Rotate point an `angle` (in radians) around (`x`,`y`)."""
         c = np.cos(angle)
         s = np.sin(angle)
@@ -76,7 +86,7 @@ class Point:
             center.y + (self.x - center.x) * s + (self.y - center.y) * c,
         )
 
-    def scale(self, factor: float) -> "Point":
+    def scale(self, factor: np.float64) -> "Point":
         """Scale point coordinates by `factor`: ``x = factor*x``, etc."""
         return self * factor
 
@@ -85,13 +95,17 @@ class Point:
         return self + vec
 
     @staticmethod
-    def from_coordinate_lists(xs: List[float], ys: List[float]) -> List["Point"]:
+    def from_coordinate_lists(
+        xs: List[np.float64], ys: List[np.float64]
+    ) -> List["Point"]:
         if len(xs) != len(ys):
             raise ValueError("xs and ys must be the same length")
         return [Point(xs[i], ys[i]) for i in range(len(xs))]
 
     @staticmethod
-    def to_coordinate_lists(ps: List["Point"]) -> Tuple[List[float], List[float]]:
+    def to_coordinate_lists(
+        ps: List["Point"]
+    ) -> Tuple[List[np.float64], List[np.float64]]:
         xs = [p.x for p in ps]
         ys = [p.y for p in ps]
         return xs, ys

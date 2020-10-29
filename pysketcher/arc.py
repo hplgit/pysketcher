@@ -1,8 +1,9 @@
 import numpy as np
 
-from .composition import ShapeWithText
-from .point import Point
+from pysketcher.composition.composition import ShapeWithText
+
 from .curve import Curve
+from .point import Point
 from .text import Text
 
 
@@ -10,6 +11,12 @@ class Arc(Curve):
     """
     A representation of a continuous connected subset of a circle.
     """
+
+    _center: Point
+    _radius: float
+    start_angle: float
+    arc_angle: float
+    resolution: int
 
     def __init__(
         self,
@@ -38,6 +45,17 @@ class Arc(Curve):
 
         # Cannot set dimensions (Arc_wText recurses into this
         # constructor forever). Set in test_Arc instead.
+
+    def translate(self, vec: Point) -> "Arc":
+        circle = Arc(
+            self._center + vec,
+            self._radius,
+            self._start_angle,
+            self._arc_angle,
+            self._resolution,
+        )
+        circle.style = self.style
+        return circle
 
     def geometric_features(self):
         m = self._resolution // 2  # mid point in array

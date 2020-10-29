@@ -1,9 +1,10 @@
 from enum import Enum, auto
 
-from .point import Point
-from .arrow_with_text import Text
-from .composition import ShapeWithText
+from pysketcher.composition.composition import ShapeWithText
+
 from .arrow import DoubleArrow
+from .arrow_with_text import Text
+from .point import Point
 
 
 class DistanceWithText(ShapeWithText):

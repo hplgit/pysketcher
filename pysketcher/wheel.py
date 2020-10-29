@@ -1,9 +1,10 @@
 import numpy as np
 
-from .point import Point
+from pysketcher.composition.composition import Composition
+
 from .circle import Circle
-from .composition import Composition
 from .line import Line
+from .point import Point
 
 
 class Wheel:

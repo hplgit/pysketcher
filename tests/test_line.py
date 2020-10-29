@@ -1,30 +1,21 @@
-import pytest
 import numpy as np
+from hypothesis import assume, given, infer
+from hypothesis.strategies import builds
 
-from pysketcher import Shape, Line, Point
-from .test_shape import ShapeContract
+from pysketcher import Line, Point
+from tests.conftest import make_float
+from tests.utils import given_inferred
 
 
-class TestLine(ShapeContract):
-    @pytest.fixture
-    def shape(self, request) -> Shape:
-        return Line(Point(0, 1), Point(1, 1))
+class TestLine:
+    @given_inferred
+    def test_start(self, a: Point, b: Point) -> None:
+        assume(a != b)
+        line = Line(a, b)
+        assert line.start == a
+        assert line.end == b
 
-    def test_start(self, shape: Shape):
-        assert shape.start == Point(0, 1)
-
-    def test_end(self, shape: Shape):
-        assert shape.end == Point(1, 1)
-
-    rotate_data = [
-        (Line(Point(0, 0), Point(1, 0)), np.pi / 2,     Point(0, 0), Line(Point(0, 0), Point(0, 1)) ),
-        (Line(Point(0, 0), Point(1, 0)), np.pi,         Point(0, 0), Line(Point(0, 0), Point(-1, 0))),
-        (Line(Point(0, 0), Point(1, 0)), 3 * np.pi / 2, Point(0, 0), Line(Point(0, 0), Point(0, -1))),
-        (Line(Point(0, 0), Point(1, 0)), 2 * np.pi,     Point(0, 0), Line(Point(0, 0), Point(1, 0)))
-    ]
-
-    @pytest.mark.parametrize("line, theta, center, expected", rotate_data)
-    def test_rotate(self, line: Line, center: Point, theta: float, expected: Line):
-        result = line.rotate(theta, center)
-        assert abs(result.start - expected.start) < 1E-14
-        assert abs(result.end - expected.end) < 1E-14
+    # def test_rotate(self, line: Line, center: Point, theta: float, expected: Line):
+    #     result = line.rotate(theta, center)
+    #     assert abs(result.start - expected.start) < 1e-14
+    #     assert abs(result.end - expected.end) < 1e-14

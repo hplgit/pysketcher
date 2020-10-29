@@ -1,7 +1,7 @@
 import numpy as np
 
-from .matplotlibdraw import MatplotlibDraw
 from .arc import Arc
+from .matplotlibdraw import MatplotlibDraw
 from .point import Point
 
 

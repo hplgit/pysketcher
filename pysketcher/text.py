@@ -1,7 +1,7 @@
-from .shape import Shape
 from .drawing_tool import DrawingTool
-from .style import Style, TextStyle
 from .point import Point
+from .shape import Shape
+from .style import Style, TextStyle
 
 
 class Text(Shape):

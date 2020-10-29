@@ -1,7 +1,7 @@
 import numpy as np
 
-from .spline import Spline
 from .point import Point
+from .spline import Spline
 from .text import Text
 
 
@@ -28,7 +28,3 @@ class SketchyFunc1(Spline):
             points += [Point(x[i], y[i])]
 
         super().__init__(points)
-        if name is not None:
-            self._shapes["name"] = Text(
-                name, self.geometric_features()[name_pos] + Point(0, 0.1)
-            )
