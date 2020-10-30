@@ -27,8 +27,8 @@ class Line(Curve):
             end: The end point of the line.
 
         Example:
-            >>> a = Line(Point(1,2), Point(4,3))
-            >>> b = Line.rotate(np.pi / 2, Point(1,2))
+            >>> a = Line(Point(1.,2.), Point(4.,3.))
+            >>> b = a.rotate(np.pi / 2, Point(1.,2.))
         """
         if start == end:
             raise ValueError("Cannot specify a line with two equal points.")
@@ -120,9 +120,9 @@ class Line(Curve):
         """Returns a copy of a line rotated through an angle about a point.
 
         Args:
-            angle
+            angle:
+            center:
         """
-        print("rotating about %s" % center)
         start = self._start.rotate(angle, center)
         end = self._end.rotate(angle, center)
         line = Line(start, end)

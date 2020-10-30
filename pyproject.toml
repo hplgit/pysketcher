@@ -47,7 +47,7 @@ pre-commit = "^2.7.1"
 beam1 = "examples.beam1:main"
 
 [tool.pytest.ini_options]
-testpaths = "tests"
+testpaths = ["tests", "pysketcher"]
 python_files = "test_*.py"
 python_functions = "test_*"
 junit_duration_report = "call"
