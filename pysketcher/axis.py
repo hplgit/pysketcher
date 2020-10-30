@@ -1,8 +1,7 @@
+from pysketcher.arrow import Arrow
 from pysketcher.composition.composition import ShapeWithText
-
-from .arrow import Arrow
-from .point import Point
-from .text import Text
+from pysketcher.point import Point
+from pysketcher.text import Text
 
 
 class Axis(ShapeWithText):

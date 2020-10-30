@@ -1,8 +1,8 @@
 import numpy as np
 
-from .point import Point
-from .spline import Spline
-from .text import Text
+from pysketcher.point import Point
+from pysketcher.spline import Spline
+from pysketcher.text import Text
 
 
 class SketchyFunc1(Spline):

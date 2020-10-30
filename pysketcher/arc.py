@@ -1,10 +1,9 @@
 import numpy as np
 
 from pysketcher.composition.composition import ShapeWithText
-
-from .curve import Curve
-from .point import Point
-from .text import Text
+from pysketcher.curve import Curve
+from pysketcher.point import Point
+from pysketcher.text import Text
 
 
 class Arc(Curve):

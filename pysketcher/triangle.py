@@ -1,8 +1,6 @@
-from .curve import Curve
-from .matplotlibdraw import MatplotlibDraw
-from .point import Point
-from .shape import Shape
-from .text import Text
+from pysketcher.curve import Curve
+from pysketcher.point import Point
+from pysketcher.text import Text
 
 
 class Triangle(Curve):

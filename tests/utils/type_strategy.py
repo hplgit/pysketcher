@@ -17,7 +17,6 @@ class TypeStrategy:
 
         def wrapper(*args, **kwargs):
             logging.debug(f"Calling {self._func.__name__}.")
-            args = args[1:]
             return self._func(*args, **kwargs)
 
         if not self._type:

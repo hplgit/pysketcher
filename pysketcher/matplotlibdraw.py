@@ -6,9 +6,9 @@ import matplotlib.pyplot as mpl
 import matplotlib.transforms as transforms
 import numpy as np
 
-from .drawing_tool import DrawingTool
-from .point import Point
-from .style import Style, TextStyle
+from pysketcher.drawing_tool import DrawingTool
+from pysketcher.point import Point
+from pysketcher.style import Style, TextStyle
 
 
 class MatplotlibDraw(DrawingTool):

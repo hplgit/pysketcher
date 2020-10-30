@@ -1,7 +1,7 @@
-from .line import Line
-from .matplotlibdraw import MatplotlibDraw
-from .point import Point
-from .style import Style
+from pysketcher.line import Line
+from pysketcher.matplotlibdraw import MatplotlibDraw
+from pysketcher.point import Point
+from pysketcher.style import Style
 
 
 class Arrow(Line):

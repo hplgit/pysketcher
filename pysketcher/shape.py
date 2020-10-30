@@ -2,9 +2,9 @@ import copy
 from abc import ABC, abstractmethod
 from typing import Callable, List
 
-from .drawing_tool import DrawingTool
-from .point import Point
-from .style import Style
+from pysketcher.drawing_tool import DrawingTool
+from pysketcher.point import Point
+from pysketcher.style import Style
 
 
 class Stylable(ABC):

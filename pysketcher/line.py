@@ -4,8 +4,8 @@ from typing import Tuple
 
 import numpy as np
 
-from .curve import Curve
-from .point import Point
+from pysketcher.curve import Curve
+from pysketcher.point import Point
 
 
 class Line(Curve):

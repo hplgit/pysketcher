@@ -1,8 +1,8 @@
 import numpy as np
 
-from .arc import Arc
-from .matplotlibdraw import MatplotlibDraw
-from .point import Point
+from pysketcher.arc import Arc
+from pysketcher.matplotlibdraw import MatplotlibDraw
+from pysketcher.point import Point
 
 
 class Circle(Arc):

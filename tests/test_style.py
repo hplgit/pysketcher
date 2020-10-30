@@ -41,20 +41,18 @@ class TestStyle(object):
         assert style.shadow == shadow
 
 
-#
-#
-# class TestTextStyle(TestStyle):
-#     @given(from_type(Style), floats(allow_infinity=False, allow_nan=False))
-#     def test_font_size(self, style: TextStyle, font_size: float):
-#         style.font_size = font_size
-#         assert style.font_size == font_size
-#
-#     @given(from_type(Style), sampled_from(TextStyle.FontFamily))
-#     def test_font_family(self, style: TextStyle, font_family: TextStyle.FontFamily):
-#         style.font_family = font_family
-#         assert style.font_family == font_family
-#
-#     @given(from_type(Style), sampled_from(TextStyle.Alignment))
-#     def test_alignment(self, style: TextStyle, alignment: TextStyle.Alignment):
-#         style.alignment = alignment
-#         assert style.alignment == alignment
+class TestTextStyle(TestStyle):
+    @given_inferred
+    def test_font_size(self, style: TextStyle, font_size: np.float64):
+        style.font_size = font_size
+        assert style.font_size == font_size
+
+    @given_inferred
+    def test_font_family(self, style: TextStyle, font_family: TextStyle.FontFamily):
+        style.font_family = font_family
+        assert style.font_family == font_family
+
+    @given_inferred
+    def test_alignment(self, style: TextStyle, alignment: TextStyle.Alignment):
+        style.alignment = alignment
+        assert style.alignment == alignment

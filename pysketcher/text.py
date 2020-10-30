@@ -1,7 +1,7 @@
-from .drawing_tool import DrawingTool
-from .point import Point
-from .shape import Shape
-from .style import Style, TextStyle
+from pysketcher.drawing_tool import DrawingTool
+from pysketcher.point import Point
+from pysketcher.shape import Shape
+from pysketcher.style import Style, TextStyle
 
 
 class Text(Shape):

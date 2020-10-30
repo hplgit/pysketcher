@@ -5,6 +5,7 @@ import pytest
 from hypothesis import assume, given, infer, note
 
 from pysketcher import Point
+from pysketcher.angle import Angle
 from tests.utils import given_inferred
 
 from .conftest import isclose, mx
@@ -101,11 +102,16 @@ class TestPoint:
                     angle = angle - 2 * np.pi
             assert isclose(angle, np.pi / 2.0)
 
-    #
-    # @given_inferred
-    # def test_rotation_about_zero(self, a: Point, angle: np.float64):
-    #     b = a.rotate(angle, Point(0., 0.))
-    #     assert isclose(b.angle() - a.angle(), angle)
+    @given_inferred
+    def test_rotation_about_zero(self, a: Point, angle: Angle):
+        assume(abs(a) != 0)
+        b = a.rotate(angle, Point(0.0, 0.0))
+        aa = a.angle()
+        bb = b.angle()
+        note(f"a angle: {aa}")
+        note(f"b angle: {bb}")
+        assert isclose(bb - aa, angle)
+
     #
     # @given_inferred
     # def test_rotation(self, a: Point, angle: np.float64, center: Point):

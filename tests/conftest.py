@@ -1,12 +1,11 @@
-import logging
-from typing import Callable, Type
+from typing import Type
 
 import numpy as np
 import pytest
 from hypothesis.extra.numpy import from_dtype
-from hypothesis.strategies import SearchStrategy, composite, from_type
+from hypothesis.strategies import SearchStrategy, builds, floats, from_type
 
-from pysketcher import Line, Point, Shape, Style
+from pysketcher.angle import Angle
 from tests.utils import TypeStrategy
 
 mx = 1e12
@@ -23,9 +22,13 @@ def isclose(a: np.float64, b: np.float64):
 
 
 @TypeStrategy()
+def make_angle(typ: Type) -> SearchStrategy[Angle]:
+    return builds(Angle, make_float(typ))
+
+
+@TypeStrategy()
 def make_float(typ: Type) -> SearchStrategy[np.float64]:
     strategy = from_dtype(np.dtype(typ), allow_nan=False, allow_infinity=False).filter(
         lambda x: -mx < x < mx
     )
-    logging.debug(f"Setting the {typ} strategy to {strategy}.")
     return strategy

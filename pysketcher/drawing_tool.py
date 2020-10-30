@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from .point import Point
-from .style import Style, TextStyle
+from pysketcher.point import Point
+from pysketcher.style import Style, TextStyle
 
 
 class DrawingTool(ABC):
