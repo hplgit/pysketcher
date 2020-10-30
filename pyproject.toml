@@ -41,7 +41,7 @@ wheel = "^0.33.6"
 sphinx = "^3.2.1"
 sphinx_rtd_theme = "^0.5.0"
 recommonmark = "^0.6.0"
-pre-commit = "^2.7.1"
+pre-commit = "^2.8.1"
 
 [tool.poetry.scripts]
 beam1 = "examples.beam1:main"
