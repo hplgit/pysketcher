@@ -53,8 +53,8 @@ def compare_images(expected: str, actual: str, tol: float) -> Union[None, Dict]:
         - *tol*: The comparison tolerance.
 
     Examples:
-        >>> img1 = "docs/images/wheel_on_inclined_plane.png"
-        >>> img2 = "docs/images/wheel_on_inclined_plane.png"
+        >>> img1 = "./baseline/plot.png"
+        >>> img2 = "./output/plot.png"
         >>> compare_images(img1, img2, 0.001)
     """
     actual = os.fspath(actual)
