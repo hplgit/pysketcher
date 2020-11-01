@@ -1,10 +1,8 @@
-from pysketcher import Circle, Composition, MatplotlibDraw, Point
+import pysketcher as ps
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
-drawing_tool = MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=5, axis=False)
-drawing_tool.set_linecolor("black")
+circle = ps.Circle(ps.Point(2.5, 2.5), 1.5)
 
-code = Circle(Point(2.5, 2.5), 1.5, drawing_tool)
-fig = Composition(dict(text=code))
-
-fig.draw(drawing_tool)
-drawing_tool.display()
+fig = ps.Figure(0, 5, 0, 5, backend=MatplotlibBackend)
+fig.add(circle)
+fig.show()
