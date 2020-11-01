@@ -60,14 +60,3 @@ class MatplotlibBackend(Backend):
             Text: MatplotlibText(),
             Composition: MatplotlibComposition(self),
         }
-
-    # def arrow2(self, x, y, dx, dy, style="->"):
-    #     """Draw arrow (dx,dy) at (x,y). `style` is '->', '<-' or '<->'."""
-    #     self.ax.annotate(
-    #         "",
-    #         xy=(x + dx, y + dy),
-    #         xytext=(x, y),
-    #         arrowprops=dict(
-    #             arrowstyle=style, facecolor="black", linewidth=1, shrinkA=0, shrinkB=0
-    #         ),
-    #     )

@@ -12,6 +12,7 @@ from pysketcher.arrow_with_text import ArrowWithText
 from pysketcher.axis import Axis
 from pysketcher.beam import SimpleSupport
 from pysketcher.circle import Circle
+from pysketcher.composition import Composition, ShapeWithText
 from pysketcher.curve import Curve
 from pysketcher.distance_with_text import DistanceWithText
 from pysketcher.drawable import Drawable

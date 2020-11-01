@@ -1,4 +1,4 @@
-from pysketcher import Angle
+from pysketcher.angle import Angle
 from pysketcher.point import Point
 from pysketcher.shape import Shape
 from pysketcher.style import Style, TextStyle
