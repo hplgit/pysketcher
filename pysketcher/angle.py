@@ -5,6 +5,21 @@ import numpy as np
 
 class Angle(np.float64):
     def __new__(cls, value: np.float64) -> "Angle":
+        """A representation of a 2-Dimensional Angle
+
+        Args:
+            value: The value of the angle to create.
+
+        Example:
+            >>> Angle(1.0)
+            Angle(1.0)
+            >>> Angle(np.pi / 2)
+            Angle(1.5707963267948966)
+            >>> Angle(123)
+            Angle(-2.6637061435917175)
+            >>> Angle(2*np.pi)
+            Angle(0.0)
+        """
         value = cls._normalize(value)
         return super(cls, cls).__new__(cls, value)
 

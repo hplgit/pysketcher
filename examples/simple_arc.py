@@ -1,11 +1,11 @@
 import numpy as np
-from pysketcher import MatplotlibDraw, Point, Arc, Composition
 
-drawing_tool = MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=5, axis=False)
-drawing_tool.set_linecolor("black")
+from pysketcher import Angle, Arc, Figure, Point
+from pysketcher.backend.matplotlib.matplotlib_backend import MatplotlibBackend
 
-code = Arc(Point(2.5, 2.5), 1.5, np.pi / 2, np.pi / 2)
-fig = Composition(dict(text=code))
+fig = Figure(0.0, 5.0, 0.0, 5.0, MatplotlibBackend)
 
-fig.draw(drawing_tool)
-drawing_tool.display()
+code = Arc(Point(2.5, 2.5), 1.5, Angle(np.pi / 2), Angle(np.pi / 2))
+
+fig.add(code)
+fig.show()

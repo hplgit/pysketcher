@@ -5,18 +5,19 @@ try:
 except PackageNotFoundError:
     pass
 
+from pysketcher.angle import Angle
 from pysketcher.arc import Arc, ArcWithText
 from pysketcher.arrow import Arrow, DoubleArrow
 from pysketcher.arrow_with_text import ArrowWithText
 from pysketcher.axis import Axis
 from pysketcher.beam import SimpleSupport
 from pysketcher.circle import Circle
-from pysketcher.composition.composition import Composition, ShapeWithText
 from pysketcher.curve import Curve
 from pysketcher.distance_with_text import DistanceWithText
+from pysketcher.drawable import Drawable
+from pysketcher.figure import Figure
 from pysketcher.force import Force, Gravity
 from pysketcher.line import Line
-from pysketcher.matplotlibdraw import MatplotlibDraw
 from pysketcher.moment import Moment
 from pysketcher.point import Point
 from pysketcher.rectangle import Rectangle

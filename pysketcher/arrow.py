@@ -1,5 +1,4 @@
 from pysketcher.line import Line
-from pysketcher.matplotlibdraw import MatplotlibDraw
 from pysketcher.point import Point
 from pysketcher.style import Style
 

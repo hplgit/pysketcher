@@ -1,8 +1,25 @@
 """A more sophisticated beam than in beam1.py."""
 
-from pysketcher import *
-import numpy as np
 import logging
+
+import numpy as np
+
+from pysketcher import (
+    Axis,
+    Curve,
+    DistanceWithText,
+    Figure,
+    Force,
+    Moment,
+    Point,
+    Rectangle,
+    SimpleSupport,
+    Style,
+    Text,
+    UniformLoad,
+)
+from pysketcher.backend.matplotlib import MatplotlibBackend
+from pysketcher.composition import Composition
 
 logging.basicConfig(level=logging.INFO)
 
@@ -14,9 +31,7 @@ def beam():
     H = 1.0
     A = Point(0.0, 3.0)
 
-    drawing_tool = MatplotlibDraw(
-        xmin=-3, xmax=A.x + 1.5 * L, ymin=0, ymax=A.y + 5 * H, axis=False
-    )
+    fig = Figure(-3, A.x + 1.5 * L, 0, A.y + 5 * H, MatplotlibBackend)
 
     beam = (
         Rectangle(A, L, H)
@@ -76,11 +91,9 @@ def beam():
         }
     )
 
-    x_axis = Axis(
-        A + Point(L + h, H / 2),
-        2 * H,
-        "$x$",
-    ).set_line_color(Style.Color.BLACK)
+    x_axis = Axis(A + Point(L + h, H / 2), 2 * H, "$x$").set_line_color(
+        Style.Color.BLACK
+    )
     y_axis = Axis(
         A + Point(0, H / 2), 3.5 * H, "$y$", rotation_angle=np.pi / 2
     ).set_line_color(Style.Color.BLACK)
@@ -116,21 +129,10 @@ def beam():
         .set_line_width(3)
     )
 
-    beam.draw(drawing_tool)
-    drawing_tool.display()
-
-    import time
-
-    time.sleep(1.5)
-
-    annotations.draw(drawing_tool)
-    drawing_tool.display()
-    time.sleep(1.5)
-
-    elastic_line.draw(drawing_tool)
-    drawing_tool.display()
-    # beam.draw_dimensions()
-    # test_Dashpot(xpos+2*W)
+    fig.add(beam)
+    fig.add(annotations)
+    fig.add(elastic_line)
+    fig.show()
 
 
 beam()

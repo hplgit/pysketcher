@@ -1,17 +1,22 @@
-from pysketcher.drawing_tool import DrawingTool
+from typing import Any, Callable, Dict, TypeVar, Union
+
 from pysketcher.point import Point
 from pysketcher.shape import Shape, Stylable
 from pysketcher.style import Style, TextStyle
 from pysketcher.text import Text
 
+T = TypeVar("type")
+
 
 class Composition(Stylable):
     class CompositionStyle(Style):
-        """Presents the Stylable contract for a Composition, setting the style of each object in the composition transparently"""
+        """Presents the Stylable contract for a Composition, setting the style of each object in the composition
+        transparently """
 
         _composition: "Composition"
 
         def __init__(self, composition: "Composition"):
+            super().__init__()
             self._composition = composition
 
         @property
@@ -100,10 +105,6 @@ class Composition(Stylable):
     def __getitem__(self, name):
         return self._shapes[name]
 
-    def draw(self, drawing_tool: DrawingTool) -> None:
-        for shape in self._shapes.values():
-            shape.draw(drawing_tool)
-
     def _for_all_shapes(self, func: str, *args, **kwargs) -> "Composition":
         shapes = dict()
         for key, shape in self._shapes:
@@ -118,6 +119,12 @@ class Composition(Stylable):
 
     def scale(self, factor) -> "Composition":
         return self._for_all_shapes("scale", factor)
+
+    def apply(self, func: Callable[[Union[Shape, "Composition"]], T]) -> Dict[str, T]:
+        ret_dict = {}
+        for key, shape in self._shapes.items():
+            ret_dict[key] = func(shape)
+        return ret_dict
 
 
 class ShapeWithText(Composition):

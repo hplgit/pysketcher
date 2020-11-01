@@ -1,9 +1,6 @@
-import numpy as np
 from hypothesis import assume, given, infer
-from hypothesis.strategies import builds
 
 from pysketcher import Line, Point
-from tests.conftest import make_float
 from tests.utils import given_inferred
 
 

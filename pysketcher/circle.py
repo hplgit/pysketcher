@@ -1,7 +1,6 @@
 import numpy as np
 
 from pysketcher.arc import Arc
-from pysketcher.matplotlibdraw import MatplotlibDraw
 from pysketcher.point import Point
 
 

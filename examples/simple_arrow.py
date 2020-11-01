@@ -1,10 +1,11 @@
-import pysketcher
-from pysketcher import Arrow, Composition, Point
+from pysketcher import Arrow, DoubleArrow, Figure, Point
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
-drawing_tool = pysketcher.MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=5, axis=False)
+fig = Figure(0, 5, 0, 5, backend=MatplotlibBackend)
 
-code = Arrow(Point(1, 2), Point(4, 3))
-fig = Composition(dict(text=code))
+arrow = Arrow(Point(1, 2), Point(4, 3))
+arrow2 = DoubleArrow(Point(2, 1), Point(3, 4))
 
-fig.draw(drawing_tool)
-drawing_tool.display()
+fig.add(arrow)
+fig.add(arrow2)
+fig.show()

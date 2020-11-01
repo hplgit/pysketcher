@@ -112,11 +112,11 @@ class TestPoint:
         note(f"b angle: {bb}")
         assert isclose(bb - aa, angle)
 
-    #
-    # @given_inferred
-    # def test_rotation(self, a: Point, angle: np.float64, center: Point):
-    #     b = a.rotate(angle, center)
-    #     assert isclose((b - center).angle() - (a - center).angle(), angle)
+    @given_inferred
+    def test_rotation(self, a: Point, angle: Angle, center: Point):
+        assume(abs(a - center) != 0)
+        b = a.rotate(angle, center)
+        assert isclose((b - center).angle() - (a - center).angle(), angle)
 
 
 #
