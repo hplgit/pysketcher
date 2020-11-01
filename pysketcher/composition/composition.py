@@ -107,7 +107,7 @@ class Composition(Stylable):
 
     def _for_all_shapes(self, func: str, *args, **kwargs) -> "Composition":
         shapes = dict()
-        for key, shape in self._shapes:
+        for key, shape in self._shapes.items():
             shapes[key] = getattr(shape, func)(*args, **kwargs)
         return Composition(shapes)
 
@@ -130,19 +130,3 @@ class Composition(Stylable):
 class ShapeWithText(Composition):
     def __init__(self, shape: Shape, text: Text):
         super().__init__({"text": text, "shape": shape})
-
-    @property
-    def style(self) -> Style:
-        return self["shape"].style
-
-    @style.setter
-    def style(self, style: Style):
-        self["shape"].style = style
-
-    @property
-    def text_style(self) -> TextStyle:
-        return self["text"].style
-
-    @text_style.setter
-    def text_style(self, text_style: TextStyle):
-        self["text"].style = text_style

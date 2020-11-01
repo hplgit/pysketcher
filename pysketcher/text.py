@@ -56,3 +56,11 @@ class Text(Shape):
     def set_alignment(self, alignment: TextStyle.Alignment) -> "Text":
         self.style.alignment = alignment
         return self
+
+    def translate(self, vec: Point) -> "Text":
+        new_text = Text(self.text, self.position, self.direction)
+        new_text.style = self._style
+        return new_text
+
+    def scale(self, factor: float) -> "Text":
+        raise NotImplementedError

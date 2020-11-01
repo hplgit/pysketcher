@@ -37,15 +37,23 @@ class Curve(Shape):
         Rotate all coordinates: `angle` is measured in radians
         center is the "origin" of the rotation.
         """
-        return Curve([p.rotate(angle, center) for p in self.points])
+        ret_curve = Curve([p.rotate(angle, center) for p in self.points])
+        ret_curve.style = self.style
+        return ret_curve
 
     def scale(self, factor: np.float64) -> "Curve":
         """Scale all coordinates by `factor`: ``x = factor*x``, etc."""
-        return Curve(Point.from_coordinate_lists(factor * self.xs, factor * self.ys))
+        ret_curve = Curve(
+            Point.from_coordinate_lists(factor * self.xs, factor * self.ys)
+        )
+        ret_curve.style = self.style
+        return ret_curve
 
     def translate(self, vec: Point) -> "Curve":
         """Translate all coordinates by a vector `vec`."""
-        return Curve([p + vec for p in self.points])
+        ret_curve = Curve([p + vec for p in self.points])
+        ret_curve.style = self.style
+        return ret_curve
 
     def __str__(self):
         """Compact pretty print of a Curve object."""

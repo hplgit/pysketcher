@@ -13,6 +13,9 @@ from pysketcher.curve import Curve
 from pysketcher.drawable import Drawable
 from pysketcher.text import Text
 
+plt.rc("text", usetex=True)
+plt.rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
+
 
 class MatplotlibBackend(Backend):
     """
@@ -23,15 +26,26 @@ class MatplotlibBackend(Backend):
 
     _fig: plt.Figure
     _axes: plt.Axes
+    _x_min: float
+    _y_min: float
+    _x_max: float
+    _y_max: float
 
     def __init__(self, x_min, x_max, y_min, y_max):
         plt.ion()
+        self._x_min = x_min
+        self._x_max = x_max
+        self._y_min = y_min
+        self._y_max = y_max
         self._fig = plt.figure(
             figsize=[x_max - x_min, y_max - y_min], tight_layout=False
         )
         self._axes = self._fig.gca()
-        self._axes.set_xlim(x_min, x_max)
-        self._axes.set_ylim(y_min, y_max)
+        self._configure_axes()
+
+    def _configure_axes(self):
+        self._axes.set_xlim(self._x_min, self._x_max)
+        self._axes.set_ylim(self._y_min, self._y_max)
         self._axes.set_axis_off()
 
     def add(self, shape: Drawable) -> None:
@@ -40,8 +54,9 @@ class MatplotlibBackend(Backend):
                 adapter.plot(shape, self._axes)
 
     def erase(self):
-        """Erase the current figure."""
-        raise NotImplementedError
+        self._fig.clear()
+        self._axes = self._fig.gca()
+        self._configure_axes()
 
     def show(self):
         self._fig.sca(self._axes)

@@ -32,6 +32,9 @@ class Figure:
     def save(self, filename: str) -> None:
         self._backend.save(filename)
 
+    def erase(self):
+        self._backend.erase()
+
     # def animate(
     #     self,
     #     drawing_tool: DrawingTool,

@@ -1,5 +1,8 @@
+import logging
+
 import numpy as np
 
+from pysketcher.angle import Angle
 from pysketcher.composition.composition import ShapeWithText
 from pysketcher.curve import Curve
 from pysketcher.point import Point
@@ -13,69 +16,85 @@ class Arc(Curve):
 
     _center: Point
     _radius: float
-    start_angle: float
-    arc_angle: float
-    resolution: int
+    _start_angle: Angle
+    _arc_angle: Angle
+    _resolution: int
 
     def __init__(
         self,
         center: Point,
         radius: float,
-        start_angle: float,
-        arc_angle: float,
+        start_angle: Angle,
+        arc_angle: Angle,
         resolution: int = 180,
     ):
         # Must record some parameters for __call__
         self._center = center
         self._radius = radius
+        self._start_angle = Angle(start_angle)
+        self._arc_angle = Angle(arc_angle)
         self._resolution = resolution
-        self._start_angle = start_angle
-        self._arc_angle = arc_angle
 
-        ts = np.linspace(
-            self._start_angle, self._start_angle + self._arc_angle, resolution + 1
-        )
+        if self._arc_angle == 0.0:
+            # assume a full circle
+            ts = np.linspace(0.0, 2.0 * np.pi, resolution + 1)
+        else:
+            ts = np.linspace(0.0, self._arc_angle, resolution + 1)
 
-        points = [
-            Point(center.x + radius * np.cos(t), center.y + radius * np.sin(t))
-            for t in ts
-        ]
+        points = [self(t) for t in ts]
         super().__init__(points)
 
-        # Cannot set dimensions (Arc_wText recurses into this
-        # constructor forever). Set in test_Arc instead.
+    def __call__(self, theta: Angle) -> Point:
+        """
+        Return (x,y) point at start_angle + theta.
+        """
+        if self._arc_angle != 0.0 and theta > self._arc_angle:
+            raise ValueError("Theta is outside the bounds of the arc")
+        iota = Angle(self.start_angle + theta)
+        ret_point = Point(
+            self.center.x + self.radius * np.cos(iota),
+            self.center.y + self.radius * np.sin(iota),
+        )
+        return ret_point
+
+    @property
+    def start_angle(self) -> Angle:
+        return self._start_angle
+
+    @property
+    def arc_angle(self) -> Angle:
+        return self._arc_angle
+
+    @property
+    def end_angle(self) -> Angle:
+        return self._start_angle + self._arc_angle
+
+    @property
+    def radius(self) -> float:
+        return self._radius
+
+    @property
+    def center(self) -> Point:
+        return self._center
+
+    @property
+    def start(self) -> Point:
+        return self(0.0)
+
+    @property
+    def end(self) -> Point:
+        return self(self.arc_angle)
 
     def translate(self, vec: Point) -> "Arc":
-        circle = Arc(
+        arc = Arc(
             self._center + vec,
             self._radius,
             self._start_angle,
             self._arc_angle,
             self._resolution,
         )
-        circle.style = self.style
-        return circle
-
-    def geometric_features(self):
-        m = self._resolution // 2  # mid point in array
-        return {
-            "start": self._points[0],
-            "end": self._points[-1],
-            "mid": self._points[m],
-        }
-
-    def __call__(self, theta):
-        """
-        Return (x,y) point at start_angle + theta.
-        Not valid after translation, rotation, or scaling.
-        """
-        if theta > self._arc_angle:
-            raise ValueError("Theta is outside the bounds of the arc")
-
-        return Point(
-            self._center.x + self._radius * np.cos(self._start_angle + theta),
-            self._center.y + self._radius * np.sin(self._start_angle + theta),
-        )
+        arc.style = self.style
+        return arc
 
 
 class ArcWithText(ShapeWithText):
@@ -84,15 +103,14 @@ class ArcWithText(ShapeWithText):
         text: str,
         center: Point,
         radius: float,
-        start_angle: float,
-        arc_angle: float,
-        fontsize: float = 0,
+        start_angle: Angle,
+        arc_angle: Angle,
         resolution: int = 180,
         text_spacing: float = 1 / 6.0,
     ):
         arc = Arc(center, radius, start_angle, arc_angle, resolution)
         mid = arc(arc_angle / 2.0)
         normal = (mid - center).unit_vector()
-        text_pos = mid + normal * text_spacing
+        text_pos = mid - (normal * text_spacing)
         text = Text(text, text_pos)
         super().__init__(arc, text)
