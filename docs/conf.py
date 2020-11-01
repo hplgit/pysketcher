@@ -71,7 +71,7 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+html_static_path = ["tutorial/examples/images"]
 
 
 # -- Options for AutoStructify ----------------------------------------------
@@ -79,11 +79,7 @@ html_static_path = ["_static"]
 
 def setup(app):
     app.add_config_value(
-        "recommonmark_config",
-        {
-            "auto_toc_tree_section": "Contents",
-        },
-        True,
+        "recommonmark_config", {"auto_toc_tree_section": "Contents"}, True
     )
     app.add_transform(AutoStructify)
 

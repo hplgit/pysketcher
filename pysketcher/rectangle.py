@@ -1,11 +1,11 @@
 from typing import List
 
-from .arrow_with_text import ArrowWithText
-from .curve import Curve
-from .distance_with_text import DistanceWithText
-from .point import Point
-from .shape import Shape
-from .style import TextStyle
+from pysketcher.arrow_with_text import ArrowWithText
+from pysketcher.curve import Curve
+from pysketcher.distance_with_text import DistanceWithText
+from pysketcher.point import Point
+from pysketcher.shape import Shape
+from pysketcher.style import TextStyle
 
 
 class Rectangle(Curve):

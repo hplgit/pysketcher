@@ -1,9 +1,10 @@
 from enum import Enum, auto, unique
+from typing import Tuple, Union
 
-from .text import Text
-from .arrow import Arrow
-from .composition import ShapeWithText
-from .point import Point
+from pysketcher.arrow import Arrow
+from pysketcher.composition import ShapeWithText
+from pysketcher.point import Point
+from pysketcher.text import Text
 
 
 class ArrowWithText(ShapeWithText):
@@ -12,7 +13,7 @@ class ArrowWithText(ShapeWithText):
     to some point `arrow_tip`.
     """
 
-    _DEFAULT_SPACING: float = 0.15
+    _DEFAULT_SPACING: Point = Point(0.15, 0.15)
 
     @unique
     class TextPosition(Enum):
@@ -25,35 +26,17 @@ class ArrowWithText(ShapeWithText):
         start: Point,
         end: Point,
         text_position: TextPosition = TextPosition.START,
-        spacing: float = None,
-        start_spacing: float = None,
-        end_spacing: float = None,
+        spacing: Union[float, Point] = None,
     ):
 
-        if spacing is not None:
-            if start_spacing:
-                raise ValueError("Cannot set spacing and start_spacing")
-            if end_spacing:
-                raise ValueError("Cannot set spacing and end_spacing")
+        spacing = spacing if spacing else self._DEFAULT_SPACING
+        if not issubclass(spacing.__class__, Point):
+            spacing = Point(spacing, spacing)
 
         if text_position == self.TextPosition.START:
-            text = Text(text, start)
+            text = Text(text, start + spacing)
         if text_position == self.TextPosition.END:
-            text = Text(text, end)
+            text = Text(text, end + spacing)
 
-        spacing = spacing if spacing else self._DEFAULT_SPACING
-        if end_spacing is None:
-            if text_position == self.TextPosition.END:
-                end_spacing = spacing
-            else:
-                end_spacing = 0
-        if start_spacing is None:
-            if text_position == self.TextPosition.START:
-                start_spacing = spacing
-            else:
-                start_spacing = 0
-
-        arrow_start = start + (end - start) * start_spacing
-        arrow_end = end - (end - start) * end_spacing
-        arrow = Arrow(arrow_start, arrow_end)
+        arrow = Arrow(start, end)
         super().__init__(arrow, text)

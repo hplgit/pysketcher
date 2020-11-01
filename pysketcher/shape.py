@@ -1,10 +1,7 @@
-import copy
 from abc import ABC, abstractmethod
-from typing import Callable, List
 
-from .drawing_tool import DrawingTool
-from .point import Point
-from .style import Style
+from pysketcher.point import Point
+from pysketcher.style import Style
 
 
 class Stylable(ABC):
@@ -66,29 +63,6 @@ class Shape(Stylable):
 
     def __iter__(self):
         return [self]
-
-    def copy(self):
-        return copy.deepcopy(self)
-
-    @abstractmethod
-    def draw(self, drawing_tool: DrawingTool) -> None:
-        pass
-
-    def animate(
-        self,
-        drawing_tool: DrawingTool,
-        time_points: List[float],
-        action: Callable[["Shape", float, float], "Shape"],
-        pause_per_frame: float = 0.5,
-        dt: float = 0.5,
-        title=None,
-    ):
-
-        for n, t in enumerate(time_points):
-            drawing_tool.erase()
-
-            fig: Shape = action(self, t, dt)
-            fig.draw(drawing_tool)
 
     @abstractmethod
     def rotate(self, angle: float, center: Point) -> "Shape":

@@ -1,7 +1,7 @@
-from .drawing_tool import DrawingTool
-from .point import Point
-from .shape import Shape
-from .style import Style, TextStyle
+from pysketcher.angle import Angle
+from pysketcher.point import Point
+from pysketcher.shape import Shape
+from pysketcher.style import Style, TextStyle
 
 
 class Text(Shape):
@@ -22,11 +22,6 @@ class Text(Shape):
         self._direction = direction
         self._style = TextStyle()
 
-    def draw(self, drawing_tool: DrawingTool, verbose=0):
-        drawing_tool.text(
-            self._text, self._position, direction=self._direction, style=self.style
-        )
-
     def rotate(self, angle: float, center: Point):
         direction = self._direction.rotate(angle, center)
         position = self._position.rotate(angle, center)
@@ -42,6 +37,18 @@ class Text(Shape):
     def style(self) -> TextStyle:
         return self._style
 
+    @property
+    def position(self) -> Point:
+        return self._position
+
+    @property
+    def direction(self) -> Angle:
+        return self._direction
+
+    @property
+    def text(self) -> str:
+        return self._text
+
     @style.setter
     def style(self, text_style: TextStyle):
         self._style = text_style
@@ -49,3 +56,11 @@ class Text(Shape):
     def set_alignment(self, alignment: TextStyle.Alignment) -> "Text":
         self.style.alignment = alignment
         return self
+
+    def translate(self, vec: Point) -> "Text":
+        new_text = Text(self.text, self.position, self.direction)
+        new_text.style = self._style
+        return new_text
+
+    def scale(self, factor: float) -> "Text":
+        raise NotImplementedError

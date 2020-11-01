@@ -1,8 +1,8 @@
 from typing import List
 
-from .curve import Curve
-from .point import Point
-from .style import Style
+from pysketcher.curve import Curve
+from pysketcher.point import Point
+from pysketcher.style import Style
 
 
 class Wall(Curve):

@@ -1,7 +1,17 @@
 """A very simple beam."""
 import logging
 
-from pysketcher import *
+from pysketcher import (
+    DistanceWithText,
+    Figure,
+    Force,
+    Point,
+    Rectangle,
+    SimpleSupport,
+    Style,
+)
+from pysketcher.backend.matplotlib import MatplotlibBackend
+from pysketcher.composition import Composition
 
 
 def main():
@@ -12,10 +22,7 @@ def main():
     x_pos = 2.0
     y_pos = 3.0
 
-    drawing_tool = MatplotlibDraw(
-        xmin=0, xmax=x_pos + 1.2 * L, ymin=0, ymax=y_pos + 5 * H, axis=True
-    )
-    drawing_tool.set_grid(True)
+    fig = Figure(0, x_pos + 1.2 * L, 0, y_pos + 5 * H, MatplotlibBackend)
 
     p0 = Point(x_pos, y_pos)
     main = Rectangle(p0, L, H).set_fill_pattern(Style.FillPattern.UP_LEFT_TO_RIGHT)
@@ -39,11 +46,9 @@ def main():
         }
     )
 
-    beam.draw(drawing_tool)
-    beam.draw_dimensions(drawing_tool)
-    drawing_tool.display()
-
-    # test_Dashpot(xpos+2*W)
+    fig.add(beam)
+    # beam.draw_dimensions(drawing_tool)
+    fig.show()
 
 
 if __name__ == "__main__":

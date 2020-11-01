@@ -4,6 +4,8 @@ from typing import List, Tuple
 import numpy as np
 from hypothesis import note
 
+from pysketcher.angle import Angle
+
 
 class Point:
     """
@@ -66,8 +68,8 @@ class Point:
             raise ZeroDivisionError("Length of Vector cannot be Zero")
         return self * (1 / (abs(self)))
 
-    def angle(self) -> np.float64:
-        angle = np.arctan2(self.y, self.x)
+    def angle(self) -> Angle:
+        angle = Angle(np.arctan2(self.y, self.x))
         return angle
 
     def radius(self) -> np.float64:
@@ -77,8 +79,10 @@ class Point:
         uv = self.unit_vector()
         return Point(-uv.y, uv.x)
 
-    def rotate(self, angle: np.float64, center: "Point") -> "Point":
+    def rotate(self, angle: Angle, center: "Point") -> "Point":
         """Rotate point an `angle` (in radians) around (`x`,`y`)."""
+        if not type(angle) == Angle:
+            angle = Angle(angle)
         c = np.cos(angle)
         s = np.sin(angle)
         return Point(

@@ -1,26 +1,34 @@
-from pysketcher.composition.composition import Composition, ShapeWithText
+from importlib.metadata import PackageNotFoundError, version
 
-from .arc import Arc, ArcWithText
-from .arrow import Arrow, DoubleArrow
-from .arrow_with_text import ArrowWithText
-from .axis import Axis
-from .beam import SimpleSupport
-from .circle import Circle
-from .curve import Curve
-from .distance_with_text import DistanceWithText
-from .force import Force, Gravity
-from .line import Line
-from .matplotlibdraw import MatplotlibDraw
-from .moment import Moment
-from .point import Point
-from .rectangle import Rectangle
-from .shape import Shape
-from .sketchy_func import SketchyFunc1
-from .spline import Spline
-from .style import Style, TextStyle
-from .text import Text
-from .triangle import Triangle
-from .uniform_load import UniformLoad
-from .velocity_profile import VelocityProfile
-from .wall import Wall
-from .wheel import Wheel
+try:
+    __version__ = version(__name__)
+except PackageNotFoundError:
+    pass
+
+from pysketcher.angle import Angle
+from pysketcher.arc import Arc, ArcWithText
+from pysketcher.arrow import Arrow, DoubleArrow
+from pysketcher.arrow_with_text import ArrowWithText
+from pysketcher.axis import Axis
+from pysketcher.beam import SimpleSupport
+from pysketcher.circle import Circle
+from pysketcher.composition import Composition, ShapeWithText
+from pysketcher.curve import Curve
+from pysketcher.distance_with_text import DistanceWithText
+from pysketcher.drawable import Drawable
+from pysketcher.figure import Figure
+from pysketcher.force import Force, Gravity
+from pysketcher.line import Line
+from pysketcher.moment import Moment
+from pysketcher.point import Point
+from pysketcher.rectangle import Rectangle
+from pysketcher.shape import Shape
+from pysketcher.sketchy_func import SketchyFunc1
+from pysketcher.spline import Spline
+from pysketcher.style import Style, TextStyle
+from pysketcher.text import Text
+from pysketcher.triangle import Triangle
+from pysketcher.uniform_load import UniformLoad
+from pysketcher.velocity_profile import VelocityProfile
+from pysketcher.wall import Wall
+from pysketcher.wheel import Wheel

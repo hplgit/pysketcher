@@ -1,144 +1,134 @@
-from pysketcher import *
+import logging
+
+import numpy as np
+
+import pysketcher as ps
+from pysketcher import Point
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
 H = 7.0
 W = 6.0
 
-drawing_tool._set_coordinate_system(xmin=0, xmax=W, ymin=0, ymax=H, axis=False)
+logging.basicConfig(level=logging.INFO)
 # drawing_tool.set_grid(True)
-drawing_tool.set_linecolor("blue")
 
 L = 5 * H / 7  # length
-P = (W / 6, 0.85 * H)  # rotation point
-a = 40  # angle
+P = ps.Point(W / 6, 0.85 * H)  # rotation point
+a = 2 * np.pi / 9  # angle
 
-vertical = Line(P, P - point(0, L))
-path = Arc(P, L, -90, a)
-angle = Arc_wText(r"$\theta$", P, L / 4, -90, a, text_spacing=1 / 30.0)
+vertical = ps.Line(P, P - ps.Point(0, L))
+path = ps.Arc(P, L, -np.pi / 2, a)
+theta = ps.ArcWithText(r"$\theta$", P, L / 4, -np.pi / 2, a, text_spacing=1 / 30.0)
 
-rod = Line(P, P + L * point(sin(radians(a)), -L * cos(radians(a))))
-# or shorter (and more reliable)
-mass_pt = path.geometric_features()["end"]
-rod = Line(P, mass_pt)
+mass_pt = path.end
+rod = ps.Line(P, mass_pt)
 
-mass = Circle(center=mass_pt, radius=L / 20.0)
-mass.set_filled_curves(color="blue")
-rod_vec = rod.geometric_features()["end"] - rod.geometric_features()["start"]
-unit_rod_vec = unit_vec(rod_vec)
-mass_symbol = Text("$m$", mass_pt + L / 10 * unit_rod_vec)
+mass = ps.Circle(mass_pt, L / 20.0)
 
-length = DistanceWithText(P, mass_pt, "$L$")
+rod_vec = rod.end - rod.start
+unit_rod_vec = rod_vec.unit_vector()
+mass_symbol = ps.Text("$m$", mass_pt + unit_rod_vec * (L / 10.0))
+
+length = ps.DistanceWithText("$L$", P, mass_pt)
 # Displace length indication
-length.translate(L / 15 * point(cos(radians(a)), sin(radians(a))))
-gravity = Gravity(start=P + point(0.8 * L, 0), length=L / 3)
+length = length.translate(rod_vec.normal() * (L / 15))
+gravity = ps.Gravity(start=P + ps.Point(0.8 * L, 0), length=L / 3)
 
 
-def set_dashed_thin_blackline(*objects):
+def set_dashed_thin_blackline(*objects: ps.Shape):
     """Set linestyle of objects to dashed, black, width=1."""
     for obj in objects:
-        obj.set_linestyle("dashed")
-        obj.set_linecolor("black")
-        obj.set_linewidth(1)
+        obj.set_line_style(ps.Style.LineStyle.DASHED)
+        obj.set_line_color(ps.Style.Color.BLACK)
+        obj.set_line_width(1)
 
 
 set_dashed_thin_blackline(vertical, path)
+theta.style.arrow = ps.Style.ArrowStyle.DOUBLE
+mass.style.fill_color = ps.Style.Color.BLUE
 
-fig = Composition(
+model = ps.Composition(
     {
-        "body": mass,
-        "rod": rod,
         "vertical": vertical,
-        "theta": angle,
         "path": path,
+        "theta": theta,
+        "rod": rod,
+        "body": mass,
+        "m": mass_symbol,
         "g": gravity,
         "L": length,
-        "m": mass_symbol,
     }
 )
 
-fig.draw()
-drawing_tool.display()
-drawing_tool.savefig("tmp_pendulum1")
+fig = ps.Figure(0.0, W, 0.0, H, backend=MatplotlibBackend)
+fig.add(model)
+fig.show()
 
-# Draw free body diagram in several different versions
-# (note that we build body_diagram, erase and draw,
-# add elements to body_diagram, erase and draw, and so on)
-input("Press Return to make free body diagram: ")
-
-drawing_tool.erase()
-
-drawing_tool.set_linecolor("black")
-
-rod_start = rod.geometric_features()["start"]  # Point P
-vertical2 = Line(rod_start, rod_start + point(0, -L / 3))
+vertical2 = ps.Line(rod.start, rod.start + ps.Point(0.0, -L / 3.0))
 set_dashed_thin_blackline(vertical2)
 set_dashed_thin_blackline(rod)
-angle2 = Arc_wText(r"$\theta$", rod_start, L / 6, -90, a, text_spacing=1 / 30.0)
+angle2 = ps.ArcWithText(
+    r"$\theta$", rod.start, L / 6, -np.pi / 2, a, text_spacing=1 / 30.0
+)
+angle2.style.arrow = ps.Style.ArrowStyle.DOUBLE
 
-mg_force = Force(mass_pt, mass_pt + L / 5 * point(0, -1), "$mg$", text_pos="end")
-rod_force = Force(
+mg_force = ps.Force(
+    "$mg$",
     mass_pt,
-    mass_pt - L / 3 * unit_vec(rod_vec),
+    mass_pt + ps.Point(0.0, -L / 5.0),
+    text_position=ps.ArrowWithText.TextPosition.END,
+)
+rod_force = ps.Force(
     "$S$",
-    text_pos="end",
-    text_spacing=(0.03, 0.01),
-)
-air_force = Force(
     mass_pt,
-    mass_pt - L / 6 * unit_vec((rod_vec[1], -rod_vec[0])),
-    "$\sim|v|v$",
-    text_pos="end",
-    text_spacing=(0.04, 0.005),
+    mass_pt - rod_vec.unit_vector() * (L / 3.0),
+    text_position=ps.ArrowWithText.TextPosition.END,
 )
 
-body_diagram = Composition(
-    {
-        "mg": mg_force,
-        "S": rod_force,
-        "rod": rod,
-        "vertical": vertical2,
-        "theta": angle2,
-        "body": mass,
-        "m": mass_symbol,
-    }
+mass.style.fill_color = ps.Style.Color.BLUE
+
+body_diagram_shapes = {
+    "$mg$": mg_force,
+    "S": rod_force,
+    "rod": rod,
+    "vertical": vertical2,
+    "theta": angle2,
+    "body": mass,
+    "m": mass_symbol,
+}
+
+air_force = ps.Force(
+    r"${\sim}|v|v$",
+    mass_pt,
+    mass_pt + rod_vec.normal() * (L / 6.0),
+    text_position=ps.ArrowWithText.TextPosition.END,
+    # spacing = Point(0.04, 0.005),
 )
 
-body_diagram.draw()
-# drawing_tool.display('Free body diagram')
-drawing_tool.savefig("tmp_pendulum2")
+body_diagram_shapes["air"] = air_force
 
-drawing_tool.adjust_coordinate_system(body_diagram.minmax_coordinates(), 90)
-# drawing_tool.display('Free body diagram')
-drawing_tool.savefig("tmp_pendulum3")
+x0y0 = ps.Text("$(x_0,y_0)$", P + ps.Point(-0.4, -0.1))
 
-drawing_tool.erase()
-body_diagram["air"] = air_force
-body_diagram.draw()
-# drawing_tool.display('Free body diagram')
-drawing_tool.savefig("tmp_pendulum4")
-
-drawing_tool.erase()
-x0y0 = Text("$(x_0,y_0)$", P + point(-0.4, -0.1))
-ir = Force(
-    P,
-    P + L / 10 * unit_vec(rod_vec),
+ir = ps.Force(
     r"$\boldsymbol{i}_r$",
-    text_pos="end",
-    text_spacing=(0.015, 0),
-)
-ith = Force(
     P,
-    P + L / 10 * unit_vec((-rod_vec[1], rod_vec[0])),
-    r"$\boldsymbol{i}_{\theta}$",
-    text_pos="end",
-    text_spacing=(0.02, 0.005),
+    P + rod_vec.unit_vector() * (L / 10.0),
+    text_position=ps.ArrowWithText.TextPosition.END,
 )
 
-body_diagram["ir"] = ir
-body_diagram["ith"] = ith
-body_diagram["origin"] = x0y0
+ith = ps.Force(
+    r"$\boldsymbol{i}_{\theta}$",
+    P,
+    P + rod_vec.normal() * (L / 10.0),
+    text_position=ps.ArrowWithText.TextPosition.END,
+)
 
-body_diagram.draw()
+body_diagram_shapes["ir"] = ir
+body_diagram_shapes["ith"] = ith
+body_diagram_shapes["origin"] = x0y0
+
+fig.erase()
+body_diagram = ps.Composition(body_diagram_shapes)
+fig.add(body_diagram)
 # drawing_tool.display('Free body diagram')
-drawing_tool.savefig("tmp_pendulum5")
-
-input()
+fig.show()
