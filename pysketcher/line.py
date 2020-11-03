@@ -34,6 +34,8 @@ class Line(Curve):
             raise ValueError("Cannot specify a line with two equal points.")
         self._start = start
         self._end = end
+        self._horizontal = False
+        self._vertical = False
         self._a = self._b = self._c = self._d = None
         super().__init__([self._start, self._end])
         self._compute_formulas()

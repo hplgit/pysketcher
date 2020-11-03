@@ -23,7 +23,12 @@ from pysketcher.moment import Moment
 from pysketcher.point import Point
 from pysketcher.rectangle import Rectangle
 from pysketcher.shape import Shape
-from pysketcher.sketchy_func import SketchyFunc1
+from pysketcher.sketchy_func import (
+    SketchyFunc1,
+    SketchyFunc2,
+    SketchyFunc3,
+    SketchyFunc4,
+)
 from pysketcher.spline import Spline
 from pysketcher.style import Style, TextStyle
 from pysketcher.text import Text

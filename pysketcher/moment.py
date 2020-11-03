@@ -23,7 +23,6 @@ class Moment(ArcWithText):
             radius,
             start_angle,
             np.pi,
-            fontsize=fontsize,
             text_spacing=text_spacing,
             resolution=180,
         )

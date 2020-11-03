@@ -1,10 +1,8 @@
-from pysketcher import Composition, MatplotlibDraw, Point, Triangle
+import pysketcher as ps
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
-drawing_tool = MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=5, axis=False)
-drawing_tool.set_linecolor("black")
+model = ps.Triangle(ps.Point(1, 1), ps.Point(1, 4), ps.Point(3, 3))
 
-code = Triangle(Point(1, 1), Point(1, 4), Point(3, 3))
-fig = Composition(dict(text=code))
-
-fig.draw(drawing_tool)
-drawing_tool.display()
+fig = ps.Figure(0, 5, 0, 5, backend=MatplotlibBackend)
+fig.add(model)
+fig.show()

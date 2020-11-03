@@ -25,16 +25,13 @@ class MatplotlibText(MatplotlibAdapter):
             kwargs["backgroundcolor"] = mpl_style.fill_color
         if mpl_style.line_color is not None:
             kwargs["color"] = mpl_style.line_color
+        if mpl_style.font_size is not None:
+            kwargs["fontsize"] = mpl_style.font_size
+        if mpl_style.alignment is not None:
+            kwargs["horizontalalignment"] = mpl_style.alignment
 
         rotation_angle = text.direction.angle()
         if rotation_angle != 0.0:
             kwargs["rotation"] = rotation_angle
 
-        axes.text(
-            text.position.x,
-            text.position.y,
-            text.text,
-            horizontalalignment=mpl_style.alignment,
-            fontsize=mpl_style.font_size,
-            **kwargs
-        )
+        axes.text(text.position.x, text.position.y, text.text, **kwargs)
