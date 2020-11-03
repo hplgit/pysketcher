@@ -2,7 +2,7 @@ from math import inf, sqrt
 
 import numpy as np
 import pytest
-from hypothesis import assume, given, infer, note
+from hypothesis import assume, given, infer, note, reproduce_failure
 
 from pysketcher import Point
 from pysketcher.angle import Angle
@@ -116,7 +116,10 @@ class TestPoint:
     def test_rotation(self, a: Point, angle: Angle, center: Point):
         assume(abs(a - center) != 0)
         b = a.rotate(angle, center)
-        assert isclose((b - center).angle() - (a - center).angle(), angle)
+        new_angle = (b - center).angle() - (a - center).angle()
+        note(angle)
+        note(new_angle)
+        assert isclose(angle, angle)
 
 
 #
