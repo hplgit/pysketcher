@@ -1,13 +1,13 @@
 """Minimialistic pysketcher example."""
-from pysketcher import Composition, MatplotlibDraw, Point, Text, TextStyle
+import pysketcher as ps
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
-drawing_tool = MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=3, axis=False)
-
-code = Text("print 'Hello, World!'", Point(2.5, 1.5))
+code = ps.Text("print 'Hello, World!'", ps.Point(2.5, 1.5))
 
 code.style.fontsize = 24
-code.style.font_family = TextStyle.FontFamily.MONO
-code.style.fill_color = TextStyle.Color.GREY
+code.style.font_family = ps.TextStyle.FontFamily.MONO
+code.style.fill_color = ps.TextStyle.Color.GREY
 
-code.draw(drawing_tool)
-drawing_tool.display()
+fig = ps.Figure(0.0, 5.0, 0.0, 3.0, backend=MatplotlibBackend)
+fig.add(code)
+fig.show()
