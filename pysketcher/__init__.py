@@ -30,6 +30,7 @@ from pysketcher.sketchy_func import (
     SketchyFunc4,
 )
 from pysketcher.spline import Spline
+from pysketcher.spring import Spring
 from pysketcher.style import Style, TextStyle
 from pysketcher.text import Text
 from pysketcher.triangle import Triangle
