@@ -1,10 +1,11 @@
 import logging
+import warnings
 from typing import List, Tuple
 
 import numpy as np
-from hypothesis import note
 
 from pysketcher.angle import Angle
+from pysketcher.warning import LossOfPrecisionWarning
 
 
 class Point:
@@ -37,7 +38,7 @@ class Point:
         return Point(self.x * scalar, self.y * scalar)
 
     def __abs__(self) -> np.float64:
-        return np.sqrt(self.x * self.x + self.y * self.y)
+        return np.hypot(self.x, self.y)
 
     def __eq__(self, other: "Point") -> bool:
         return self._isclose(self.x, other.x) and self._isclose(self.y, other.y)
@@ -69,8 +70,69 @@ class Point:
         return self * (1 / (abs(self)))
 
     def angle(self) -> Angle:
-        angle = Angle(np.arctan2(self.y, self.x))
-        return angle
+        """
+
+        Returns:
+            object:
+        """
+        logging.debug(abs(self))
+        if abs(self.x) <= 1e-160 or abs(self.y) <= 1e-160 or abs(self) < 1e-160:
+            warnings.warn(
+                "Vert short components will lead to loss of precision.",
+                category=LossOfPrecisionWarning,
+            )
+
+        if abs(self) == 0:
+            return np.nan
+
+        # check for simple degenerate cases:
+        if self.x == 0.0:
+            if self.y > 0.0:
+                return Angle(np.pi / 2)
+            else:
+                return Angle(-np.pi / 2)
+        if self.y == 0.0:
+            if self.x > 0.0:
+                return Angle(0.0)
+            else:
+                return Angle(np.pi)
+
+        if abs(self.x / self.y) >= 1e5 or abs(self.y / self.x) >= 1e5:
+            warnings.warn(
+                "Variation in magnitude of more that 1e6 causes loss of precision.",
+                LossOfPrecisionWarning,
+            )
+
+        # determine quadrant
+        if self.x > 0:
+            if self.y > 0:
+                quadrant = 0
+            else:  # b < 0
+                quadrant = -1
+        else:  # a < 0
+            if self.y > 0:
+                quadrant = 1
+            else:  # b > 0:
+                quadrant = -2
+
+        a = abs(self)
+        b = abs(self.x)
+        c = abs(self.y)
+
+        u = c - (a - b) if b >= c else b - (a - c)
+
+        angle = 2 * np.arctan(
+            np.sqrt((((a - b) + c) * u) / ((a + (b + c)) * ((a - c) + b)))
+        )
+
+        if quadrant == 0:
+            return Angle(angle)
+        elif quadrant == 1:
+            return Angle(np.pi - angle)
+        elif quadrant == -1:
+            return Angle(-angle)
+        else:
+            return Angle(-np.pi + angle)
 
     def radius(self) -> np.float64:
         return abs(self)
@@ -81,8 +143,19 @@ class Point:
 
     def rotate(self, angle: Angle, center: "Point") -> "Point":
         """Rotate point an `angle` (in radians) around (`x`,`y`)."""
+
         if not type(angle) == Angle:
             angle = Angle(angle)
+
+        # Check for a few degenerate cases:
+        if angle == Angle(0.0):
+            return self
+        if angle == Angle(np.pi / 2):
+            return Point(center.x - self.y + center.y, center.y + self.x - center.x)
+        if angle == Angle(np.pi):
+            return Point(2 * center.x - self.x, 2 * center.y - self.y)
+        if angle == Angle(-np.pi / 2):
+            return Point(center.x + self.y - center.y, center.y - self.x + center.x)
         c = np.cos(angle)
         s = np.sin(angle)
         return Point(

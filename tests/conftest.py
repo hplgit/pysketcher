@@ -6,11 +6,12 @@ from hypothesis.extra.numpy import from_dtype
 from hypothesis.strategies import SearchStrategy, builds, floats, from_type
 
 import pysketcher as ps
+from pysketcher import Point
 from pysketcher.angle import Angle
 from pysketcher.backend.matplotlib import MatplotlibBackend
 from tests.utils import TypeStrategy
 
-mx = 1e12
+mx = 1e30
 atol = 1e-4
 
 
@@ -41,3 +42,16 @@ def make_float(typ: Type) -> SearchStrategy[np.float64]:
         lambda x: -mx < x < mx
     )
     return strategy
+
+
+@TypeStrategy()
+def make_point(typ: Type) -> SearchStrategy[Point]:
+    def flt(a: Point):
+        retval = True
+        if a.x != 0.0:
+            retval = retval and a.x > 1e-160
+        if a.y != 0.0:
+            retval = retval and a.y > 1e-160
+        return retval and mx > abs(a) > 0.0
+
+    return builds(Point, make_float(np.float64), make_float(np.float64)).filter(flt)

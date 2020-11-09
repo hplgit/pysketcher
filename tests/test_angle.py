@@ -1,5 +1,5 @@
 import numpy as np
-from hypothesis import assume
+from hypothesis import assume, note
 
 from pysketcher.angle import Angle
 from tests.utils import given_inferred
@@ -21,13 +21,13 @@ class TestAngle:
     def test_addition(self, a: Angle, b: Angle):
         c = a + b
         assert type(c) == Angle
-        assert -np.pi <= a <= np.pi
+        assert -np.pi <= c <= np.pi
 
     @given_inferred
     def test_subtraction(self, a: Angle, b: Angle):
         c = a - b
         assert type(c) == Angle
-        assert -np.pi <= a <= np.pi
+        assert -np.pi <= c <= np.pi
 
     @given_inferred
     def test_multiplication(self, a: Angle, b: np.float64):
@@ -40,5 +40,6 @@ class TestAngle:
         assume(1e-6 < abs(b) < 1e6)
         assume(b != 0.0)
         c = a / b
+        note(c)
         assert type(c) == Angle
-        assert -np.pi <= a <= np.pi
+        assert -np.pi <= c <= np.pi

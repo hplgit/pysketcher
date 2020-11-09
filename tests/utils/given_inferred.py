@@ -15,13 +15,10 @@ def given_inferred(func):
 
     def valid(self=None):
         nonlocal func, args, kwonlyargs
-        logging.debug(f"{func.__name__} has been annotated with given_inferred.")
         # infer can only be applied to keywords, so convert the positionals to kws
         newargs = {arg: infer for arg in args if arg != "self"}
         kwargs = {kw: infer for kw in kwonlyargs}
         args = {**newargs, **kwargs}
-        logging.debug(f"{func.__name__} args are {args}.")
-        logging.debug(f"{func.__name__} type hints are {get_type_hints(func)}")
         if self:
             return given(**args)(func)(self)
         else:
