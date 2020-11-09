@@ -33,7 +33,7 @@ class TestAngle:
     def test_multiplication(self, a: Angle, b: np.float64):
         c = a * b
         assert type(c) == Angle
-        assert -np.pi <= a <= np.pi
+        assert -np.pi <= c <= np.pi
 
     @given_inferred
     def test_division(self, a: Angle, b: np.float64):
