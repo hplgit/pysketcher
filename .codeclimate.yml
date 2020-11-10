@@ -1,14 +1,17 @@
+version: 2
+argument-count:
+    config:
+        threshold: 7
 exclude_patterns:
-  - "doc/"
-  - "examples/"
-  - "tests/"
-
+    - "doc/"
+    - "examples/"
+    - "tests/"
 plugins:
-  bandit:
-    enabled: true
-  Pep8:
-    enabled: true
-  Radon:
-    enabled: true
-  SonarPython:
-    enabled: true
+    bandit:
+        enabled: true
+    Pep8:
+        enabled: true
+    Radon:
+        enabled: true
+    SonarPython:
+        enabled: true
