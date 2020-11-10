@@ -1,10 +1,8 @@
-from pysketcher import Composition, MatplotlibDraw, Point, Rectangle
+import pysketcher as ps
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
-drawing_tool = MatplotlibDraw(xmin=0, xmax=20, ymin=0, ymax=20, axis=False)
+rect = ps.Rectangle(ps.Point(4, 4), 10, 15)
 
-code = Rectangle(Point(4, 4), 10, 15)
-code.draw_dimensions(drawing_tool)
-fig = Composition(dict(text=code))
-
-fig.draw(drawing_tool)
-drawing_tool.display()
+fig = ps.Figure(0, 20, 0, 20, backend=MatplotlibBackend)
+fig.add(rect)
+fig.show()

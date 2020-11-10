@@ -1,10 +1,11 @@
 import logging
+import warnings
 from typing import List, Tuple
 
 import numpy as np
-from hypothesis import note
 
 from pysketcher.angle import Angle
+from pysketcher.warning import LossOfPrecisionWarning
 
 
 class Point:
@@ -37,7 +38,7 @@ class Point:
         return Point(self.x * scalar, self.y * scalar)
 
     def __abs__(self) -> np.float64:
-        return np.sqrt(self.x * self.x + self.y * self.y)
+        return np.hypot(self.x, self.y)
 
     def __eq__(self, other: "Point") -> bool:
         return self._isclose(self.x, other.x) and self._isclose(self.y, other.y)
@@ -81,14 +82,27 @@ class Point:
 
     def rotate(self, angle: Angle, center: "Point") -> "Point":
         """Rotate point an `angle` (in radians) around (`x`,`y`)."""
+
         if not type(angle) == Angle:
             angle = Angle(angle)
-        c = np.cos(angle)
-        s = np.sin(angle)
-        return Point(
-            center.x + (self.x - center.x) * c - (self.y - center.y) * s,
-            center.y + (self.x - center.x) * s + (self.y - center.y) * c,
-        )
+
+        # Check for a few degenerate cases:
+        if angle == Angle(0.0):
+            p = self
+        elif angle == Angle(np.pi / 2):
+            p = Point(center.x - self.y + center.y, center.y + self.x - center.x)
+        elif angle == Angle(np.pi):
+            p = Point(2 * center.x - self.x, 2 * center.y - self.y)
+        elif angle == Angle(-np.pi / 2):
+            p = Point(center.x + self.y - center.y, center.y - self.x + center.x)
+        else:
+            c = np.cos(angle)
+            s = np.sin(angle)
+            p = Point(
+                center.x + (self.x - center.x) * c - (self.y - center.y) * s,
+                center.y + (self.x - center.x) * s + (self.y - center.y) * c,
+            )
+        return p
 
     def scale(self, factor: np.float64) -> "Point":
         """Scale point coordinates by `factor`: ``x = factor*x``, etc."""

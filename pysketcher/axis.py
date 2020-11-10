@@ -1,3 +1,4 @@
+from pysketcher.angle import Angle
 from pysketcher.arrow import Arrow
 from pysketcher.composition.composition import ShapeWithText
 from pysketcher.point import Point
@@ -10,7 +11,7 @@ class Axis(ShapeWithText):
         start: Point,
         length: float,
         label: str,
-        rotation_angle=0,
+        rotation_angle: Angle = Angle(0.0),
         label_spacing=1.0 / 4.5,
     ):
         """
@@ -30,8 +31,12 @@ class Axis(ShapeWithText):
         """
         arrow = Arrow(start, start + Point(length, 0)).rotate(rotation_angle, start)
         # should increase spacing for downward pointing axis
-        label_pos = Point(start.x + length + label_spacing, start.y)
-        label = Text(label, position=label_pos).rotate(rotation_angle, start)
+        if type(label_spacing) != tuple:
+            label_spacing = (label_spacing, label_spacing)
+        label_pos = Point(
+            start.x + length + label_spacing[0], start.y + label_spacing[1]
+        )
+        label = Text(label, label_pos).rotate(rotation_angle, start)
 
         super().__init__(arrow, label)
 

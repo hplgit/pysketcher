@@ -22,7 +22,7 @@ class Text(Shape):
         self._direction = direction
         self._style = TextStyle()
 
-    def rotate(self, angle: float, center: Point):
+    def rotate(self, angle: float, center: Point) -> "Text":
         direction = self._direction.rotate(angle, center)
         position = self._position.rotate(angle, center)
         return Text(self._text, position, direction)

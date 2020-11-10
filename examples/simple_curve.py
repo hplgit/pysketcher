@@ -1,15 +1,17 @@
 import logging
 
-import pysketcher
-from pysketcher import Composition, Curve, Point, Style
+import pysketcher as ps
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
 logging.basicConfig(level=logging.INFO)
 
-drawing_tool = pysketcher.MatplotlibDraw(xmin=0, xmax=5, ymin=0, ymax=16, axis=False)
 
-code = Curve([Point(0, 0), Point(1, 1), Point(2, 4), Point(3, 9), Point(4, 16)])
-code.style.line_color = Style.Color.BLACK
-fig = Composition(dict(text=code))
+code = ps.Curve(
+    [ps.Point(0, 0), ps.Point(1, 1), ps.Point(2, 4), ps.Point(3, 9), ps.Point(4, 16)]
+)
+code.style.line_color = ps.Style.Color.BLACK
+model = ps.Composition(dict(text=code))
 
-fig.draw(drawing_tool)
-drawing_tool.display()
+fig = ps.Figure(0, 5, 0, 16, backend=MatplotlibBackend)
+fig.add(model)
+fig.show()

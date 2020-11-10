@@ -6,28 +6,26 @@ from pysketcher import (
     ArcWithText,
     Axis,
     Circle,
-    Composition,
+    Figure,
     Force,
     Gravity,
     Line,
-    MatplotlibDraw,
     Point,
     Shape,
     Style,
     Wall,
 )
+from pysketcher.backend.matplotlib import MatplotlibBackend
+from pysketcher.composition import Composition
 
 
 def inclined_plane():
     theta = np.pi / 6
     L = 10.0
     a = 1.0
-    xmin = 0
-    ymin = -3
+    x_min = 0.0
+    y_min = -3.0
 
-    drawing_tool = MatplotlibDraw(
-        xmin=xmin, xmax=xmin + 1.5 * L, ymin=ymin, ymax=ymin + L
-    )
     B = Point(a + L, 0)
     A = Point(a, np.tan(theta) * L)
 
@@ -45,7 +43,7 @@ def inclined_plane():
     ground.style.line_style = Style.LineStyle.DASHED
     ground.style.line_width = 1
 
-    r = 1  # radius of wheel
+    r = 1.0  # radius of wheel
     help_line = Line(A, B)
     x = a + 3 * L / 10.0
     y = help_line(x=x)
@@ -73,7 +71,7 @@ def inclined_plane():
     x_const = x_const.rotate(-theta, contact)
     # or x_const = Line(contact-2*r*normal_vec, contact+4*r*normal_vec).set_linestyle('dotted')
     x_axis = Axis(
-        start=contact + normal_vec * 3 * r,
+        start=contact + normal_vec * 3.0 * r,
         length=4 * r,
         label="$x$",
         rotation_angle=-theta,
@@ -91,12 +89,12 @@ def inclined_plane():
         }
     )
 
-    fig = Composition({"fixed elements": fixed, "body": body})
+    model = Composition({"fixed elements": fixed, "body": body})
 
-    fig.draw(drawing_tool)
-    drawing_tool.savefig("tmp.png")
-    drawing_tool.savefig("tmp.pdf")
-    drawing_tool.display()
+    fig = Figure(x_min, x_min + 1.5 * L, y_min, y_min + L, backend=MatplotlibBackend)
+
+    fig.add(model)
+    fig.show()
     time.sleep(1)
     tangent_vec = Point(normal_vec.y, -normal_vec.x)
 
@@ -112,12 +110,6 @@ def inclined_plane():
         displacement = x - x0
         return fig["body"].translate(displacement)
 
-    # animate(fig, time_points, move, pause_per_frame=0,
-    #        dt=time_points[1] - time_points[0])
 
-    print(str(fig))
-    print(repr(fig))
-
-
-inclined_plane()
-input()
+if __name__ == "__main__":
+    inclined_plane()

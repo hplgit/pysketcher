@@ -1,13 +1,13 @@
-from pysketcher import *
+import numpy as np
+
+import pysketcher as ps
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
 Nt = 5
 
-# u = SketchyFunc1()
-# t_mesh = linspace(0, 8, Nt+1)
-
-u = SketchyFunc3()
-t_mesh = linspace(0, 6, Nt + 1)
-t_mesh_staggered = linspace(
+u = ps.SketchyFunc3()
+t_mesh = np.linspace(0, 6, Nt + 1)
+t_mesh_staggered = np.linspace(
     0.5 * (t_mesh[0] + t_mesh[1]), 0.5 * (t_mesh[-2] + t_mesh[-1]), Nt
 )
 
@@ -18,18 +18,18 @@ t_max = t_mesh[-1] + 0.3 * t_axis_extent
 u_max = 1.3 * max([u(t) for t in t_mesh])
 u_min = -0.2 * u_max
 
-drawing_tool._set_coordinate_system(t_min, t_max, u_min, u_max, axis=False)
-drawing_tool.set_linecolor("black")
-
-r = 0.005 * (t_max - t_min)  # radius of circles placed at mesh points
-u_discrete = Composition(
+r = 0.005 * (t_max - t_min)  # radius of circles placed at mesh Points
+u_discrete = ps.Composition(
     {
-        i: Composition(
+        i: ps.Composition(
             dict(
-                circle=Circle(point(t, u(t)), r).set_filled_curves("black"),
-                u_point=Text(
+                circle=ps.Circle(ps.Point(t, u(t)), r).set_fill_color(
+                    ps.Style.Color.BLACK
+                ),
+                u_Point=ps.Text(
                     "$u_%d$" % i,
-                    point(t, u(t)) + (point(0, 5 * r) if i > 0 else point(-5 * r, 0)),
+                    ps.Point(t, u(t))
+                    + (ps.Point(0, 5 * r) if i > 0 else ps.Point(-5 * r, 0)),
                 ),
             )
         )
@@ -39,15 +39,18 @@ u_discrete = Composition(
 
 # u' = v
 # v = u.smooth.derivative(n=1)
-v = SketchyFunc4()
+v = ps.SketchyFunc4()
 
-v_discrete = Composition(
+v_discrete = ps.Composition(
     {
-        i: Composition(
+        i: ps.Composition(
             dict(
-                circle=Circle(point(t, v(t)), r).set_filled_curves("red"),
-                v_point=Text(
-                    r"$v_{%d/2}$" % (2 * i + 1), point(t, v(t)) + (point(0, 5 * r))
+                circle=ps.Circle(ps.Point(t, v(t)), r).set_fill_color(
+                    ps.Style.Color.RED
+                ),
+                v_Point=ps.Text(
+                    r"$v_{%d/2}$" % (2 * i + 1),
+                    ps.Point(t, v(t)) + (ps.Point(0, 5 * r)),
                 ),
             )
         )
@@ -55,59 +58,66 @@ v_discrete = Composition(
     }
 )
 
-axes = Composition(
+axes = ps.Composition(
     dict(
-        x=Axis(
-            point(0, 0),
+        x=ps.Axis(
+            ps.Point(0, 0),
             t_mesh[-1] + 0.2 * t_axis_extent,
             "$t$",
             label_spacing=(1 / 45.0, -1 / 30.0),
         ),
-        y=Axis(point(0, 0), 0.8 * u_max, "$u,v$", rotation_angle=90),
+        y=ps.Axis(ps.Point(0, 0), 0.8 * u_max, "$u,v$", rotation_angle=np.pi / 2),
     )
 )
 
 h = 0.03 * u_max  # tickmarks height
-u_nodes = Composition(
+u_nodes = ps.Composition(
     {
-        i: Composition(
+        i: ps.Composition(
             dict(
-                node=Line(point(t, h), point(t, -h)),
-                name=Text("$t_%d$" % i, point(t, -3.5 * h)),
+                node=ps.Line(ps.Point(t, h), ps.Point(t, -h)),
+                name=ps.Text("$t_%d$" % i, ps.Point(t, -3.5 * h)),
             )
         )
         for i, t in enumerate(t_mesh)
     }
 )
-v_nodes = Composition(
+v_nodes = ps.Composition(
     {
-        i: Composition(
+        i: ps.Composition(
             dict(
-                node=Line(point(t, h / 1.5), point(t, -h / 1.5)).set_linecolor("red"),
-                name=Text(r"$t_{%d/2}$" % (2 * i + 1), point(t, -3.5 * h)),
+                node=ps.Line(
+                    ps.Point(t, h / 1.5), ps.Point(t, -h / 1.5)
+                ).set_line_color(ps.Style.Color.RED),
+                name=ps.Text(r"$t_{%d/2}$" % (2 * i + 1), ps.Point(t, -3.5 * h)),
             )
         )
         for i, t in enumerate(t_mesh_staggered)
     }
 )
-illustration = Composition(
+illustration = ps.Composition(
     dict(u=u_discrete, v=v_discrete, u_mesh=u_nodes, v_mesh=v_nodes, axes=axes)
-).set_name("fdm_uv")
-drawing_tool.erase()
-# Staggered t mesh and u and v points
-illustration.draw()
-drawing_tool.display()
-drawing_tool.savefig(illustration.get_name())
+)
+
+fig = ps.Figure(t_min, t_max, u_min, u_max, backend=MatplotlibBackend)
+
+# Staggered t mesh and u and v Points
+fig.add(illustration)
+fig.show()
 
 # Exact u line (u is a Spline Shape that applies 500 intervals by default
 # for drawing the curve)
-u_exact = u.set_linestyle("dashed").set_linewidth(1)
-u_exact.draw()
-# v = Curve(u.xcoor, v(u.xcoor))
-t_mesh_staggered_fine = linspace(t_mesh_staggered[0], t_mesh_staggered[-1], 501)
-v_exact = Curve(t_mesh_staggered_fine).set_linestyle("dashed").set_linewidth(1)
-v_exact.draw()
-drawing_tool.display()
-drawing_tool.savefig("%s_uve" % illustration.get_name())
+u_exact = u.set_line_style(ps.Style.LineStyle.DASHED).set_line_width(1)
+fig.add(u_exact)
+fig.show()
 
-input()
+# v = Curve(u.xcoor, v(u.xcoor))
+t_mesh_staggered_fine = np.linspace(t_mesh_staggered[0], t_mesh_staggered[-1], 501)
+t_mesh_staggered_points = [ps.Point(x, v(x)) for x in t_mesh_staggered_fine]
+v_exact = (
+    ps.Curve(t_mesh_staggered_points)
+    .set_line_style(ps.Style.LineStyle.DASHED)
+    .set_line_width(1)
+)
+fig.add(v_exact)
+fig.show()

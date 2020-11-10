@@ -138,9 +138,6 @@ class Style:
 
 
 class TextStyle(Style):
-    class FontSize(Enum):
-        MEDIUM = auto()
-
     class FontFamily(Enum):
         SERIF = auto()
         SANS = auto()
@@ -151,22 +148,22 @@ class TextStyle(Style):
         CENTER = auto()
         RIGHT = auto()
 
-    _font_size: FontSize
+    _font_size: float
     _font_family: FontFamily
     _alignment: Alignment
 
     def __init__(self,):
         super().__init__()
-        self._font_size = self.FontSize.MEDIUM
+        self._font_size = 12
         self._font_family = self.FontFamily.SANS
         self._alignment = self.Alignment.CENTER
 
     @property
-    def font_size(self) -> FontSize:
+    def font_size(self) -> float:
         return self._font_size
 
     @font_size.setter
-    def font_size(self, font_size: FontSize):
+    def font_size(self, font_size: float):
         self._font_size = font_size
 
     @property

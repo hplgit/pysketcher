@@ -54,13 +54,18 @@ def beam():
 
     support = SimpleSupport(B, h)  # pt B is simply supported
 
-    R1 = Force("$R_1$", A - Point(0, 2 * H), A, start_spacing=0.3)
+    R1 = Force(
+        "$R_1$",
+        A - Point(0, 2 * H),
+        A,
+        # start_spacing=0.3
+    )
     R1.set_line_width(3).set_line_color(Style.Color.BLACK)
     R2 = Force(
         "$R2$",
         B - Point(0, 2 * H),
         support.geometric_features()["mid_support"],
-        start_spacing=0.3,
+        spacing=0.3,
     )
     R2.set_line_width(3).set_line_color(Style.Color.BLACK)
     M1 = Moment(
@@ -135,4 +140,5 @@ def beam():
     fig.show()
 
 
-beam()
+if __name__ == "__main__":
+    beam()
