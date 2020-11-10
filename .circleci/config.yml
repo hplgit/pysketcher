@@ -68,6 +68,32 @@ jobs:
                  git commit -m "Updated poetry.lock to reflect new dependency versions"
                  git push origin ${CIRCLE_BRANCH}
               fi
+  bumpVersion:
+    executor: python/default
+    steps:
+      - attach_workspace:
+            at: .
+      - run:
+          name: Update version number
+          command: |
+              poetry version patch --no-interaction
+              git config user.email "automation@circleci.com"
+              git config user.name  "CirleCI Automation"
+              git add pyproject.yaml
+              git commit -m "[ci skip] Updated version number to ${poetry verion -s}"
+              git tag ${poetry version -s}
+              git push origin ${poetry version -s}
+              git push origin master
+  publishRelease:
+    executor: python/default
+    steps:
+        - attach_workspace:
+              at: .
+        - run:
+            name: Push release to pypi
+            command: |
+                poetry publish --build --username "${PYPI_USERNAME}" --password "${PYPI_PASSWORD}" --no-interaction
+
 
 orbs:
   python: circleci/python@1.0.0
@@ -93,7 +119,21 @@ workflows:
       - checkout:
           filters:
             branches:
-              ignore: /^dependabot.*/
+              ignore:
+                - /^dependabot.*/
+                - master
       - build:
           requires:
             - checkout
+  bumpVersion:
+    jobs:
+      - checkout:
+          filters:
+            branches:
+              only: master
+      - build:
+          requires:
+            - checkout
+      - publishRelease:
+          requires:
+            - build
