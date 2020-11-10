@@ -1,4 +1,5 @@
 import pysketcher as ps
+from pysketcher import *
 from pysketcher.backend.matplotlib import MatplotlibBackend
 
 W = 10.0

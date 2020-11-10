@@ -89,6 +89,8 @@ class MatplotlibStyle:
 
 
 class MatplotlibTextStyle(MatplotlibStyle):
+    FONT_SIZE_MAP = {TextStyle.FontSize.MEDIUM: "medium"}
+
     FONT_FAMILY_MAP = {
         TextStyle.FontFamily.SERIF: "serif",
         TextStyle.FontFamily.SANS: "sans-serif",
@@ -107,8 +109,8 @@ class MatplotlibTextStyle(MatplotlibStyle):
         super().__init__(text_style)
 
     @property
-    def font_size(self) -> float:
-        return self._style.font_size
+    def font_size(self) -> str:
+        return self.FONT_SIZE_MAP.get(self._style.font_size)
 
     @property
     def font_family(self) -> str:
