@@ -14,6 +14,7 @@ from pysketcher.beam import SimpleSupport
 from pysketcher.circle import Circle
 from pysketcher.composition import Composition, ShapeWithText
 from pysketcher.curve import Curve
+from pysketcher.dashpot import Dashpot
 from pysketcher.distance_with_text import DistanceWithText
 from pysketcher.drawable import Drawable
 from pysketcher.figure import Figure
@@ -23,8 +24,14 @@ from pysketcher.moment import Moment
 from pysketcher.point import Point
 from pysketcher.rectangle import Rectangle
 from pysketcher.shape import Shape
-from pysketcher.sketchy_func import SketchyFunc1
+from pysketcher.sketchy_func import (
+    SketchyFunc1,
+    SketchyFunc2,
+    SketchyFunc3,
+    SketchyFunc4,
+)
 from pysketcher.spline import Spline
+from pysketcher.spring import Spring
 from pysketcher.style import Style, TextStyle
 from pysketcher.text import Text
 from pysketcher.triangle import Triangle
