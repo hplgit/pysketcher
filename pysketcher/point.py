@@ -88,19 +88,21 @@ class Point:
 
         # Check for a few degenerate cases:
         if angle == Angle(0.0):
-            return self
-        if angle == Angle(np.pi / 2):
-            return Point(center.x - self.y + center.y, center.y + self.x - center.x)
-        if angle == Angle(np.pi):
-            return Point(2 * center.x - self.x, 2 * center.y - self.y)
-        if angle == Angle(-np.pi / 2):
-            return Point(center.x + self.y - center.y, center.y - self.x + center.x)
-        c = np.cos(angle)
-        s = np.sin(angle)
-        return Point(
-            center.x + (self.x - center.x) * c - (self.y - center.y) * s,
-            center.y + (self.x - center.x) * s + (self.y - center.y) * c,
-        )
+            p = self
+        elif angle == Angle(np.pi / 2):
+            p = Point(center.x - self.y + center.y, center.y + self.x - center.x)
+        elif angle == Angle(np.pi):
+            p = Point(2 * center.x - self.x, 2 * center.y - self.y)
+        elif angle == Angle(-np.pi / 2):
+            p = Point(center.x + self.y - center.y, center.y - self.x + center.x)
+        else:
+            c = np.cos(angle)
+            s = np.sin(angle)
+            p = Point(
+                center.x + (self.x - center.x) * c - (self.y - center.y) * s,
+                center.y + (self.x - center.x) * s + (self.y - center.y) * c,
+            )
+        return p
 
     def scale(self, factor: np.float64) -> "Point":
         """Scale point coordinates by `factor`: ``x = factor*x``, etc."""
