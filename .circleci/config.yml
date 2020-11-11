@@ -131,9 +131,12 @@ workflows:
           filters:
             branches:
               only: master
-      - build:
+      - bumpVersion:
           requires:
             - checkout
+      - build:
+          requires:
+            - bumpVersion
       - publishRelease:
           requires:
             - build

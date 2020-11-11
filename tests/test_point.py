@@ -2,7 +2,15 @@ from math import inf, sqrt
 
 import numpy as np
 import pytest
-from hypothesis import assume, given, infer, note, reproduce_failure
+from hypothesis import (
+    HealthCheck,
+    assume,
+    given,
+    infer,
+    note,
+    reproduce_failure,
+    settings,
+)
 
 from pysketcher import Point
 from pysketcher.angle import Angle
@@ -65,11 +73,12 @@ class TestPoint:
         assert abs(a) == np.hypot(x, y)
 
     @given_inferred
+    @settings(suppress_health_check=[HealthCheck.filter_too_much])
     def test_angle(self, a: Point):
-        assume(mx > abs(a) > 0.0)
-        assume(abs(a) > 1e-160)
-        if a.x != 0.0 and a.y != 0:
-            assume(abs(a.x / a.y) < 1e4 and abs(a.y / a.x) < 1e4)
+        if a.x != 0.0:
+            assume(abs(a.y / a.x) < 1e4)
+        if a.y != 0.0:
+            assume(abs(a.x / a.y) < 1e4)
         angle = a.angle()
         note(angle)
         b = Point(abs(a), 0.0).rotate(angle, Point(0.0, 0.0))
@@ -112,6 +121,7 @@ class TestPoint:
         assert isclose(bb - aa, angle)
 
     @given_inferred
+    @settings(suppress_health_check=[HealthCheck.filter_too_much])
     def test_rotation(self, a: Point, angle: Angle, center: Point):
         assume(abs(a - center) != 0)
         b = a.rotate(angle, center)
