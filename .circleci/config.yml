@@ -91,7 +91,7 @@ jobs:
               poetry version patch --no-interaction
               git config user.email "automation@circleci.com"
               git config user.name  "CirleCI Automation"
-              git add pyproject.yaml
+              git add pyproject.toml
               git commit -m "[ci skip] Updated version number to ${poetry verion -s}"
               git tag ${poetry version -s}
               git push origin ${poetry version -s}
