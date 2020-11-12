@@ -5,6 +5,11 @@ jobs:
     executor: python/default
     steps:
       - checkout
+      - run:
+          name: Upgrade Poetry
+          command: |
+            poetry self upgrade
+            poetry -V
       - persist_to_workspace:
           root: .
           paths:
