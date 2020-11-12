@@ -8,7 +8,8 @@ from tests.utils import given_inferred
 class TestAngle:
     @given_inferred
     def test_range(self, x: Angle):
-        assert -np.pi <= x <= np.pi
+        assert -np.pi <= x
+        assert x <= np.pi
 
     @given_inferred
     def test_equality(self, x: np.float64):
@@ -21,20 +22,23 @@ class TestAngle:
     def test_addition(self, a: Angle, b: Angle):
         c = a + b
         assert type(c) == Angle
-        assert -np.pi <= c <= np.pi
+        assert -np.pi <= c
+        assert c <= np.pi
 
     @given_inferred
     def test_subtraction(self, a: Angle, b: Angle):
         c = a - b
         assert type(c) == Angle
-        assert -np.pi <= c <= np.pi
+        assert -np.pi <= c
+        assert c <= np.pi
 
     @given_inferred
     def test_multiplication(self, a: Angle, b: np.float64):
         c = a * b
         assert type(c) == Angle
         assert c <= np.pi
-        assert -np.pi <= c <= np.pi
+        assert -np.pi <= c
+        assert c <= np.pi
 
     @given_inferred
     def test_division(self, a: Angle, b: np.float64):
@@ -43,4 +47,5 @@ class TestAngle:
         c = a / b
         note(c)
         assert type(c) == Angle
-        assert -np.pi <= c <= np.pi
+        assert -np.pi <= c
+        assert c <= np.pi
