@@ -76,6 +76,7 @@ jobs:
       - run:
           name: Update version number
           command: |
+              poetry -V
               poetry version patch --no-interaction
               git config user.email "automation@circleci.com"
               git config user.name  "CirleCI Automation"
