@@ -88,14 +88,19 @@ jobs:
           command: |
               poetry self update 1.1.4
               poetry -V
+              mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
               poetry version patch --no-interaction
               git config user.email "automation@circleci.com"
               git config user.name  "CirleCI Automation"
               git add pyproject.toml
-              git commit -m "[ci skip] Updated version number to ${poetry verion -s}"
-              git tag ${poetry version -s}
-              git push origin ${poetry version -s}
+              git commit -m "[ci skip] Updated version number to $(poetry version -s)"
+              git tag $(poetry version -s)
+              git push origin $(poetry version -s)
               git push origin master
+      - persist_to_workspace:
+            root: .
+            paths:
+                - .
   publishRelease:
     executor: python/default
     steps:
