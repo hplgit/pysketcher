@@ -97,7 +97,7 @@ jobs:
 
 
 orbs:
-  python: circleci/python@1.0.0
+  python: circleci/python@1.2.1
 workflows:
   version: 2
   updateDeps:
