@@ -1,5 +1,5 @@
 import numpy as np
-from hypothesis import assume, note
+from hypothesis import assume, note, reproduce_failure
 
 from pysketcher.angle import Angle
 from tests.utils import given_inferred
@@ -8,7 +8,7 @@ from tests.utils import given_inferred
 class TestAngle:
     @given_inferred
     def test_range(self, x: Angle):
-        assert -np.pi <= x
+        assert -np.pi < x
         assert x <= np.pi
 
     @given_inferred
@@ -37,8 +37,7 @@ class TestAngle:
         c = a * b
         assert type(c) == Angle
         assert c <= np.pi
-        assert -np.pi <= c
-        assert c <= np.pi
+        assert -np.pi < c
 
     @given_inferred
     def test_division(self, a: Angle, b: np.float64):
