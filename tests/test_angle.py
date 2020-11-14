@@ -12,7 +12,7 @@ class TestAngle:
         assert x <= np.pi
 
     @given_inferred
-    def test_equality(self, x: np.float64):
+    def test_equality(self, x: float):
         if -np.pi < x < np.pi:
             assert x == Angle(x)
         else:
@@ -33,14 +33,14 @@ class TestAngle:
         assert c <= np.pi
 
     @given_inferred
-    def test_multiplication(self, a: Angle, b: np.float64):
+    def test_multiplication(self, a: Angle, b: float):
         c = a * b
         assert type(c) == Angle
         assert c <= np.pi
         assert -np.pi < c
 
     @given_inferred
-    def test_division(self, a: Angle, b: np.float64):
+    def test_division(self, a: Angle, b: float):
         assume(1e-6 < abs(b) < 1e6)
         assume(b != 0.0)
         c = a / b

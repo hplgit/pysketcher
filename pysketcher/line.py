@@ -1,8 +1,5 @@
-import warnings
 from copy import copy
 from typing import Tuple
-
-import numpy as np
 
 from pysketcher.curve import Curve
 from pysketcher.point import Point
@@ -12,10 +9,10 @@ class Line(Curve):
 
     _start: Point
     _end: Point
-    _a: np.float64
-    _b: np.float64
-    _c: np.float64
-    _d: np.float64
+    _a: float
+    _b: float
+    _c: float
+    _d: float
     _vertical: bool
     _horizontal: bool
 
@@ -43,26 +40,20 @@ class Line(Curve):
     def _compute_formulas(self):
         # Define equations for line:
         # y = a*x + b,  x = c*y + d
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
-                "ignore", "divide by zero encountered in double_scalars"
-            )
-            warnings.filterwarnings(
-                "ignore", "invalid value encountered in double_scalars"
-            )
-            warnings.filterwarnings("ignore", "overflow encountered in double_scalars")
+        try:
             self._a = (self._end.y - self._start.y) / (self._end.x - self._start.x)
             self._b = self._start.y - self._a * self._start.x
-            if np.isnan(self._a) or np.isinf(self._a):
-                # Vertical line, y is not a function of x
-                self._vertical = True
-                self._c = 0.0
-                self._d = self._end.x
-            else:
-                self._c = 1.0 / self._a
-                self._d = self._b / self._a
-                if np.isnan(self._c) or np.isinf(self._c):
-                    self._horizontal = True
+        except ZeroDivisionError:
+            self._vertical = True
+            self._c = 0.0
+            self._d = self._end.x
+            return
+
+        try:
+            self._c = 1.0 / self._a
+            self._d = self._b / self._a
+        except ZeroDivisionError:
+            self._horizontal = True
 
     @property
     def start(self):
@@ -74,7 +65,7 @@ class Line(Curve):
         """The end point of the line."""
         return self._end
 
-    def __call__(self, x: np.float64 = None, y: np.float64 = None):
+    def __call__(self, x: float = None, y: float = None):
         """Given x, return y on the line, or given y, return x.
 
         Args:
@@ -96,9 +87,7 @@ class Line(Curve):
         return self._a * x + self._b if x else self._c * y + self._d
 
     def interval(
-        self,
-        x_range: Tuple[np.float64, np.float64] = None,
-        y_range: Tuple[np.float64, np.float64] = None,
+        self, x_range: Tuple[float, float] = None, y_range: Tuple[float, float] = None
     ):
         """Returns a smaller portion of a line.
 
@@ -118,7 +107,7 @@ class Line(Curve):
                 Point(self(y_range[0]), y_range[0]), Point(self(y_range[1]), y_range[1])
             )
 
-    def rotate(self, angle: np.float64, center: Point) -> "Line":
+    def rotate(self, angle: float, center: Point) -> "Line":
         """Returns a copy of a line rotated through an angle about a point.
 
         Args:

@@ -2,8 +2,7 @@ from typing import Type
 
 import numpy as np
 import pytest
-from hypothesis.extra.numpy import from_dtype
-from hypothesis.strategies import SearchStrategy, builds
+from hypothesis.strategies import SearchStrategy, builds, floats
 
 import pysketcher as ps
 from pysketcher import Point
@@ -28,7 +27,7 @@ def add_np(doctest_namespace):
     doctest_namespace["MatplotlibBackend"] = MatplotlibBackend
 
 
-def isclose(a: np.float64, b: np.float64):
+def isclose(a: float, b: float):
     return np.isclose(a, b, atol=atol)
 
 
@@ -42,8 +41,8 @@ def make_angle(typ: Type) -> SearchStrategy[Angle]:
 
 
 @TypeStrategy()
-def make_float(typ: Type) -> SearchStrategy[np.float64]:
-    strategy = from_dtype(np.dtype(typ), allow_nan=False, allow_infinity=False).filter(
+def make_float(typ: Type) -> SearchStrategy[float]:
+    strategy = floats(allow_nan=False, allow_infinity=False).filter(
         lambda x: -mx < x < mx
     )
     return strategy
@@ -59,4 +58,4 @@ def make_point(typ: Type) -> SearchStrategy[Point]:
             retval = retval and a.y > mn
         return retval and mx > abs(a) > 0.0
 
-    return builds(Point, make_float(np.float64), make_float(np.float64)).filter(flt)
+    return builds(Point, make_float(float), make_float(float)).filter(flt)

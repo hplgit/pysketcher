@@ -1,5 +1,3 @@
-import numpy as np
-
 from pysketcher.composition.composition import Composition
 from pysketcher.curve import Curve
 from pysketcher.line import Line
@@ -40,11 +38,11 @@ class Dashpot(Composition):
     def __init__(
         self,
         start: Point,
-        total_length: np.float64,
-        bar_length: np.float64 = None,
-        width: np.float64 = None,
-        dashpot_length: np.float64 = None,
-        piston_pos: np.float64 = None,
+        total_length: float,
+        bar_length: float = None,
+        width: float = None,
+        dashpot_length: float = None,
+        piston_pos: float = None,
     ):
         B = start
         L = total_length

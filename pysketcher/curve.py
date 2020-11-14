@@ -41,7 +41,7 @@ class Curve(Shape):
         ret_curve.style = self.style
         return ret_curve
 
-    def scale(self, factor: np.float64) -> "Curve":
+    def scale(self, factor: float) -> "Curve":
         """Scale all coordinates by `factor`: ``x = factor*x``, etc."""
         ret_curve = Curve(
             Point.from_coordinate_lists(factor * self.xs, factor * self.ys)

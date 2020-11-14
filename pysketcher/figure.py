@@ -1,7 +1,5 @@
 from typing import List, Type
 
-import numpy as np
-
 from pysketcher.backend.backend import Backend
 from pysketcher.drawable import Drawable
 
@@ -12,10 +10,10 @@ class Figure:
 
     def __init__(
         self,
-        x_min: np.float64,
-        x_max: np.float64,
-        y_min: np.float64,
-        y_max: np.float64,
+        x_min: float,
+        x_max: float,
+        y_min: float,
+        y_max: float,
         backend: Type[Backend],
     ):
         self._backend = backend(x_min, x_max, y_min, y_max)

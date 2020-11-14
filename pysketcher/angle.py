@@ -3,8 +3,8 @@ import logging
 import numpy as np
 
 
-class Angle(np.float64):
-    def __new__(cls, value: np.float64) -> "Angle":
+class Angle(float):
+    def __new__(cls, value: float) -> "Angle":
         """A representation of a 2-Dimensional Angle
 
         Args:
@@ -24,10 +24,10 @@ class Angle(np.float64):
         return super(cls, cls).__new__(cls, value)
 
     @staticmethod
-    def _normalize(value: np.float64):
+    def _normalize(value: float):
         logging.debug(f"Initial value: {value}")
 
-        def order(x: np.float) -> np.float:
+        def order(x: float) -> float:
             return np.trunc(x / (2 * np.pi))
 
         if not (-np.pi < value <= np.pi):
@@ -45,24 +45,24 @@ class Angle(np.float64):
         # logging.debug(f"Final value: {value}")
         return value
 
-    def __add__(self, other: np.float64) -> "Angle":
+    def __add__(self, other: float) -> "Angle":
         res = super(self.__class__, self).__add__(other)
         return self.__class__(res)
 
-    def __sub__(self, other: np.float64) -> "Angle":
+    def __sub__(self, other: float) -> "Angle":
         res = super(self.__class__, self).__sub__(other)
         return self.__class__(res)
 
-    def __mul__(self, other: np.float64) -> "Angle":
+    def __mul__(self, other: float) -> "Angle":
         res = super(self.__class__, self).__mul__(other)
         return self.__class__(res)
 
-    def __truediv__(self, other: np.float64) -> "Angle":
+    def __truediv__(self, other: float) -> "Angle":
         res = super(self.__class__, self).__truediv__(other)
         return self.__class__(res)
 
-    def __str__(self: np.float64) -> str:
+    def __str__(self: float) -> str:
         return f"{float(self)}"
 
-    def __repr__(self: np.float64) -> str:
+    def __repr__(self: float) -> str:
         return f"Angle({float(self)})"

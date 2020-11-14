@@ -10,10 +10,10 @@ class Point:
     Simple Point class which implements basic point arithmetic.
     """
 
-    _x: np.float64
-    _y: np.float64
+    _x: float
+    _y: float
 
-    def __init__(self, x: np.float64, y: np.float64):
+    def __init__(self, x: float, y: float):
         """
         Parameters
         ---------
@@ -22,8 +22,8 @@ class Point:
         y: float
             The y co-ordinate
         """
-        self._x = np.float64(x)
-        self._y = np.float64(y)
+        self._x = float(x)
+        self._y = float(y)
 
     def __add__(self, other: "Point") -> "Point":
         return Point(self.x + other._x, self.y + other.y)
@@ -31,10 +31,10 @@ class Point:
     def __sub__(self, other: "Point") -> "Point":
         return Point(self.x - other._x, self.y - other.y)
 
-    def __mul__(self, scalar: np.float64) -> "Point":
+    def __mul__(self, scalar: float) -> "Point":
         return Point(self.x * scalar, self.y * scalar)
 
-    def __abs__(self) -> np.float64:
+    def __abs__(self) -> float:
         return np.hypot(self.x, self.y)
 
     def __eq__(self, other: "Point") -> bool:
@@ -50,15 +50,15 @@ class Point:
         )
 
     @staticmethod
-    def _isclose(x: np.float64, y: np.float64) -> bool:
+    def _isclose(x: float, y: float) -> bool:
         return np.isclose(x, y, atol=1e-4)
 
     @property
-    def x(self) -> np.float64:
+    def x(self) -> float:
         return self._x
 
     @property
-    def y(self) -> np.float64:
+    def y(self) -> float:
         return self._y
 
     def unit_vector(self) -> "Point":
@@ -70,7 +70,7 @@ class Point:
         angle = Angle(np.arctan2(self.y, self.x))
         return angle
 
-    def radius(self) -> np.float64:
+    def radius(self) -> float:
         return abs(self)
 
     def normal(self) -> "Point":
@@ -101,7 +101,7 @@ class Point:
             )
         return p
 
-    def scale(self, factor: np.float64) -> "Point":
+    def scale(self, factor: float) -> "Point":
         """Scale point coordinates by `factor`: ``x = factor*x``, etc."""
         return self * factor
 
@@ -110,17 +110,13 @@ class Point:
         return self + vec
 
     @staticmethod
-    def from_coordinate_lists(
-        xs: List[np.float64], ys: List[np.float64]
-    ) -> List["Point"]:
+    def from_coordinate_lists(xs: List[float], ys: List[float]) -> List["Point"]:
         if len(xs) != len(ys):
             raise ValueError("xs and ys must be the same length")
         return [Point(xs[i], ys[i]) for i in range(len(xs))]
 
     @staticmethod
-    def to_coordinate_lists(
-        ps: List["Point"]
-    ) -> Tuple[List[np.float64], List[np.float64]]:
+    def to_coordinate_lists(ps: List["Point"]) -> Tuple[List[float], List[float]]:
         xs = [p.x for p in ps]
         ys = [p.y for p in ps]
         return xs, ys
