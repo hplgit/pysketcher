@@ -1,4 +1,4 @@
-from hypothesis import assume, given, infer
+from hypothesis import assume
 
 from pysketcher import Line, Point
 from tests.utils import given_inferred

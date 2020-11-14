@@ -1,8 +1,8 @@
-from typing import Any, Callable, Dict, TypeVar, Union
+from typing import Callable, Dict, TypeVar, Union
 
 from pysketcher.point import Point
 from pysketcher.shape import Shape, Stylable
-from pysketcher.style import Style, TextStyle
+from pysketcher.style import Style
 from pysketcher.text import Text
 
 T = TypeVar("type")

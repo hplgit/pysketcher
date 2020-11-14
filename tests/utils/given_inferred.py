@@ -1,6 +1,5 @@
 import logging
 from inspect import getfullargspec
-from typing import get_type_hints
 
 from hypothesis import given, infer
 from hypothesis.errors import InvalidArgument
@@ -33,13 +32,13 @@ def given_inferred(func):
 
     if varargs:
         return invalid(
-            f"Cannot apply @given_inferred to a function with arbitrary positional arguments."
+            "Cannot apply @given_inferred to a function with arbitrary positional arguments."
         )
     if varkw:
         return invalid(
-            f"Cannot apply @given_inferred to a function with arbitrary keyword arguments"
+            "Cannot apply @given_inferred to a function with arbitrary keyword arguments"
         )
     if defaults or kwonlydefaults:
-        return invalid(f"Cannot apply @given_inferred to a function with defaults.")
+        return invalid("Cannot apply @given_inferred to a function with defaults.")
     valid.is_hypothesis_test = True
     return valid

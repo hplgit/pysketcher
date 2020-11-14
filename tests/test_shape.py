@@ -1,6 +1,6 @@
 import numpy as np
 
-from pysketcher import Arrow, Axis, Force, Line, Point, Shape, Style
+from pysketcher import Shape, Style
 from tests.utils import given_inferred
 
 

@@ -1,4 +1,4 @@
-from pysketcher import Figure, Line, Point, Text, TextStyle
+from pysketcher import Figure, Point, Text, TextStyle
 from pysketcher.backend.matplotlib import MatplotlibBackend
 
 fig = Figure(0.0, 6.0, 0.0, 6.0, MatplotlibBackend)

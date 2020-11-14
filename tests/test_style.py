@@ -1,6 +1,6 @@
 import numpy as np
 
-from pysketcher import Style, TextStyle
+from pysketcher import Style
 from tests.utils import given_inferred
 
 

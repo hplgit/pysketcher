@@ -4,7 +4,6 @@ from pysketcher.arrow_with_text import ArrowWithText
 from pysketcher.curve import Curve
 from pysketcher.distance_with_text import DistanceWithText
 from pysketcher.point import Point
-from pysketcher.shape import Shape
 from pysketcher.style import TextStyle
 
 

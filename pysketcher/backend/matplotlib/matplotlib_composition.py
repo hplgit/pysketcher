@@ -1,14 +1,15 @@
 from matplotlib.axes import Axes
 
 from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
+from pysketcher.backend.matplotlib.matplotlib_backend import MatplotlibBackend
 from pysketcher.composition import Composition
 
 
 class MatplotlibComposition(MatplotlibAdapter):
 
-    _mplb: "MatplotlibBackend"
+    _mplb: MatplotlibBackend
 
-    def __init__(self, mplb: "MatplotlibBackend"):
+    def __init__(self, mplb: MatplotlibBackend):
         self._mplb = mplb
 
     def plot(self, shape: Composition, axes: Axes):

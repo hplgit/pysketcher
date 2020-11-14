@@ -22,7 +22,7 @@ class DistanceWithText(ShapeWithText):
         MIDDLE = auto()
         END = auto()
 
-        def swap(self) -> "TextPosition":
+        def swap(self) -> "DistanceWithText.TextPosition":
             swap_dict = {
                 self.START: self.END,
                 self.END: self.START,

@@ -1,5 +1,3 @@
-from numpy import exp, linspace
-
 import pysketcher as ps
 from pysketcher.backend.matplotlib import MatplotlibBackend
 

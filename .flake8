@@ -1,0 +1,18 @@
+[flake8]
+exclude =
+    .git,
+    .venv,
+    .tox,
+    .hypothesis,
+    .github,
+    .circlci,
+    dist,
+    pysketcher.egg-info,
+    test-results,
+    # unmigrated examples
+    examples/ForwardEuler_comic_strip.py,
+    examples/integral_comic_strip.py,
+    examples/pendulum2.py
+max-line-length = 80
+select = C,E,F,W,B,B950
+ignore = E203, E501, W503

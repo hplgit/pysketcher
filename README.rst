@@ -1,6 +1,10 @@
 ============
  PySketcher
 ============
+
+.. image:: https://badge.fury.io/py/pysketcher.svg
+       :target: https://badge.fury.io/py/pysketcher
+
 .. image:: https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability
     :target: https://codeclimate.com/github/rvodden/pysketcher/maintainability
 
@@ -39,6 +43,6 @@ very little if any of his code remains. Significant deviations from his library 
 
 4. Angles are in radians not degrees.
 
-5. The Composition object is used more consistently. Previously objects such as Beam where direct children of Shape which led to code repetition.
+5. The Composition object is used more consistently. Previously objects such as Beam were direct children of Shape which led to code repetition.
 
 `Please see the documentation for more information <https://pysketcher.readthedocs.io/en/latest/index.html>`_.

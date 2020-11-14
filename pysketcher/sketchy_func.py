@@ -82,8 +82,8 @@ class SketchyFunc4(Spline):
         xs = np.array([0, 2, 3, 4, 5, 6])
         ys = np.array([1.5, 1.3, 0.7, 0.5, 0.6, 0.8])
         # Scale x and y
-        x = x_min - xs.min() + xs * (x_max - x_min) / (xs.max() - xs.min())
-        y = y_min - ys.min() + ys * (y_max - y_min) / (ys.max() - ys.min())
+        xs = x_min - xs.min() + xs * (x_max - x_min) / (xs.max() - xs.min())
+        ys = y_min - ys.min() + ys * (y_max - y_min) / (ys.max() - ys.min())
         points = Point.from_coordinate_lists(xs, ys)
 
         super().__init__(points)

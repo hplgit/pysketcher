@@ -1,7 +1,7 @@
 from pysketcher.angle import Angle
 from pysketcher.point import Point
 from pysketcher.shape import Shape
-from pysketcher.style import Style, TextStyle
+from pysketcher.style import TextStyle
 
 
 class Text(Shape):

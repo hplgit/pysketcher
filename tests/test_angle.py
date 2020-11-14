@@ -1,5 +1,5 @@
 import numpy as np
-from hypothesis import assume, note, reproduce_failure
+from hypothesis import assume, note
 
 from pysketcher.angle import Angle
 from tests.utils import given_inferred

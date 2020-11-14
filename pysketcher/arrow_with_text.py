@@ -1,5 +1,5 @@
 from enum import Enum, auto, unique
-from typing import Tuple, Union
+from typing import Union
 
 from pysketcher.arrow import Arrow
 from pysketcher.composition import ShapeWithText

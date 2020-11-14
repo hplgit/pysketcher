@@ -1,9 +1,8 @@
-from typing import List, Type, Union
+from typing import List, Type
 
 import numpy as np
 
 from pysketcher.backend.backend import Backend
-from pysketcher.backend.matplotlib.matplotlib_backend import MatplotlibBackend
 from pysketcher.drawable import Drawable
 
 

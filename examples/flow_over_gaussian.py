@@ -30,10 +30,10 @@ def velocity_profile(y: float) -> ps.Point:
 inlet_profile = ps.VelocityProfile(ps.Point(0, 0), H, velocity_profile, 5)
 inlet_profile.style.line_color = ps.Style.Color.BLUE
 
-symmetry_line = ps.Line(Point(0, H), ps.Point(W + L, H))
+symmetry_line = ps.Line(ps.Point(0, H), ps.Point(W + L, H))
 symmetry_line.style.line_style = ps.Style.LineStyle.DASHED
 
-outlet = ps.Line(Point(W + L, 0), ps.Point(W + L, H))
+outlet = ps.Line(ps.Point(W + L, 0), ps.Point(W + L, H))
 outlet.style.line_style = ps.Style.LineStyle.DASHED
 
 model = ps.Composition(

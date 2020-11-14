@@ -10,10 +10,11 @@ line = ps.Line(a, b)
 figure.add(line)
 figure.show()
 
-import os
 
 # End Here
-from utils.change_extension import change_extension
+import os  # noqa: E402
+
+from .utils.change_extension import change_extension  # noqa: E402
 
 filename = change_extension(__file__, "png")
 figure.save(os.path.join("images", filename))

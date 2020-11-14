@@ -1,23 +1,14 @@
-from math import inf, sqrt
+from math import inf
 
 import numpy as np
 import pytest
-from hypothesis import (
-    HealthCheck,
-    assume,
-    given,
-    infer,
-    note,
-    reproduce_failure,
-    settings,
-)
+from hypothesis import HealthCheck, assume, note, settings
 
 from pysketcher import Point
 from pysketcher.angle import Angle
-from pysketcher.warning import LossOfPrecisionWarning
 from tests.utils import given_inferred
 
-from .conftest import isclose, mx
+from .conftest import isclose
 
 
 class TestPoint:
@@ -61,7 +52,7 @@ class TestPoint:
         assert a * s == Point(x * s, y * s)
 
     @given_inferred
-    def test_multiplication(self, x: np.float64, y: np.float64, s: np.float64):
+    def test_scale(self, x: np.float64, y: np.float64, s: np.float64):
         a = Point(x, y)
         assert a.scale(s) == Point(x * s, y * s)
 

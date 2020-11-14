@@ -98,8 +98,6 @@ def inclined_plane():
     time.sleep(1)
     tangent_vec = Point(normal_vec.y, -normal_vec.x)
 
-    time_points = np.linspace(0, 1, 31)
-
     def position(t):
         """Position of center point of wheel."""
         return c + tangent_vec * 7 * t ** 2

@@ -1,11 +1,8 @@
-import logging
-import warnings
 from typing import List, Tuple
 
 import numpy as np
 
 from pysketcher.angle import Angle
-from pysketcher.warning import LossOfPrecisionWarning
 
 
 class Point:

@@ -3,7 +3,7 @@ from typing import Type
 import numpy as np
 import pytest
 from hypothesis.extra.numpy import from_dtype
-from hypothesis.strategies import SearchStrategy, builds, floats, from_type
+from hypothesis.strategies import SearchStrategy, builds
 
 import pysketcher as ps
 from pysketcher import Point

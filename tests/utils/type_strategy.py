@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Dict, Type, TypeVar, get_args, get_origin, get_type_hints
+from typing import Callable, Type, TypeVar, get_args, get_origin, get_type_hints
 
 from hypothesis.strategies import SearchStrategy, register_type_strategy
 
