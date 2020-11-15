@@ -21,16 +21,17 @@ keywords = ['sketch','graphics','scientific','engineering','geometry']
 docs = ["sphinx"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 numpy = "^1.18.2"
 matplotlib = "^3.2.1"
 scipy = "^1.4.1"
+importlib-metadata = "^2.0.0"
+nox = "^2020.8.22"
 
 [tool.poetry.dev-dependencies]
 hypothesis = "^5.41.2"
 pytest = "^6.1.1"
 pylint = "^2.6.0"
-tox = "^3.20.1"
 flake8 = "^3.7.9"
 coverage = "^5.3"
 mypy = "^0.790"
@@ -41,7 +42,13 @@ wheel = "^0.35.1"
 sphinx = "^3.2.1"
 sphinx_rtd_theme = "^0.5.0"
 recommonmark = "^0.6.0"
+pytest-cov = "^2.10.1"
+nox = "^2020.8.22"
 pre-commit = "^2.7.1"
+flake8-black = "^0.2.1"
+flake8-import-order = "^0.18.1"
+flake8-bandit = "^2.1.2"
+nox-poetry = "^0.5.0"
 
 [tool.poetry.scripts]
 beam1 = "examples.beam1:main"
@@ -56,7 +63,11 @@ junit_family = "xunit1"
 addopts = "--doctest-modules"
 
 [tool.coverage.run]
+branch = true
 source = ["pysketcher/"]
+
+[tool.coverage.report]
+show_missing = true
 
 [tool.tox]
 legacy_tox_ini = '''

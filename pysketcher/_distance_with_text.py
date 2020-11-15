@@ -1,28 +1,38 @@
-from enum import Enum, auto
+from enum import auto, Enum
 
-from pysketcher.arrow import DoubleArrow
-from pysketcher.arrow_with_text import Text
+from pysketcher._arrow import DoubleArrow
+from pysketcher._arrow_with_text import Text
+from pysketcher._point import Point
 from pysketcher.composition.composition import ShapeWithText
-from pysketcher.point import Point
 
 
 class DistanceWithText(ShapeWithText):
-    """
-    Arrow <-> with text (usually a symbol) at the midpoint, used for
-    identifying a some distance in a figure.  The text is placed
+    """Arrow <-> with text (usually a symbol) at the midpoint.
+
+    Used for identifying a some distance in a figure.  The text is placed
     slightly to the right of vertical-like arrows, with text displaced
     `text_spacing` times to total distance in x direction of the plot
     area. The text is by default aligned 'left' in this case. For
     horizontal-like arrows, the text is placed the same distance
     above, but aligned 'center' by default (when `alignment` is None).
+
+    Args:
+        text: The text which should be displayed.
+        start: The start of the arrow.
+        end: The end of the arrow.
+        spacing: The spacing between the text and the arrow.
     """
 
     class TextPosition(Enum):
+        """Used to indicate if text should be at
+        the start, end, or middle of an arrow."""
+
         START = auto()
         MIDDLE = auto()
         END = auto()
 
         def swap(self) -> "DistanceWithText.TextPosition":
+            """Swaps the relative position of text."""
             swap_dict = {
                 self.START: self.END,
                 self.END: self.START,

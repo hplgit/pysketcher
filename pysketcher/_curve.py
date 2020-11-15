@@ -2,9 +2,9 @@ from typing import List
 
 import numpy as np
 
-from pysketcher.angle import Angle
-from pysketcher.point import Point
-from pysketcher.shape import Shape
+from pysketcher._angle import Angle
+from pysketcher._point import Point
+from pysketcher._shape import Shape
 
 
 class Curve(Shape):

@@ -1,10 +1,10 @@
 from typing import Callable
 
-from pysketcher.arrow import Arrow
+from pysketcher._arrow import Arrow
+from pysketcher._line import Line
+from pysketcher._point import Point
+from pysketcher._spline import Spline
 from pysketcher.composition.composition import Composition
-from pysketcher.line import Line
-from pysketcher.point import Point
-from pysketcher.spline import Spline
 
 
 class VelocityProfile(Composition):

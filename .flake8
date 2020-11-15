@@ -14,5 +14,8 @@ exclude =
     examples/integral_comic_strip.py,
     examples/pendulum2.py
 max-line-length = 80
-select = C,E,F,W,B,B950
+select = B,B9,BLK,C,E,F,I,W,B,B950,S
 ignore = E203, E501, W503
+application-import-names = pysketcher,tests
+import-order-style = google
+per-file-ignores = tests/*:S101

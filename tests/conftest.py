@@ -1,12 +1,10 @@
 from typing import Type
 
+from hypothesis.strategies import builds, floats, SearchStrategy
 import numpy as np
 import pytest
-from hypothesis.strategies import SearchStrategy, builds, floats
 
 import pysketcher as ps
-from pysketcher import Point
-from pysketcher.angle import Angle
 from pysketcher.backend.matplotlib import MatplotlibBackend
 from tests.utils import TypeStrategy
 
@@ -32,12 +30,12 @@ def isclose(a: float, b: float):
 
 
 @TypeStrategy()
-def make_angle(typ: Type) -> SearchStrategy[Angle]:
+def make_angle(typ: Type) -> SearchStrategy[ps.Angle]:
     def flt(a: typ):
         if a != 0.0:
             return abs(a) > mn
 
-    return builds(Angle, make_float(typ)).filter(flt)
+    return builds(ps.Angle, make_float(typ)).filter(flt)
 
 
 @TypeStrategy()
@@ -49,8 +47,8 @@ def make_float(typ: Type) -> SearchStrategy[float]:
 
 
 @TypeStrategy()
-def make_point(typ: Type) -> SearchStrategy[Point]:
-    def flt(a: Point) -> bool:
+def make_point(typ: Type) -> SearchStrategy[ps.Point]:
+    def flt(a: ps.Point) -> bool:
         retval = True
         if a.x != 0.0:
             retval = retval and a.x > mn
@@ -58,4 +56,4 @@ def make_point(typ: Type) -> SearchStrategy[Point]:
             retval = retval and a.y > mn
         return retval and mx > abs(a) > 0.0
 
-    return builds(Point, make_float(float), make_float(float)).filter(flt)
+    return builds(ps.Point, make_float(float), make_float(float)).filter(flt)

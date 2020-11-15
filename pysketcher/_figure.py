@@ -1,7 +1,7 @@
 from typing import List, Type
 
+from pysketcher._drawable import Drawable
 from pysketcher.backend.backend import Backend
-from pysketcher.drawable import Drawable
 
 
 class Figure:

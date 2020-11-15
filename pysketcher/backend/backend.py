@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from pysketcher.drawable import Drawable
+from pysketcher._drawable import Drawable
 
 
 class Backend(ABC):

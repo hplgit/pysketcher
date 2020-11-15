@@ -1,5 +1,5 @@
-import logging
 from inspect import getfullargspec
+import logging
 
 from hypothesis import given, infer
 from hypothesis.errors import InvalidArgument
@@ -7,9 +7,15 @@ from hypothesis.errors import InvalidArgument
 
 def given_inferred(func):
 
-    args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = getfullargspec(
-        func
-    )
+    (
+        args,
+        varargs,
+        varkw,
+        defaults,
+        kwonlyargs,
+        kwonlydefaults,
+        annotations,
+    ) = getfullargspec(func)
     logging.debug(f"{func.__name__} has been annotated with given_inferred.")
 
     def valid(self=None):
@@ -32,11 +38,17 @@ def given_inferred(func):
 
     if varargs:
         return invalid(
-            "Cannot apply @given_inferred to a function with arbitrary positional arguments."
+            (
+                "Cannot apply @given_inferred to a function"
+                "with arbitrary positional arguments."
+            )
         )
     if varkw:
         return invalid(
-            "Cannot apply @given_inferred to a function with arbitrary keyword arguments"
+            (
+                "Cannot apply @given_inferred to a function"
+                "with arbitrary keyword arguments"
+            )
         )
     if defaults or kwonlydefaults:
         return invalid("Cannot apply @given_inferred to a function with defaults.")

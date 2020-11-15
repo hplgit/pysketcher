@@ -1,23 +1,24 @@
 from typing import Callable, Dict, TypeVar, Union
 
-from pysketcher.point import Point
-from pysketcher.shape import Shape, Stylable
-from pysketcher.style import Style
-from pysketcher.text import Text
+from pysketcher._point import Point
+from pysketcher._shape import Shape, Stylable
+from pysketcher._style import Style
+from pysketcher._text import Text
 
 T = TypeVar("type")
 
 
 class Composition(Stylable):
     class CompositionStyle(Style):
-        """Presents the Stylable contract for a Composition, setting the style of each object in the composition
-        transparently """
+        """Presents the Stylable contract for a Composition,
+        setting the style of each object in the composition
+        transparently"""
 
-        _composition: "Composition"
+        composition: "Composition"
 
         def __init__(self, composition: "Composition"):
             super().__init__()
-            self._composition = composition
+            self.composition = composition
 
         @property
         def line_style(self) -> Style.LineStyle:
@@ -25,7 +26,7 @@ class Composition(Stylable):
 
         @line_style.setter
         def line_style(self, line_style: Style.LineStyle):
-            for shape in self._composition:
+            for shape in self.composition:
                 shape.style.line_style = line_style
 
         @property
@@ -34,7 +35,7 @@ class Composition(Stylable):
 
         @line_width.setter
         def line_width(self, line_width: float):
-            for shape in self._composition:
+            for shape in self.composition:
                 shape.style.line_width = line_width
 
         @property
@@ -43,7 +44,7 @@ class Composition(Stylable):
 
         @line_color.setter
         def line_color(self, line_color: Style.Color):
-            for shape in self._composition:
+            for shape in self.composition:
                 shape.style.line_color = line_color
 
         @property
@@ -52,7 +53,7 @@ class Composition(Stylable):
 
         @fill_color.setter
         def fill_color(self, fill_color: Style.Color):
-            for shape in self._composition:
+            for shape in self.composition:
                 shape.style.fill_color = fill_color
 
         @property
@@ -61,7 +62,7 @@ class Composition(Stylable):
 
         @fill_pattern.setter
         def fill_pattern(self, fill_pattern: Style.Color):
-            for shape in self._composition:
+            for shape in self.composition:
                 shape.style.fill_pattern = fill_pattern
 
         @property
@@ -70,7 +71,7 @@ class Composition(Stylable):
 
         @arrow.setter
         def arrow(self, arrow: Style.ArrowStyle):
-            for shape in self._composition:
+            for shape in self.composition:
                 shape.style.arrow = arrow
 
         @property
@@ -79,7 +80,7 @@ class Composition(Stylable):
 
         @shadow.setter
         def shadow(self, shadow: float):
-            for shape in self._composition:
+            for shape in self.composition:
                 shape.style.shadow = shadow
 
     _shapes: dict

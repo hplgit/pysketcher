@@ -1,7 +1,7 @@
-from pysketcher.angle import Angle
-from pysketcher.point import Point
-from pysketcher.shape import Shape
-from pysketcher.style import TextStyle
+from pysketcher._angle import Angle
+from pysketcher._point import Point
+from pysketcher._shape import Shape
+from pysketcher._style import TextStyle
 
 
 class Text(Shape):
@@ -15,7 +15,9 @@ class Text(Shape):
 
     _style: TextStyle
 
-    def __init__(self, text: str, position: Point, direction: Point = Point(1, 0)):
+    def __init__(
+        self, text: str, position: Point, direction: Point = Point(1, 0)  # noqa: B008
+    ):
         super().__init__()
         self._text = text
         self._position = position

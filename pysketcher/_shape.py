@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from pysketcher.point import Point
-from pysketcher.style import Style
+from pysketcher._point import Point
+from pysketcher._style import Style
 
 
 class Stylable(ABC):

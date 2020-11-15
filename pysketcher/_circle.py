@@ -1,7 +1,7 @@
 import numpy as np
 
-from pysketcher.arc import Arc
-from pysketcher.point import Point
+from pysketcher._arc import Arc
+from pysketcher._point import Point
 
 
 class Circle(Arc):

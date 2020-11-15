@@ -1,7 +1,7 @@
 import logging
-from typing import Callable, Type, TypeVar, get_args, get_origin, get_type_hints
+from typing import Callable, get_args, get_origin, get_type_hints, Type, TypeVar
 
-from hypothesis.strategies import SearchStrategy, register_type_strategy
+from hypothesis.strategies import register_type_strategy, SearchStrategy
 
 RT = TypeVar("RT")
 
@@ -23,14 +23,20 @@ class TypeStrategy:
             hints = get_type_hints(func)
             logging.debug(hints)
             if "return" not in hints:
-                msg = f"Cannot register {self._func.__name__}, as does not have a return type hint."
+                msg = (
+                    f"Cannot register {self._func.__name__}, "
+                    "as does not have a return type hint."
+                )
                 logging.error(msg)
                 raise ValueError(msg)
             else:
                 hint = hints["return"]
                 origin = get_origin(hint)
                 if origin != SearchStrategy:
-                    msg = f"Cannot register {self._func.__name__}, as does it returns {origin} not a SearchStrategy"
+                    msg = (
+                        f"Cannot register {self._func.__name__}, "
+                        "as does it returns {origin} not a SearchStrategy"
+                    )
                     logging.error(msg)
                     raise ValueError(msg)
                 else:

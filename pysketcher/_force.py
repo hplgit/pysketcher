@@ -1,6 +1,6 @@
-from pysketcher.arrow_with_text import ArrowWithText
-from pysketcher.point import Point
-from pysketcher.style import Style
+from pysketcher._arrow_with_text import ArrowWithText
+from pysketcher._point import Point
+from pysketcher._style import Style
 
 
 class Force(ArrowWithText):

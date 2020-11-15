@@ -3,15 +3,15 @@ from typing import Dict, Type
 
 import matplotlib.pyplot as plt
 
+from pysketcher._curve import Curve
+from pysketcher._drawable import Drawable
+from pysketcher._text import Text
 from pysketcher.backend.backend import Backend
 from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
 from pysketcher.backend.matplotlib.matplotlib_composition import MatplotlibComposition
 from pysketcher.backend.matplotlib.matplotlib_curve import MatplotlibCurve
 from pysketcher.backend.matplotlib.matplotlib_text import MatplotlibText
 from pysketcher.composition import Composition
-from pysketcher.curve import Curve
-from pysketcher.drawable import Drawable
-from pysketcher.text import Text
 
 plt.rc("text", usetex=True)
 plt.rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"

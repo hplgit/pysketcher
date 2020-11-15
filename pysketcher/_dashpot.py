@@ -1,9 +1,9 @@
+from pysketcher._curve import Curve
+from pysketcher._line import Line
+from pysketcher._point import Point
+from pysketcher._rectangle import Rectangle
+from pysketcher._style import Style
 from pysketcher.composition.composition import Composition
-from pysketcher.curve import Curve
-from pysketcher.line import Line
-from pysketcher.point import Point
-from pysketcher.rectangle import Rectangle
-from pysketcher.style import Style
 
 
 class Dashpot(Composition):
@@ -81,8 +81,11 @@ class Dashpot(Composition):
 
         if not (p2.y > p1.y > p0.y):
             raise ValueError(
-                "Dashpot has inconsistent dimensions! start: %g, dashpot begin: %g, dashpot end: %g, very end: %g"
-                % (B.y, p0.y, p1.y, p2.y)
+                (
+                    "Dashpot has inconsistent dimensions! start: %g, "
+                    "dashpot begin: %g, dashpot end: %g, very end: %g"
+                    % (B.y, p0.y, p1.y, p2.y)
+                )
             )
 
         shapes["line start"] = Line(B, p0)
@@ -138,7 +141,10 @@ class Dashpot(Composition):
         # tlength = Distance_wText((B[0]+4*w, B[1]), (B[0]+4*w, B[1]+L),
         #                          'total_length',
         #                          text_pos=(B[0]+4.5*w, B[1]+L-2*w))
-        # line = Line((B[0]+w, abs_piston_pos), (B[0]+7*w, abs_piston_pos)).set_linestyle('dashed').set_linecolor('black').set_linewidth(1)
+        # line = Line((B[0]+w, abs_piston_pos), (B[0]+7*w, abs_piston_pos))
+        #   .set_linestyle('dashed')
+        #   .set_linecolor('black')
+        #   .set_linewidth(1)
         # pp = Text('abs_piston_pos', (B[0]+7*w, abs_piston_pos), alignment='left')
         # dims = {'start': start, 'width': width, 'dashpot_length': dplength,
         #         'bar_length': blength, 'total_length': tlength,

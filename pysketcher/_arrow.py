@@ -1,6 +1,6 @@
-from pysketcher.line import Line
-from pysketcher.point import Point
-from pysketcher.style import Style
+from pysketcher._line import Line
+from pysketcher._point import Point
+from pysketcher._style import Style
 
 
 class Arrow(Line):

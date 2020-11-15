@@ -1,9 +1,9 @@
+from pysketcher._distance_with_text import DistanceWithText
+from pysketcher._point import Point
+from pysketcher._rectangle import Rectangle
+from pysketcher._text import Text
+from pysketcher._triangle import Triangle
 from pysketcher.composition.composition import Composition
-from pysketcher.distance_with_text import DistanceWithText
-from pysketcher.point import Point
-from pysketcher.rectangle import Rectangle
-from pysketcher.text import Text
-from pysketcher.triangle import Triangle
 
 
 class SimpleSupport(Composition):

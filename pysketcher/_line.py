@@ -1,8 +1,8 @@
 from copy import copy
 from typing import Tuple
 
-from pysketcher.curve import Curve
-from pysketcher.point import Point
+from pysketcher._curve import Curve
+from pysketcher._point import Point
 
 
 class Line(Curve):
@@ -17,7 +17,7 @@ class Line(Curve):
     _horizontal: bool
 
     def __init__(self, start: Point, end: Point):
-        """ A representation of a line primitive.
+        """A representation of a line primitive.
 
         Args:
             start: The starting point of the line.
@@ -92,8 +92,10 @@ class Line(Curve):
         """Returns a smaller portion of a line.
 
         Args:
-            x_range: The range of x-coordinates which should be used to obtain the segment
-            y_range: The range of y-coordinates which should be used to obtain the segment
+            x_range: The range of x-coordinates which
+                should be used to obtain the segment
+            y_range: The range of y-coordinates which
+                should be used to obtain the segment
 
         """
         if x_range and y_range:

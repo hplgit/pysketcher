@@ -5,40 +5,40 @@ try:
 except PackageNotFoundError:
     pass
 
-from pysketcher.angle import Angle
-from pysketcher.arc import Arc, ArcWithText
-from pysketcher.arrow import Arrow, DoubleArrow
-from pysketcher.arrow_with_text import ArrowWithText
-from pysketcher.axis import Axis
-from pysketcher.beam import SimpleSupport
-from pysketcher.circle import Circle
-from pysketcher.composition import Composition, ShapeWithText
-from pysketcher.curve import Curve
-from pysketcher.dashpot import Dashpot
-from pysketcher.distance_with_text import DistanceWithText
-from pysketcher.drawable import Drawable
-from pysketcher.figure import Figure
-from pysketcher.force import Force, Gravity
-from pysketcher.line import Line
-from pysketcher.moment import Moment
-from pysketcher.point import Point
-from pysketcher.rectangle import Rectangle
-from pysketcher.shape import Shape
-from pysketcher.sketchy_func import (
+from pysketcher._angle import Angle
+from pysketcher._arc import Arc, ArcWithText
+from pysketcher._arrow import Arrow, DoubleArrow
+from pysketcher._arrow_with_text import ArrowWithText
+from pysketcher._axis import Axis
+from pysketcher._beam import SimpleSupport
+from pysketcher._circle import Circle
+from pysketcher._curve import Curve
+from pysketcher._dashpot import Dashpot
+from pysketcher._distance_with_text import DistanceWithText
+from pysketcher._drawable import Drawable
+from pysketcher._figure import Figure
+from pysketcher._force import Force, Gravity
+from pysketcher._line import Line
+from pysketcher._moment import Moment
+from pysketcher._point import Point
+from pysketcher._rectangle import Rectangle
+from pysketcher._shape import Shape
+from pysketcher._sketchy_func import (
     SketchyFunc1,
     SketchyFunc2,
     SketchyFunc3,
     SketchyFunc4,
 )
-from pysketcher.spline import Spline
-from pysketcher.spring import Spring
-from pysketcher.style import Style, TextStyle
-from pysketcher.text import Text
-from pysketcher.triangle import Triangle
-from pysketcher.uniform_load import UniformLoad
-from pysketcher.velocity_profile import VelocityProfile
-from pysketcher.wall import Wall
-from pysketcher.wheel import Wheel
+from pysketcher._spline import Spline
+from pysketcher._spring import Spring
+from pysketcher._style import Style, TextStyle
+from pysketcher._text import Text
+from pysketcher._triangle import Triangle
+from pysketcher._uniform_load import UniformLoad
+from pysketcher._velocity_profile import VelocityProfile
+from pysketcher._wall import Wall
+from pysketcher._wheel import Wheel
+from pysketcher.composition import Composition, ShapeWithText
 
 __all__ = [
     Angle,

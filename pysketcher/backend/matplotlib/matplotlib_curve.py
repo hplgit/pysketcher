@@ -3,9 +3,9 @@ from typing import List
 import matplotlib.pyplot as plt
 
 import pysketcher as ps
+from pysketcher._style import Style
 from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
 from pysketcher.backend.matplotlib.matplotlib_style import MatplotlibStyle
-from pysketcher.style import Style
 
 
 class MatplotlibCurve(MatplotlibAdapter):
@@ -46,8 +46,9 @@ class MatplotlibCurve(MatplotlibAdapter):
                 self._plot_arrow(x_e, y_e, dx_e, dy_e, curve.style, axes)
 
         # if mpl_style.shadow:
-        #     # http://matplotlib.sourceforge.net/users/transforms_tutorial.html#using-offset-transforms-to-create-a-shadow-effect
-        #     # shift the object over 2 points, and down 2 points
+        # http://matplotlib.sourceforge.net/users/transforms_tutorial.html
+        # #using-offset-transforms-to-create-a-shadow-effect
+        # shift the object over 2 points, and down 2 points
         #     dx, dy = mpl_style.shadow / 72.0, -mpl_style.shadow / 72.0
         #     offset = transforms.ScaledTranslation(dx, dy, fig.dpi_scale_trans)
         #     shadow_transform = axes.transData + offset

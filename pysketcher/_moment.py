@@ -1,7 +1,7 @@
 import numpy as np
 
-from pysketcher.arc import ArcWithText
-from pysketcher.style import Style
+from pysketcher._arc import ArcWithText
+from pysketcher._style import Style
 
 
 class Moment(ArcWithText):

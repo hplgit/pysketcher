@@ -1,10 +1,10 @@
-from enum import Enum, auto, unique
+from enum import auto, Enum, unique
 from typing import Union
 
-from pysketcher.arrow import Arrow
+from pysketcher._arrow import Arrow
+from pysketcher._point import Point
+from pysketcher._text import Text
 from pysketcher.composition import ShapeWithText
-from pysketcher.point import Point
-from pysketcher.text import Text
 
 
 class ArrowWithText(ShapeWithText):

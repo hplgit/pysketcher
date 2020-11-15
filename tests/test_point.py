@@ -1,13 +1,11 @@
 from math import inf
 
+from hypothesis import assume, HealthCheck, note, settings
 import numpy as np
 import pytest
-from hypothesis import HealthCheck, assume, note, settings
 
-from pysketcher import Point
-from pysketcher.angle import Angle
+from pysketcher import Angle, Point
 from tests.utils import given_inferred
-
 from .conftest import isclose
 
 
@@ -124,7 +122,9 @@ class TestPoint:
 #
 #
 # @pytest.mark.parametrize("xs, ys, expected", from_coordinate_lists_data)
-# def test_from_coordinate_lists(xs: List[float], ys: List[float], expected: List[Point]):
+# def test_from_coordinate_lists(xs: List[float],
+# ys: List[float],
+# expected: List[Point]):
 #     assert Point.from_coordinate_lists(xs, ys) == expected
 #
 #

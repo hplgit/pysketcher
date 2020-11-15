@@ -1,7 +1,7 @@
-import numpy as np
 from hypothesis import assume, note
+import numpy as np
 
-from pysketcher.angle import Angle
+from pysketcher import Angle
 from tests.utils import given_inferred
 
 

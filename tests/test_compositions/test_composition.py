@@ -1,6 +1,6 @@
-import pytest
 from hypothesis import given
 from hypothesis.strategies import floats, sampled_from
+import pytest
 
 from pysketcher import Line, Point, Style
 from pysketcher.composition import Composition

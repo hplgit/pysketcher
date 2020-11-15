@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 
+from pysketcher._text import Text
 from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
 from pysketcher.backend.matplotlib.matplotlib_style import MatplotlibTextStyle
-from pysketcher.text import Text
 
 
 class MatplotlibText(MatplotlibAdapter):

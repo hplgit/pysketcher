@@ -10,10 +10,6 @@ repos:
     rev: 19.3b0
     hooks:
     -   id: black
--   repo: https://github.com/timothycrosley/isort
-    rev: 5.5.3
-    hooks:
-    -   id: isort
 -   repo: https://github.com/asottile/blacken-docs
     rev: v1.8.0
     hooks:

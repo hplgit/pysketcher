@@ -1,8 +1,8 @@
 import numpy as np
 
 from pysketcher import Curve, Point
+from pysketcher._line import Line
 from pysketcher.composition.composition import Composition
-from pysketcher.line import Line
 
 
 class Spring(Composition):

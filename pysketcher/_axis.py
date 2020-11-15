@@ -1,8 +1,8 @@
-from pysketcher.angle import Angle
-from pysketcher.arrow import Arrow
+from pysketcher._angle import Angle
+from pysketcher._arrow import Arrow
+from pysketcher._point import Point
+from pysketcher._text import Text
 from pysketcher.composition.composition import ShapeWithText
-from pysketcher.point import Point
-from pysketcher.text import Text
 
 
 class Axis(ShapeWithText):
@@ -11,7 +11,7 @@ class Axis(ShapeWithText):
         start: Point,
         length: float,
         label: str,
-        rotation_angle: Angle = Angle(0.0),
+        rotation_angle: Angle = Angle(0.0),  # noqa: B008
         label_spacing=1.0 / 4.5,
     ):
         """

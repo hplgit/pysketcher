@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from matplotlib.axes import Axes
 
-from pysketcher.drawable import Drawable
+from pysketcher._drawable import Drawable
 
 
 class MatplotlibAdapter(ABC):

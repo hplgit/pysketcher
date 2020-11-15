@@ -3,8 +3,8 @@ from typing import List
 import numpy as np
 from scipy.interpolate import UnivariateSpline
 
-from pysketcher.curve import Curve
-from pysketcher.point import Point
+from pysketcher._curve import Curve
+from pysketcher._point import Point
 
 
 class Spline(Curve):

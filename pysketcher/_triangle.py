@@ -1,6 +1,6 @@
-from pysketcher.curve import Curve
-from pysketcher.point import Point
-from pysketcher.text import Text
+from pysketcher._curve import Curve
+from pysketcher._point import Point
+from pysketcher._text import Text
 
 
 class Triangle(Curve):

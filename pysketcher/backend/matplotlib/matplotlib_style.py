@@ -1,4 +1,4 @@
-from pysketcher.style import Style, TextStyle
+from pysketcher._style import Style, TextStyle
 
 
 class MatplotlibStyle:
