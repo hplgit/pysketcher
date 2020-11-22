@@ -3,6 +3,8 @@ from enum import auto, Enum, unique
 
 @unique
 class Color(Enum):
+    """A set of colors supported across all backends."""
+
     RED = auto()
     GREEN = auto()
     BLUE = auto()

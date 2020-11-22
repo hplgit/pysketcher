@@ -3,7 +3,7 @@ from enum import auto, Enum
 from pysketcher._arrow import DoubleArrow
 from pysketcher._arrow_with_text import Text
 from pysketcher._point import Point
-from pysketcher.composition.composition import ShapeWithText
+from pysketcher.composition import ShapeWithText
 
 
 class DistanceWithText(ShapeWithText):
@@ -17,15 +17,32 @@ class DistanceWithText(ShapeWithText):
     above, but aligned 'center' by default (when `alignment` is None).
 
     Args:
-        text: The text which should be displayed.
+        text: The text which will be displayed.
         start: The start of the arrow.
         end: The end of the arrow.
-        spacing: The spacing between the text and the arrow.
+        spacing: The spacing of the text from the arrow position.
+        text_position: The position of the text.
+
+    Raises:
+        ValueError: when invalid `text_position` is passed.
+
+    Examples:
+        >>> distance_with_text = ps.DistanceWithText(
+        ...     "$a$", ps.Point(1.0, 1.0), ps.Point(3.0, 1.0)
+        ... )
+        >>> fig = ps.Figure(0.0, 4.0, 0.0, 2.0, backend=MatplotlibBackend)
+        >>> fig.add(distance_with_text)
+        >>> fig.save("pysketcher/images/distance_with_text.png")
+
+        .. figure:: images/distance_with_text.png
+            :alt: An example of DistanceWithText.
+            :figclass: align-center
+
+            An example of ``DistanceWithText``.
     """
 
     class TextPosition(Enum):
-        """Used to indicate if text should be at
-        the start, end, or middle of an arrow."""
+        """Used to show that text should be at the start, end, or middle of an arrow."""
 
         START = auto()
         MIDDLE = auto()
@@ -45,7 +62,7 @@ class DistanceWithText(ShapeWithText):
         text: str,
         start: Point,
         end: Point,
-        spacing: float = 1 / 3.0,
+        spacing: float = 1 / 6.0,
         text_position: TextPosition = TextPosition.MIDDLE,
     ):
         self._start = start
@@ -91,8 +108,3 @@ class DistanceWithText(ShapeWithText):
         arrow.line_color = "black"
         arrow.line_width = 1
         super().__init__(arrow, text)
-
-    def geometric_features(self):
-        d = self._shapes["arrow"].geometric_features()
-        d["text_position"] = self._shapes["text"].position
-        return d

@@ -14,8 +14,15 @@ exclude =
     examples/integral_comic_strip.py,
     examples/pendulum2.py
 max-line-length = 80
-select = B,B9,BLK,C,E,F,I,W,B,B950,S
-ignore = E203, E501, W503
+select = B,B9,B950,BLK,C,D,DAR,E,F,I,S,W
+ignore = E203, E501, W503, D107
 application-import-names = pysketcher,tests
 import-order-style = google
-per-file-ignores = tests/*:S101
+per-file-ignores =
+    tests/*:S101,D100,D101,D102,D103,D104,D107
+    tests/utils/*:S101,D100,D101,D102,D103,D104,D107
+    noxfile.py:D100,D101,D102,D103
+    pysketcher/backend/*:D100,D101,D102,D103,D104,D105
+    pysketcher/_builder/*:D100,D101,D102,D103,D104,D105
+    pysketcher/type_checking/*:D100,D101,D102,D103,D104,D105
+docstring-convention = google

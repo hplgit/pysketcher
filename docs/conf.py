@@ -13,9 +13,14 @@
 import os
 import sys
 
-from recommonmark.transform import AutoStructify
+import pysketcher
 
-sys.path.insert(0, os.path.abspath("."))
+# The short X.Y version.
+version = ".".join(pysketcher.__version__.split(".", 2)[:2])
+# The full version, including alpha/beta/rc tags.
+release = pysketcher.__version__
+
+sys.path.insert(0, os.path.abspath(".."))
 
 # -- Project information -----------------------------------------------------
 
@@ -31,9 +36,11 @@ author = u"Richard Vodden"
 extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
     "sphinx.ext.coverage",
     "sphinx.ext.autosectionlabel",
+    "sphinx.ext.linkcode",
+    "sphinx.ext.imgmath",
+    "sphinx_autodoc_typehints",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -54,11 +61,33 @@ highlight_language = "python"
 
 # AutoDoc Settings
 
-autodoc_member_order = "bysource"
 autodoc_typehints = "description"
-autoclass_content = "both"
+autoclass_content = "class"
+autodoc_member_order = "groupwise"
 
-# Napolean Settings
+
+def linkcode_resolve(domain, info):
+    def find_source():
+        # try to find the file and line number, based on code from numpy:
+        # https://github.com/numpy/numpy/blob/master/doc/source/conf.py#L286
+        obj = sys.modules[info["module"]]
+        for part in info["fullname"].split("."):
+            obj = getattr(obj, part)
+        import inspect
+        import os
+
+        fn = inspect.getsourcefile(obj)
+        fn = os.path.relpath(fn, start=os.path.dirname(pysketcher.__file__))
+        source, lineno = inspect.getsourcelines(obj)
+        return fn, lineno, lineno + len(source) - 1
+
+    if domain != "py" or not info["module"]:
+        return None
+    try:
+        filename = "pysketcher/%s#L%d-L%d" % find_source()
+    except Exception:
+        filename = info["module"].replace(".", "/") + ".py"
+    return "https://github.com/rvodden/pysketcher/blob/%s/%s" % (release, filename)
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -72,16 +101,3 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["tutorial/examples/images"]
-
-
-# -- Options for AutoStructify ----------------------------------------------
-
-
-def setup(app):
-    app.add_config_value(
-        "recommonmark_config", {"auto_toc_tree_section": "Contents"}, True
-    )
-    app.add_transform(AutoStructify)
-
-
-autosectionlabel_prefix_document = True

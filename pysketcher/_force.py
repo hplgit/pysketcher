@@ -4,7 +4,7 @@ from pysketcher._style import Style
 
 
 class Force(ArrowWithText):
-    """Another name for `ArrowWithText` to make code easier to read"""
+    """Another name for :class:`ArrowWithText` to make code easier to read."""
 
     pass
 

@@ -1,7 +1,6 @@
-pysketcher
-==========
+API Documentation
+=================
 
-.. toctree::
-   :maxdepth: 4
-
-   pysketcher
+.. automodule:: pysketcher
+    :members:
+    :show-inheritance:

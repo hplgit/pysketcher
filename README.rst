@@ -25,9 +25,6 @@
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. image:: https://api.dependabot.com/badges/status?host=github&repo=rvodden/pysketcher
-    :target: https://dependabot.com
-
 **This is alpha software - the interface is likely to change with every release prior to 0.1.0.**
 
 Tool for creating sketches of physical and mathematical problems in terms of Python code.

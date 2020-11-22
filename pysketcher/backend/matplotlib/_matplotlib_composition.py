@@ -1,6 +1,6 @@
 from matplotlib.axes import Axes
 
-from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
+from pysketcher.backend.matplotlib._matplotlib_adapter import MatplotlibAdapter
 from pysketcher.composition import Composition
 
 

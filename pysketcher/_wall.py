@@ -6,6 +6,34 @@ from pysketcher._style import Style
 
 
 class Wall(Curve):
+    """A representation of a wall.
+
+    Args:
+        points: a ``List`` of ``Point`` through which the wall should pass.
+        thickness: the thickness of the wall.
+
+    Examples:
+        >>> model = ps.Wall(
+        ...     [
+        ...         ps.Point(1, 1),
+        ...         ps.Point(2, 2),
+        ...         ps.Point(3, 2.5),
+        ...         ps.Point(4, 2),
+        ...         ps.Point(5, 1),
+        ...     ],
+        ...     0.1,
+        ... )
+        >>> fig = ps.Figure(0, 6, 0, 3, backend=MatplotlibBackend)
+        >>> fig.add(model)
+        >>> fig.save("pysketcher/images/wall.png")
+
+        .. figure:: images/wall.png
+            :alt: An example of a Wall.
+            :figclass: align-center
+
+            An example ``Wall``.
+    """
+
     _start: Point
     _end: Point
     _thickness: float
@@ -35,7 +63,3 @@ class Wall(Curve):
 
         super().__init__(points)
         self.style.fill_pattern = Style.FillPattern.CROSS
-
-    def geometric_features(self):
-        d = {"start": self._start, "end": self._end}
-        return d

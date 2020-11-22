@@ -3,10 +3,30 @@ import numpy as np
 from pysketcher._circle import Circle
 from pysketcher._line import Line
 from pysketcher._point import Point
-from pysketcher.composition.composition import Composition
+from pysketcher.composition import Composition
 
 
-class Wheel:
+class Wheel(Composition):
+    """A representation of a wheel.
+
+    Args:
+        center: The center of the ``Wheel``.
+        radius: The radius of the ``Wheel``.
+        inner_radius: The radius of the hub of the ``Wheel``.
+
+    Examples:
+        >>> w = ps.Wheel(ps.Point(1.0, 1.0), 0.5, 0.25)
+        >>> fig = ps.Figure(0.0, 2.0, 0.0, 2.0, backend=MatplotlibBackend)
+        >>> fig.add(w)
+        >>> fig.save("pysketcher/images/wheel.png")
+
+        .. figure:: images/wheel.png
+            :alt: An example of a Wheel.
+            :figclass: align-center
+
+            An example of a ``Wheel``.
+    """
+
     _center: Point
     _radius: float
     _inner_radius: float
@@ -38,8 +58,12 @@ class Wheel:
             Line(Point(xi, yi), Point(xo, yo))
             for xi, yi, xo, yo in zip(xinner, yinner, xouter, youter)
         ]
-        self.shapes = {
-            "inner": inner,
-            "outer": outer,
-            "spokes": Composition({"spoke%d" % i: lines[i] for i in range(len(lines))}),
-        }
+        super().__init__(
+            {
+                "inner": inner,
+                "outer": outer,
+                "spokes": Composition(
+                    {"spoke%d" % i: lines[i] for i in range(len(lines))}
+                ),
+            }
+        )

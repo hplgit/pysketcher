@@ -3,11 +3,12 @@ from pysketcher._line import Line
 from pysketcher._point import Point
 from pysketcher._rectangle import Rectangle
 from pysketcher._style import Style
-from pysketcher.composition.composition import Composition
+from pysketcher.composition import Composition
 
 
 class Dashpot(Composition):
-    """
+    """A representation of a dashpot.
+
     Specify a vertical dashpot of height `total_length` and `start` as
     bottom/starting point. The first bar part has length `bar_length`.
     Then comes the dashpot as a rectangular construction of total
@@ -16,24 +17,37 @@ class Dashpot(Composition):
     `piston_pos`, which is the distance between the first bar (given
     by `bar_length`) to the piston.
     If some of `dashpot_length`, `bar_length`, `width` or `piston_pos`
-    are not given, suitable default values are calculated. Their
-    values can be extracted as keys in the dict returned from
-    ``geometric_features``.
+    are not given, suitable default values are calculated.
+
+    Args:
+        start: The starting point of the Dashpot.
+        total_length: The total length of the Dashpot including bar.
+        bar_length: The length of the bar.
+        width: The width of the dashpot.
+        dashpot_length: The length of the Dashpot excluding bar.
+        piston_pos: The position of the piston. Defaults to 1/3 length.
 
     Examples:
-        >>> L = 12.
-        >>> H = L / 6.
-        >>> x = L / 2.
+        >>> L = 12.0
+        >>> H = L / 6.0
+        >>> x = L / 2.0
         >>> d_start = ps.Point(0, 0)
         >>> d = ps.Dashpot(d_start, L + x)
         >>> fig = ps.Figure(-3, 3, -1, 13, backend=MatplotlibBackend)
         >>> fig.add(d)
-        >>> fig.show()
+        >>> fig.save("pysketcher/images/dashpot.png")
+
+        .. figure:: images/dashpot.png
+            :alt: An example of Dashpot.
+            :figclass: align-center
+            :scale: 30%
+
+            An example of ``Dashpot``.
     """
 
-    dashpot_fraction = 1.0 / 2  # fraction of total_length
-    piston_gap_fraction = 1.0 / 6  # fraction of width
-    piston_thickness_fraction = 1.0 / 8  # fraction of dashplot_length
+    _dashpot_fraction = 1.0 / 2  # fraction of total_length
+    _piston_gap_fraction = 1.0 / 6  # fraction of width
+    _piston_thickness_fraction = 1.0 / 8  # fraction of dashplot_length
 
     def __init__(
         self,
@@ -52,22 +66,11 @@ class Dashpot(Composition):
             w = width / 2.0
         s = bar_length
 
-        # [0, x, L-x, L], f = (L-2*x)/L
-        # x = L*(1-f)/2.
-
-        # B: start point
-        # w: half-width
-        # L: total length
-        # s: length of first bar
-        # p0: start of dashpot (B[0]+s)
-        # p1: end of dashpot
-        # p2: end point
-
         shapes = {}
         # dashpot is p0-p1 in y and width 2*w
         if dashpot_length is None:
             if s is None:
-                f = Dashpot.dashpot_fraction
+                f = Dashpot._dashpot_fraction
                 s = L * (1 - f) / 2.0  # default
             p1 = Point(B.x, B.y + L - s)
             dashpot_length = f * L
@@ -98,7 +101,7 @@ class Dashpot(Composition):
                 Point(p1.x + w, p1.y),
             ]
         )
-        piston_thickness = dashpot_length * Dashpot.piston_thickness_fraction
+        piston_thickness = dashpot_length * Dashpot._piston_thickness_fraction
         if piston_pos is None:
             piston_pos = 1 / 3.0 * dashpot_length
         if piston_pos < 0:
@@ -108,7 +111,7 @@ class Dashpot(Composition):
 
         abs_piston_pos = p0.y + piston_pos
 
-        gap = w * Dashpot.piston_gap_fraction
+        gap = w * Dashpot._piston_gap_fraction
         shapes["piston"] = Composition(
             {
                 "line": Line(p2, Point(B.x, abs_piston_pos + piston_thickness)),

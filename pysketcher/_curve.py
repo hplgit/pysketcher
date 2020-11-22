@@ -8,12 +8,34 @@ from pysketcher._shape import Shape
 
 
 class Curve(Shape):
-    """General curve as a sequence of (x,y) coordintes."""
+    """General curve as a sequence of (x,y) coordintes.
+
+    Examples:
+        >>> code = ps.Curve(
+        ...     [
+        ...         ps.Point(0, 0),
+        ...         ps.Point(1, 1),
+        ...         ps.Point(2, 4),
+        ...         ps.Point(3, 9),
+        ...         ps.Point(4, 16),
+        ...     ]
+        ... )
+        >>> code.style.line_color = ps.Style.Color.BLACK
+        >>> model = ps.Composition(dict(text=code))
+        >>> fig = ps.Figure(0, 5, 0, 16, backend=MatplotlibBackend)
+        >>> fig.add(model)
+        >>> fig.save("pysketcher/images/curve.png")
+
+
+    .. figure:: images/curve.png
+        :alt: An example of Curve.
+        :figclass: align-center
+        :scale: 30%
+
+        An example of ``Curve``.
+    """
 
     def __init__(self, points: List[Point]):
-        """
-        `x`, `y`: arrays holding the coordinates of the curve.
-        """
         super().__init__()
         self._points = points
         # self.shapes must not be defined in this class
@@ -22,20 +44,30 @@ class Curve(Shape):
 
     @property
     def points(self):
+        """The points which make up the curve."""
         return self._points
 
     @property
     def xs(self):
+        """The x co-ordinates of the points of the curve."""
         return np.array([p.x for p in self.points])
 
     @property
     def ys(self):
+        """The y co-ordinates of the Points of the curve."""
         return np.array([p.y for p in self.points])
 
     def rotate(self, angle: Angle, center: Point) -> "Curve":
-        """
-        Rotate all coordinates: `angle` is measured in radians
-        center is the "origin" of the rotation.
+        """Rotate all coordinates.
+
+        Args:
+            angle: The ``Angle`` (in radians) through which the rotation should be
+                performed.
+            center: The ``Point`` about which the rotation should be performed.
+
+        Returns:
+            A copy of the ``Curve`` which has had all points rotated in the
+                described manner.
         """
         ret_curve = Curve([p.rotate(angle, center) for p in self.points])
         ret_curve.style = self.style
@@ -58,8 +90,8 @@ class Curve(Shape):
     def __str__(self):
         """Compact pretty print of a Curve object."""
         s = "%d (x,y) coords" % len(self._points)
-        s += " %s" % self.style
         return s
 
     def __repr__(self):
-        return str(self)
+        """An unambiguous string representational of a Curve object."""
+        return "Curve(" + ",".join([repr(p) for p in self.points]) + ")"

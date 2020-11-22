@@ -19,7 +19,9 @@ def gaussian(x: float) -> float:
     return alpha * np.exp(-((x - W) ** 2) / (0.5 * sigma ** 2))
 
 
-wall = ps.Wall([ps.Point(x, gaussian(x)) for x in np.linspace(0, W + L, 51)], 0.3)
+wall = ps.Wall(
+    [ps.Point(x, gaussian(x)) for x in np.linspace(W + L, 0, 51, endpoint=False)], 0.3
+)
 wall.style.line_color = ps.Style.Color.BROWN
 
 
@@ -61,5 +63,7 @@ symbols = {
 }
 symbols = ps.Composition(symbols)
 
-drawing_tool = ps.Figure(0, W + L + 1, -2, H + 1, backend=MatplotlibBackend)
-drawing_tool.display()
+fig = ps.Figure(0, W + L + 1, -2, H + 1, backend=MatplotlibBackend)
+fig.add(model)
+fig.add(symbols)
+fig.show()

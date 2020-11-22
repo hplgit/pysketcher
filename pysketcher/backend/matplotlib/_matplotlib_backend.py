@@ -7,10 +7,10 @@ from pysketcher._curve import Curve
 from pysketcher._drawable import Drawable
 from pysketcher._text import Text
 from pysketcher.backend.backend import Backend
-from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
-from pysketcher.backend.matplotlib.matplotlib_composition import MatplotlibComposition
-from pysketcher.backend.matplotlib.matplotlib_curve import MatplotlibCurve
-from pysketcher.backend.matplotlib.matplotlib_text import MatplotlibText
+from pysketcher.backend.matplotlib._matplotlib_adapter import MatplotlibAdapter
+from pysketcher.backend.matplotlib._matplotlib_composition import MatplotlibComposition
+from pysketcher.backend.matplotlib._matplotlib_curve import MatplotlibCurve
+from pysketcher.backend.matplotlib._matplotlib_text import MatplotlibText
 from pysketcher.composition import Composition
 
 plt.rc("text", usetex=True)
@@ -18,11 +18,7 @@ plt.rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
 
 
 class MatplotlibBackend(Backend):
-    """
-    Simple interface for plotting. This interface makes use of
-    Matplotlib for plotting.
-
-    """
+    """Simple interface for plotting. Makes use of Matplotlib for plotting."""
 
     _fig: plt.Figure
     _axes: plt.Axes
@@ -37,15 +33,15 @@ class MatplotlibBackend(Backend):
         self._x_max = x_max
         self._y_min = y_min
         self._y_max = y_max
-        self._fig = plt.figure(
-            figsize=[x_max - x_min, y_max - y_min], tight_layout=False
-        )
+        aspect = (y_max - y_min) / (x_max - x_min)
+        self._fig = plt.figure(figsize=[10, 10 * aspect], tight_layout=False)
         self._axes = self._fig.gca()
         self._configure_axes()
 
     def _configure_axes(self):
         self._axes.set_xlim(self._x_min, self._x_max)
         self._axes.set_ylim(self._y_min, self._y_max)
+        self._axes.set_aspect("equal")
         self._axes.set_axis_off()
 
     def add(self, shape: Drawable) -> None:

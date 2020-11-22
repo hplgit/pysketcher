@@ -1,12 +1,12 @@
 from math import inf
 
+from conftest import isclose
 from hypothesis import assume, HealthCheck, note, settings
 import numpy as np
 import pytest
 
 from pysketcher import Angle, Point
 from tests.utils import given_inferred
-from .conftest import isclose
 
 
 class TestPoint:

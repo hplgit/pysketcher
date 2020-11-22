@@ -8,12 +8,36 @@ from pysketcher._point import Point
 
 
 class Spline(Curve):
+    """A univariate spline.
+
+    Note: UnivariateSpline interpolation may not work if
+        the x[i] points are far from uniformly spaced.
+
+    Examples:
+        >>> s = ps.Spline(
+        ...     [
+        ...         ps.Point(0, 0),
+        ...         ps.Point(1, 1),
+        ...         ps.Point(2, 4),
+        ...         ps.Point(3, 9),
+        ...         ps.Point(4, 16),
+        ...     ]
+        ... )
+        >>> fig = ps.Figure(0, 5, 0, 16, backend=MatplotlibBackend)
+        >>> fig.add(s)
+        >>> fig.save("pysketcher/images/spline.png")
+
+        .. figure:: images/spline.png
+            :alt: An example of a Spline.
+            :figclass: align-center
+            :scale: 30%
+
+            An example of ``Spline``.
+    """
 
     _input_points: List[Point]
     _smooth: UnivariateSpline
 
-    # Note: UnivariateSpline interpolation may not work if
-    # the x[i] points are far from uniformly spaced
     def __init__(self, points: List[Point], degree: int = 3, resolution: int = 501):
         self._input_points = points
         self._smooth = UnivariateSpline(
@@ -24,15 +48,6 @@ class Spline(Curve):
         smooth_points = [Point(p[0], p[1]) for p in zip(x_coordinates, y_coordinates)]
         super().__init__(smooth_points)
 
-    def geometric_features(self):
-        return {
-            "start": self.points[0],
-            "end": self.points[-1],
-            "interval": [self.points[0].x, self.points[-1].x],
-        }
-
     def __call__(self, x):
+        """Returns the value of the curve at a given x-coordinate."""
         return self._smooth(x)
-
-    # Can easily find the derivative and the integral as
-    # self.smooth.derivative(n=1) and self.smooth.antiderivative()

@@ -1,23 +1,26 @@
 from pysketcher._arrow import Arrow
 from pysketcher._point import Point
 from pysketcher._rectangle import Rectangle
-from pysketcher.composition.composition import Composition
+from pysketcher.composition import Composition
 
 
 class UniformLoad(Composition):
-    """
-    Downward-pointing arrows indicating a vertical load.
+    """Downward-pointing arrows indicating a vertical load.
+
     The arrows are of equal length and filling a rectangle
     specified as in the :class:`Rectangle` class.
 
-    Recorded geometric features:
+    Examples:
+        >>> l = ps.UniformLoad(ps.Point(0.5, 0.5), 4, 0.5)
+        >>> fig = ps.Figure(0.0, 5.0, 0.0, 1, backend=MatplotlibBackend)
+        >>> fig.add(l)
+        >>> fig.save("pysketcher/images/uniform_load.png")
 
-    ==================== =============================================
-    Attribute            Description
-    ==================== =============================================
-    mid_top              Middle point at the top of the row of
-                         arrows (often used for positioning a text).
-    ==================== =============================================
+        .. figure:: images/uniform_load.png
+            :alt: An example of a Uniform Load.
+            :figclass: align-center
+
+            An example of a ``UniformLoad``.
     """
 
     def __init__(
@@ -32,6 +35,3 @@ class UniformLoad(Composition):
             end = Point(x, lower_left_corner.y)
             shapes["arrow%d" % i] = Arrow(start, end)
         super().__init__(shapes)
-
-    def geometric_features(self):
-        return {"mid_top": self["box"].geometric_features()["upper_mid"]}

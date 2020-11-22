@@ -8,17 +8,13 @@ from tests.utils import ImageComparisonFailure
 
 
 def make_test_filename(file_name, purpose):
-    """
-    Make a new filename by inserting *purpose* before the file's extension.
-    """
+    """Make a new filename by inserting *purpose* before the file's extension."""
     base, ext = os.path.splitext(file_name)
     return "%s-%s%s" % (base, purpose, ext)
 
 
 def calculate_rms(expected_image, actual_image):
-    """
-    Calculate the per-pixel errors, then compute the root mean square error.
-    """
+    """Calculate the per-pixel errors, then compute the root mean square error."""
     if expected_image.shape != actual_image.shape:
         raise ImageComparisonFailure(
             "Image sizes do not match expected size: {} "
@@ -41,6 +37,7 @@ def compare_images(expected: str, actual: str, tol: float) -> Union[None, Dict]:
         tol : The tolerance (a color value difference, where 255 is the
               maximal difference).  The test fails if the average pixel
               difference is greater than this value.
+
     Returns:
         Return *None* if the images are equal within the given tolerance.
         If the images differ, the return value depends on  *in_decorator*.
@@ -52,6 +49,10 @@ def compare_images(expected: str, actual: str, tol: float) -> Union[None, Dict]:
         - *diff_image*: The filename of the difference image.
         - *tol*: The comparison tolerance.
 
+    Raises:
+        ValueError: If either of the provided images is not suitable.
+        IOError: If either of the image files cannot be found.
+
     Examples:
         >>> img1 = "docs/images/wheel_on_inclined_plane.png"
         >>> img2 = "docs/images/wheel_on_inclined_plane.png"
@@ -59,9 +60,9 @@ def compare_images(expected: str, actual: str, tol: float) -> Union[None, Dict]:
     """
     actual = os.fspath(actual)
     if not os.path.exists(actual):
-        raise Exception("Output image %s does not exist." % actual)
+        raise ValueError("Output image %s does not exist." % actual)
     if os.stat(actual).st_size == 0:
-        raise Exception("Output image file %s is empty." % actual)
+        raise ValueError("Output image file %s is empty." % actual)
 
     # Convert the image to png
     expected = os.fspath(expected)
@@ -108,6 +109,9 @@ def save_diff_image(expected: str, actual: str, output: str):
         expected : File path of expected image.
         actual : File path of actual image.
         output : File path to save difference image to.
+
+    Raises:
+        ImageComparisonFailure: If the images are not compatible
     """
     # Drop alpha channels, similarly to compare_images.
     expected_image = np.asarray(Image.open(expected).convert("RGB"))

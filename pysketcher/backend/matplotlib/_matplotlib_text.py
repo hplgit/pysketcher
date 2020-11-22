@@ -1,21 +1,23 @@
 import matplotlib.pyplot as plt
 
 from pysketcher._text import Text
-from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
-from pysketcher.backend.matplotlib.matplotlib_style import MatplotlibTextStyle
+from pysketcher.backend.matplotlib._matplotlib_adapter import MatplotlibAdapter
+from pysketcher.backend.matplotlib._matplotlib_style import MatplotlibTextStyle
 
 
 class MatplotlibText(MatplotlibAdapter):
+    """Renders a Text primitive."""
+
     def plot(self, text: Text, axes: plt.Axes):
-        """
+        """Render a Text primitive.
+
         Write `text` string at a position (centered, left, right - according
         to the `alignment` string). `position` is a point in the coordinate
         system.
-        If ``arrow+tip != None``, an arrow is drawn from the text to a point
-        (on a curve, for instance). The arrow_tip argument is then
-        the (x,y) coordinates for the arrow tip.
-        fontsize=0 indicates use of the default font as set by
-        ``set_fontsize``.
+
+        Args:
+            text: the ``Text`` object to be rendered.
+            axes: the ``Axes`` to render the text object on.
         """
         mpl_style = MatplotlibTextStyle(text.style)
         kwargs = {}

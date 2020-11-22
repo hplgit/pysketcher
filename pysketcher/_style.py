@@ -1,50 +1,62 @@
 from collections import namedtuple
-from enum import auto, Enum, unique
+from enum import auto, unique
+
+from pysketcher._utils import DocEnum
 
 Arrow = namedtuple("Arrow", "start end")
 
 
 class Style:
-    @unique
-    class LineStyle(Enum):
-        SOLID = auto()
-        DOTTED = auto()
-        DASH_DOT = auto()
-        DASHED = auto()
+    """Represents the visual characteristics of a Drawable object."""
 
     @unique
-    class Color(Enum):
-        GREY = auto()
-        BLACK = auto()
-        BROWN = auto()
-        RED = auto()
-        ORANGE = auto()
-        YELLOW = auto()
-        GREEN = auto()
-        CYAN = auto()
-        BLUE = auto()
-        MAGENTA = auto()
-        PURPLE = auto()
-        WHITE = auto()
+    class LineStyle(DocEnum):
+        """Represents the manner of line to be drawn."""
+
+        SOLID = auto(), "An unbroken line."
+        DOTTED = auto(), "A dotted line."
+        DASH_DOT = auto(), "An alternating dash dot line."
+        DASHED = auto(), "A dashed line."
 
     @unique
-    class FillPattern(Enum):
-        VERTICAL = auto()
-        HORIZONTAL = auto()
-        CROSS = auto()
-        SQUARE = auto()
-        STAR = auto()
-        DOT = auto()
-        CIRCLE = auto()
-        SMALL_CIRCLE = auto()
-        UP_RIGHT_TO_LEFT = auto()
-        UP_LEFT_TO_RIGHT = auto()
+    class Color(DocEnum):
+        """Represents the color in which something should be rendered."""
+
+        GREY = auto(), "The color grey."
+        BLACK = auto(), "The color black."
+        BROWN = auto(), "The color brown."
+        RED = auto(), "The color red."
+        ORANGE = auto(), "The color orange."
+        YELLOW = auto(), " The color yellow."
+        GREEN = auto(), "The color green."
+        CYAN = auto(), "The color cyan."
+        BLUE = auto(), "The color blue."
+        MAGENTA = auto(), "The color magenta."
+        PURPLE = auto(), "The color purple."
+        WHITE = auto(), "The color white."
 
     @unique
-    class ArrowStyle(Enum):
-        START = Arrow(True, False)
-        END = Arrow(False, True)
-        DOUBLE = Arrow(True, True)
+    class FillPattern(DocEnum):
+        """Represents the pattern in which something can be shaded."""
+
+        VERTICAL = auto(), "A pattern made up for vertical lines."
+        HORIZONTAL = auto(), "A pattern made up of horizontal lines."
+        CROSS = auto(), "A pattern made of crossing diagonal lines."
+        SQUARE = auto(), "A pattern made of crossing horizontal and vertical lines."
+        STAR = auto(), "A pattern made of stars."
+        DOT = auto(), "A pattern made of dots,"
+        CIRCLE = auto(), "A pattern made of circles."
+        SMALL_CIRCLE = auto(), "A pattern made of small circles."
+        UP_RIGHT_TO_LEFT = auto(), "A pattern made of diagonal lines from SE to NW."
+        UP_LEFT_TO_RIGHT = auto(), "A pattern made of diagonal lines from SW to NE."
+
+    @unique
+    class ArrowStyle(DocEnum):
+        """Represents the style of arrow which can adorn a line."""
+
+        START = Arrow(True, False), "Place an arrowhead at the start of the line."
+        END = Arrow(False, True), "Place an arrowhead at the end of the line."
+        DOUBLE = Arrow(True, True), "Place an arrowhead at both ends of the line."
 
     _line_style: LineStyle
     _line_width: float
@@ -65,6 +77,7 @@ class Style:
 
     @property
     def line_style(self) -> LineStyle:
+        """The style of line."""
         return self._line_style
 
     @line_style.setter
@@ -73,6 +86,7 @@ class Style:
 
     @property
     def line_width(self) -> float:
+        """The width of line."""
         return self._line_width
 
     @line_width.setter
@@ -81,6 +95,7 @@ class Style:
 
     @property
     def line_color(self) -> Color:
+        """The color of line."""
         return self._line_color
 
     @line_color.setter
@@ -89,6 +104,7 @@ class Style:
 
     @property
     def fill_color(self) -> Color:
+        """The color of fill."""
         return self._fill_color
 
     @fill_color.setter
@@ -97,6 +113,7 @@ class Style:
 
     @property
     def fill_pattern(self) -> FillPattern:
+        """The pattern of fill."""
         return self._fill_pattern
 
     @fill_pattern.setter
@@ -107,6 +124,7 @@ class Style:
 
     @property
     def arrow(self) -> ArrowStyle:
+        """The arrow which should adorn the line."""
         return self._arrow
 
     @arrow.setter
@@ -115,6 +133,7 @@ class Style:
 
     @property
     def shadow(self) -> float:
+        """The shadow which the object should cast."""
         return self._shadow
 
     @shadow.setter
@@ -122,6 +141,7 @@ class Style:
         self._shadow = shadow
 
     def __str__(self):
+        """Returns a representation of the style in string form."""
         return (
             "line_style: %s, line_width: %s, line_color: %s,"
             " fill_pattern: %s, fill_color: %s, arrow: %s shadow: %s"
@@ -138,15 +158,21 @@ class Style:
 
 
 class TextStyle(Style):
-    class FontFamily(Enum):
-        SERIF = auto()
-        SANS = auto()
-        MONO = auto()
+    """Represents the visual style of a text object."""
 
-    class Alignment(Enum):
-        LEFT = auto()
-        CENTER = auto()
-        RIGHT = auto()
+    class FontFamily(DocEnum):
+        """Represents the font which should be used to render text."""
+
+        SERIF = auto(), "A font with serifs."
+        SANS = auto(), "A font without serifs."
+        MONO = auto(), "An equally spaced font."
+
+    class Alignment(DocEnum):
+        """Represents the horizontal alignment of text."""
+
+        LEFT = auto(), "Align text to the left."
+        CENTER = auto(), "Align text to the center."
+        RIGHT = auto(), "Align text to the right."
 
     _font_size: float
     _font_family: FontFamily
@@ -160,6 +186,7 @@ class TextStyle(Style):
 
     @property
     def font_size(self) -> float:
+        """The size of text."""
         return self._font_size
 
     @font_size.setter
@@ -168,6 +195,7 @@ class TextStyle(Style):
 
     @property
     def font_family(self) -> FontFamily:
+        """The family of font in which text is rendered."""
         return self._font_family
 
     @font_family.setter
@@ -176,6 +204,7 @@ class TextStyle(Style):
 
     @property
     def alignment(self):
+        """The alignment to be used when text is rendered."""
         return self._alignment
 
     @alignment.setter

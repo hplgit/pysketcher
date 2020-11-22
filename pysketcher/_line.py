@@ -6,6 +6,26 @@ from pysketcher._point import Point
 
 
 class Line(Curve):
+    """A representation of a line primitive.
+
+    Args:
+        start: The starting point of the line.
+        end: The end point of the line.
+
+    Example:
+        >>> a = ps.Line(ps.Point(1.0, 2.0), ps.Point(4.0, 3.0))
+        >>> b = a.rotate(np.pi / 2, ps.Point(1.0, 2.0))
+        >>> fig = ps.Figure(0, 5, 0, 5, backend=MatplotlibBackend)
+        >>> fig.add(a)
+        >>> fig.add(b)
+        >>> fig.save("pysketcher/images/line.png")
+
+    .. figure:: images/line.png
+        :alt: An example of Line.
+        :figclass: align-center
+
+        An example of ``Line``.
+    """
 
     _start: Point
     _end: Point
@@ -17,16 +37,6 @@ class Line(Curve):
     _horizontal: bool
 
     def __init__(self, start: Point, end: Point):
-        """A representation of a line primitive.
-
-        Args:
-            start: The starting point of the line.
-            end: The end point of the line.
-
-        Example:
-            >>> a = Line(Point(1.,2.), Point(4.,3.))
-            >>> b = a.rotate(np.pi / 2, Point(1.,2.))
-        """
         if start == end:
             raise ValueError("Cannot specify a line with two equal points.")
         self._start = start
@@ -56,12 +66,12 @@ class Line(Curve):
             self._horizontal = True
 
     @property
-    def start(self):
+    def start(self) -> Point:
         """The starting point of the line."""
         return self._start
 
     @property
-    def end(self):
+    def end(self) -> Point:
         """The end point of the line."""
         return self._end
 
@@ -77,7 +87,7 @@ class Line(Curve):
 
         Raises:
             ValueError: If the line is horizontal and y is provided, or if
-            the line is vertical and x is provided.
+                the line is vertical and x is provided.
         """
         self._compute_formulas()
         if self._horizontal and y:
@@ -97,6 +107,12 @@ class Line(Curve):
             y_range: The range of y-coordinates which
                 should be used to obtain the segment
 
+        Returns:
+            A line bounded to either ``x_range`` or ``y_range``.
+
+        Raises:
+            ValueError: If the line is vertical and ``x_range`` is provided, or if
+                the line is horizontal and ``y_range`` is provided.
         """
         if x_range and y_range:
             raise ValueError("Cannot specify both x_range and y_range.")
@@ -110,11 +126,14 @@ class Line(Curve):
             )
 
     def rotate(self, angle: float, center: Point) -> "Line":
-        """Returns a copy of a line rotated through an angle about a point.
+        """Rotate the line through an angle about a point.
 
         Args:
-            angle:
-            center:
+            angle: the angle in radians through which the rotation should occur.
+            center: the point about which the rotation should occur.
+
+        Returns:
+            A copy of the line rotated through ``angle`` about ``center``.
         """
         start = self._start.rotate(angle, center)
         end = self._end.rotate(angle, center)

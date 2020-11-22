@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 import pysketcher as ps
 from pysketcher._style import Style
-from pysketcher.backend.matplotlib.matplotlib_adapter import MatplotlibAdapter
-from pysketcher.backend.matplotlib.matplotlib_style import MatplotlibStyle
+from pysketcher.backend.matplotlib._matplotlib_adapter import MatplotlibAdapter
+from pysketcher.backend.matplotlib._matplotlib_style import MatplotlibStyle
 
 
 class MatplotlibCurve(MatplotlibAdapter):

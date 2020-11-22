@@ -2,11 +2,12 @@ import numpy as np
 
 from pysketcher import Curve, Point
 from pysketcher._line import Line
-from pysketcher.composition.composition import Composition
+from pysketcher.composition import Composition
 
 
 class Spring(Composition):
-    """
+    """A representation of a spring.
+
     Specify a *vertical* spring, starting at `start` and with `length`
     as total vertical length. In the middle of the spring there are
     `num_windings` circular windings to illustrate the spring. If
@@ -18,13 +19,20 @@ class Spring(Composition):
     below).
 
     Examples:
-        >>> L = 12.
-        >>> H = L / 6.
-        >>> start = ps.Point(0., 0.)
+        >>> L = 12.0
+        >>> H = L / 6.0
+        >>> start = ps.Point(0.0, 0.0)
         >>> s = ps.Spring(start, L)
-        >>> fig = ps.Figure(-2, 2, -1, L+H,backend=MatplotlibBackend)
+        >>> fig = ps.Figure(-2, 2, -1, L + H, backend=MatplotlibBackend)
         >>> fig.add(s)
-        >>> fig.show()
+        >>> fig.save("pysketcher/images/spring.png")
+
+        .. figure:: images/spring.png
+            :alt: An example of a Spring.
+            :figclass: align-center
+            :scale: 30%
+
+            An example of a ``Spring``.
     """
 
     spring_fraction = 1.0 / 2  # fraction of total length occupied by spring

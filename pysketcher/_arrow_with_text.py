@@ -8,15 +8,41 @@ from pysketcher.composition import ShapeWithText
 
 
 class ArrowWithText(ShapeWithText):
-    """
-    As class Text, but an arrow is drawn from the mid part of the text
-    to some point `arrow_tip`.
+    """An ``Arrow`` with a text label at ``text_position``.
+
+    Args:
+        text: The text to be displayed.
+        start: The start ``Point`` of the arrow.
+        end: The end ``Point`` of the arrow.
+        text_position: The position of the text on the arrow.
+        spacing: The text spacing.
+
+    Examples:
+        >>> arrow_with_text = ps.ArrowWithText(
+        ...     "$a$",
+        ...     ps.Point(1.0, 1.0),
+        ...     ps.Point(
+        ...         3.0,
+        ...         1.0,
+        ...     ),
+        ... )
+        >>> fig = ps.Figure(0.0, 4.0, 0.0, 2.0, backend=MatplotlibBackend)
+        >>> fig.add(arrow_with_text)
+        >>> fig.save("pysketcher/images/arrow_with_text.png")
+
+    .. figure:: images/arrow_with_text.png
+        :alt: An example of ArrowWithText.
+        :figclass: align-center
+
+        An example of ``ArrowWithText``.
     """
 
     _DEFAULT_SPACING: Point = Point(0.15, 0.15)
 
     @unique
     class TextPosition(Enum):
+        """Specifies the position of the text on the ``Arrow``."""
+
         START = auto()
         END = auto()
 
