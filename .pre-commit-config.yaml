@@ -24,3 +24,8 @@ repos:
     rev: ''  # pick a git hash / tag to point to
     hooks:
     -   id: flake8
+-   repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.8.2
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
