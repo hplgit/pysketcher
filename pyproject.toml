@@ -25,7 +25,7 @@ python = "^3.7"
 numpy = "^1.18.2"
 matplotlib = "^3.2.1"
 scipy = "^1.4.1"
-importlib-metadata = {version = "^2.0.0", python = "<=3.7"}
+importlib-metadata = {version = ">=2,<4", python = "<=3.7"}
 nox = "^2020.8.22"
 
 [tool.poetry.dev-dependencies]
