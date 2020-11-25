@@ -1,6 +1,4 @@
-import numpy as np
-
-from pysketcher import Arrow, Axis, Force, Line, Point, Shape, Style
+from pysketcher import Shape, Style
 from tests.utils import given_inferred
 
 
@@ -12,7 +10,7 @@ class TestShape:
         assert shape.style == style
 
     @given_inferred
-    def test_set_line_width(self, shape: Shape, line_width: np.float64):
+    def test_set_line_width(self, shape: Shape, line_width: float):
         new_shape = shape.set_line_width(line_width)
         assert new_shape == shape
         assert new_shape.style.line_width == line_width
@@ -48,7 +46,7 @@ class TestShape:
         assert new_shape.style.arrow == arrow
 
     @given_inferred
-    def test_set_shadow(self, shape: Shape, shadow: np.float64):
+    def test_set_shadow(self, shape: Shape, shadow: float):
         new_shape = shape.set_shadow(shadow)
         assert new_shape == shape
         assert new_shape.style.shadow == shadow

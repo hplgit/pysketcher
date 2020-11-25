@@ -1,4 +1,4 @@
-from hypothesis import assume, given, infer
+from hypothesis import assume, HealthCheck, settings
 
 from pysketcher import Line, Point
 from tests.utils import given_inferred
@@ -6,6 +6,7 @@ from tests.utils import given_inferred
 
 class TestLine:
     @given_inferred
+    @settings(suppress_health_check=[HealthCheck.filter_too_much])
     def test_start(self, a: Point, b: Point) -> None:
         assume(a != b)
         line = Line(a, b)

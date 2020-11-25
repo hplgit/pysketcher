@@ -3,7 +3,6 @@ import logging
 import numpy as np
 
 import pysketcher as ps
-from pysketcher import Point
 from pysketcher.backend.matplotlib import MatplotlibBackend
 
 H = 7.0

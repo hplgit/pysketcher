@@ -19,7 +19,9 @@ def gaussian(x: float) -> float:
     return alpha * np.exp(-((x - W) ** 2) / (0.5 * sigma ** 2))
 
 
-wall = ps.Wall([ps.Point(x, gaussian(x)) for x in np.linspace(0, W + L, 51)], 0.3)
+wall = ps.Wall(
+    [ps.Point(x, gaussian(x)) for x in np.linspace(W + L, 0, 51, endpoint=False)], 0.3
+)
 wall.style.line_color = ps.Style.Color.BROWN
 
 
@@ -30,10 +32,10 @@ def velocity_profile(y: float) -> ps.Point:
 inlet_profile = ps.VelocityProfile(ps.Point(0, 0), H, velocity_profile, 5)
 inlet_profile.style.line_color = ps.Style.Color.BLUE
 
-symmetry_line = ps.Line(Point(0, H), ps.Point(W + L, H))
+symmetry_line = ps.Line(ps.Point(0, H), ps.Point(W + L, H))
 symmetry_line.style.line_style = ps.Style.LineStyle.DASHED
 
-outlet = ps.Line(Point(W + L, 0), ps.Point(W + L, H))
+outlet = ps.Line(ps.Point(W + L, 0), ps.Point(W + L, H))
 outlet.style.line_style = ps.Style.LineStyle.DASHED
 
 model = ps.Composition(
@@ -61,5 +63,7 @@ symbols = {
 }
 symbols = ps.Composition(symbols)
 
-drawing_tool = ps.Figure(0, W + L + 1, -2, H + 1, backend=MatplotlibBackend)
-drawing_tool.display()
+fig = ps.Figure(0, W + L + 1, -2, H + 1, backend=MatplotlibBackend)
+fig.add(model)
+fig.add(symbols)
+fig.show()

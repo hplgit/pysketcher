@@ -1,72 +1,55 @@
-from math import inf, sqrt
+from math import inf
 
+from conftest import isclose
+from hypothesis import assume, HealthCheck, note, settings
 import numpy as np
 import pytest
-from hypothesis import (
-    HealthCheck,
-    assume,
-    given,
-    infer,
-    note,
-    reproduce_failure,
-    settings,
-)
 
-from pysketcher import Point
-from pysketcher.angle import Angle
-from pysketcher.warning import LossOfPrecisionWarning
+from pysketcher import Angle, Point
 from tests.utils import given_inferred
-
-from .conftest import isclose, mx
 
 
 class TestPoint:
     @given_inferred
-    def test_coordinates(self, x: np.float64, y: np.float64) -> None:
+    def test_coordinates(self, x: float, y: float) -> None:
         p = Point(x, y)
         assert p.x == x
         assert p.y == y
 
     @given_inferred
-    def test_equality(self, x: np.float64, y: np.float64) -> None:
+    def test_equality(self, x: float, y: float) -> None:
         assert Point(x, y) == Point(x, y)
 
     @given_inferred
-    def test_adding(
-        self, x1: np.float64, x2: np.float64, y1: np.float64, y2: np.float64
-    ):
+    def test_adding(self, x1: float, x2: float, y1: float, y2: float):
         a = Point(x1, y1)
         b = Point(x2, y2)
         assert a + b == Point(x1 + x2, y1 + y2)
 
     @given_inferred
-    def test_translation(
-        self, x1: np.float64, x2: np.float64, y1: np.float64, y2: np.float64
-    ):
+    def test_translation(self, x1: float, x2: float, y1: float, y2: float):
         a = Point(x1, y1)
         b = Point(x2, y2)
         assert a + b == Point(x1 + x2, y1 + y2)
 
     @given_inferred
-    def test_subtraction(
-        self, x1: np.float64, x2: np.float64, y1: np.float64, y2: np.float64
-    ):
+    def test_subtraction(self, x1: float, x2: float, y1: float, y2: float):
         a = Point(x1, y1)
         b = Point(x2, y2)
         assert a - b == Point(x1 - x2, y1 - y2)
 
     @given_inferred
-    def test_multiplication(self, x: np.float64, y: np.float64, s: np.float64):
+    def test_multiplication(self, x: float, y: float, s: float):
         a = Point(x, y)
         assert a * s == Point(x * s, y * s)
 
     @given_inferred
-    def test_multiplication(self, x: np.float64, y: np.float64, s: np.float64):
+    def test_scale(self, x: float, y: float, s: float):
         a = Point(x, y)
         assert a.scale(s) == Point(x * s, y * s)
 
     @given_inferred
-    def test_abs(self, x: np.float64, y: np.float64):
+    def test_abs(self, x: float, y: float):
         assume(x * x != inf)
         assume(y * y != inf)
         a = Point(x, y)
@@ -88,7 +71,7 @@ class TestPoint:
         assert -np.pi <= angle <= np.pi
 
     @given_inferred
-    def test_unit_vector(self, x: np.float64, y: np.float64):
+    def test_unit_vector(self, x: float, y: float):
         a = Point(x, y)
         if isclose(abs(a), 0.0):
             with pytest.raises(ZeroDivisionError):
@@ -139,7 +122,9 @@ class TestPoint:
 #
 #
 # @pytest.mark.parametrize("xs, ys, expected", from_coordinate_lists_data)
-# def test_from_coordinate_lists(xs: List[float], ys: List[float], expected: List[Point]):
+# def test_from_coordinate_lists(xs: List[float],
+# ys: List[float],
+# expected: List[Point]):
 #     assert Point.from_coordinate_lists(xs, ys) == expected
 #
 #

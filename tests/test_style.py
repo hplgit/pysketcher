@@ -1,6 +1,4 @@
-import numpy as np
-
-from pysketcher import Style, TextStyle
+from pysketcher import Style
 from tests.utils import given_inferred
 
 
@@ -11,7 +9,7 @@ class TestStyle(object):
         assert style.line_style == line_style
 
     @given_inferred
-    def test_line_width(self, style: Style, width: np.float64):
+    def test_line_width(self, style: Style, width: float):
         style.line_width = width
         assert style.line_width == width
 
@@ -36,7 +34,7 @@ class TestStyle(object):
         assert style.arrow == arrow
 
     @given_inferred
-    def test_shadow(self, style: Style, shadow: np.float64):
+    def test_shadow(self, style: Style, shadow: float):
         style.shadow = shadow
         assert style.shadow == shadow
 

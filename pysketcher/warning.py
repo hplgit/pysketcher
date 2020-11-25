@@ -1,2 +1,0 @@
-class LossOfPrecisionWarning(UserWarning):
-    pass

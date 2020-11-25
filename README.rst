@@ -1,6 +1,10 @@
 ============
  PySketcher
 ============
+
+.. image:: https://badge.fury.io/py/pysketcher.svg
+       :target: https://badge.fury.io/py/pysketcher
+
 .. image:: https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability
     :target: https://codeclimate.com/github/rvodden/pysketcher/maintainability
 
@@ -21,9 +25,6 @@
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. image:: https://api.dependabot.com/badges/status?host=github&repo=rvodden/pysketcher
-    :target: https://dependabot.com
-
 **This is alpha software - the interface is likely to change with every release prior to 0.1.0.**
 
 Tool for creating sketches of physical and mathematical problems in terms of Python code.
@@ -39,6 +40,6 @@ very little if any of his code remains. Significant deviations from his library 
 
 4. Angles are in radians not degrees.
 
-5. The Composition object is used more consistently. Previously objects such as Beam where direct children of Shape which led to code repetition.
+5. The Composition object is used more consistently. Previously objects such as Beam were direct children of Shape which led to code repetition.
 
 `Please see the documentation for more information <https://pysketcher.readthedocs.io/en/latest/index.html>`_.

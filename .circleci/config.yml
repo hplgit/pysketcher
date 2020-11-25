@@ -1,5 +1,10 @@
 ---
 version: 2.1
+executors:
+    python:
+        docker:
+            - image: rvodden/pysketcher-build:0.0.495
+
 jobs:
   checkout:
     executor: python/default
@@ -17,21 +22,16 @@ jobs:
       - run:
           name: Upate Poetry lock file with new dependencies
           command: |
-            poetry self update 1.1.4
             poetry update
       - persist_to_workspace:
             root: .
             paths:
                 - .
   build:
-    executor: python/default
+    executor: python
     steps:
       - attach_workspace:
           at: .
-      - run:
-          name: Upgrade poetry
-          command: |
-              poetry self update 1.1.4
       - python/install-packages:
             pkg-manager: poetry
       - run:
@@ -81,8 +81,6 @@ jobs:
       - run:
           name: Update version number
           command: |
-              poetry self update 1.1.4
-              poetry -V
               mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
               poetry version patch --no-interaction
               git config user.email "automation@circleci.com"
@@ -104,7 +102,6 @@ jobs:
         - run:
             name: Push release to pypi
             command: |
-                poetry self update 1.1.4
                 poetry publish --build --username "${PYPI_USERNAME}" --password "${PYPI_PASSWORD}" --no-interaction
 
 
