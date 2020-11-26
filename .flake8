@@ -19,6 +19,8 @@ ignore = E203, E501, W503, D107
 application-import-names = pysketcher,tests
 import-order-style = google
 per-file-ignores =
+    examples/*:S101,D100,D101,D102,D103,D104,D107
+    docs/*:S101,D100,D101,D102,D103,D104,D107
     tests/*:S101,D100,D101,D102,D103,D104,D107
     tests/utils/*:S101,D100,D101,D102,D103,D104,D107
     noxfile.py:D100,D101,D102,D103

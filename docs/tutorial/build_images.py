@@ -1,5 +1,5 @@
 import os
-from subprocess import Popen
+from subprocess import Popen  # noqa: S404
 
 EXAMPLE_DIR = "examples"
 
@@ -18,7 +18,7 @@ def main():
     examples = [f for f in files if has_py_extension(f)]
     os.chdir(EXAMPLE_DIR)
     for example in examples:
-        proc = Popen(["python", example])
+        proc = Popen(["python", example])  # noqa: S603,S607
         proc.wait()
 
 

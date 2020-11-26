@@ -69,7 +69,7 @@ def inclined_plane():
     x_const = Line(contact, contact + Point(0, 4))
     x_const.style.line_style = Style.LineStyle.DOTTED
     x_const = x_const.rotate(-theta, contact)
-    # or x_const = Line(contact-2*r*normal_vec, contact+4*r*normal_vec).set_linestyle('dotted')
+
     x_axis = Axis(
         start=contact + normal_vec * 3.0 * r,
         length=4 * r,

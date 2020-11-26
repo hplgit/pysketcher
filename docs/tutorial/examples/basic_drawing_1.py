@@ -12,7 +12,7 @@ figure.show()
 
 
 # End Here
-import os  # noqa: E402
+import os  # noqa: E402, I100
 
 from .utils.change_extension import change_extension  # noqa: E402
 

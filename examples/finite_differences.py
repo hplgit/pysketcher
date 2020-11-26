@@ -1,7 +1,4 @@
-"""
-Illustrate forward, backward and centered finite differences
-in four figures.
-"""
+"""Illustrate forward, backward and centered finite differences in four figures."""
 
 import pysketcher as ps
 from pysketcher.backend.matplotlib import MatplotlibBackend

@@ -56,6 +56,9 @@ zipp = "^3.4.0"
 darglint = "^1.5.8"
 blackdoc = "^0.3"
 commitizen = "^2.8.2"
+safety = "^1.9.0"
+flake8-bugbear = "^20.11.1"
+typed-ast = "^1.4.1"
 
 [tool.poetry.scripts]
 beam1 = "examples.beam1:main"
