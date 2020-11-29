@@ -35,6 +35,14 @@ def tests(session: Session) -> None:
 
 
 @nox.session(python="3.8")
+def coverage(session: Session) -> None:
+    """Upload coverage data."""
+    session.install("coverage[toml]", "codecov")
+    session.run("coverage", "xml", "--fail-under=0")
+    session.run("codecov", *session.posargs)
+
+
+@nox.session(python="3.8")
 def black(session: Session) -> None:
     args = session.posargs or locations
     session.install("black", "blackdoc")
