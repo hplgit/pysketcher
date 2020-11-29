@@ -13,8 +13,8 @@ from pysketcher.backend.matplotlib._matplotlib_curve import MatplotlibCurve
 from pysketcher.backend.matplotlib._matplotlib_text import MatplotlibText
 from pysketcher.composition import Composition
 
-plt.rc("text", usetex=True)
-plt.rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
+# plt.rc("text", usetex=True)
+# plt.rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
 
 
 class MatplotlibBackend(Backend):
@@ -33,8 +33,9 @@ class MatplotlibBackend(Backend):
         self._x_max = x_max
         self._y_min = y_min
         self._y_max = y_max
-        aspect = (y_max - y_min) / (x_max - x_min)
-        self._fig = plt.figure(figsize=[10, 10 * aspect], tight_layout=False)
+        self._fig = plt.figure(
+            figsize=[x_max - x_min, y_max - y_min], tight_layout=False
+        )
         self._axes = self._fig.gca()
         self._configure_axes()
 

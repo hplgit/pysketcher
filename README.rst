@@ -2,8 +2,8 @@
  PySketcher
 ============
 
-.. image:: https://badge.fury.io/py/pysketcher.svg
-       :target: https://badge.fury.io/py/pysketcher
+.. image:: https://badgen.net/pypi/v/pysketcher?icon=pypi
+       :target: https://pypi.org/project/pysketcher/
 
 .. image:: https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability
     :target: https://codeclimate.com/github/rvodden/pysketcher/maintainability
@@ -11,7 +11,7 @@
 .. image:: https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/test_coverage
     :target: https://codeclimate.com/github/rvodden/pysketcher/test_coverage
 
-.. image:: https://circleci.com/gh/rvodden/pysketcher.svg?style=shield
+.. image:: https://badgen.net/circleci/github/rvodden/pysketcher?icon=circleci
     :target: https://app.circleci.com/pipelines/github/rvodden/pysketcher
 
 .. image:: https://readthedocs.org/projects/pysketcher/badge/?version=latest&style=flat
@@ -24,6 +24,9 @@
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+
+.. image:: https://badgen.net/github/dependabot/rvodden/pysketcher?icon=github
+    :target: https://github.com/rvodden/pysketcher
 
 **This is alpha software - the interface is likely to change with every release prior to 0.1.0.**
 

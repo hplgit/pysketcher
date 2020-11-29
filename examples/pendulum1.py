@@ -109,14 +109,14 @@ body_diagram_shapes["air"] = air_force
 x0y0 = ps.Text("$(x_0,y_0)$", P + ps.Point(-0.4, -0.1))
 
 ir = ps.Force(
-    r"$\boldsymbol{i}_r$",
+    r"$\vec{i}_r$",
     P,
     P + rod_vec.unit_vector() * (L / 10.0),
     text_position=ps.ArrowWithText.TextPosition.END,
 )
 
 ith = ps.Force(
-    r"$\boldsymbol{i}_{\theta}$",
+    r"$\vec{i}_{\theta}$",
     P,
     P + rod_vec.normal() * (L / 10.0),
     text_position=ps.ArrowWithText.TextPosition.END,
