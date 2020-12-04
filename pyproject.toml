@@ -29,7 +29,7 @@ importlib-metadata = {version = ">=2,<4", python = "<=3.7"}
 nox = "^2020.8.22"
 
 [tool.poetry.dev-dependencies]
-hypothesis = "^5.41.3"
+hypothesis = "^5.41.4"
 pytest = "^6.1.1"
 pylint = "^2.6.0"
 flake8 = "^3.7.9"
