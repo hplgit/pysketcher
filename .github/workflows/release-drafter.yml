@@ -5,7 +5,7 @@ on:
       - master
 jobs:
   draft_release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: release-drafter/release-drafter@v5.6.1
         env:
