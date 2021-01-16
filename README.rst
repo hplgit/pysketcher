@@ -2,20 +2,21 @@
  PySketcher
 ============
 
+.. image:: https://github.com/rvodden/pysketcher/workflows/Tests/badge.svg
+    :target: https://github.com/rvodden/pysketcher/actions?query=workflow%3ATests+branch%3Amaster
+
 .. image:: https://badgen.net/pypi/v/pysketcher?icon=pypi
        :target: https://pypi.org/project/pysketcher/
 
 .. image:: https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/maintainability
     :target: https://codeclimate.com/github/rvodden/pysketcher/maintainability
 
-.. image:: https://api.codeclimate.com/v1/badges/eae2c2aa97080fbfed7e/test_coverage
-    :target: https://codeclimate.com/github/rvodden/pysketcher/test_coverage
-
-.. image:: https://badgen.net/circleci/github/rvodden/pysketcher?icon=circleci
-    :target: https://app.circleci.com/pipelines/github/rvodden/pysketcher
+.. image:: https://codecov.io/gh/rvodden/pysketcher/branch/master/graph/badge.svg?token=AHCKOL75VY
+    :target: https://codecov.io/gh/rvodden/pysketcher
 
 .. image:: https://readthedocs.org/projects/pysketcher/badge/?version=latest&style=flat
     :target: https://pysketcher.readthedocs.io/en/latest/
+
 .. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
     :target: https://github.com/pre-commit/pre-commit
 
