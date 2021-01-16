@@ -22,11 +22,10 @@ docs = ["sphinx"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-numpy = "^1.18.2"
+numpy = "^1.19.5"
 matplotlib = "^3.2.1"
-scipy = "^1.4.1"
+scipy = "^1.6.0"
 importlib-metadata = {version = ">=2,<4", python = "<=3.7"}
-nox = "^2020.8.22"
 
 [tool.poetry.dev-dependencies]
 hypothesis = "^5.41.4"
@@ -48,7 +47,7 @@ pre-commit = "^2.7.1"
 flake8-black = "^0.2.1"
 flake8-import-order = "^0.18.1"
 flake8-bandit = "^2.1.2"
-nox-poetry = "^0.5.0"
+nox-poetry = "^0.7.1"
 flake8-docstrings = "^1.5.0"
 sphinx-autodoc-typehints = "^1.11.1"
 six = "^1.15.0"
