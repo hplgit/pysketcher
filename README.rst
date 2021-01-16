@@ -32,8 +32,7 @@
 
 Tool for creating sketches of physical and mathematical problems in terms of Python code.
 
-This library is very heavily based on the thinking of Hans Petter Langtangen however
-very little if any of his code remains. Significant deviations from his library are:
+This library is continues the legacy of Hans Petter Langtangen. Work done since he sadly passed in 2016 includes:
 
 1. The MatlibplotDraw object is no longer global and is no longer tightly coupled to the shape object. There is now a DrawingTool interface which this class implements.
 
