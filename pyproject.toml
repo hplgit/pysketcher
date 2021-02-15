@@ -29,7 +29,7 @@ importlib-metadata = {version = ">=2,<4", python = "<=3.7"}
 
 [tool.poetry.dev-dependencies]
 hypothesis = "^6.2.0"
-pytest = "^6.1.1"
+pytest = "^6.2.2"
 pylint = "^2.6.0"
 flake8 = "^3.7.9"
 coverage = "^5.3"
