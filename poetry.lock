@@ -727,7 +727,7 @@ tox_to_nox = ["jinja2", "tox"]
 
 [[package]]
 name = "nox-poetry"
-version = "0.7.1"
+version = "0.8.1"
 description = "nox-poetry"
 category = "dev"
 optional = false
@@ -1475,7 +1475,7 @@ docs = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "149d65c8333cc9f5e6ab21666d1fdabeea6032142c6e680794e13f683f76fb1d"
+content-hash = "da213dec3fcd7f5b22682cf504781df9e86c0e380af3b3196e466ab370417667"
 
 [metadata.files]
 alabaster = [
@@ -1957,8 +1957,8 @@ nox = [
     {file = "nox-2020.12.31.tar.gz", hash = "sha256:58a662070767ed4786beb46ce3a789fca6f1e689ed3ac15c73c4d0094e4f9dc4"},
 ]
 nox-poetry = [
-    {file = "nox-poetry-0.7.1.tar.gz", hash = "sha256:7b598ff54e20b4fc28ca2dab961363089d6ca085118a5218fc28680a1920b709"},
-    {file = "nox_poetry-0.7.1-py3-none-any.whl", hash = "sha256:73bb9b16c5ce93119409fa314f7a820c36895b8e762ff387601f6cc3d50dd698"},
+    {file = "nox-poetry-0.8.1.tar.gz", hash = "sha256:e613716b67166de1dbe787ba8f0a6fe64a6c48b8fa553ad9fc399a9e51478bcc"},
+    {file = "nox_poetry-0.8.1-py3-none-any.whl", hash = "sha256:5a391ff3ab5fa4023f4cdf38a214dd72465d8731f2635657e50f0f6e24f8a404"},
 ]
 numpy = [
     {file = "numpy-1.19.5-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:cc6bd4fd593cb261332568485e20a0712883cf631f6f5e8e86a52caa8b2b50ff"},
