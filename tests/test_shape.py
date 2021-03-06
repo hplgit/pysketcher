@@ -6,7 +6,7 @@ from tests.utils import given_inferred
 
 class TestShape:
     @given_inferred
-    @settings(suppress_health_check=[HealthCheck.filter_too_much])
+    @settings(suppress_health_check=[HealthCheck.filter_too_much, HealthCheck.too_slow])
     def test_style(self, shape: Shape):
         style = Style()
         shape.style = style

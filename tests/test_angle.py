@@ -1,4 +1,5 @@
-from hypothesis import assume, note
+from hypothesis import given, note
+from hypothesis.strategies import booleans, floats, from_type
 import numpy as np
 
 from pysketcher import Angle
@@ -39,10 +40,10 @@ class TestAngle:
         assert c <= np.pi
         assert -np.pi < c
 
-    @given_inferred
-    def test_division(self, a: Angle, b: float):
-        assume(1e-6 < abs(b) < 1e6)
-        assume(b != 0.0)
+    @given(from_type(Angle), floats(min_value=1e-6, max_value=1e6), booleans())
+    def test_division(self, a: Angle, b: float, negate: bool):
+        if negate:
+            b = -b
         c = a / b
         note(c)
         assert type(c) == Angle
