@@ -28,7 +28,7 @@ scipy = "^1.6.0"
 importlib-metadata = {version = ">=2,<4", python = "<=3.7"}
 
 [tool.poetry.dev-dependencies]
-hypothesis = "^6.6.0"
+hypothesis = "^6.7.0"
 pytest = "^6.2.2"
 pylint = "^2.6.2"
 flake8 = "^3.7.9"
