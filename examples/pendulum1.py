@@ -84,7 +84,6 @@ rod_force = ps.Force(
     text_position=ps.ArrowWithText.TextPosition.END,
 )
 
-mass.style.fill_color = ps.Style.Color.BLUE
 
 body_diagram_shapes = {
     "$mg$": mg_force,
@@ -101,7 +100,6 @@ air_force = ps.Force(
     mass_pt,
     mass_pt + rod_vec.normal() * (L / 6.0),
     text_position=ps.ArrowWithText.TextPosition.END,
-    # spacing = Point(0.04, 0.005),
 )
 
 body_diagram_shapes["air"] = air_force
@@ -129,5 +127,4 @@ body_diagram_shapes["origin"] = x0y0
 fig.erase()
 body_diagram = ps.Composition(body_diagram_shapes)
 fig.add(body_diagram)
-# drawing_tool.display('Free body diagram')
 fig.show()

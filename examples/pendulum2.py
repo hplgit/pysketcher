@@ -9,15 +9,10 @@ from pysketcher import *
 H = 15.0
 W = 17.0
 
-drawing_tool._set_coordinate_system(xmin=0, xmax=W, ymin=0, ymax=H, axis=False)
 
+def pendulum(theta, S, mg, drag, t, time_level) -> Composition:
 
-def pendulum(theta, S, mg, drag, t, time_level):
-
-    drawing_tool.set_linecolor("blue")
-    import math
-
-    a = math.degrees(theta[time_level])
+    a = theta[time_level]
     L = 0.4 * H  # length
     P = (W / 2, 0.8 * H)  # rotation point
 

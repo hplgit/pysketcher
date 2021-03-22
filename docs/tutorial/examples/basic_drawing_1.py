@@ -1,5 +1,5 @@
 import pysketcher as ps
-from pysketcher.backend.matplotlib.matplotlib_backend import MatplotlibBackend
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
 figure = ps.Figure(0.0, 5.0, 0.0, 5.0, MatplotlibBackend)
 
