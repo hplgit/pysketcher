@@ -248,7 +248,7 @@ colorama = {version = "*", markers = "sys_platform == \"win32\""}
 
 [[package]]
 name = "commitizen"
-version = "2.17.0"
+version = "2.17.2"
 description = "Python commitizen client tool"
 category = "dev"
 optional = false
@@ -1481,7 +1481,7 @@ docs = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "c766691ca5f21ec54ec55d792bbed38937fb30918c42d742c133179e88109952"
+content-hash = "945f1549e6d235e1506838e0f6847cc4c89b4fa9a47b9e46dcaf4b9707845c97"
 
 [metadata.files]
 alabaster = [
@@ -1604,8 +1604,8 @@ colorlog = [
     {file = "colorlog-4.8.0.tar.gz", hash = "sha256:59b53160c60902c405cdec28d38356e09d40686659048893e026ecbd589516b1"},
 ]
 commitizen = [
-    {file = "commitizen-2.17.0-py3-none-any.whl", hash = "sha256:0c2644026cf4a07196b1c7414da880d3a60f00cebc0c726f6d77069d3d633199"},
-    {file = "commitizen-2.17.0.tar.gz", hash = "sha256:6c7e89c76336dbd778769aed269ac1e6669163cf6a1df1171e591b751d6c8746"},
+    {file = "commitizen-2.17.2-py3-none-any.whl", hash = "sha256:e4956bcbba5b53dfad77d3b359fbb83281b9c0c55d4f805072c84bc5f04f88d0"},
+    {file = "commitizen-2.17.2.tar.gz", hash = "sha256:c43a07b2eb4dae86975723391d9405a2d17cb415d8ba094c480ac8ce99ccb687"},
 ]
 commonmark = [
     {file = "commonmark-0.9.1-py2.py3-none-any.whl", hash = "sha256:da2f38c92590f83de410ba1a3cbceafbc74fee9def35f9251ba9a971d6d66fd9"},
