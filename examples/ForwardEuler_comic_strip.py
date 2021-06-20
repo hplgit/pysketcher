@@ -1,8 +1,11 @@
 """Comic strip for illustrating Euler's method for ODEs."""
 
 import numpy as np
+import pytest
 
 from pysketcher import *
+
+pytest.importorskip("donottestme")
 
 xkcd = True
 

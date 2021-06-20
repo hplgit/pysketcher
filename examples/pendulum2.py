@@ -4,7 +4,11 @@ A function draws the free body diagram, given the angle.
 This function can be coupled to a numerical solver
 for the motion. Videos of the motion are made.
 """
+import pytest
+
 from pysketcher import *
+
+pytest.importorskip("donottestme")
 
 H = 15.0
 W = 17.0

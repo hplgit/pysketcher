@@ -13,6 +13,6 @@ jobs:
     - run: pip install nox==2020.12.31
     - run: pip install nox-poetry==0.7.1
     - run: pip install poetry==1.1.4
-    - run: nox --sessions tests-3.8 coverage
+    - run: nox --sessions tests-3.8 examples-3.8 coverage
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}

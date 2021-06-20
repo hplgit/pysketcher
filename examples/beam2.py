@@ -3,6 +3,7 @@
 import logging
 
 import numpy as np
+import pytest
 
 from pysketcher import (
     Axis,
@@ -23,8 +24,10 @@ from pysketcher.composition import Composition
 
 logging.basicConfig(level=logging.INFO)
 
+pytest.importorskip("donottestme")
 
-def beam():
+
+def main() -> None:
     L = 8.0
     a = 3 * L / 4
     b = L - a
@@ -141,4 +144,4 @@ def beam():
 
 
 if __name__ == "__main__":
-    beam()
+    main()

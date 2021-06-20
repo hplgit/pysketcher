@@ -19,7 +19,7 @@ from pysketcher.backend.matplotlib import MatplotlibBackend
 from pysketcher.composition import Composition
 
 
-def inclined_plane():
+def main():
     theta = np.pi / 6
     L = 10.0
     a = 1.0
@@ -110,4 +110,4 @@ def inclined_plane():
 
 
 if __name__ == "__main__":
-    inclined_plane()
+    main()

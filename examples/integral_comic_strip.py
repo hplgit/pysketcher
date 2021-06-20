@@ -1,6 +1,10 @@
 """Comic strip for illustrating numerical integration."""
 
+import pytest
+
 from pysketcher import *
+
+pytest.importorskip("donottestme")
 
 xkcd = True  # True: XKCD copic strip, False: ordinary Matplotlib figure
 

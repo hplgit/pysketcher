@@ -14,7 +14,7 @@ from pysketcher.backend.matplotlib import MatplotlibBackend
 from pysketcher.composition import Composition
 
 
-def main():
+def main() -> None:
     logging.basicConfig(level=logging.INFO)
 
     L = 8.0
