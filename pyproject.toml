@@ -33,7 +33,7 @@ pytest = "^6.2.2"
 pylint = "^2.6.2"
 flake8 = "^3.9.0"
 coverage = "^5.3"
-mypy = "^0.902"
+mypy = "^0.910"
 pydocstyle = "^6.1.1"
 black = "^21.4b2"
 'zest.releaser' = { version = "^6.22.1", extras = ['recommended'] }
