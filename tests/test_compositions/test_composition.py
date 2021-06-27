@@ -2,7 +2,7 @@ from hypothesis import given
 from hypothesis.strategies import floats, sampled_from
 import pytest
 
-from pysketcher import Line, Point, Style
+from pysketcher import Line, Point, Shape, Style, Text
 from pysketcher.composition import Composition
 
 
@@ -11,7 +11,14 @@ class TestCompositionStyle:
     def composition(self):
         shape1 = Line(Point(0, 1), Point(1, 1))
         shape2 = Line(Point(1, 1), Point(0, 2))
-        composition = Composition({"shape1": shape1, "shape2": shape2})
+        text = Text("This is a test.", Point(2, 2))
+        composition = Composition(
+            {
+                "shape1": shape1,
+                "shape2": shape2,
+                "test": text,
+            }
+        )
         return composition
 
     @given(sampled_from(Style.LineStyle))
@@ -57,3 +64,7 @@ class TestCompositionStyle:
         composition.style.shadow = shadow
         assert composition["shape1"].style.shadow == shadow
         assert composition["shape2"].style.shadow == shadow
+
+    def test_iteration(self, composition: Composition):
+        for shape in composition:
+            assert isinstance(shape, Shape)

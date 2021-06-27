@@ -76,8 +76,8 @@ class MatplotlibCurve(MatplotlibAdapter):
                 edgecolor=mpl_style.line_color,
                 linestyle=mpl_style.line_style,
                 linewidth=mpl_style.line_width,
+                head_width=0.1,
                 # head_width=self.arrow_head_width,
-                # head_width=0.1,
                 # width=1,  # width of arrow body in coordinate scale
                 length_includes_head=True,
                 shape="full",

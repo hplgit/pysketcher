@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import Callable, List, Tuple, Type, Union
 
 from pysketcher._drawable import Drawable
 from pysketcher.backend.backend import Backend
@@ -77,21 +77,29 @@ class Figure:
         self._backend.save(filename)
 
     def erase(self):
-        """Removes all the shapes from the figure."""
+        """Removes all the shapes from the figurnnnne."""
         self._backend.erase()
 
-    # def animate(
-    #     self,
-    #     drawing_tool: DrawingTool,
-    #     time_points: List[float],
-    #     action: Callable[["Shape", float, float], "Shape"],
-    #     pause_per_frame: float = 0.5,
-    #     dt: float = 0.5,
-    #     title=None,
-    # ):
-    #
-    #     for n, t in enumerate(time_points):
-    #         drawing_tool.erase()
-    #
-    #         fig: Shape = action(self, t, dt)
-    #         fig.draw(drawing_tool)
+    def animate(
+        self,
+        func: Callable[[float], Drawable],
+        interval: Union[Tuple[float, float], Tuple[float, float, float]],
+    ):
+        """Renders an animation from the provided function.
+
+        If the backend supports it, then an animation will be rendered
+        and stored internally by the backend.
+
+        Args:
+            func: This function takes a parameter and provides a `Drawable` for that
+                parameter value.
+            interval: the start and end values for the parameter and an optional
+                increment. If the increment is not provided, the parameter will be
+                incremented by 1.
+
+        """
+        self._backend.animate(func, interval)
+
+    def save_animation(self, filename: str):
+        """Saves a previously rendered animation to a file."""
+        self._backend.save_animation(filename)

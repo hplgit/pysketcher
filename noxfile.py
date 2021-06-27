@@ -44,6 +44,7 @@ def examples(session: Session) -> None:
     session.run("poetry", "install", external=True)
     session.run(
         "pytest",
+        "--cov",
         "--cov-append",
         "-o",
         "testpaths=examples",

@@ -4,55 +4,59 @@ A function draws the free body diagram, given the angle.
 This function can be coupled to a numerical solver
 for the motion. Videos of the motion are made.
 """
-import pytest
 
-from pysketcher import *
+import numpy as np
+import pysketcher as ps
+from scipy.integrate import odeint
+from pysketcher.backend.matplotlib import MatplotlibBackend
 
-pytest.importorskip("donottestme")
-
-H = 15.0
-W = 17.0
-
-drawing_tool._set_coordinate_system(xmin=0, xmax=W, ymin=0, ymax=H, axis=False)
+H = 8.0
+W = 8.0
+L = 5 * H / 7  # length
 
 
-def pendulum(theta, S, mg, drag, t, time_level):
+def pendulum(theta, S, mg, drag) -> ps.Composition:
+    """Draw a free body animation of a pendulum.
 
-    drawing_tool.set_linecolor("blue")
-    import math
+    params:
+        theta: the angle from the vertical at which the pendulum is.
+        S: the force exerted toward the pivot.
+        mg: the force owing to gravity.
+        drag: the force acting against the motion of the pendulum.
 
-    a = math.degrees(theta[time_level])
-    L = 0.4 * H  # length
-    P = (W / 2, 0.8 * H)  # rotation point
+    return: A composition of the pendulum
+    """
+    a = theta
+    P = ps.Point(W / 2, 0.9 * H)  # rotation point
 
-    vertical = Line(P, P - point(0, L))
-    path = Arc(P, L, -90, a)
-    angle = Arc_wText(r"$\theta$", P, L / 4, -90, a, text_spacing=1 / 30.0)
+    path = ps.Arc(P, L, -ps.Angle(np.pi / 2), a)
+    angle = ps.ArcWithText(r"$\theta$", P, L / 4, -ps.Angle(np.pi / 2), a)
+    angle.set_line_color(ps.Style.Color.BLACK)
 
-    mass_pt = path.geometric_features()["end"]
-    rod = Line(P, mass_pt)
+    mass_pt = path.end
+    rod = ps.Line(P, mass_pt)
 
-    mass = Circle(center=mass_pt, radius=L / 20.0)
-    mass.set_filled_curves(color="blue")
-    rod_vec = rod.geometric_features()["end"] - rod.geometric_features()["start"]
-    unit_rod_vec = unit_vec(rod_vec)
-    mass_symbol = Text("$m$", mass_pt + L / 10 * unit_rod_vec)
+    mass = ps.Circle(mass_pt, L / 30.0).set_fill_color(ps.Style.Color.BLUE)
+    rod_vec = rod.end - rod.start
 
-    length = DistanceWithText(P, mass_pt, "$L$")
+    length = ps.DistanceWithText("$L$", P, mass_pt)
     # Displace length indication
-    length.translate(L / 15 * point(cos(radians(a)), sin(radians(a))))
-    gravity = Gravity(start=P + point(0.8 * L, 0), length=L / 3)
+    length = length.translate(ps.Point(-np.cos(a), -np.sin(a)) * (L / 15.0))
+    length.style.line_width = 0.1
+    gravity_start = ps.Point(0.8 * L, 0)
+    gravity = ps.Gravity(P + gravity_start, L / 3)
 
-    def set_dashed_thin_blackline(*objects):
-        """Set linestyle of objects to dashed, black, width=1."""
-        for obj in objects:
-            obj.set_linestyle("dashed")
-            obj.set_linecolor("black")
-            obj.set_linewidth(1)
+    dashed_thin_black_line = ps.Style()
+    dashed_thin_black_line.line_style = ps.Style.LineStyle.DASHED
+    dashed_thin_black_line.line_color = ps.Style.Color.BLACK
+    dashed_thin_black_line.line_width = 1.0
 
-    set_dashed_thin_blackline(vertical, path)
+    path.style = dashed_thin_black_line
+    vertical = ps.Line(rod.start, rod.start + ps.Point(0, -L))
+    vertical.style = dashed_thin_black_line
+    rod.style = dashed_thin_black_line
 
-    fig = Composition(
+    comp = ps.Composition(
         {
             "body": mass,
             "rod": rod,
@@ -60,149 +64,131 @@ def pendulum(theta, S, mg, drag, t, time_level):
             "theta": angle,
             "path": path,
             "g": gravity,
-            "L": length,
+            # "L": length,
         }
     )
 
-    # fig.draw()
-    # drawing_tool.display()
-    # drawing_tool.savefig('tmp_pendulum1')
-
-    drawing_tool.set_linecolor("black")
-
-    rod_start = rod.geometric_features()["start"]  # Point P
-    vertical2 = Line(rod_start, rod_start + point(0, -L / 3))
-    set_dashed_thin_blackline(vertical2)
-    set_dashed_thin_blackline(rod)
-    angle2 = Arc_wText(r"$\theta$", rod_start, L / 6, -90, a, text_spacing=1 / 30.0)
-
-    magnitude = 1.2 * L / 2  # length of a unit force in figure
-    force = mg[time_level]  # constant (scaled eq: about 1)
+    magnitude = 1.2 * L / 6  # length of a unit force in figure
+    force = mg  # constant (scaled eq: about 1)
     force *= magnitude
-    mg_force = Force(mass_pt, mass_pt + force * point(0, -1), "", text_pos="end")
-    force = S[time_level]
-    force *= magnitude
-    rod_force = Force(
-        mass_pt,
-        mass_pt - force * unit_vec(rod_vec),
-        "",
-        text_pos="end",
-        text_spacing=(0.03, 0.01),
-    )
-    force = drag[time_level]
-    force *= magnitude
-    # print('drag(%g)=%g' % (t, drag[time_level]))
-    air_force = Force(
-        mass_pt,
-        mass_pt - force * unit_vec((rod_vec[1], -rod_vec[0])),
-        "",
-        text_pos="end",
-        text_spacing=(0.04, 0.005),
+    mg_force = (
+        ps.Force(
+            "$mg$",
+            mass_pt,
+            mass_pt + ps.Point(0, 1) * force,
+            text_position=ps.Force.TextPosition.END,
+            spacing=ps.Point(-0.3, 0),
+        )
+        if force != 0
+        else None
     )
 
-    body_diagram = Composition(
+    force = S
+    force *= magnitude
+    rod_force = (
+        ps.Force(
+            "S",
+            mass_pt,
+            mass_pt - rod_vec.unit_vector() * force,
+            text_position=ps.Force.TextPosition.END,
+            spacing=rod_vec.normal() * 0.3,
+        )
+        if force != 0
+        else None
+    )
+
+    force = drag
+    force *= magnitude
+    air_force = (
+        ps.Force(
+            "",
+            mass_pt,
+            mass_pt - rod_vec.normal() * force,
+        )
+        if force != 0
+        else None
+    )
+
+    x0y0 = ps.Text("$(x_0,y_0)$", P + ps.Point(-0.4, -0.1))
+
+    ir = ps.Force(
+        r"$\mathbf{i}_r$",
+        P,
+        P + rod_vec.unit_vector() * (L / 10),
+        text_position=ps.Force.TextPosition.END,
+        # spacing=ps.Point(0.015, 0)
+    )
+    ith = ps.Force(
+        r"$\mathbf{i}_{\theta}$",
+        P,
+        P + rod_vec.normal() * (L / 10),
+        text_position=ps.Force.TextPosition.END,
+        # spacing=ps.Point(0.02, 0.005)
+    )
+
+    body_diagram = ps.Composition(
         {
             "mg": mg_force,
             "S": rod_force,
             "air": air_force,
-            "rod": rod,
-            "vertical": vertical2,
-            "theta": angle2,
-            "body": mass,
+            "ir": ir,
+            "ith": ith,
+            "origin": x0y0,
         }
     )
 
-    x0y0 = Text("$(x_0,y_0)$", P + point(-0.4, -0.1))
-    ir = Force(
-        P,
-        P + L / 10 * unit_vec(rod_vec),
-        r"$\boldsymbol{i}_r$",
-        text_pos="end",
-        text_spacing=(0.015, 0),
-    )
-    ith = Force(
-        P,
-        P + L / 10 * unit_vec((-rod_vec[1], rod_vec[0])),
-        r"$\boldsymbol{i}_{\theta}$",
-        text_pos="end",
-        text_spacing=(0.02, 0.005),
-    )
-
-    # body_diagram['ir'] = ir
-    # body_diagram['ith'] = ith
-    # body_diagram['origin'] = x0y0
-
-    drawing_tool.erase()
-    body_diagram.draw(verbose=0)
-    # drawing_tool.display('Free body diagram')
-    drawing_tool.savefig("tmp_%04d.png" % time_level, crop=False)
-    # No cropping: otherwise movies will be very strange
+    comp = comp.merge(body_diagram)
+    return comp
 
 
-def simulate_pendulum(alpha, theta0, dt, T):
-    import odespy
+def simulate_pendulum():
+    """Simulate a pendulum."""
 
-    def f(u, t, alpha):
-        omega, theta = u
-        return [-alpha * omega * abs(omega) - sin(theta), omega]
+    # The second order differential equation for the angle theta
+    # of a pendulum acted on by gravity with friction can be written:
+    #
+    # theta''(t) + b*theta'(t) + c*sin(theta(t)) = 0
+    #
+    # where b and c are positive constants, and a prime (‘) denotes a derivative.
+    #
+    # To solve this equation with `odeint`, we must first convert it to a system of
+    # first order equations. By defining the angular velocity omega(t) = theta'(t),
+    # we obtain the system:
+    #
+    # theta'(t) = omega(t)
+    # omega'(t) = -b*omega(t) - c*sin(theta(t))
+    #
+    # so let y be the vector [theta, omega]. We implement this system in Python as:
 
-    import numpy as np
+    def pend(y, t, b, c):
+        theta, omega = y
+        dydt = [omega, -b * omega - c * np.sin(theta)]
+        return dydt
 
-    Nt = int(round(T / float(dt)))
-    t = np.linspace(0, Nt * dt, Nt + 1)
-    solver = odespy.RK4(f, f_args=[alpha])
-    solver.set_initial_condition([0, theta0])
-    u, t = solver.solve(t, terminate=lambda u, t, n: abs(u[n, 1]) < 1e-3)
-    omega = u[:, 0]
-    theta = u[:, 1]
-    S = omega ** 2 + np.cos(theta)
-    drag = -alpha * np.abs(omega) * omega
-    return t, theta, omega, S, drag
+    # Set the pendulum off at pi/6 from the vertical and stationary:
+    y0 = [-np.pi / 6, 0.0]
+
+    # give b and c some values:
+    b = 0.25
+    c = 5
+
+    # generate a linear space over time for us to solve against:
+    t = np.linspace(0, 10, 101)
+
+    return odeint(pend, y0, t, args=(b, c))
 
 
-def animate():
-    # Clean up old plot files
-    import glob
-    import os
+def main():
+    t = np.linspace(0, 10, 101)
+    sol = simulate_pendulum()
 
-    for filename in glob.glob("tmp_*.png") + glob.glob("movie.*"):
-        os.remove(filename)
-    # Solve problem
-    from math import degrees, pi, radians
+    def anim_func(i: float) -> ps.Composition:
+        return pendulum(ps.Angle(sol[i, 0]), 1, -1, sol[i, 1])
 
-    import numpy as np
-
-    alpha = 0.4
-    period = 2 * pi
-    T = 12 * period
-    dt = period / 40
-    a = 70
-    theta0 = radians(a)
-    t, theta, omega, S, drag = simulate_pendulum(alpha, theta0, dt, T)
-    mg = np.ones(S.size)
-    # Visualize drag force 5 times as large
-    drag *= 5
-    print("NOTE: drag force magnified 5 times!!")
-
-    # Draw animation
-    import time
-
-    for time_level, t_ in enumerate(t):
-        pendulum(theta, S, mg, drag, t_, time_level)
-        time.sleep(0.2)
-
-    # Make videos
-    prog = "ffmpeg"
-    filename = "tmp_%04d.png"
-    fps = 6
-    codecs = {"flv": "flv", "mp4": "libx264", "webm": "libvpx", "ogg": "libtheora"}
-    for ext in codecs:
-        lib = codecs[ext]
-        cmd = "%(prog)s -i %(filename)s -r %(fps)s " % vars()
-        cmd += "-vcodec %(lib)s movie.%(ext)s" % vars()
-        print(cmd)
-        os.system(cmd)
+    fig = ps.Figure(0.0, W, 0.0, H, backend=MatplotlibBackend)
+    fig.animate(anim_func, (0, 101))
+    fig.save_animation("pendulum.mp4")
 
 
 if __name__ == "__main__":
-    animate()
+    main()

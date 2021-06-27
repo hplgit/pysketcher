@@ -68,7 +68,7 @@ class Style:
 
     def __init__(self):
         self._line_style = self.LineStyle.SOLID
-        self._line_width = 1.0
+        self._line_width = 0.1
         self._line_color = self.Color.BLACK
         self._fill_pattern = None
         self._fill_color = None

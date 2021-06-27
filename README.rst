@@ -31,7 +31,8 @@
 
 **This is alpha software - the interface is likely to change with every release prior to 0.1.0.**
 
-Tool for creating sketches of physical and mathematical problems in terms of Python code.
+PySketcher is a modern Python library designed to make creating geometric, mathematical and physical diagrams very
+easy.
 
 This library is continues the legacy of Hans Petter Langtangen. Work done since he sadly passed in 2016 includes:
 

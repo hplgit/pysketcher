@@ -94,16 +94,16 @@ class Composition(Stylable):
             for shape in self.composition:
                 shape.style.shadow = shadow
 
-    _shapes: dict
+    _shapes: Dict
 
-    def __init__(self, shapes: dict):
+    def __init__(self, shapes: Dict[str, Shape]):
         """shapes: list or dict of Shape objects."""
         super().__init__()
         self._shapes = shapes
         self._style = self.CompositionStyle(self)
 
     def __iter__(self):
-        """Provides an ``interable`` of the shapes in the composition."""
+        """Provides an ``iterable`` of the shapes in the composition."""
         return self._shapes.values().__iter__()
 
     def add(self, key: str, shape: Shape) -> "Composition":
@@ -119,6 +119,21 @@ class Composition(Stylable):
         shapes = self._shapes.copy()
         shapes[key] = shape
         return Composition(shapes)
+
+    def merge(self, comp: "Composition") -> "Composition":
+        """Merge two compositions.
+
+        Args:
+            comp: the composition to merge with this one.
+
+        Returns:
+            a new composition made up of this one and the provided one.
+        """
+        return_composition = comp
+
+        for key, shape in self._shapes.items():
+            return_composition = return_composition.add(key, shape)
+        return return_composition
 
     def __getitem__(self, key):
         """Gets the ``shape`` in the ``Composition`` with key ``key``."""
@@ -173,7 +188,7 @@ class Composition(Stylable):
             func: The function to apply.
 
         Returns:
-            A copy of the ``Composition`` with the function applied.
+            A dictionary of results.
         """
         ret_dict = {}
         for key, shape in self._shapes.items():

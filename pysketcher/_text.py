@@ -50,12 +50,12 @@ class Text(Shape):
         self, text: str, position: Point, direction: Point = Point(1, 0)  # noqa: B008
     ):
         super().__init__()
-        self._text = text
-        self._position = position
-        self._direction = direction
-        self._style = TextStyle()
+        self._text: str = text
+        self._position: Point = position
+        self._direction: Point = direction
+        self._style: TextStyle = TextStyle()
 
-    def rotate(self, angle: float, center: Point) -> "Text":
+    def rotate(self, angle: Angle, center: Point) -> "Text":
         """Returns the text rotated through ``angle`` radians about ``centre``."""
         direction = self._direction.rotate(angle, center)
         position = self._position.rotate(angle, center)
@@ -84,7 +84,7 @@ class Text(Shape):
         return self._position
 
     @property
-    def direction(self) -> Angle:
+    def direction(self) -> Point:
         """The direction in which the text flows."""
         return self._direction
 
@@ -107,7 +107,7 @@ class Text(Shape):
 
     def translate(self, vec: Point) -> "Text":
         """Translates the text through ``vec``."""
-        new_text = Text(self.text, self.position, self.direction)
+        new_text = Text(self.text, self.position + vec, self.direction)
         new_text.style = self._style
         return new_text
 

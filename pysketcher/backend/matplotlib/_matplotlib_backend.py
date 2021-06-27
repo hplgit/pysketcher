@@ -1,6 +1,8 @@
 import logging
-from typing import Dict, Type
+from typing import Callable, Dict, Optional, Tuple, Type, Union
 
+from celluloid import Camera
+from matplotlib.animation import ArtistAnimation
 import matplotlib.pyplot as plt
 
 from pysketcher._curve import Curve
@@ -13,6 +15,7 @@ from pysketcher.backend.matplotlib._matplotlib_curve import MatplotlibCurve
 from pysketcher.backend.matplotlib._matplotlib_text import MatplotlibText
 from pysketcher.composition import Composition
 
+
 # plt.rc("text", usetex=True)
 # plt.rcParams["text.latex.preamble"] = r"\usepackage{amsmath}"
 
@@ -22,10 +25,13 @@ class MatplotlibBackend(Backend):
 
     _fig: plt.Figure
     _axes: plt.Axes
+    _camera: Optional[Camera]
     _x_min: float
     _y_min: float
     _x_max: float
     _y_max: float
+
+    _INTERVAL: int = 40  # ms between each frame
 
     def __init__(self, x_min, x_max, y_min, y_max):
         plt.ion()
@@ -33,6 +39,7 @@ class MatplotlibBackend(Backend):
         self._x_max = x_max
         self._y_min = y_min
         self._y_max = y_max
+        self._camera = None
         self._fig = plt.figure(
             figsize=[x_max - x_min, y_max - y_min], tight_layout=False
         )
@@ -72,3 +79,28 @@ class MatplotlibBackend(Backend):
             Text: MatplotlibText(),
             Composition: MatplotlibComposition(self),
         }
+
+    def animate(
+        self,
+        func: Callable[[float], Drawable],
+        interval: Union[Tuple[float, float], Tuple[float, float, float]],
+    ):
+        if len(interval) == 2:
+            start, end = interval
+            increment = 1
+        else:
+            start, end, increment = interval
+        self._camera = Camera(self._fig)
+        i: float = start
+        while i < end:
+            self.add(func(i))
+            self._camera.snap()
+            i += increment
+
+    def show_animation(self):
+        animation: ArtistAnimation = self._camera.animate(interval=self._INTERVAL)
+        animation.show()
+
+    def save_animation(self, filename: str):
+        animation: ArtistAnimation = self._camera.animate(interval=self._INTERVAL)
+        animation.save(filename)

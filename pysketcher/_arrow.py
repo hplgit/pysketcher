@@ -11,15 +11,18 @@ class Arrow(Line):
         end: The end of the arrow.
 
     Examples:
-        >>> arrow = ps.Arrow(
-        ...     ps.Point(1.0, 1.0),
-        ...     ps.Point(
-        ...         3.0,
-        ...         1.0,
-        ...     ),
+        >>> up_arrow = ps.Arrow(ps.Point(0.0, 1.0), ps.Point(0.0, 3.0))
+        >>> down_arrow = ps.Arrow(ps.Point(0.0, -1.0), ps.Point(0.0, -3.0))
+        >>> left_arrow = ps.Arrow(ps.Point(-1.0, 0.0), ps.Point(-3.0, 0.0))
+        >>> right_arrow = ps.Arrow(
+        ...     ps.Point(1.0, 0.0),
+        ...     ps.Point(3.0, 0.0),
         ... )
-        >>> fig = ps.Figure(0.0, 4.0, 0.0, 2.0, backend=MatplotlibBackend)
-        >>> fig.add(arrow)
+        >>> fig = ps.Figure(-4.0, 4.0, -4.0, 4.0, backend=MatplotlibBackend)
+        >>> fig.add(up_arrow)
+        >>> fig.add(down_arrow)
+        >>> fig.add(left_arrow)
+        >>> fig.add(right_arrow)
         >>> fig.save("pysketcher/images/arrow.png")
 
     .. figure:: images/arrow.png
