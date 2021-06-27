@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "pysketcher"
-version = "0.0.7"
+version = "0.0.8"
 description = "Geometric Sketching Utility for Python"
 license = "mit"
 authors = [
