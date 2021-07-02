@@ -928,7 +928,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "pylint"
-version = "2.9.1"
+version = "2.9.2"
 description = "python code static checker"
 category = "dev"
 optional = false
@@ -1508,7 +1508,7 @@ docs = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "381306767cd7f5de24b4dd3aa32bdbcd832b89aae8766730ff494b7399842e98"
+content-hash = "dcdc310569bb32e9d319c50e27b9a0307b28f5e2fe2f8b870c6ea55f801ebf3b"
 
 [metadata.files]
 alabaster = [
@@ -2113,8 +2113,8 @@ pygments = [
     {file = "Pygments-2.9.0.tar.gz", hash = "sha256:a18f47b506a429f6f4b9df81bb02beab9ca21d0a5fee38ed15aef65f0545519f"},
 ]
 pylint = [
-    {file = "pylint-2.9.1-py3-none-any.whl", hash = "sha256:647fa5882fd49d7f34d07d0a23702689d5cf10a81dcd74e79bd524603d40b371"},
-    {file = "pylint-2.9.1.tar.gz", hash = "sha256:d8f9e6ff7bc2e64a724b1b4409f0a30014891fc006ffbf68b590015e364322ec"},
+    {file = "pylint-2.9.2-py3-none-any.whl", hash = "sha256:064b486e16f4d8b92405b6529178bc48713c0673322c2e1aca919f75bd76dbf4"},
+    {file = "pylint-2.9.2.tar.gz", hash = "sha256:ad2b3a806fc7261e9bbf858068c10cd6b62b8c59ba9566c4a4ead0db796f8930"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
