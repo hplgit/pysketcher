@@ -1,10 +1,11 @@
 """A very simple beam."""
 import logging
 
+# TODO: switch this to ps style importing
 from pysketcher import (
-    DistanceWithText,
     Figure,
     Force,
+    LinearDimension,
     Point,
     Rectangle,
     SimpleSupport,
@@ -33,7 +34,7 @@ def main() -> None:
     )
     F_pt = Point(p0.x + L / 2, p0.y + H)
     force = Force("$F$", F_pt + Point(0, 2 * H), F_pt).set_line_width(3)
-    L_dim = DistanceWithText(
+    L_dim = LinearDimension(
         "$L$", Point(x_pos, p0.y - 3 * h), Point(x_pos + L, p0.y - 3 * h)
     )
     beam = Composition(

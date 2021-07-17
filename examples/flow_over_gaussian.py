@@ -52,13 +52,9 @@ def main() -> None:
     line = ps.Line(ps.Point(W - 2.5 * sigma, 0), ps.Point(W + 2.5 * sigma, 0))
     line.style.line_style = ps.Style.LineStyle.DASHED
     symbols = {
-        "alpha": ps.DistanceWithText(r"$\alpha$", ps.Point(W, 0), ps.Point(W, alpha)),
-        "W": ps.DistanceWithText(
-            r"$W$", ps.Point(0, -0.5), ps.Point(W, -0.5), spacing=-1.0 / 3
-        ),
-        "L": ps.DistanceWithText(
-            r"$L$", ps.Point(W, -0.5), ps.Point(W + L, -0.5), spacing=-1.0 / 3
-        ),
+        "alpha": ps.LinearDimension(r"$\alpha$", ps.Point(W, 0), ps.Point(W, alpha)),
+        "W": ps.LinearDimension(r"$W$", ps.Point(0, -0.5), ps.Point(W, -0.5)),
+        "L": ps.LinearDimension(r"$L$", ps.Point(W, -0.5), ps.Point(W + L, -0.5)),
         "v(y)": ps.Text("$v(y)$  ", ps.Point(H / 2.0, velocity.x)),
         "dashed line": line,
     }

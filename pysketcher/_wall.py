@@ -47,7 +47,7 @@ class Wall(Curve):
             # Displaces a point on our curve by thickness.
             # find a normal to the line between the point_before and the point_after
             # then displace by thickness from point in the direction of that normal
-            return point + ((point_after - point_before).normal() * self._thickness)
+            return point + ((point_after - point_before).normal * self._thickness)
 
         # at the start, there isn't a point_before, so use the start point
         new_points: List[Point] = [_displace(points[0], points[0], points[1])]

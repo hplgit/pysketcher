@@ -30,16 +30,18 @@ def pendulum(theta, S, mg, drag) -> ps.Composition:
     P = ps.Point(W / 2, 0.9 * H)  # rotation point
 
     path = ps.Arc(P, L, -ps.Angle(np.pi / 2), a)
-    angle = ps.ArcWithText(r"$\theta$", P, L / 4, -ps.Angle(np.pi / 2), a)
-    angle.set_line_color(ps.Style.Color.BLACK)
-
     mass_pt = path.end
     rod = ps.Line(P, mass_pt)
+
+    theta = ps.AngularDimension(
+        r"$\theta$", P + ps.Point(0, -L / 4), P + (mass_pt - P).unit_vector * (L / 4), P
+    )
+    theta.extension_lines = False
 
     mass = ps.Circle(mass_pt, L / 30.0).set_fill_color(ps.Style.Color.BLUE)
     rod_vec = rod.end - rod.start
 
-    length = ps.DistanceWithText("$L$", P, mass_pt)
+    length = ps.LinearDimension("$L$", mass_pt, P)
     # Displace length indication
     length = length.translate(ps.Point(-np.cos(a), -np.sin(a)) * (L / 15.0))
     length.style.line_width = 0.1
@@ -61,7 +63,7 @@ def pendulum(theta, S, mg, drag) -> ps.Composition:
             "body": mass,
             "rod": rod,
             "vertical": vertical,
-            "theta": angle,
+            "theta": theta,
             "path": path,
             "g": gravity,
             # "L": length,
@@ -76,8 +78,7 @@ def pendulum(theta, S, mg, drag) -> ps.Composition:
             "$mg$",
             mass_pt,
             mass_pt + ps.Point(0, 1) * force,
-            text_position=ps.Force.TextPosition.END,
-            spacing=ps.Point(-0.3, 0),
+            text_position=ps.TextPosition.END,
         )
         if force != 0
         else None
@@ -89,9 +90,8 @@ def pendulum(theta, S, mg, drag) -> ps.Composition:
         ps.Force(
             "S",
             mass_pt,
-            mass_pt - rod_vec.unit_vector() * force,
-            text_position=ps.Force.TextPosition.END,
-            spacing=rod_vec.normal() * 0.3,
+            mass_pt - rod_vec.unit_vector * force,
+            text_position=ps.TextPosition.END,
         )
         if force != 0
         else None
@@ -103,7 +103,7 @@ def pendulum(theta, S, mg, drag) -> ps.Composition:
         ps.Force(
             "",
             mass_pt,
-            mass_pt - rod_vec.normal() * force,
+            mass_pt - rod_vec.normal * force,
         )
         if force != 0
         else None
@@ -114,15 +114,15 @@ def pendulum(theta, S, mg, drag) -> ps.Composition:
     ir = ps.Force(
         r"$\mathbf{i}_r$",
         P,
-        P + rod_vec.unit_vector() * (L / 10),
-        text_position=ps.Force.TextPosition.END,
+        P + rod_vec.unit_vector * (L / 10),
+        text_position=ps.TextPosition.END,
         # spacing=ps.Point(0.015, 0)
     )
     ith = ps.Force(
         r"$\mathbf{i}_{\theta}$",
         P,
-        P + rod_vec.normal() * (L / 10),
-        text_position=ps.Force.TextPosition.END,
+        P + rod_vec.normal * (L / 10),
+        text_position=ps.TextPosition.END,
         # spacing=ps.Point(0.02, 0.005)
     )
 

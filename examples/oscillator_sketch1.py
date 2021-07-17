@@ -53,7 +53,7 @@ def main() -> None:
     text_ku.style.font_size = fontsize
     text_bv = ps.Text("$bu'$", ps.Point(-L / 2, H))
     text_bv.style.font_size = fontsize
-    x_axis = ps.Axis(ps.Point(2 * H, L), H, "$u(t)$", label_spacing=(0.04, -0.01))
+    x_axis = ps.Axis(ps.Point(2 * H, L), H, "$u(t)$")
     x_axis_start = ps.Line(
         ps.Point(2 * H, L - H / 4), ps.Point(2 * H, L + H / 4)
     ).set_line_width(4)

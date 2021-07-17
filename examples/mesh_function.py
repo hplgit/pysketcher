@@ -55,7 +55,6 @@ def main() -> None:
                 ps.Point(0.0, 0.0),
                 x_axis_extent,
                 "$t$",
-                label_spacing=(1 / 45.0, -1 / 30.0),
             ),
             "y": ps.Axis(
                 ps.Point(0.0, 0.0), 0.8 * u_max, "$u$", rotation_angle=np.pi / 2

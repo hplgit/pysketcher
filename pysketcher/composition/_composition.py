@@ -194,15 +194,3 @@ class Composition(Stylable):
         for key, shape in self._shapes.items():
             ret_dict[key] = func(shape)
         return ret_dict
-
-
-class ShapeWithText(Composition):
-    """A convenience class to combine a Shape with a Text Object.
-
-    Args:
-        shape: The shape.
-        text: The text.
-    """
-
-    def __init__(self, shape: Shape, text: Text):
-        super().__init__({"text": text, "shape": shape})

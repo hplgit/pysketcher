@@ -1,11 +1,8 @@
 from typing import List
 
 from pysketcher import Angle
-from pysketcher._arrow_with_text import ArrowWithText
 from pysketcher._curve import Curve
-from pysketcher._distance_with_text import DistanceWithText
 from pysketcher._point import Point
-from pysketcher._style import TextStyle
 
 
 class Rectangle(Curve):
@@ -36,10 +33,6 @@ class Rectangle(Curve):
         An example of ``Rectangle``.
     """
 
-    _lower_left_corner: Point
-    _width: float
-    _height: float
-
     def __init__(self, lower_left_corner: Point, width: float, height: float):
 
         self._width = width
@@ -47,27 +40,6 @@ class Rectangle(Curve):
         self._lower_left_corner = lower_left_corner
 
         super().__init__(self._generate_points())
-
-        # Dimensions
-        dims = {
-            "width": DistanceWithText(
-                "width",
-                self._lower_left_corner + Point(0, -height / 5.0),
-                self._lower_left_corner + Point(width, -height / 5.0),
-            ),
-            "height": DistanceWithText(
-                "height",
-                self._lower_left_corner + Point(width + width / 5.0, 0),
-                self._lower_left_corner + Point(width + width / 5.0, height),
-            ),
-            "lower_left_corner": ArrowWithText(
-                "lower_left_corner",
-                self._lower_left_corner - Point(width / 5.0, height / 5.0),
-                self._lower_left_corner,
-            ),
-        }
-        dims["height"]["text"].style.alignment = TextStyle.Alignment.LEFT
-        self.dimensions = dims
 
     def _generate_points(self) -> List[Point]:
         return [
@@ -94,3 +66,33 @@ class Rectangle(Curve):
         for point in self._points:
             points.append(point.rotate(angle, center))
         return Curve(points)
+
+    @property
+    def width(self) -> float:
+        """The width of the rectangle."""
+        return self._width
+
+    @property
+    def height(self) -> float:
+        """The height of the rectangle."""
+        return self._height
+
+    @property
+    def lower_left(self) -> Point:
+        """The lower left point of the rectangle."""
+        return self._lower_left_corner
+
+    @property
+    def lower_right(self) -> Point:
+        """The lower right point of the rectangle."""
+        return self._lower_left_corner + Point(self._width, 0)
+
+    @property
+    def upper_left(self) -> Point:
+        """The upper left point of the rectangle."""
+        return self._lower_left_corner + Point(0, self._height)
+
+    @property
+    def upper_right(self) -> Point:
+        """The upper right point of the rectangle."""
+        return self._lower_left_corner + Point(self._width, self._height)

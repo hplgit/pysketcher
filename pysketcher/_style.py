@@ -68,7 +68,7 @@ class Style:
 
     def __init__(self):
         self._line_style = self.LineStyle.SOLID
-        self._line_width = 0.1
+        self._line_width = 1
         self._line_color = self.Color.BLACK
         self._fill_pattern = None
         self._fill_color = None
@@ -182,7 +182,7 @@ class TextStyle(Style):
         self,
     ):
         super().__init__()
-        self._font_size = 12
+        self._font_size = 18
         self._font_family = self.FontFamily.SANS
         self._alignment = self.Alignment.CENTER
 

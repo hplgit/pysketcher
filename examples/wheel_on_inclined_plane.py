@@ -3,16 +3,18 @@ import time
 import numpy as np
 
 from pysketcher import (
-    ArcWithText,
+    Angle,
+    Arc,
+    ArcAnnotation,
     Axis,
     Circle,
     Figure,
     Force,
-    Gravity,
     Line,
     Point,
     Shape,
     Style,
+    TextPosition,
     Wall,
 )
 from pysketcher.backend.matplotlib import MatplotlibBackend
@@ -32,9 +34,8 @@ def main():
     wall = Wall([A, B], thickness=-0.25)
     wall.style.fill_pattern = Style.FillPattern.UP_LEFT_TO_RIGHT
 
-    angle = ArcWithText(
-        r"$\theta$", center=B, radius=3, start_angle=np.pi - theta, arc_angle=theta
-    )
+    angle = Arc(center=B, radius=3, start_angle=np.pi - theta, arc_angle=theta)
+    angleLabel = ArcAnnotation(r"$\theta$", angle)
     angle.style.line_color = Style.Color.BLACK
     angle.style.line_width = 1
 
@@ -60,11 +61,13 @@ def main():
     )
     wheel = Composition({"outer": outer_wheel, "inner": hole})
 
-    N = Force("$N$", contact - normal_vec * 2 * r, contact, spacing=0.2)
+    N = Force(
+        "$N$", contact - normal_vec * 2 * r, contact, text_position=TextPosition.START
+    )
     N.style.line_color = Style.Color.BLACK
 
     # text_alignment='left')
-    mg = Gravity(c, 3 * r, text="$Mg$", text_position=Gravity.TextPosition.END)
+    mg = Force("$mg$", c, c + Point(0, -3 * r), text_position=TextPosition.END)
 
     x_const = Line(contact, contact + Point(0, 4))
     x_const.style.line_style = Style.LineStyle.DOTTED
@@ -74,13 +77,14 @@ def main():
         start=contact + normal_vec * 3.0 * r,
         length=4 * r,
         label="$x$",
-        rotation_angle=-theta,
+        rotation_angle=Angle(-theta),
     )
 
     body = Composition({"wheel": wheel, "N": N, "mg": mg})
     fixed = Composition(
         {
             "angle": angle,
+            "angle_label": angleLabel,
             "inclined wall": wall,
             "wheel": wheel,
             "ground": ground,

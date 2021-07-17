@@ -33,18 +33,18 @@ def main() -> None:
 
     vehicle.style.line_color = ps.Style.Color.RED
 
-    wheel1_dim = ps.ArrowWithText("$w_1$", c + ps.Point(2, 0.25), c)
+    wheel1_dim = ps.LinearDimension("$w_1$", c + ps.Point(2, 0.25), c)
     hdp = w_1 + L + 3 * R  # horizontal dimension position
-    R_dim = ps.DistanceWithText("$R$", ps.Point(hdp, 0), ps.Point(hdp, R))
-    H_dim = ps.DistanceWithText("$H$", ps.Point(hdp, 2 * R), ps.Point(hdp, 2 * R + H))
-    H2_dim = ps.DistanceWithText(
+    R_dim = ps.LinearDimension("$R$", ps.Point(hdp, 0), ps.Point(hdp, R))
+    H_dim = ps.LinearDimension("$H$", ps.Point(hdp, 2 * R), ps.Point(hdp, 2 * R + H))
+    H2_dim = ps.LinearDimension(
         "$\\frac{5}{4}H$", ps.Point(hdp, 2 * R + H), ps.Point(hdp, 2 * R + (9 / 4) * H)
     )
 
     vdp = 2 * R + H + 3 / 2 * H
-    R2_dim = ps.DistanceWithText("$2R$", ps.Point(w_1 - 2 * R, vdp), ps.Point(w_1, vdp))
-    L_dim = ps.DistanceWithText("$L$", ps.Point(w_1, vdp), ps.Point(w_1 + L, vdp))
-    R3_dim = ps.DistanceWithText(
+    R2_dim = ps.LinearDimension("$2R$", ps.Point(w_1 - 2 * R, vdp), ps.Point(w_1, vdp))
+    L_dim = ps.LinearDimension("$L$", ps.Point(w_1, vdp), ps.Point(w_1 + L, vdp))
+    R3_dim = ps.LinearDimension(
         "$2R$", ps.Point(w_1 + L, vdp), ps.Point(w_1 + L + 2 * R, vdp)
     )
 

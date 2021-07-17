@@ -1,7 +1,5 @@
-from pysketcher._distance_with_text import DistanceWithText
 from pysketcher._point import Point
 from pysketcher._rectangle import Rectangle
-from pysketcher._text import Text
 from pysketcher._triangle import Triangle
 from pysketcher.composition import Composition
 
@@ -35,19 +33,19 @@ class SimpleSupport(Composition):
     _size: float
 
     def __init__(self, position: Point, size: float):
-        p0 = Point(position.x - size / 2.0, position.y - size)
-        p1 = Point(position.x + size / 2.0, position.y - size)
-        triangle = Triangle(p0, p1, position)
+        self._position = position
+        self._size = size
+        self._p0 = Point(position.x - size / 2.0, position.y - size)
+        self._p1 = Point(position.x + size / 2.0, position.y - size)
+        self._triangle = Triangle(self._p0, self._p1, position)
         gap = size / 5.0
-        h = size / 4.0  # height of rectangle
-        p2 = Point(p0.x, p0.y - gap - h)
-        rectangle = Rectangle(p2, size, h)
-        shapes = {"triangle": triangle, "rectangle": rectangle}
+        self._height = size / 4.0  # height of rectangle
+        self._p2 = Point(self._p0.x, self._p0.y - gap - self._height)
+        self._rectangle = Rectangle(self._p2, self._size, self._height)
+        shapes = {"triangle": self._triangle, "rectangle": self._rectangle}
         super().__init__(shapes)
 
-        self._dimensions = {
-            "position": Text("position", position),
-            "size": DistanceWithText(
-                "size", Point(p2.x, p2.y - size), Point(p2.x + size, p2.y - size)
-            ),
-        }
+    @property
+    def mid_support(self) -> Point:
+        """Returns the midpoint of the base of the support."""
+        return (self._rectangle.lower_left + self._rectangle.lower_right) * 0.5

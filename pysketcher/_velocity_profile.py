@@ -1,4 +1,3 @@
-import logging
 from typing import Callable
 
 from pysketcher._arrow import Arrow
@@ -6,8 +5,6 @@ from pysketcher._line import Line
 from pysketcher._point import Point
 from pysketcher._spline import Spline
 from pysketcher.composition import Composition
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 class VelocityProfile(Composition):

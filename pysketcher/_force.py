@@ -1,25 +1,38 @@
-from pysketcher._arrow_with_text import ArrowWithText
+from pysketcher._arrow import Arrow
 from pysketcher._point import Point
 from pysketcher._style import Style
+from pysketcher.annotation import LineAnnotation, TextPosition
+from pysketcher.composition import Composition
 
 
-class Force(ArrowWithText):
-    """Another name for :class:`ArrowWithText` to make code easier to read."""
+class Force(Composition):
+    """A composition of Arrow and LinearAnnotation."""
 
-    pass
+    def __init__(
+        self,
+        text: str,
+        start: Point,
+        end: Point,
+        text_position: TextPosition = TextPosition.MIDDLE,
+    ):
+        self._text = text
+        self._start = start
+        self._end = end
+
+        self._arrow = Arrow(start, end)
+        self._label = LineAnnotation(text, self._arrow, text_position)
+        super().__init__({"arrow": self._arrow, "label": self._label})
 
 
 class Gravity(Force):
     """Downward-pointing gravity arrow with the symbol g."""
 
+    # TODO: add the g
+
     def __init__(
         self,
         start,
         length,
-        text_position: ArrowWithText.TextPosition = ArrowWithText.TextPosition.START,
-        text="$g$",
     ):
-        Force.__init__(
-            self, text, start, start + Point(0, -length), text_position=text_position
-        )
+        Force.__init__(self, "$g$", start, start + Point(0, -length))
         self.style.line_color = Style.Color.BLACK

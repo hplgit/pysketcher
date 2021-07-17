@@ -26,6 +26,9 @@ class UniformLoad(Composition):
     def __init__(
         self, lower_left_corner: Point, width: float, height: float, num_arrows=10
     ):
+        self._lower_left_corner = lower_left_corner
+        self._width = width
+        self._height = height
         box = Rectangle(lower_left_corner, width, height)
         shapes = {"box": box}
         dx = float(width) / (num_arrows - 1)
@@ -35,3 +38,8 @@ class UniformLoad(Composition):
             end = Point(x, lower_left_corner.y)
             shapes["arrow%d" % i] = Arrow(start, end)
         super().__init__(shapes)
+
+    @property
+    def mid_top(self) -> Point:
+        """The middle of the top of the load."""
+        return self._lower_left_corner + Point(self._width / 2, self._height)

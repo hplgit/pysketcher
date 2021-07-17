@@ -5,6 +5,6 @@ groups which can then be transformed. This module also
 provides a set of pre-baked primitives for convenience.
 """
 
-from pysketcher.composition._composition import Composition, ShapeWithText
+from pysketcher.composition._composition import Composition
 
-__all__ = ["Composition", "ShapeWithText"]
+__all__ = ["Composition"]

@@ -62,12 +62,7 @@ def main():
 
     axes = ps.Composition(
         dict(
-            x=ps.Axis(
-                ps.Point(0, 0),
-                t_mesh[-1] + 0.2 * t_axis_extent,
-                "$t$",
-                label_spacing=(1 / 45.0, -1 / 30.0),
-            ),
+            x=ps.Axis(ps.Point(0, 0), t_mesh[-1] + 0.2 * t_axis_extent, "$t$"),
             y=ps.Axis(ps.Point(0, 0), 0.8 * u_max, "$u,v$", rotation_angle=np.pi / 2),
         )
     )

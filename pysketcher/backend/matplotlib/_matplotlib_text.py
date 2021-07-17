@@ -28,7 +28,7 @@ class MatplotlibText(MatplotlibAdapter):
         if mpl_style.line_color is not None:
             kwargs["color"] = mpl_style.line_color
 
-        rotation_angle = text.direction.angle()
+        rotation_angle = text.direction.angle
         if rotation_angle != 0.0:
             kwargs["rotation"] = rotation_angle
 

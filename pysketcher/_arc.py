@@ -3,8 +3,6 @@ import numpy as np
 from pysketcher._angle import Angle
 from pysketcher._curve import Curve
 from pysketcher._point import Point
-from pysketcher._text import Text
-from pysketcher.composition import ShapeWithText
 
 
 class Arc(Curve):
@@ -121,6 +119,11 @@ class Arc(Curve):
         """The point at which the arc ends."""
         return self(self.arc_angle)
 
+    @property
+    def mid(self) -> Point:
+        """The middle of the arc."""
+        return self(self.arc_angle / 2)
+
     def translate(self, vec: Point) -> "Arc":
         """Translates the arc by the specified vector.
 
@@ -139,50 +142,3 @@ class Arc(Curve):
         )
         arc.style = self.style
         return arc
-
-
-class ArcWithText(ShapeWithText):
-    """An ``Arc`` with a ``Text`` label.
-
-    Args:
-        text: The text to be displayed.
-        center: The center of the ``Arc``.
-        radius: The radius of the ``Arc``.
-        start_angle: The angle from the +ve horizontal from which
-            the ``Arc`` should begin.
-        arc_angle: The angle from the ``start_angle`` at which
-            the ``Arc`` should end.
-        resolution: The number of points in the ``Arc``.
-        text_spacing: The spacing of the text from the midpoint of the ``Arc``.
-
-    Examples:
-        >>> arc_with_text = ps.ArcWithText(
-        ...     "$A$", ps.Point(0.0, 0.0), 1.0, Angle(0.0), Angle(np.pi / 2)
-        ... )
-        >>> fig = ps.Figure(-0.5, 1.5, -0.5, 1.5, backend=MatplotlibBackend)
-        >>> fig.add(arc_with_text)
-        >>> fig.save("pysketcher/images/arc_with_text.png")
-
-        .. figure:: images/arc_with_text.png
-            :alt: An example of an ArcWithText.
-            :figclass: align-center
-
-            An example of an ``ArcWithText``.
-    """
-
-    def __init__(
-        self,
-        text: str,
-        center: Point,
-        radius: float,
-        start_angle: Angle,
-        arc_angle: Angle,
-        resolution: int = 180,
-        text_spacing: float = 1 / 6.0,
-    ):
-        arc = Arc(center, radius, start_angle, arc_angle, resolution)
-        mid = arc(arc_angle / 2.0)
-        normal = (mid - center).unit_vector()
-        text_pos = mid - (normal * text_spacing)
-        text = Text(text, text_pos)
-        super().__init__(arc, text)

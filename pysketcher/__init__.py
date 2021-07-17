@@ -7,15 +7,13 @@ except PackageNotFoundError:
     pass
 
 from pysketcher._angle import Angle
-from pysketcher._arc import Arc, ArcWithText
+from pysketcher._arc import Arc
 from pysketcher._arrow import Arrow, DoubleArrow
-from pysketcher._arrow_with_text import ArrowWithText
 from pysketcher._axis import Axis
 from pysketcher._circle import Circle
 from pysketcher._cubic_bezier_curve import CubicBezier
 from pysketcher._curve import Curve
 from pysketcher._dashpot import Dashpot
-from pysketcher._distance_with_text import DistanceWithText
 from pysketcher._drawable import Drawable
 from pysketcher._figure import Figure
 from pysketcher._force import Force, Gravity
@@ -40,33 +38,36 @@ from pysketcher._uniform_load import UniformLoad
 from pysketcher._velocity_profile import VelocityProfile
 from pysketcher._wall import Wall
 from pysketcher._wheel import Wheel
-from pysketcher.composition import Composition, ShapeWithText
+from pysketcher.annotation import ArcAnnotation, LineAnnotation, TextPosition
+from pysketcher.composition import Composition
+from pysketcher.dimension import AngularDimension, LinearDimension, RadialDimension
 
 __all__ = [
+    "AngularDimension",
+    "Axis",
     "Angle",
     "Arc",
-    "ArcWithText",
+    "ArcAnnotation",
     "Arrow",
     "DoubleArrow",
-    "ArrowWithText",
-    "Axis",
-    "SimpleSupport",
     "Circle",
     "CubicBezier",
     "Composition",
-    "ShapeWithText",
     "Curve",
     "Dashpot",
-    "DistanceWithText",
     "Drawable",
     "Figure",
     "Force",
     "Gravity",
     "Line",
+    "LineAnnotation",
+    "LinearDimension",
     "Moment",
     "Point",
+    "RadialDimension",
     "Rectangle",
     "Shape",
+    "SimpleSupport",
     "SketchyFunc1",
     "SketchyFunc2",
     "SketchyFunc3",
@@ -75,6 +76,7 @@ __all__ = [
     "Spring",
     "Style",
     "TextStyle",
+    "TextPosition",
     "Text",
     "Triangle",
     "UniformLoad",

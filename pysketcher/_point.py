@@ -103,25 +103,28 @@ class Point:
         """The y co-ordinate of the Point."""
         return self._y
 
-    # TODO: These should all be properties
+    @property
     def unit_vector(self) -> "Point":
         """Returns a ``Point`` of length 1 in the direction of the ``Point``."""
         if self._is_close(abs(self), 0.0):
             raise ZeroDivisionError("Length of Vector cannot be Zero")
         return self * (1 / (abs(self)))
 
+    @property
     def angle(self) -> Angle:
         """Returns the ``Angle`` the ``Point`` makes to the +ve horizontal."""
         angle = Angle(np.arctan2(self.y, self.x))
         return angle
 
+    @property
     def radius(self) -> float:
         """Returns the distance from ``Point(0.,0.)`` to this point."""
         return abs(self)
 
+    @property
     def normal(self) -> "Point":
         r"""Returns a ``Point`` of length 1, :math:``$\frac{\pi}{2}$`` from ``self``."""
-        uv = self.unit_vector()
+        uv = self.unit_vector
         return Point(-uv.y, uv.x)
 
     def rotate(self, angle: Angle, center: "Point") -> "Point":

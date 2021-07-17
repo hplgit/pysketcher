@@ -41,7 +41,7 @@ class MatplotlibBackend(Backend):
         self._y_max = y_max
         self._camera = None
         self._fig = plt.figure(
-            figsize=[x_max - x_min, y_max - y_min], tight_layout=False
+            figsize=[(x_max - x_min) * 3, (y_max - y_min) * 3], tight_layout=False
         )
         self._axes = self._fig.gca()
         self._configure_axes()

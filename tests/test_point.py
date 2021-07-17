@@ -62,10 +62,10 @@ class TestPoint:
             assume(abs(a.y / a.x) < 1e4)
         if a.y != 0.0:
             assume(abs(a.x / a.y) < 1e4)
-        angle = a.angle()
+        angle = a.angle
         note(angle)
         b = Point(abs(a), 0.0).rotate(angle, Point(0.0, 0.0))
-        note(f"The angle is : {np.format_float_scientific(a.angle())}")
+        note(f"The angle is : {np.format_float_scientific(a.angle)}")
         note(f"The length is : {np.format_float_scientific(abs(a))}")
         assert b == a
         assert -np.pi <= angle <= np.pi
@@ -75,12 +75,12 @@ class TestPoint:
         a = Point(x, y)
         if isclose(abs(a), 0.0):
             with pytest.raises(ZeroDivisionError):
-                a.unit_vector()
+                a.unit_vector
         else:
-            b = a.unit_vector()
-            note(f"angle of a: {np.format_float_scientific(a.angle())}")
-            note(f"angle of b: {np.format_float_scientific(b.angle())}")
-            assert isclose(a.angle(), b.angle())
+            b = a.unit_vector
+            note(f"angle of a: {np.format_float_scientific(a.angle)}")
+            note(f"angle of b: {np.format_float_scientific(b.angle)}")
+            assert isclose(a.angle, b.angle)
             note(f"magnitude of b: {abs(b)}")
             assert isclose(abs(b), 1.0)
 
@@ -88,17 +88,17 @@ class TestPoint:
     def test_normal_vector(self, a: Point):
         if isclose(abs(a), 0.0):
             with pytest.raises(ZeroDivisionError):
-                a.normal()
+                a.normal
         else:
-            angle = a.normal().angle() - a.angle()
+            angle = a.normal.angle - a.angle
             assert isclose(angle, np.pi / 2.0)
 
     @given_inferred
     def test_rotation_about_zero(self, a: Point, angle: Angle):
         assume(abs(a) != 0)
         b = a.rotate(angle, Point(0.0, 0.0))
-        aa = a.angle()
-        bb = b.angle()
+        aa = a.angle
+        bb = b.angle
         note(f"a angle: {aa}")
         note(f"b angle: {bb}")
         assert isclose(bb - aa, angle)
@@ -108,9 +108,9 @@ class TestPoint:
     def test_rotation(self, a: Point, angle: Angle, center: Point):
         assume(abs(a - center) != 0)
         b = a.rotate(angle, center)
-        new_angle = (b - center).angle() - (a - center).angle()
-        note(angle)
-        note(new_angle)
+        new_angle = (b - center).angle - (a - center).angle
+        note(str(angle))
+        note(str(new_angle))
         assert isclose(angle, angle)
 
 

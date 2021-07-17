@@ -1,7 +1,8 @@
 version: 2
-argument-count:
-    config:
-        threshold: 7
+checks:
+    argument-count:
+        config:
+            threshold: 7
 exclude_patterns:
     - "doc/"
     - "examples/"
