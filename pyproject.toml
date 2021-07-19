@@ -29,7 +29,7 @@ importlib-metadata = {version = ">=2,<5", python = "<=3.7"}
 celluloid = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
-hypothesis = "^6.14.2"
+hypothesis = "^6.14.3"
 pytest = "^6.2.2"
 pylint = "^2.9.3"
 flake8 = "^3.9.0"
