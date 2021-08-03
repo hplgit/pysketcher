@@ -31,7 +31,7 @@ celluloid = "^0.2.0"
 [tool.poetry.dev-dependencies]
 hypothesis = "^6.14.3"
 pytest = "^6.2.2"
-pylint = "^2.9.5"
+pylint = "^2.9.6"
 flake8 = "^3.9.0"
 coverage = "^5.3"
 mypy = "^0.910"
